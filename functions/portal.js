@@ -19,7 +19,7 @@ export async function onRequestGet(context) {
   }
 
   // Fetch the static HTML
-  const asset = await env.ASSETS.fetch(new Request(new URL('/portal.html', request.url)));
+  const asset = await env.ASSETS.fetch(new Request(new URL('/_portal.html', request.url)));
   let html = await asset.text();
 
   // Inject session data as a script tag before the closing </head>
