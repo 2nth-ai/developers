@@ -6,3 +6,8 @@ pages_build_output_dir = "public"
 GITHUB_REDIRECT_URI = "https://developers-2nth-ai.pages.dev/api/auth/callback"
 SITE_URL            = "https://developers-2nth-ai.pages.dev"
 MAIN_SITE_URL       = "https://2nth.ai"
+RESEND_FROM         = "noreply@2nth.ai"
+
+[[kv_namespaces]]
+binding = "KV"
+id      = "REPLACE_WITH_KV_ID"

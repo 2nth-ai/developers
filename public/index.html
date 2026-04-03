@@ -14,11 +14,6 @@
       --c-steel-400:#c4c4cc; --c-steel-600:#71717a; --c-steel-700:#52525b;
       --c-border:hsla(0,0%,100%,.06); --c-input-bg:#141414;
     }
-    .light {
-      --c-carbon:#fff; --c-graphite:#f7f8fa; --c-titanium:#0a0a0a;
-      --c-steel-400:#3f3f46; --c-steel-600:#71717a; --c-steel-700:#a1a1aa;
-      --c-border:rgba(0,0,0,.08); --c-input-bg:#f7f8fa;
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Barlow', sans-serif;
@@ -32,41 +27,54 @@
     .subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--c-steel-600); margin-top: 2px; margin-bottom: 32px; }
     .card { background: var(--c-graphite); border: 1px solid var(--c-border); border-radius: 8px; padding: 36px 32px; text-align: left; }
     .label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--c-steel-600); margin-bottom: 8px; font-weight: 600; }
-    .row { display: flex; gap: 8px; margin-bottom: 14px; }
     .input {
-      flex: 1; padding: 12px 14px; border: 1px solid var(--c-border); border-radius: 4px;
+      width: 100%; padding: 12px 14px; border: 1px solid var(--c-border); border-radius: 4px;
       background: var(--c-input-bg); color: var(--c-titanium);
       font-family: 'JetBrains Mono', monospace; font-size: 14px; outline: none;
       transition: border-color 0.15s;
     }
     .input::placeholder { color: var(--c-steel-700); }
     .input:focus { border-color: #06B6D4; }
+    .input-code {
+      font-size: 28px; letter-spacing: 0.3em; text-align: center; margin-top: 8px;
+    }
     .btn {
-      padding: 12px 22px; border: 1px solid #06B6D4; border-radius: 4px;
+      width: 100%; margin-top: 12px; padding: 12px; border: 1px solid #06B6D4; border-radius: 4px;
       background: #06B6D4; color: #0a0a0a; cursor: pointer;
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
-      letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
+      letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.15s;
     }
     .btn:hover { background: #0891b2; border-color: #0891b2; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-ghost {
+      width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--c-border); border-radius: 4px;
+      background: transparent; color: var(--c-steel-400); cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: all 0.15s;
+    }
+    .btn-ghost:hover { border-color: #06B6D4; color: #06B6D4; }
+    .code-step { display: none; margin-top: 20px; }
+    .code-step.show { display: block; }
+    .code-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--c-steel-700); margin-top: 10px; text-align: center; }
     .divider {
-      display: flex; align-items: center; gap: 12px; margin: 18px 0;
+      display: flex; align-items: center; gap: 12px; margin: 20px 0;
       font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px;
       text-transform: uppercase; color: var(--c-steel-700);
     }
     .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--c-border); }
-    .alt-row { display: flex; gap: 8px; }
     .alt-btn {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
       padding: 10px; border: 1px solid var(--c-border); border-radius: 4px;
       background: var(--c-carbon); color: var(--c-steel-400); text-decoration: none;
       font-family: 'JetBrains Mono', monospace; font-size: 11px; transition: all 0.15s; cursor: pointer;
     }
     .alt-btn:hover { border-color: #06B6D4; color: #06B6D4; }
-    .hint { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--c-steel-700); margin-top: 14px; text-align: center; }
-    .msg { font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 10px 14px; border-radius: 4px; margin-bottom: 14px; display: none; }
+    .msg { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 12px; border-radius: 4px; margin-bottom: 12px; display: none; }
     .msg.show { display: block; }
     .msg-err { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); color: #EF4444; }
+    .msg-ok { background: rgba(6,182,212,.08); border: 1px solid rgba(6,182,212,.2); color: #06B6D4; }
     .features { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
     .feat { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--c-steel-600); }
     .dot { width: 5px; height: 5px; border-radius: 50%; background: #06B6D4; }
@@ -84,23 +92,21 @@
 
   <div class="card">
     <div id="msg" class="msg"></div>
-    <label class="label">Sign in with your email</label>
-    <div class="row">
-      <input type="email" id="email" class="input" placeholder="you@company.com" onkeydown="if(event.key==='Enter')document.getElementById('go').click()">
-      <button type="button" id="go" class="btn" onclick="doSignIn()">Sign In</button>
+
+    <div id="emailStep">
+      <label class="label">Sign in with your email</label>
+      <input type="email" id="email" class="input" placeholder="you@company.com">
+      <button type="button" class="btn" onclick="sendCode()">Send sign-in code</button>
     </div>
-    <div class="divider">or continue with</div>
-    <div class="alt-row">
-      <a href="/api/auth/login" class="alt-btn">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        GitHub
-      </a>
-      <a href="javascript:void(0)" onclick="window.location.href='https://2nth.ai/?return='+encodeURIComponent(window.location.origin+'/portal.html')" class="alt-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Sign in on 2nth.ai
-      </a>
+
+    <div class="code-step" id="codeStep">
+      <label class="label">Enter your 6-digit code</label>
+      <input type="text" id="code" class="input input-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+      <button type="button" class="btn" id="verifyBtn" onclick="verifyCode()">Verify code</button>
+      <button type="button" class="btn-ghost" onclick="resendCode()">Resend code</button>
+      <div class="code-hint">Check your inbox — code expires in 10 minutes.</div>
     </div>
-    <div class="hint">We'll redirect you to 2nth.ai to sign in. No password needed.</div>
+
   </div>
 
   <div class="features">
@@ -113,35 +119,111 @@
   <div class="links">
     <a href="/docs.html">Docs</a>
     <a href="/portal.html">Portal</a>
-    <a href="/partners/gridlineprop.html">GridLineProp</a>
-    <a href="/partners/scanman.html">ScanMan</a>
-    <a href="/partners/agilex.html">Agilex</a>
   </div>
 
   <div class="footer"><a href="https://2nth.ai">2nth.ai</a> — from thought to motion</div>
 </div>
 
 <script>
-// Check SSO session on load — redirect to portal if already signed in
+let currentEmail = '';
+
+// Already signed in? Redirect to portal.
 fetch('/api/auth/session', { credentials: 'include' })
   .then(r => r.json())
   .then(d => { if (d.user) window.location.href = '/portal.html'; })
   .catch(() => {});
 
-function doSignIn() {
-  var email = document.getElementById('email').value.trim().toLowerCase();
+function showMsg(text, type) {
   var msg = document.getElementById('msg');
+  msg.className = 'msg show msg-' + type;
+  msg.textContent = text;
+}
 
-  if (!email || email.indexOf('@') === -1) {
-    msg.className = 'msg show msg-err';
-    msg.textContent = 'Enter a valid email address.';
+function clearMsg() {
+  var msg = document.getElementById('msg');
+  msg.className = 'msg';
+  msg.textContent = '';
+}
+
+async function sendCode() {
+  clearMsg();
+  var email = document.getElementById('email').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showMsg('Enter a valid email address.', 'err');
     return;
   }
 
-  // Send user to 2nth.ai magic link sign-in, return here after
-  var returnTo = encodeURIComponent(window.location.origin + '/portal.html');
-  window.location.href = 'https://2nth.ai/?return=' + returnTo + '&email=' + encodeURIComponent(email);
+  try {
+    var res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    var data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to send');
+
+    currentEmail = email;
+    document.getElementById('emailStep').style.display = 'none';
+    var codeStep = document.getElementById('codeStep');
+    codeStep.classList.add('show');
+    showMsg('Code sent — check your inbox.', 'ok');
+    document.getElementById('code').focus();
+  } catch (e) {
+    showMsg(e.message, 'err');
+  }
 }
+
+async function verifyCode() {
+  clearMsg();
+  var code = document.getElementById('code').value.trim();
+  if (code.length !== 6) {
+    showMsg('Enter the 6-digit code from your email.', 'err');
+    return;
+  }
+
+  var btn = document.getElementById('verifyBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+
+  try {
+    var res = await fetch('/api/auth/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentEmail, code }),
+    });
+    var data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Invalid code');
+
+    window.location.href = '/portal.html';
+  } catch (e) {
+    showMsg(e.message, 'err');
+    btn.disabled = false;
+    btn.textContent = 'Verify code';
+  }
+}
+
+async function resendCode() {
+  clearMsg();
+  try {
+    await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentEmail }),
+    });
+    showMsg('New code sent.', 'ok');
+    document.getElementById('code').value = '';
+    document.getElementById('code').focus();
+  } catch {}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('email').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendCode();
+  });
+  document.getElementById('code').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') verifyCode();
+  });
+});
 </script>
 </body>
 </html>
