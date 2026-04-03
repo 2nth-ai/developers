@@ -1,0 +1,7 @@
+name = "developers-2nth-ai"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "public"
+
+[vars]
+GITHUB_REDIRECT_URI = "https://dev.developers.2nth.ai/api/auth/callback"
+SITE_URL = "https://dev.developers.2nth.ai"

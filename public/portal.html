@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Portal — 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .user-bar{display:flex;align-items:center;gap:12px}
+    .avatar{width:32px;height:32px;border-radius:50%;border:2px solid #e4e4e7}
+    .user-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:#18181b}
+    .btn{display:inline-block;padding:8px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;border-radius:5px;border:none;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-primary{background:#0891b2;color:#fff}.btn-primary:hover{background:#0e7490}
+    .btn-outline{background:none;border:1px solid #e4e4e7;color:#52525b}.btn-outline:hover{border-color:#0891b2;color:#0891b2}
+    .btn-sm{padding:6px 12px;font-size:9px}
+    .step-list{counter-reset:steps;list-style:none;margin-left:0;padding:0}
+    .step-list li{counter-increment:steps;position:relative;padding:16px 16px 16px 56px;margin-bottom:12px;background:#fff;border:1px solid #e4e4e7;border-radius:8px}
+    .step-list li::before{content:counter(steps);position:absolute;left:16px;top:16px;width:28px;height:28px;border-radius:50%;background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.25);color:#0891b2;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+    .step-list li strong{color:#18181b;display:block;margin-bottom:4px}
+    .tab-bar{display:flex;gap:0;border-bottom:2px solid #e4e4e7;margin-bottom:32px}
+    .tab{padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+    .tab:hover{color:#52525b}
+    .tab.active{color:#0891b2;border-bottom-color:#0891b2}
+    .tab-content{display:none}.tab-content.active{display:block}
+    .form-group{margin-bottom:20px}
+    .form-group label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;background:#fff;outline:none;transition:border-color .15s}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#0891b2}
+    .form-group textarea{min-height:120px;resize:vertical}
+    .msg{padding:12px 16px;border-radius:6px;margin-bottom:16px;font-size:13px;display:none}
+    .msg.show{display:block}
+    .msg-success{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);color:#059669}
+    .msg-error{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);color:#dc2626}
+    .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:24px 0}
+    .quick-link{display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:1px solid #e4e4e7;border-radius:8px;text-decoration:none;color:#18181b;transition:all .15s}
+    .quick-link:hover{border-color:#0891b2;text-decoration:none;box-shadow:0 2px 8px rgba(8,145,178,.06)}
+    .quick-link .icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(8,145,178,.06);border-radius:6px}
+    .quick-link .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a}
+    .quick-link .title{font-size:14px;font-weight:600}
+    .loading{text-align:center;padding:60px;color:#a1a1aa}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <div id="user-area"></div>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div id="loading" class="loading">Loading...</div>
+
+  <div id="signed-out" style="display:none;text-align:center;padding:80px 0">
+    <h1>Developer Portal</h1>
+    <p class="lead">Sign in with GitHub to contribute skills, submit ideas, and track your work on the 2nth.ai platform.</p>
+    <a href="/api/auth/login" class="btn btn-primary" style="font-size:12px;padding:12px 28px">Sign in with GitHub</a>
+  </div>
+
+  <div id="portal" style="display:none">
+
+    <h1>Developer Portal</h1>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="showTab('start')">Get started</div>
+      <div class="tab" onclick="showTab('ideas')">Submit idea</div>
+      <div class="tab" onclick="showTab('contribute')">Contribute</div>
+      <div class="tab" onclick="showTab('resources')">Resources</div>
+    </div>
+
+    <!-- ─── GET STARTED ──────────────────────────────────── -->
+
+    <div id="tab-start" class="tab-content active">
+      <h2 style="border:none;margin-top:0;padding-top:0">Welcome, <span id="welcome-name"></span></h2>
+      <p>Here's how to start contributing to the 2nth.ai platform.</p>
+
+      <h3>Quick links</h3>
+      <div class="quick-links">
+        <a href="https://github.com/2nth-ai/skills/fork" target="_blank" class="quick-link">
+          <div class="icon">&#9733;</div>
+          <div><div class="label">Step 1</div><div class="title">Fork the skills repo</div></div>
+        </a>
+        <a href="https://github.com/2nth-ai/skills" target="_blank" class="quick-link">
+          <div class="icon">&#128218;</div>
+          <div><div class="label">Browse</div><div class="title">Explore 300+ skills</div></div>
+        </a>
+        <a href="https://2nth.ai/join.html" target="_blank" class="quick-link">
+          <div class="icon">&#9889;</div>
+          <div><div class="label">Try it</div><div class="title">Get 50K free tokens</div></div>
+        </a>
+        <a href="/" class="quick-link">
+          <div class="icon">&#128196;</div>
+          <div><div class="label">Learn</div><div class="title">Read the docs</div></div>
+        </a>
+      </div>
+
+      <h3>Your first contribution</h3>
+      <ol class="step-list">
+        <li>
+          <strong>Fork the skills repo</strong>
+          Go to <a href="https://github.com/2nth-ai/skills/fork" target="_blank">github.com/2nth-ai/skills/fork</a> and create your fork.
+        </li>
+        <li>
+          <strong>Create a skill directory</strong>
+          Pick a domain (<code>tech/</code>, <code>biz/</code>, <code>edu/</code>, <code>fin/</code>, <code>leg/</code>, <code>health/</code>) and create <code>your-skill-name/SKILL.md</code>.
+        </li>
+        <li>
+          <strong>Write your SKILL.md</strong>
+          Include the YAML frontmatter (name, domain, tier, version, contributor) and document what the skill does, configuration options, and example output. See the <a href="/#skills">format guide</a>.
+        </li>
+        <li>
+          <strong>Open a pull request</strong>
+          PR your fork into <code>2nth-ai/skills</code> targeting the <code>dev</code> branch. CI will validate your frontmatter automatically.
+        </li>
+        <li>
+          <strong>Get reviewed and merged</strong>
+          The team reviews your skill. Once merged, it goes live on the platform and you earn 5% revenue share on usage.
+        </li>
+      </ol>
+    </div>
+
+    <!-- ─── SUBMIT IDEA ──────────────────────────────────── -->
+
+    <div id="tab-ideas" class="tab-content">
+      <h2 style="border:none;margin-top:0;padding-top:0">Submit an idea</h2>
+      <p>Have an idea for a new skill, integration, or platform improvement? Submit it here and the team will review it.</p>
+
+      <div id="idea-msg" class="msg"></div>
+
+      <form id="idea-form" onsubmit="submitIdea(event)">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="idea-title" placeholder="e.g. Slack notification skill for project updates" required>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="idea-type">
+            <option value="skill">New skill</option>
+            <option value="integration">Integration</option>
+            <option value="feature">Platform feature</option>
+            <option value="improvement">Improvement</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="idea-desc" placeholder="Describe the idea, why it's useful, and how it might work..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" id="idea-submit">Submit idea</button>
+      </form>
+    </div>
+
+    <!-- ─── CONTRIBUTE ───────────────────────────────────── -->
+
+    <div id="tab-contribute" class="tab-content">
+      <h2 style="border:none;margin-top:0;padding-top:0">Contribution guide</h2>
+
+      <h3>What you can contribute</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Repo</th><th>Access</th></tr></thead>
+        <tbody>
+          <tr><td>Skill documentation</td><td><a href="https://github.com/2nth-ai/skills">skills</a> (public)</td><td>Anyone — fork and PR</td></tr>
+          <tr><td>Code improvements</td><td>Platform repos (private)</td><td>Partners — request access</td></tr>
+          <tr><td>Ideas &amp; feedback</td><td>This portal</td><td>Anyone signed in</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Branch conventions</h3>
+      <table>
+        <thead><tr><th>Prefix</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>feature/</code></td><td>New functionality</td></tr>
+          <tr><td><code>fix/</code></td><td>Bug fixes</td></tr>
+          <tr><td><code>skill/</code></td><td>New or updated skill</td></tr>
+          <tr><td><code>partner/</code></td><td>Partner contributions</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Revenue share</h3>
+      <table>
+        <thead><tr><th>Tier</th><th>Share</th><th>Requirements</th></tr></thead>
+        <tbody>
+          <tr><td>Community</td><td>5%</td><td>PR accepted, skill active 30+ days</td></tr>
+          <tr><td>Partner</td><td>10-30%</td><td>Partner agreement + code review</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Become a partner</h3>
+      <p>Partners get write access to platform repos, higher revenue share, and priority support. <a href="mailto:craig@2nth.ai">Contact the team</a> to apply.</p>
+    </div>
+
+    <!-- ─── RESOURCES ────────────────────────────────────── -->
+
+    <div id="tab-resources" class="tab-content">
+      <h2 style="border:none;margin-top:0;padding-top:0">Resources</h2>
+
+      <div class="quick-links">
+        <a href="/" class="quick-link">
+          <div class="icon">&#128214;</div>
+          <div><div class="label">Docs</div><div class="title">Platform documentation</div></div>
+        </a>
+        <a href="https://github.com/2nth-ai/skills" target="_blank" class="quick-link">
+          <div class="icon">&#128736;</div>
+          <div><div class="label">Public</div><div class="title">Skills repo (300+)</div></div>
+        </a>
+        <a href="https://github.com/orgs/2nth-ai/projects/1" target="_blank" class="quick-link">
+          <div class="icon">&#128203;</div>
+          <div><div class="label">Track</div><div class="title">Roadmap board</div></div>
+        </a>
+        <a href="https://2nth.ai" target="_blank" class="quick-link">
+          <div class="icon">&#127968;</div>
+          <div><div class="label">Platform</div><div class="title">2nth.ai main site</div></div>
+        </a>
+      </div>
+
+      <h3>SKILL.md template</h3>
+      <pre><code>---
+name: Your Skill Name
+domain: tech
+tier: explorer
+version: 1.0.0
+status: draft
+contributor: <span id="res-username">your-github-handle</span>
+contributor_type: community
+license: CC-BY-SA-4.0
+platform_license: 2nth-platform-v1
+revenue_share: 5
+tags: [tech, your-tags]
+---
+
+# Your Skill Name — Domain
+
+What this skill does.
+
+## What it does
+
+1. Capability one
+2. Capability two
+
+## Configuration options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+
+## Example output
+
+```
+example here
+```</code></pre>
+
+      <h3>Release cycle</h3>
+      <div class="flow" style="margin:16px 0">
+        <div class="flow-step">Your PR</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step active">dev</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step">beta (3 days)</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step">production</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+let currentUser = null;
+
+async function init() {
+  const res = await fetch('/api/auth/session');
+  const { user } = await res.json();
+  currentUser = user;
+
+  document.getElementById('loading').style.display = 'none';
+
+  if (!user) {
+    document.getElementById('signed-out').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('portal').style.display = 'block';
+  document.getElementById('welcome-name').textContent = user.name;
+  document.getElementById('res-username').textContent = user.login;
+  document.getElementById('user-area').innerHTML = `
+    <div class="user-bar">
+      <img src="${user.avatar}" class="avatar" alt="">
+      <span class="user-name">${user.login}</span>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  `;
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+async function submitIdea(e) {
+  e.preventDefault();
+  const msg = document.getElementById('idea-msg');
+  const btn = document.getElementById('idea-submit');
+  msg.className = 'msg';
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    const res = await fetch('/api/ideas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: document.getElementById('idea-title').value,
+        type: document.getElementById('idea-type').value,
+        description: document.getElementById('idea-desc').value,
+      }),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      msg.className = 'msg show msg-success';
+      msg.innerHTML = `Idea submitted! <a href="${data.issue_url}" target="_blank">View on GitHub &rarr;</a>`;
+      document.getElementById('idea-form').reset();
+    } else {
+      msg.className = 'msg show msg-error';
+      msg.textContent = data.error || 'Failed to submit.';
+    }
+  } catch {
+    msg.className = 'msg show msg-error';
+    msg.textContent = 'Network error. Try again.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Submit idea';
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+}
+
+init();
+</script>
+</body>
+</html>
