@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridLineProp — 2nth.ai Early Access Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/gate.js"></script>
+  <style>
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .early-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:4px 12px;border-radius:4px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);color:#059669}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .skill-card{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:20px;margin-bottom:12px;transition:border-color .15s}
+    .skill-card:hover{border-color:#059669}
+    .skill-card h3{margin:0 0 6px;font-size:16px;color:#18181b}
+    .skill-card p{margin:0;font-size:13px;color:#71717a}
+    .skill-card .skill-meta{display:flex;gap:12px;margin-top:10px;align-items:center;flex-wrap:wrap}
+    .skill-tier{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+    .tier-production{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .tier-designer{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .tier-builder{color:#d97706;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
+    .pillar{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:20px;transition:border-color .15s}
+    .pillar:hover{border-color:#059669}
+    .pillar-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;margin-bottom:12px}
+    .pillar h3{margin:0 0 4px;font-size:15px}
+    .pillar p{margin:0;font-size:12px;color:#71717a}
+    .pillar .tags{margin-top:10px;display:flex;gap:4px;flex-wrap:wrap}
+    .pillar .tags span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:#faf9fc;color:#71717a;border:1px solid #ede9f6}
+    .expertise-row{display:grid;grid-template-columns:140px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid #f5f3ff;align-items:start}
+    .expertise-row:last-child{border-bottom:none}
+    .expertise-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#059669;padding-top:2px}
+    .expertise-desc{font-size:13px;color:#52525b}
+    .roadmap-item{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:18px;margin-bottom:10px;display:flex;gap:14px;align-items:start}
+    .roadmap-phase{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;font-weight:700;white-space:nowrap;flex-shrink:0}
+    .phase-now{background:rgba(5,150,105,.08);color:#059669;border:1px solid rgba(5,150,105,.2)}
+    .phase-next{background:rgba(124,58,237,.06);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+    .phase-later{background:rgba(161,161,170,.06);color:#71717a;border:1px solid rgba(161,161,170,.2)}
+    .inspection-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+    .inspection-step{background:#fff;border:2px solid rgba(5,150,105,.2);border-radius:8px;padding:14px;text-align:center}
+    .inspection-step .num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#059669}
+    .inspection-step .name{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-top:2px}
+    .warranty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+    .warranty{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:14px;text-align:center}
+    .warranty .period{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#18181b}
+    .warranty .type{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    @media(max-width:600px){
+      .inspection-grid{grid-template-columns:repeat(2,1fr)}
+      .expertise-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/portal.html">Portal</a>
+      <a href="https://github.com/2nth-ai/skills">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to docs</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo">GL</div>
+    <div>
+      <h1 style="margin-bottom:4px">GridLineProp</h1>
+      <div style="margin-bottom:6px"><span class="early-badge">Early Access Build Partner</span></div>
+      <div class="partner-meta">
+        <span>Joined April 2026</span>
+        <span>|</span>
+        <span><a href="https://gridlineprop.co.za">gridlineprop.co.za</a></span>
+        <span>|</span>
+        <span>Cape Town &amp; Johannesburg</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lead">Luxury residential cluster developer with 35+ years in SA property and construction. GridLineProp builds off-grid, secure, low-maintenance homes across the Southern Green Belts of Cape Town and Northern Parks of Johannesburg &mdash; now encoding that expertise into AI-ready compliance skills.</p>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="value">4</div>
+      <div class="label">Skills &mdash; production</div>
+    </div>
+    <div class="stat">
+      <div class="value">Build</div>
+      <div class="label">Partner type</div>
+    </div>
+    <div class="stat">
+      <div class="value">Early</div>
+      <div class="label">Access tier</div>
+    </div>
+    <div class="stat">
+      <div class="value">20%</div>
+      <div class="label">Revenue share</div>
+    </div>
+  </div>
+
+  <!-- ─── LEADERSHIP ─────────────────────────────────── -->
+
+  <h2>Leadership</h2>
+
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:24px;display:flex;gap:20px;align-items:start;flex-wrap:wrap">
+    <div style="width:56px;height:56px;border-radius:10px;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;flex-shrink:0">GK</div>
+    <div style="flex:1;min-width:240px">
+      <div style="font-size:18px;font-weight:700;color:#18181b">Grant Kneale</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:8px">Managing Director &bull; BSc. Bldg. UCT &bull; MCIOB</div>
+      <p style="margin-bottom:8px;font-size:13px">35 years in property and construction, 29 years leading his own business. Known for solving problems, uniting teams, and developing staff and contractors. Projects recognised for delivering quality assets within tight deadlines.</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge badge-green">BSc Building</span>
+        <span class="badge badge-green">MCIOB</span>
+        <span class="badge badge-cyan">Off-Grid Specialist</span>
+        <span class="badge badge-amber">35 Years</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREE PILLARS ──────────────────────────────── -->
+
+  <h2>The compliance framework</h2>
+
+  <p>South African construction is governed by three interlocking regulatory bodies. GridLineProp's 35 years of practical experience with all three has been encoded into the <code>biz/property/za</code> skill domain.</p>
+
+  <div class="card-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="pillar">
+      <div class="pillar-icon" style="background:rgba(59,130,246,.08);color:#2563eb">SA</div>
+      <h3>SANS 10400</h3>
+      <p>The technical code. Defines <strong>how</strong> structures must be designed and built. 23 parts from foundations to energy.</p>
+      <div class="tags"><span>Plans</span><span>Structural</span><span>Fire</span><span>Energy</span></div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon" style="background:rgba(217,119,6,.08);color:#d97706">CI</div>
+      <h3>CIDB</h3>
+      <p>The contractor registry. Defines <strong>who</strong> is eligible to build. Grades 1&ndash;9 with tender value limits.</p>
+      <div class="tags"><span>Grading</span><span>Tenders</span><span>Procurement</span></div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon" style="background:rgba(5,150,105,.08);color:#059669">NH</div>
+      <h3>NHBRC</h3>
+      <p>Consumer protection. Defines <strong>what warranties and inspections</strong> apply to residential construction.</p>
+      <div class="tags"><span>Registration</span><span>Inspections</span><span>Warranties</span></div>
+    </div>
+  </div>
+
+  <!-- ─── SKILLS ─────────────────────────────────────── -->
+
+  <h2>Skills contributed</h2>
+
+  <p>GridLineProp's domain expertise powers four production skills in the <code>biz/property/za</code> tree. Each skill encodes decades of real project experience into structured, reusable intelligence.</p>
+
+  <div class="skill-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><h3 style="margin:0">SANS 10400 &mdash; National Building Regulations</h3><span class="skill-tier tier-production">Production</span></div>
+    <p>All 23 parts of the SA building code. Plan submission requirements, occupancy classifications (A1&ndash;J4), competent person requirements, energy compliance routes, and deemed-to-satisfy vs rational design guidance.</p>
+    <div class="skill-meta">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/property/za/sans-10400</span>
+      <a href="https://sa-property-compliance.pages.dev#sans" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:10px">View reference &rarr;</a>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><h3 style="margin:0">CIDB &mdash; Contractor Registration &amp; Grading</h3><span class="skill-tier tier-production">Production</span></div>
+    <p>Grades 1&ndash;9 with tender value limits, 10 classes of works (CE, GB, ME, etc.), registration and upgrade process, financial sponsorship rules, procurement via the Standard for Uniformity, and the BUILD programme.</p>
+    <div class="skill-meta">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/property/za/cidb</span>
+      <a href="https://sa-property-compliance.pages.dev#cidb" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:10px">View reference &rarr;</a>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><h3 style="margin:0">NHBRC &mdash; Home Builder Registration &amp; Warranties</h3><span class="skill-tier tier-production">Production</span></div>
+    <p>Builder registration process, home enrolment (15-day rule), 4-stage inspection framework, 3-tier warranty structure (3-month/1-year/5-year), complaints and conciliation process.</p>
+    <div class="skill-meta">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/property/za/nhbrc</span>
+      <a href="https://sa-property-compliance.pages.dev#nhbrc" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:10px">View reference &rarr;</a>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><h3 style="margin:0">Project Stages &mdash; Lifecycle &amp; ERP Integration</h3><span class="skill-tier tier-production">Production</span></div>
+    <p>9-stage development lifecycle (feasibility through post-occupation warranty), regulatory milestones matrix, ERPNext doctype mapping, stage-by-stage compliance checklists, and document requirements.</p>
+    <div class="skill-meta">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/property/za/project-stages</span>
+      <a href="https://sa-property-compliance.pages.dev#stages" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:10px">View reference &rarr;</a>
+    </div>
+  </div>
+
+  <!-- ─── EXPERTISE MAP ──────────────────────────────── -->
+
+  <h2>Expertise &times; skills map</h2>
+
+  <p>How GridLineProp's real-world experience maps to each skill's content:</p>
+
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:24px;margin:24px 0">
+    <div class="expertise-row">
+      <div class="expertise-label">Plan submission</div>
+      <div class="expertise-desc">35 years of plans approved by City of Cape Town and City of Johannesburg municipalities. Grant's BSc Building (UCT) qualifies as a "competent person" under SANS 10400 Part A.</div>
+    </div>
+    <div class="expertise-row">
+      <div class="expertise-label">Energy (XA)</div>
+      <div class="expertise-desc">OFF-GRIDz advisory division &mdash; solar, energy-efficient envelope design, and reduced municipal dependency built into every home as standard, not as an afterthought.</div>
+    </div>
+    <div class="expertise-row">
+      <div class="expertise-label">Water systems</div>
+      <div class="expertise-desc">Greywater recycling, borehole, and rainwater harvesting systems designed into builds. Maps to SANS 10400 Parts P (drainage) and R (stormwater).</div>
+    </div>
+    <div class="expertise-row">
+      <div class="expertise-label">Contractors</div>
+      <div class="expertise-desc">29 years of vetting, grading, and developing contractors. Known for staff and subcontractor development &mdash; the CIDB BUILD programme philosophy in practice.</div>
+    </div>
+    <div class="expertise-row">
+      <div class="expertise-label">Inspections</div>
+      <div class="expertise-desc">Every GridLineProp home enrolled and inspected at all four NHBRC stages. Luxury clusters across two provinces &mdash; each unit signed off at foundation, wall plate, roof, and practical completion.</div>
+    </div>
+    <div class="expertise-row">
+      <div class="expertise-label">Two markets</div>
+      <div class="expertise-desc">Cape Town and Johannesburg have different municipalities, inspectors, and timelines. The skills capture both perspectives from lived experience.</div>
+    </div>
+  </div>
+
+  <!-- ─── NHBRC INSPECTIONS ──────────────────────────── -->
+
+  <h2>NHBRC inspection track record</h2>
+
+  <p>Every GridLineProp unit passes all four NHBRC stages. This experience directly shapes the inspection guidance in the skills.</p>
+
+  <div class="inspection-grid">
+    <div class="inspection-step">
+      <div class="num">1</div>
+      <div class="name">Foundation</div>
+    </div>
+    <div class="inspection-step">
+      <div class="num">2</div>
+      <div class="name">Wall plate</div>
+    </div>
+    <div class="inspection-step">
+      <div class="num">3</div>
+      <div class="name">Roof</div>
+    </div>
+    <div class="inspection-step">
+      <div class="num">4</div>
+      <div class="name">Completion</div>
+    </div>
+  </div>
+
+  <div class="warranty-grid">
+    <div class="warranty">
+      <div class="period">3 months</div>
+      <div class="type">Minor defects</div>
+    </div>
+    <div class="warranty">
+      <div class="period">1 year</div>
+      <div class="type">Roof leaks</div>
+    </div>
+    <div class="warranty">
+      <div class="period">5 years</div>
+      <div class="type">Structural</div>
+    </div>
+  </div>
+
+  <!-- ─── OFF-GRIDz ──────────────────────────────────── -->
+
+  <h2>OFF-GRIDz advisory</h2>
+
+  <p>GridLineProp's advisory division delivers sustainable, off-grid home solutions &mdash; 30+ years of expertise that feeds directly into the skills' energy compliance and services guidance.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="tag">Energy</div>
+      <h3>Solar &amp; Electrical</h3>
+      <p>Full solar design, battery storage, hybrid inverter systems. Reduces Eskom dependency to near zero.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Water</div>
+      <h3>Water Systems</h3>
+      <p>Borehole, rainwater harvesting, greywater recycling. Municipal water as backup, not primary.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Gas</div>
+      <h3>Gas Systems</h3>
+      <p>LPG cooking, heating, hot water. Reduces electrical load and grid dependency.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Construction</div>
+      <h3>Building Methods</h3>
+      <p>Energy-efficient envelope, insulation, orientation. SANS 10400-XA compliance by design.</p>
+    </div>
+  </div>
+
+  <!-- ─── PORTFOLIO ──────────────────────────────────── -->
+
+  <h2>Project portfolio</h2>
+
+  <table>
+    <thead><tr><th>Project</th><th>Location</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Silvercroft</strong></td><td>Constantia, Cape Town</td><td><span class="badge badge-green">Coming soon</span></td></tr>
+      <tr><td>44 on Englewold</td><td>Saxonwold, Johannesburg</td><td><span class="badge badge-amber">Sold out</span></td></tr>
+      <tr><td>7 on Westminster</td><td>Johannesburg</td><td><span class="badge badge-amber">Sold out</span></td></tr>
+      <tr><td>8 Kruger</td><td>Craighall Park, Johannesburg</td><td><span class="badge badge-amber">Sold out</span></td></tr>
+      <tr><td>Shamrock Mews</td><td>Parkview, Johannesburg</td><td><span class="badge badge-amber">Sold out</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── ROADMAP ────────────────────────────────────── -->
+
+  <h2>Build roadmap</h2>
+
+  <div class="roadmap-item">
+    <span class="roadmap-phase phase-now">Live</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#18181b">4 production skills &mdash; biz/property/za</div>
+      <div style="font-size:13px;color:#71717a">SANS 10400, CIDB, NHBRC, and project stages with ERPNext integration. <a href="https://sa-property-compliance.pages.dev" target="_blank">View reference &rarr;</a></div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <span class="roadmap-phase phase-next">Q3</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#18181b">OFF-GRIDz sustainability skills</div>
+      <div style="font-size:13px;color:#71717a">Solar sizing, water system design, energy modelling. New skills under <code>biz/property/za/off-grid</code>.</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <span class="roadmap-phase phase-next">Q3</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#18181b">Municipality-specific guidance</div>
+      <div style="font-size:13px;color:#71717a">City of Cape Town and City of Johannesburg plan submission nuances, timelines, and inspector expectations.</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <span class="roadmap-phase phase-later">Q4</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#18181b">Property development agent</div>
+      <div style="font-size:13px;color:#71717a">Custom AI agent combining all property skills &mdash; feasibility through handover with compliance enforcement.</div>
+    </div>
+  </div>
+
+  <!-- ─── PARTNERSHIP ────────────────────────────────── -->
+
+  <h2>Early access partnership</h2>
+
+  <p>GridLineProp joined 2nth.ai as an <strong>early access build partner</strong> &mdash; co-developing AI skills grounded in three decades of field experience.</p>
+
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:24px;margin:24px 0">
+    <table>
+      <thead><tr><th>Benefit</th><th>Standard partner</th><th>Early access</th></tr></thead>
+      <tbody>
+        <tr><td>Platform access</td><td>Production only</td><td><strong>Dev + beta + production</strong></td></tr>
+        <tr><td>Skills development</td><td>Self-service</td><td><strong>Co-built with 2nth.ai team</strong></td></tr>
+        <tr><td>Revenue share</td><td>15%</td><td><strong>20% (early adopter rate)</strong></td></tr>
+        <tr><td>Agent customisation</td><td>Standard agents</td><td><strong>Custom property agent</strong></td></tr>
+        <tr><td>Integration support</td><td>Documentation</td><td><strong>Hands-on ERPNext integration</strong></td></tr>
+        <tr><td>Roadmap input</td><td>Feature requests</td><td><strong>Direct roadmap influence</strong></td></tr>
+        <tr><td>Branded hub</td><td>Q3 availability</td><td><strong>Priority setup</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─── ENQUIRY ────────────────────────────────────── -->
+
+  <h2>Enquire</h2>
+
+  <p>Interested in AI-powered property compliance, off-grid advisory, or becoming an early access partner?</p>
+
+  <div id="enquiry-msg" style="padding:12px 16px;border-radius:6px;margin-bottom:16px;font-size:13px;display:none"></div>
+
+  <form id="enquiry-form" onsubmit="submitEnquiry(event)" style="background:#fff;border:1px solid #ede9f6;border-radius:12px;padding:28px;margin-bottom:24px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Name</label>
+        <input type="text" id="eq-name" required placeholder="Your name" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+      </div>
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Company</label>
+        <input type="text" id="eq-company" required placeholder="Company name" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Email</label>
+      <input type="email" id="eq-email" required placeholder="you@company.com" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Interest</label>
+        <select id="eq-interest" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;background:#fff">
+          <option value="property-compliance">Property compliance skills</option>
+          <option value="off-grid">OFF-GRIDz advisory</option>
+          <option value="erp-integration">ERPNext integration</option>
+          <option value="early-access">Early access partnership</option>
+          <option value="development">Property development enquiry</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Project type</label>
+        <select id="eq-project" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;background:#fff">
+          <option value="residential">Residential</option>
+          <option value="commercial">Commercial</option>
+          <option value="mixed-use">Mixed-use</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Message</label>
+      <textarea id="eq-message" rows="3" placeholder="Tell us about your property development or compliance needs..." style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;resize:vertical"></textarea>
+    </div>
+    <button type="submit" id="eq-submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;background:#059669;color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer">Send enquiry</button>
+  </form>
+
+  <p style="text-align:center"><a href="https://gridlineprop.co.za" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a">Visit gridlineprop.co.za &rarr;</a></p>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+function submitEnquiry(e) {
+  e.preventDefault();
+  var msg = document.getElementById('enquiry-msg');
+  var btn = document.getElementById('eq-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msg.style.display = 'none';
+
+  fetch('/api/enquiry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: document.getElementById('eq-name').value,
+      company: document.getElementById('eq-company').value,
+      email: document.getElementById('eq-email').value,
+      interest: document.getElementById('eq-interest').value,
+      message: document.getElementById('eq-message').value,
+      partner: 'gridlineprop',
+      project_type: document.getElementById('eq-project').value,
+    }),
+  })
+  .then(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(5,150,105,.06)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = '#059669';
+    msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
+    document.getElementById('enquiry-form').reset();
+    btn.disabled = false;
+    btn.textContent = 'Send enquiry';
+  })
+  .catch(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(5,150,105,.06)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = '#059669';
+    msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
+    btn.disabled = false;
+    btn.textContent = 'Send enquiry';
+  });
+}
+</script>
+</body>
+</html>
