@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vision — 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="/gate.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Barlow',sans-serif;background:#faf9fc;color:#52525b;line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:900px;margin:0 auto;padding:0 24px}
+
+    header{border-bottom:1px solid #ede9f6;padding:20px 0;background:#fff}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:#18181b;text-decoration:none}
+    .logo span{color:#7c3aed}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#71717a;text-decoration:none;transition:color .15s}
+    nav a:hover{color:#7c3aed}
+
+    footer{border-top:1px solid #ede9f6;padding:24px 0;text-align:center;font-size:12px;color:#a1a1aa;background:#fff}
+    footer a{color:#7c3aed;text-decoration:none}
+
+    /* Hero */
+    .hero{padding:72px 0 48px;text-align:center}
+    .hero-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);color:#7c3aed;margin-bottom:20px}
+    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:.03em;color:#18181b;line-height:1.05;margin-bottom:20px}
+    .hero h1 span{color:#7c3aed}
+    .hero p{font-size:19px;color:#71717a;max-width:640px;margin:0 auto;line-height:1.6}
+
+    /* Section */
+    .section{padding:56px 0}
+    .section-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#7c3aed;margin-bottom:8px}
+    .section h2{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:.02em;color:#18181b;line-height:1.1;margin-bottom:16px}
+    .section > p{font-size:16px;color:#71717a;margin-bottom:32px;line-height:1.6}
+    .section-divider{border:none;border-top:1px solid #ede9f6;margin:0}
+
+    /* Persona cards */
+    .persona{background:#fff;border:1px solid #ede9f6;border-radius:14px;padding:36px;margin-bottom:20px;transition:border-color .15s}
+    .persona:hover{border-color:rgba(124,58,237,.25)}
+    .persona-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+    .persona-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .persona-title{font-size:22px;font-weight:700;color:#18181b;margin-bottom:2px}
+    .persona-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#a1a1aa;letter-spacing:.5px}
+    .persona p{font-size:15px;color:#71717a;margin-bottom:16px;line-height:1.6}
+
+    /* Journey steps */
+    .journey{display:flex;flex-direction:column;gap:0;margin:20px 0}
+    .step{display:flex;gap:16px;padding:14px 0;position:relative}
+    .step::before{content:'';position:absolute;left:15px;top:38px;bottom:0;width:2px;background:#ede9f6}
+    .step:last-child::before{display:none}
+    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;z-index:1}
+    .step-content h4{font-size:14px;font-weight:700;color:#18181b;margin-bottom:2px}
+    .step-content p{font-size:13px;color:#71717a;margin:0}
+    .step-tools{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa;margin-top:4px}
+
+    /* Outcome cards */
+    .outcomes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}
+    .outcome{background:#faf9fc;border:1px solid #ede9f6;border-radius:10px;padding:18px;text-align:center}
+    .outcome-value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .outcome-label{font-size:12px;color:#a1a1aa;margin-top:2px}
+
+    /* Principles */
+    .principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0}
+    .principle{background:#fff;border:1px solid #ede9f6;border-radius:12px;padding:24px}
+    .principle h3{font-size:16px;font-weight:700;color:#18181b;margin-bottom:6px}
+    .principle p{font-size:13px;color:#71717a;margin:0;line-height:1.5}
+    .principle-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:rgba(124,58,237,.15);margin-bottom:8px}
+
+    /* CTA */
+    .cta{background:#18181b;border-radius:16px;padding:48px;text-align:center;margin:48px 0}
+    .cta h2{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#fff;margin-bottom:12px}
+    .cta p{color:rgba(255,255,255,.6);font-size:15px;margin-bottom:24px}
+    .cta a{display:inline-block;padding:12px 28px;background:#7c3aed;color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none;transition:background .15s}
+    .cta a:hover{background:#6d28d9;text-decoration:none}
+
+    @media(max-width:640px){
+      .hero h1{font-size:36px}
+      .section h2{font-size:28px}
+      .persona{padding:24px}
+      .persona-header{flex-direction:column;text-align:center}
+      .principles{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/docs.html" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">VISION</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/portal.html">Portal</a>
+      <a href="#developers">Developers</a>
+      <a href="#business">Business</a>
+      <a href="#designers">Designers</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">From thought to motion</div>
+    <h1>One platform.<br>Three ways to <span>build</span>.</h1>
+    <p>Whether you write code, run a business, or design experiences — 2nth.ai gives you AI agents and skills that turn your ideas into working products.</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ─── DEVELOPERS ─────────────────────────────────────────── -->
+
+<div class="section" id="developers">
+  <div class="container">
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-icon" style="background:rgba(124,58,237,.08)">&#128187;</div>
+        <div>
+          <div class="persona-title">For Developers</div>
+          <div class="persona-sub">Engineers, full-stack devs, DevOps, security</div>
+        </div>
+      </div>
+
+      <p>You don't learn a new framework. You bring your stack and your tools. 2nth.ai gives you AI skills as composable building blocks — each one a documented, versioned, token-metered capability you call from your agents.</p>
+
+      <div class="journey">
+        <div class="step">
+          <div class="step-dot" style="background:rgba(124,58,237,.08);color:#7c3aed">1</div>
+          <div class="step-content">
+            <h4>Browse the skill tree</h4>
+            <p>300+ skills across 6 domains. Each has a SKILL.md with frontmatter, config options, example output, and cost model.</p>
+            <div class="step-tools">github.com/2nth-ai/skills</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(124,58,237,.08);color:#7c3aed">2</div>
+          <div class="step-content">
+            <h4>Fork, build, contribute</h4>
+            <p>Fork the skills repo. Add your own skill with YAML frontmatter. Open a PR. CI validates, team reviews, it goes live.</p>
+            <div class="step-tools">git &rarr; PR &rarr; dev &rarr; beta &rarr; production</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(124,58,237,.08);color:#7c3aed">3</div>
+          <div class="step-content">
+            <h4>Wire skills into your agents</h4>
+            <p>Skills resolve via API with automatic dependency chains. Your agent calls one skill, the platform resolves the full tree.</p>
+            <div class="step-tools">agents.2nth.ai/skills/resolve?path=biz/tenant-billing</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(124,58,237,.08);color:#7c3aed">4</div>
+          <div class="step-content">
+            <h4>Build a partner hub</h4>
+            <p>Deploy your own branded skills hub on your domain. Cherry-pick skills from the tree, add your own, bill your customers through tokens.</p>
+            <div class="step-tools">skills.yourcompany.com &rarr; powered by 2nth.ai</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(124,58,237,.08);color:#7c3aed">5</div>
+          <div class="step-content">
+            <h4>Earn revenue share</h4>
+            <p>Every time someone uses your skill, you earn 5-20% of the token revenue. Usage tracked automatically, settled monthly.</p>
+            <div class="step-tools">skill_usage table &rarr; contributor_earnings &rarr; payout</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome"><div class="outcome-value">300+</div><div class="outcome-label">Skills to compose</div></div>
+        <div class="outcome"><div class="outcome-value">CC BY-SA</div><div class="outcome-label">Open documentation</div></div>
+        <div class="outcome"><div class="outcome-value">20%</div><div class="outcome-label">Max revenue share</div></div>
+        <div class="outcome"><div class="outcome-value">3</div><div class="outcome-label">Environments (dev/beta/prod)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ─── BUSINESS ───────────────────────────────────────────── -->
+
+<div class="section" id="business">
+  <div class="container">
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-icon" style="background:rgba(5,150,105,.08)">&#128188;</div>
+        <div>
+          <div class="persona-title">For Business</div>
+          <div class="persona-sub">Founders, operators, product managers, executives</div>
+        </div>
+      </div>
+
+      <p>You don't need to code. You describe what you need in plain language and AI agents turn it into a working system. Submit a brief, get a concept, approve a build — and the platform handles the engineering.</p>
+
+      <div class="journey">
+        <div class="step">
+          <div class="step-dot" style="background:rgba(5,150,105,.08);color:#059669">1</div>
+          <div class="step-content">
+            <h4>Submit a brief</h4>
+            <p>"I run 12 coworking locations. I need occupancy forecasting, automated billing, and access control." That's all it takes.</p>
+            <div class="step-tools">2nth.ai &rarr; Submit brief &rarr; 50K free tokens</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(5,150,105,.08);color:#059669">2</div>
+          <div class="step-content">
+            <h4>Agent analyses your needs</h4>
+            <p>Penny (the orchestrator agent) breaks your brief into pillars — design, software, hardware — and scopes the work with token estimates.</p>
+            <div class="step-tools">Penny &rarr; design scope + software scope + cost estimate</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(5,150,105,.08);color:#059669">3</div>
+          <div class="step-content">
+            <h4>Pick a plan, start building</h4>
+            <p>Choose from Explorer (free), Starter (R1,850), Designer (R9,250), or Builder (R18,500). Tokens cover AI inference, builds, and infrastructure.</p>
+            <div class="step-tools">Pay with Paystack in ZAR &rarr; tokens credited instantly</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(5,150,105,.08);color:#059669">4</div>
+          <div class="step-content">
+            <h4>AI builds your product</h4>
+            <p>Domain agents handle the work — ERP integration, access policies, billing rules, compliance checks. You review and approve at each stage.</p>
+            <div class="step-tools">Human-in-the-loop &rarr; approve each milestone</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(5,150,105,.08);color:#059669">5</div>
+          <div class="step-content">
+            <h4>Go live on your domain</h4>
+            <p>Your product deploys to your own domain. Your brand, your customers, your data. Skills continue running behind the scenes on token billing.</p>
+            <div class="step-tools">yourcompany.com &rarr; powered by 2nth.ai skills</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome"><div class="outcome-value">R0</div><div class="outcome-label">To start exploring</div></div>
+        <div class="outcome"><div class="outcome-value">2 weeks</div><div class="outcome-label">Brief to live product</div></div>
+        <div class="outcome"><div class="outcome-value">ZAR</div><div class="outcome-label">Billing in local currency</div></div>
+        <div class="outcome"><div class="outcome-value">Yours</div><div class="outcome-label">You own the output</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ─── DESIGNERS ──────────────────────────────────────────── -->
+
+<div class="section" id="designers">
+  <div class="container">
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-icon" style="background:rgba(236,72,153,.08)">&#127912;</div>
+        <div>
+          <div class="persona-title">For Designers</div>
+          <div class="persona-sub">UX/UI designers, brand designers, creative directors</div>
+        </div>
+      </div>
+
+      <p>You design the experience, AI handles the engineering. Submit brand guidelines and user flows — the platform generates production-ready code that matches your vision. No handoff gap between design and implementation.</p>
+
+      <div class="journey">
+        <div class="step">
+          <div class="step-dot" style="background:rgba(236,72,153,.08);color:#ec4899">1</div>
+          <div class="step-content">
+            <h4>Submit your brand system</h4>
+            <p>Upload colours, typography, logo, component styles. The design agent analyses your brand DNA and creates a design token system.</p>
+            <div class="step-tools">Brand guidelines &rarr; design tokens &rarr; component library</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(236,72,153,.08);color:#ec4899">2</div>
+          <div class="step-content">
+            <h4>Describe your user experience</h4>
+            <p>"Landing page with a hero, feature grid, pricing table, and sign-up flow. Dark mode. Mobile-first." The agent maps this to a page architecture.</p>
+            <div class="step-tools">Natural language &rarr; page structure &rarr; component plan</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(236,72,153,.08);color:#ec4899">3</div>
+          <div class="step-content">
+            <h4>AI generates production code</h4>
+            <p>Clean HTML/CSS matching your brand system. Responsive, accessible, performant. Not a mockup — real code you can deploy immediately.</p>
+            <div class="step-tools">Design analysis &rarr; 7 lenses &rarr; production-ready output</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(236,72,153,.08);color:#ec4899">4</div>
+          <div class="step-content">
+            <h4>Iterate with natural language</h4>
+            <p>"Make the hero taller. Add more breathing room between sections. Swap the CTA to coral." The agent applies changes while maintaining brand consistency.</p>
+            <div class="step-tools">Conversational refinement &rarr; version history</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background:rgba(236,72,153,.08);color:#ec4899">5</div>
+          <div class="step-content">
+            <h4>Deploy and evolve</h4>
+            <p>Ship to production on your domain. Continue evolving the design through agents — add pages, update components, refresh the brand — all through conversation.</p>
+            <div class="step-tools">Cloudflare Pages &rarr; your domain &rarr; continuous design</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome"><div class="outcome-value">7</div><div class="outcome-label">Design lenses analysed</div></div>
+        <div class="outcome"><div class="outcome-value">0</div><div class="outcome-label">Design-to-code handoff gap</div></div>
+        <div class="outcome"><div class="outcome-value">Hours</div><div class="outcome-label">From concept to live site</div></div>
+        <div class="outcome"><div class="outcome-value">Talk</div><div class="outcome-label">Iterate via conversation</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ─── PRINCIPLES ─────────────────────────────────────────── -->
+
+<div class="section">
+  <div class="container">
+    <div class="section-tag">How we build</div>
+    <h2>Platform principles</h2>
+
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">01</div>
+        <h3>Skills as atoms</h3>
+        <p>Every capability is a versioned, documented skill. Skills compose into workflows. Workflows become products. Products serve customers.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-num">02</div>
+        <h3>Tokens as currency</h3>
+        <p>One unit of work across all services — AI inference, builds, infrastructure. Priced in ZAR. No surprise bills. You control spend.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-num">03</div>
+        <h3>Open docs, metered execution</h3>
+        <p>Skill documentation is CC BY-SA. Read, learn, fork freely. Execution through the platform is token-metered. Knowledge is free, compute isn't.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-num">04</div>
+        <h3>Partners own their customers</h3>
+        <p>Your brand, your domain, your customer relationships. 2nth.ai powers the infrastructure. Revenue share, not revenue capture.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-num">05</div>
+        <h3>Africa-first, globally useful</h3>
+        <p>Built in South Africa. Priced in ZAR. POPIA-compliant. Data residency in Africa-South-1. But the skills and agents work anywhere.</p>
+      </div>
+      <div class="principle">
+        <div class="principle-num">06</div>
+        <h3>Human in the loop</h3>
+        <p>AI proposes, humans approve. Every critical decision has a review gate. Agents work autonomously on tasks, escalate on judgement calls.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta">
+    <h2>Start building today</h2>
+    <p>50,000 free tokens. No credit card. No commitment.</p>
+    <a href="https://2nth.ai/join.html">Get started free</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai — from thought to motion. <a href="/docs.html">Docs</a> &middot; <a href="/portal.html">Portal</a> &middot; <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
