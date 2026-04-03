@@ -38,6 +38,9 @@
     'agilex': [
       'craig@agilex.co.za',
       'mike@agilex.co.za'
+    ],
+    'gridlineprop': [
+      'grant@gridlineprop.co.za'
     ]
   };
 
