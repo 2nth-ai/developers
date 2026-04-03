@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proximity Green — AI Skills for Shared Spaces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#fafaf9;color:#44403c;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+    /* Proximity Green brand */
+    :root{
+      --pg-green:#059669;
+      --pg-green-light:#d1fae5;
+      --pg-green-dark:#065f46;
+      --pg-dark:#1c1917;
+      --pg-warm:#f5f5f4;
+      --pg-border:#e7e5e4;
+      --pg-muted:#78716c;
+      --pg-text:#292524;
+    }
+
+    .container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+    /* Header */
+    header{background:#fff;border-bottom:1px solid var(--pg-border);padding:16px 0;position:sticky;top:0;z-index:50}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .brand-icon{width:32px;height:32px;border-radius:8px;background:var(--pg-green);display:flex;align-items:center;justify-content:center}
+    .brand-icon svg{width:18px;height:18px;fill:#fff}
+    .brand-name{font-weight:700;font-size:18px;color:var(--pg-dark);letter-spacing:-.02em}
+    .brand-sub{font-size:11px;color:var(--pg-muted);font-weight:500;margin-left:8px;padding-left:8px;border-left:1px solid var(--pg-border)}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:13px;font-weight:500;color:var(--pg-muted);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--pg-green)}
+    .nav-cta{background:var(--pg-green);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600;font-size:12px}
+    .nav-cta:hover{background:var(--pg-green-dark)}
+
+    /* Hero */
+    .hero{padding:64px 0 48px;text-align:center}
+    .hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--pg-green);background:var(--pg-green-light);padding:4px 12px;border-radius:4px;margin-bottom:16px;font-weight:600}
+    .hero h1{font-size:42px;font-weight:800;color:var(--pg-dark);letter-spacing:-.03em;line-height:1.15;margin-bottom:16px}
+    .hero p{font-size:17px;color:var(--pg-muted);max-width:600px;margin:0 auto 32px;line-height:1.6}
+    .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s;border:none;cursor:pointer}
+    .btn-green{background:var(--pg-green);color:#fff}.btn-green:hover{background:var(--pg-green-dark)}
+    .btn-outline{background:#fff;color:var(--pg-text);border:1px solid var(--pg-border)}.btn-outline:hover{border-color:var(--pg-green);color:var(--pg-green)}
+
+    /* Stats bar */
+    .stats{display:flex;justify-content:center;gap:48px;padding:32px 0;flex-wrap:wrap}
+    .stat{text-align:center}
+    .stat-value{font-size:28px;font-weight:800;color:var(--pg-dark)}
+    .stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-top:2px}
+
+    /* Section */
+    .section{padding:48px 0}
+    .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--pg-green);margin-bottom:8px}
+    .section h2{font-size:28px;font-weight:800;color:var(--pg-dark);letter-spacing:-.02em;margin-bottom:12px}
+    .section > p{color:var(--pg-muted);margin-bottom:32px}
+
+    /* Skill cards */
+    .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+    .skill-card{background:#fff;border:1px solid var(--pg-border);border-radius:12px;padding:24px;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+    .skill-card:hover{border-color:var(--pg-green);box-shadow:0 4px 16px rgba(5,150,105,.08);transform:translateY(-2px);text-decoration:none}
+    .skill-card .skill-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+    .skill-card h3{font-size:16px;font-weight:700;color:var(--pg-dark);margin-bottom:6px}
+    .skill-card p{font-size:13px;color:var(--pg-muted);line-height:1.5;margin-bottom:12px}
+    .skill-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .skill-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;padding:2px 8px;border-radius:4px;font-weight:600}
+    .tag-green{color:var(--pg-green-dark);background:var(--pg-green-light)}
+    .tag-blue{color:#1e40af;background:#dbeafe}
+    .tag-purple{color:#6b21a8;background:#f3e8ff}
+    .tag-amber{color:#92400e;background:#fef3c7}
+    .tag-tier{color:var(--pg-muted);background:var(--pg-warm);border:1px solid var(--pg-border)}
+
+    /* Asset categories */
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:32px}
+    .cat-card{background:#fff;border:1px solid var(--pg-border);border-radius:10px;padding:18px;text-align:center;transition:all .15s;cursor:pointer;text-decoration:none;color:inherit}
+    .cat-card:hover{border-color:var(--pg-green);text-decoration:none}
+    .cat-card .cat-icon{font-size:28px;margin-bottom:8px}
+    .cat-card h3{font-size:14px;font-weight:700;color:var(--pg-dark);margin-bottom:2px}
+    .cat-card p{font-size:11px;color:var(--pg-muted)}
+
+    /* Use cases */
+    .use-case{background:#fff;border:1px solid var(--pg-border);border-radius:12px;padding:24px;margin-bottom:12px}
+    .use-case h3{font-size:15px;font-weight:700;color:var(--pg-dark);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .use-case p{font-size:13px;color:var(--pg-muted);margin-bottom:8px}
+    .use-case .skills-used{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--pg-green)}
+
+    /* CTA */
+    .cta-section{background:var(--pg-green-dark);border-radius:16px;padding:48px;text-align:center;margin:48px 0}
+    .cta-section h2{color:#fff;font-size:28px;font-weight:800;margin-bottom:12px}
+    .cta-section p{color:rgba(255,255,255,.7);margin-bottom:24px;font-size:15px}
+
+    /* Footer */
+    footer{border-top:1px solid var(--pg-border);padding:24px 0;text-align:center;font-size:12px;color:var(--pg-muted)}
+    footer a{color:var(--pg-green);text-decoration:none}
+
+    @media(max-width:640px){
+      .hero h1{font-size:28px}
+      .stats{gap:24px}
+      .skills-grid{grid-template-columns:1fr}
+      .cat-grid{grid-template-columns:repeat(2,1fr)}
+      .cta-section{padding:32px 20px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="brand-name">Proximity Green</span>
+      <span class="brand-sub">Skills Hub</span>
+    </a>
+    <nav>
+      <a href="#skills">Skills</a>
+      <a href="#assets">Asset types</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#" class="nav-cta">Get started</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">Powered by 2nth.ai</div>
+    <h1>AI skills for shared<br>space operations</h1>
+    <p>Explore the skills that power your coworking space, campus, or facility. From occupancy forecasting to tenant billing — managed by AI, governed by your rules.</p>
+    <div class="hero-actions">
+      <a href="#skills" class="btn btn-green">Explore skills</a>
+      <a href="#" class="btn btn-outline">Talk to an agent</a>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat"><div class="stat-value">11</div><div class="stat-label">AI Skills</div></div>
+  <div class="stat"><div class="stat-value">6</div><div class="stat-label">Asset categories</div></div>
+  <div class="stat"><div class="stat-value">3</div><div class="stat-label">Countries</div></div>
+  <div class="stat"><div class="stat-value">24/7</div><div class="stat-label">AI Agents</div></div>
+</div>
+
+<!-- Asset categories -->
+<div class="section" id="assets">
+  <div class="container">
+    <div class="section-title">Managed asset types</div>
+    <h2>What spaces do you operate?</h2>
+    <p>Select your asset type to see relevant skills and capabilities.</p>
+
+    <div class="cat-grid">
+      <div class="cat-card" onclick="filterSkills('coworking')">
+        <div class="cat-icon">&#127970;</div>
+        <h3>Coworking</h3>
+        <p>Hot desks, private offices, meeting rooms</p>
+      </div>
+      <div class="cat-card" onclick="filterSkills('student')">
+        <div class="cat-icon">&#127979;</div>
+        <h3>Student housing</h3>
+        <p>Rooms, common areas, study spaces</p>
+      </div>
+      <div class="cat-card" onclick="filterSkills('corporate')">
+        <div class="cat-icon">&#127963;</div>
+        <h3>Corporate campus</h3>
+        <p>Multi-floor, multi-tenant buildings</p>
+      </div>
+      <div class="cat-card" onclick="filterSkills('sports')">
+        <div class="cat-icon">&#127947;</div>
+        <h3>Sports & recreation</h3>
+        <p>Courts, pools, gyms, fields</p>
+      </div>
+      <div class="cat-card" onclick="filterSkills('ev')">
+        <div class="cat-icon">&#9889;</div>
+        <h3>EV infrastructure</h3>
+        <p>Charging stations, fleet management</p>
+      </div>
+      <div class="cat-card" onclick="filterSkills('all')">
+        <div class="cat-icon">&#128301;</div>
+        <h3>Multi-asset</h3>
+        <p>Mixed portfolio, multiple types</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skills -->
+<div class="section" id="skills">
+  <div class="container">
+    <div class="section-title">AI capabilities</div>
+    <h2>Skills available on your hub</h2>
+    <p>Each skill is an AI capability that your agents can execute. Skills consume tokens and track usage for billing.</p>
+
+    <div class="skills-grid">
+
+      <a class="skill-card" data-cats="coworking,student,corporate,sports,ev">
+        <div class="skill-icon" style="background:var(--pg-green-light)">&#128200;</div>
+        <h3>Shared Space Operations</h3>
+        <p>Occupancy forecasting, resource allocation, maintenance scheduling, and multi-site operational reporting.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-green">Core</span>
+          <span class="skill-tag tag-tier">Starter</span>
+          <span class="skill-tag tag-amber">Proximity Green</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,student,corporate,sports,ev">
+        <div class="skill-icon" style="background:#dbeafe">&#128176;</div>
+        <h3>Tenant Billing Intelligence</h3>
+        <p>Rate optimisation, automated invoicing, payment reconciliation, dispute resolution with full audit trail.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-green">Core</span>
+          <span class="skill-tag tag-tier">Starter</span>
+          <span class="skill-tag tag-amber">Proximity Green</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate,student">
+        <div class="skill-icon" style="background:#f3e8ff">&#128272;</div>
+        <h3>Access Governance</h3>
+        <p>Policy engine for physical and digital access. Real-time enforcement, anomaly detection, compliance reporting.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-purple">Advanced</span>
+          <span class="skill-tag tag-tier">Designer</span>
+          <span class="skill-tag tag-amber">Proximity Green</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate,student,sports,ev">
+        <div class="skill-icon" style="background:#fef3c7">&#128178;</div>
+        <h3>Cash Flow Forecaster</h3>
+        <p>Project revenue based on occupancy trends, contract renewals, seasonal patterns, and churn probability.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-blue">Finance</span>
+          <span class="skill-tag tag-tier">Starter</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate">
+        <div class="skill-icon" style="background:var(--pg-green-light)">&#128101;</div>
+        <h3>HubSpot CRM</h3>
+        <p>Sync tenant pipeline, track lead-to-lease conversion, automate follow-ups, and generate tenant health scores.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-blue">CRM</span>
+          <span class="skill-tag tag-tier">Starter</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate,student">
+        <div class="skill-icon" style="background:#dbeafe">&#127908;</div>
+        <h3>Meeting Agent</h3>
+        <p>Joins calls, transcribes, extracts action items, routes summaries to governance engine. POPIA-compliant.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-blue">Collaboration</span>
+          <span class="skill-tag tag-tier">Starter</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,student,corporate,sports,ev">
+        <div class="skill-icon" style="background:#fef3c7">&#128202;</div>
+        <h3>Financial Modelling</h3>
+        <p>Build scenario models for expansion, pricing changes, and portfolio optimisation. Multi-currency support.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-blue">Finance</span>
+          <span class="skill-tag tag-tier">Designer</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate">
+        <div class="skill-icon" style="background:var(--pg-green-light)">&#128209;</div>
+        <h3>Contract Review</h3>
+        <p>Analyse tenant lease agreements, flag risk clauses, compare against market terms, suggest negotiation points.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-purple">Legal</span>
+          <span class="skill-tag tag-tier">Designer</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,student,corporate,sports,ev">
+        <div class="skill-icon" style="background:#dbeafe">&#128220;</div>
+        <h3>Compliance Checker</h3>
+        <p>POPIA, OHS, building regulations, fire safety, municipal by-laws. Continuous compliance monitoring.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-purple">Legal</span>
+          <span class="skill-tag tag-tier">Starter</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,corporate,student,sports,ev">
+        <div class="skill-icon" style="background:#f3e8ff">&#128187;</div>
+        <h3>Xero Accounting</h3>
+        <p>Sync invoices, reconcile payments, automate journal entries, and generate management reports via Xero API.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-blue">Finance</span>
+          <span class="skill-tag tag-tier">Starter</span>
+        </div>
+      </a>
+
+      <a class="skill-card" data-cats="coworking,student,corporate,sports">
+        <div class="skill-icon" style="background:var(--pg-green-light)">&#128197;</div>
+        <h3>Booking & Scheduling</h3>
+        <p>Room bookings, desk reservations, facility scheduling. WhatsApp integration, waitlists, capacity management.</p>
+        <div class="skill-tags">
+          <span class="skill-tag tag-green">Operations</span>
+          <span class="skill-tag tag-tier">Explorer</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- Use cases -->
+<div class="section" id="use-cases">
+  <div class="container">
+    <div class="section-title">How operators use it</div>
+    <h2>Real-world use cases</h2>
+
+    <div class="use-case">
+      <h3>&#127970; Workshop17 — 16 locations, occupancy optimisation</h3>
+      <p>Workshop17 uses the Shared Space Operations skill to forecast occupancy across all 16 sites. When Watershed hits 92%, dynamic pricing kicks in automatically. When Newlands drops below 55%, the system triggers a targeted campaign for nearby members.</p>
+      <div class="skills-used">Skills: shared-space-ops, tenant-billing, hubspot-crm, cash-flow-forecaster</div>
+    </div>
+
+    <div class="use-case">
+      <h3>&#127963; KOFISI Kigali — tenant dispute resolution</h3>
+      <p>A tenant queries a billing charge. The Tenant Billing skill pulls the full audit trail from the event ledger — access logs, contract terms, rate applied — and drafts a resolution within seconds. Credit note issued, billing rule updated, no manual investigation.</p>
+      <div class="skills-used">Skills: tenant-billing, access-governance, compliance-checker</div>
+    </div>
+
+    <div class="use-case">
+      <h3>&#128272; Corporate campus — after-hours access alert</h3>
+      <p>A flex member badges in at 10:47pm on a Saturday. Access Governance denies entry (policy: weekday 8-6 only), alerts security, and surfaces upgrade options for the tenant admin: Enterprise plan or temporary after-hours pass.</p>
+      <div class="skills-used">Skills: access-governance, tenant-billing, shared-space-ops</div>
+    </div>
+
+    <div class="use-case">
+      <h3>&#127979; Student accommodation — compliance check</h3>
+      <p>Ahead of a municipal inspection, the Compliance Checker scans all facilities against OHS regulations, fire safety codes, and POPIA requirements. Generates a readiness report with flagged items and recommended actions — 3 days before the inspector arrives.</p>
+      <div class="skills-used">Skills: compliance-checker, shared-space-ops, meeting-agent</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h2>Start managing your spaces with AI</h2>
+    <p>Get 50,000 free tokens to explore skills. No credit card required.</p>
+    <a href="https://2nth.ai/join.html" class="btn btn-green" style="font-size:14px;padding:12px 28px">Get started free</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Powered by <a href="https://2nth.ai">2nth.ai</a> &middot; <a href="https://proximity.green">proximity.green</a></p>
+  </div>
+</footer>
+
+<script>
+function filterSkills(cat) {
+  var cards = document.querySelectorAll('.skill-card');
+  cards.forEach(function(card) {
+    var cats = (card.getAttribute('data-cats') || '').split(',');
+    if (cat === 'all' || cats.indexOf(cat) !== -1) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // Highlight selected category
+  document.querySelectorAll('.cat-card').forEach(function(c) {
+    c.style.borderColor = '';
+    c.style.background = '';
+  });
+  event.currentTarget.style.borderColor = 'var(--pg-green)';
+  event.currentTarget.style.background = 'var(--pg-green-light)';
+
+  // Scroll to skills
+  document.getElementById('skills').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>
