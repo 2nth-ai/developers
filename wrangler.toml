@@ -10,4 +10,4 @@ RESEND_FROM         = "noreply@2nth.ai"
 
 [[kv_namespaces]]
 binding = "KV"
-id      = "REPLACE_WITH_KV_ID"
+id      = "bfa3357eddfc4b3fa5341d7b60c006b2"
