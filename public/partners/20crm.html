@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>20crm — Group CRM for 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/gate.js"></script>
+  <style>
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/docs.html" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/portal.html">Portal</a>
+      <a href="https://github.com/2nth-ai/20crm">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/docs.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to docs</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo">20</div>
+    <div>
+      <h1 style="margin-bottom:0">20crm</h1>
+      <div class="partner-meta">
+        <span>Group CRM</span>
+        <span>|</span>
+        <span>Powered by <a href="https://twenty.com">TwentyCRM</a></span>
+        <span>|</span>
+        <span>Open source</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lead">One TwentyCRM instance managing partners, resellers, customers, and leads across the entire 2nth.ai group — AgileX, Proximity Green, ScanMan, and all partners — with unified quoting, billing, and payment tracking.</p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="value">6</div><div class="label">Products</div></div>
+    <div class="stat"><div class="value">4</div><div class="label">Account types</div></div>
+    <div class="stat"><div class="value">6</div><div class="label">Pipeline stages</div></div>
+    <div class="stat"><div class="value">OSS</div><div class="label">Open source</div></div>
+  </div>
+
+  <h2>What it does</h2>
+
+  <div class="card-grid">
+    <div class="card"><h3>Unified contacts</h3><p>Partners, resellers, customers, and leads in one place. No more spreadsheets per product.</p></div>
+    <div class="card"><h3>Revenue pipeline</h3><p>Lead → Qualified → Proposal → Negotiation → Contracted → Active. Auto-advances on platform events.</p></div>
+    <div class="card"><h3>Token billing</h3><p>Paystack webhooks update deal stages. Token purchases, revenue share, and partner earnings tracked per deal.</p></div>
+    <div class="card"><h3>GraphQL API</h3><p>Every CRM action available via API. Developer portal enquiries create leads. Skill usage updates activities.</p></div>
+  </div>
+
+  <h2>Partners in the group CRM</h2>
+
+  <table>
+    <thead><tr><th>Partner</th><th>Account type</th><th>Products tracked</th></tr></thead>
+    <tbody>
+      <tr><td>AgileX</td><td>Partner</td><td>AI recruitment agents</td></tr>
+      <tr><td>Proximity Green</td><td>Partner</td><td>Shared space operations</td></tr>
+      <tr><td>ScanMan</td><td>Partner</td><td>Warehouse management AI</td></tr>
+      <tr><td>DroneScan</td><td>Partner</td><td>Drone inventory scanning</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Deployment</h2>
+
+  <p>Three ways to run 20crm:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Self-hosted + Cloudflare</h3>
+      <p>Docker Compose on a VPS with Cloudflare edge. Full control, SA data residency. ~$20-40/mo.</p>
+    </div>
+    <div class="card">
+      <h3>Twenty Cloud</h3>
+      <p>Managed hosting at twenty.com. Free tier available. Connect via API and webhooks.</p>
+    </div>
+    <div class="card">
+      <h3>Cloudflare Workers proxy</h3>
+      <p>Edge-cached GraphQL proxy in front of Twenty Cloud. Low latency from 2nth.ai platform.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:16px"><a href="https://dev.20crm-2nth-ai.pages.dev/deploy.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#7c3aed">Full deployment guide &rarr;</a></p>
+
+  <h2>Links</h2>
+
+  <div class="card-grid">
+    <div class="card"><h3>20crm showcase</h3><p><a href="https://dev.20crm-2nth-ai.pages.dev">dev.20crm-2nth-ai.pages.dev</a></p></div>
+    <div class="card"><h3>GitHub repo</h3><p><a href="https://github.com/2nth-ai/20crm">2nth-ai/20crm</a></p></div>
+    <div class="card"><h3>TwentyCRM docs</h3><p><a href="https://twenty.com/developers">twenty.com/developers</a></p></div>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
