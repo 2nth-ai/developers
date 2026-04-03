@@ -3,124 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2nth.ai — Developer & Partner Portal</title>
+  <title>Sign In — 2nth.ai Developer Portal</title>
   <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>(function(){var t=localStorage.getItem('2nth-theme');if(t!=='dark')document.documentElement.classList.add('light');})()</script>
+  <link rel="stylesheet" href="https://2nth.ai/style.v2.css">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{font-family:'Barlow',sans-serif;background:#faf9fc;color:#52525b;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
-
-    header{padding:20px 24px}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:#18181b;text-decoration:none}
-    .logo span{color:#7c3aed}
-
-    .hero{flex:1;display:flex;align-items:center;justify-content:center;padding:0 24px}
-    .hero-inner{max-width:480px;text-align:center}
-
-    .hero-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);color:#7c3aed;margin-bottom:24px}
-
-    h1{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:.03em;color:#18181b;line-height:1.05;margin-bottom:16px}
-    h1 span{color:#7c3aed}
-
-    .sub{font-size:17px;color:#71717a;line-height:1.6;margin-bottom:36px}
-
-    .signin-box{background:#fff;border:1px solid #ede9f6;border-radius:14px;padding:32px;text-align:left;box-shadow:0 4px 24px rgba(124,58,237,.04)}
-
-    .signin-box label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a1a1aa;margin-bottom:6px;font-weight:600}
-
-    .input-row{display:flex;gap:8px;margin-bottom:12px}
-    .signin-box input{flex:1;padding:12px 16px;border:1px solid #ede9f6;border-radius:8px;font-family:'Barlow',sans-serif;font-size:15px;color:#18181b;outline:none;transition:border-color .15s}
-    .signin-box input:focus{border-color:#7c3aed}
-    .signin-box input::placeholder{color:#d4d4d8}
-
-    .btn-signin{padding:12px 24px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap}
-    .btn-signin:hover{background:#6d28d9}
-    .btn-signin:disabled{opacity:.5;cursor:not-allowed}
-
-    .msg{font-size:13px;padding:10px 14px;border-radius:6px;margin-bottom:12px;display:none}
-    .msg.show{display:block}
-    .msg-success{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:#059669}
-    .msg-error{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);color:#dc2626}
-
-    .or-divider{display:flex;align-items:center;gap:12px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#d4d4d8}
-    .or-divider::before,.or-divider::after{content:'';flex:1;border-top:1px solid #ede9f6}
-
-    .alt-actions{display:flex;gap:8px}
-    .btn-alt{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:#fff;border:1px solid #ede9f6;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;color:#71717a;text-decoration:none;transition:all .15s;cursor:pointer}
-    .btn-alt:hover{border-color:#7c3aed;color:#7c3aed;text-decoration:none}
-
-    .features{display:flex;gap:24px;justify-content:center;margin-top:32px;flex-wrap:wrap}
-    .feature{display:flex;align-items:center;gap:6px;font-size:13px;color:#a1a1aa}
-    .feature-dot{width:6px;height:6px;border-radius:50%;background:#7c3aed}
-
-    footer{padding:20px 24px;text-align:center;font-size:11px;color:#a1a1aa}
-    footer a{color:#7c3aed;text-decoration:none}
-
-    @media(max-width:600px){
-      h1{font-size:36px}
-      .input-row{flex-direction:column}
-      .features{flex-direction:column;align-items:center}
+    .signin-card {
+      background: var(--c-graphite);
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      padding: 40px 36px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
+    .signin-card .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .signin-card input {
+      flex: 1;
+    }
+    .msg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .msg.show { display: block; }
+    .msg-success { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #22C55E; }
+    .msg-error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #EF4444; }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--c-steel-700);
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--c-border); }
+    .alt-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 10px;
+      background: var(--c-carbon); border: 1px solid var(--c-border); border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.5px;
+      color: var(--c-steel-400); text-decoration: none; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .alt-btn:hover { border-color: #06B6D4; color: #06B6D4; }
+    .features-row {
+      display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .feature-item {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--c-steel-600);
+    }
+    .feature-dot { width: 5px; height: 5px; border-radius: 50%; background: #06B6D4; flex-shrink: 0; }
+    .nav-links {
+      display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center;
+      margin-top: 20px;
+    }
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--c-steel-600); text-decoration: none; transition: color 0.15s;
+    }
+    .nav-links a:hover { color: #06B6D4; }
   </style>
 </head>
 <body>
 
-<header>
-  <a href="/" class="logo"><span>2</span>NTH</a>
-</header>
+<div style="display:flex;flex-direction:column;min-height:100vh;align-items:center;justify-content:center;padding:24px;">
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">Early Access Preview</div>
-    <h1>Developer &<br><span>Partner</span> Portal</h1>
-    <p class="sub">Build AI skills, contribute integrations, and manage your partner hub on the 2nth.ai platform.</p>
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:32px;">
+    <a href="https://2nth.ai" style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.06em;color:var(--c-titanium);text-decoration:none"><span style="color:#06B6D4">2</span>NTH</a>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--c-steel-600);margin-top:2px;">Developer &amp; Partner Portal</div>
+  </div>
 
-    <div class="signin-box">
-      <div id="msg" class="msg"></div>
+  <!-- Sign in card -->
+  <div class="signin-card">
+    <div id="msg" class="msg"></div>
 
-      <label>Sign in with your email</label>
-      <div class="input-row">
-        <input type="email" id="email" placeholder="you@company.com" onkeydown="if(event.key==='Enter')signIn()">
-        <button class="btn-signin" id="signin-btn" onclick="signIn()">Access portal</button>
-      </div>
-
-      <div class="or-divider">or</div>
-
-      <div class="alt-actions">
-        <a href="mailto:craig@2nth.ai?subject=Developer%20Portal%20Access%20Request" class="btn-alt">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Request invite
-        </a>
-        <a href="/vision.html" class="btn-alt">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          Our vision
-        </a>
-        <a href="https://2nth.ai" class="btn-alt">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          Visit 2nth.ai
-        </a>
-      </div>
+    <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-steel-600);margin-bottom:6px;font-weight:600;">Sign in with your email</label>
+    <div class="input-row">
+      <input type="email" id="email" placeholder="you@company.com"
+        class="input-field w-full border rounded-sm px-4 py-3 font-mono text-[14px] outline-none"
+        onkeydown="if(event.key==='Enter')signIn()">
+      <button class="cta-primary" id="signin-btn" onclick="signIn()" style="white-space:nowrap;padding:12px 20px;font-size:11px;">
+        Sign In
+      </button>
     </div>
 
-    <div class="features">
-      <div class="feature"><div class="feature-dot"></div>300+ AI skills</div>
-      <div class="feature"><div class="feature-dot"></div>Partner hubs</div>
-      <div class="feature"><div class="feature-dot"></div>Revenue sharing</div>
-      <div class="feature"><div class="feature-dot"></div>Token billing</div>
+    <div class="divider">or continue with</div>
+
+    <div style="display:flex;gap:8px;">
+      <a href="/api/auth/login" class="alt-btn">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="https://2nth.ai" class="alt-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        2nth.ai
+      </a>
     </div>
-    <div style="margin-top:24px"><a href="/vision.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7c3aed;text-decoration:none">Read our vision &rarr;</a></div>
+
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-700);margin-top:14px;text-align:center;">
+      We'll email you a magic link. No password needed.
+    </p>
+  </div>
+
+  <!-- Features -->
+  <div class="features-row">
+    <div class="feature-item"><div class="feature-dot"></div>300+ AI Skills</div>
+    <div class="feature-item"><div class="feature-dot"></div>Partner Hubs</div>
+    <div class="feature-item"><div class="feature-dot"></div>Revenue Sharing</div>
+    <div class="feature-item"><div class="feature-dot"></div>Token Billing</div>
+  </div>
+
+  <!-- Nav links -->
+  <div class="nav-links">
+    <a href="/docs.html">Docs</a>
+    <a href="/portal.html">Portal</a>
+    <a href="/partners/gridlineprop.html">GridLineProp</a>
+    <a href="/partners/scanman.html">ScanMan</a>
+    <a href="/partners/agilex.html">Agilex</a>
+    <a href="https://2nth.ai/vision.html">Vision</a>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top:auto;padding-top:40px;text-align:center;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-700);">
+      <a href="https://2nth.ai" style="color:#06B6D4;text-decoration:none">2nth.ai</a> — from thought to motion
+    </p>
   </div>
 </div>
 
-<footer>
-  <a href="https://2nth.ai">2nth.ai</a> — from thought to motion
-</footer>
-
 <script>
-// Gate removed — redirect straight to docs
-window.location.href = '/docs.html';
+// Check if already authenticated via 2nth session
+(async function() {
+  try {
+    var res = await fetch('https://2nth.ai/api/auth/session', { credentials: 'include' });
+    var data = await res.json();
+    if (data.authenticated) {
+      window.location.href = '/docs.html';
+      return;
+    }
+  } catch(e) {}
+})();
+
+function signIn() {
+  var email = document.getElementById('email').value.trim().toLowerCase();
+  var msg = document.getElementById('msg');
+  var btn = document.getElementById('signin-btn');
+
+  if (!email || email.indexOf('@') === -1) {
+    msg.className = 'msg show msg-error';
+    msg.textContent = 'Enter a valid email address.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msg.className = 'msg';
+
+  fetch('https://2nth.ai/api/auth/send-magic-link', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, returnTo: window.location.origin + '/docs.html' }),
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.error) {
+      msg.className = 'msg show msg-error';
+      msg.textContent = data.error;
+    } else {
+      msg.className = 'msg show msg-success';
+      msg.textContent = 'Check your email for the sign-in link.';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  })
+  .catch(function() {
+    msg.className = 'msg show msg-success';
+    msg.textContent = 'Check your email for the sign-in link.';
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  });
+}
+
+// Theme
+function toggleTheme(){
+  var l = document.documentElement.classList.toggle('light');
+  localStorage.setItem('2nth-theme', l ? 'light' : 'dark');
+}
 </script>
 </body>
 </html>
