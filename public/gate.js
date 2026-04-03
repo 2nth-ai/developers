@@ -13,7 +13,8 @@
   // Platform admins — can see everything
   var ADMINS = [
     'craig@2nth.ai',
-    'craig@imbila.ai'
+    'craig@imbila.ai',
+    'craig@b2bs.co.za'
   ];
 
   // Platform access — can see general docs, portal, but NOT partner stacks
