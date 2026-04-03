@@ -3,19 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agilex — 2nth.ai Build Partner</title>
+  <title>AgileX — 2nth.ai Build Partner</title>
   <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <style>
     .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
-    .partner-logo{width:64px;height:64px;border-radius:12px;background:#2563eb;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:1px}
+    .partner-logo{width:64px;height:64px;border-radius:12px;background:#E04032;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:1px}
     .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
-    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:24px 0}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
     .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
     .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
     .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .agent-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:10px;display:flex;gap:16px;align-items:start;transition:border-color .15s}
+    .agent-card:hover{border-color:#E04032}
+    .agent-avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;flex-shrink:0}
+    .agent-card h3{margin:0 0 2px;font-size:15px;color:#18181b}
+    .agent-card .role{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;color:#71717a;margin-bottom:6px}
+    .agent-card p{margin:0;font-size:13px;color:#71717a;line-height:1.5}
+    .agent-tasks{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+    .agent-task{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;background:#f5f3ff;color:#7c3aed;border:1px solid #ede9f6}
+    .skill-card{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:20px;margin-bottom:12px;transition:border-color .15s}
+    .skill-card:hover{border-color:#E04032}
+    .skill-card h3{margin:0 0 6px;font-size:16px;color:#18181b}
+    .skill-card p{margin:0;font-size:13px;color:#71717a}
+    .skill-card .skill-meta{display:flex;gap:12px;margin-top:10px}
+    .skill-tier{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+    .tier-starter{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .tier-designer{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .tier-builder{color:#d97706;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
+    .chain{display:flex;gap:2px;margin:24px 0;border-radius:10px;overflow:hidden}
+    .chain-step{flex:1;padding:14px 10px;text-align:center;color:#fff;font-size:11px;font-weight:700}
+    .chain-step .step-name{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;opacity:.8;margin-top:2px}
   </style>
 </head>
 <body>
@@ -37,9 +57,9 @@
   <div style="margin-bottom:8px"><a href="/" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to docs</a></div>
 
   <div class="partner-header">
-    <div class="partner-logo">AG</div>
+    <div class="partner-logo">AX</div>
     <div>
-      <h1 style="margin-bottom:0">Agilex</h1>
+      <h1 style="margin-bottom:0">AgileX</h1>
       <div class="partner-meta">
         <span>Build Partner since April 2026</span>
         <span>|</span>
@@ -50,28 +70,173 @@
     </div>
   </div>
 
-  <p class="lead">Enterprise technology solutions and digital transformation. Agilex partners with 2nth.ai to bring AI-powered automation to business operations.</p>
+  <p class="lead">AI agents that do the work. AgileX deploys 5 autonomous recruitment agents that source talent, conduct interviews, schedule meetings, analyse data, and manage offers — so your people spend time with people. From R28/day.</p>
 
   <div class="stat-grid">
+    <div class="stat">
+      <div class="value">62%</div>
+      <div class="label">Faster time-to-hire</div>
+    </div>
+    <div class="stat">
+      <div class="value">99.2%</div>
+      <div class="label">Compliance score</div>
+    </div>
+    <div class="stat">
+      <div class="value">5</div>
+      <div class="label">Autonomous agents</div>
+    </div>
+    <div class="stat">
+      <div class="value">R28</div>
+      <div class="label">Starting cost/day</div>
+    </div>
     <div class="stat">
       <div class="value">Build</div>
       <div class="label">Partner type</div>
     </div>
-    <div class="stat">
-      <div class="value">20%</div>
-      <div class="label">Revenue share</div>
-    </div>
-    <div class="stat">
-      <div class="value">Builder</div>
-      <div class="label">Partner tier</div>
+  </div>
+
+  <h2>The recruitment value chain</h2>
+
+  <div class="chain">
+    <div class="chain-step" style="background:#E04032"><div>Ava</div><div class="step-name">Source</div></div>
+    <div class="chain-step" style="background:#30D158"><div>Grant</div><div class="step-name">Interview</div></div>
+    <div class="chain-step" style="background:#BF5AF2"><div>Iris</div><div class="step-name">Assess</div></div>
+    <div class="chain-step" style="background:#FFD60A;color:#18181b"><div>Leo</div><div class="step-name">Schedule</div></div>
+    <div class="chain-step" style="background:#64D2FF"><div>Elle</div><div class="step-name">Onboard</div></div>
+  </div>
+
+  <div class="agent-card">
+    <div class="agent-avatar" style="background:#E04032">A</div>
+    <div>
+      <h3>Ava</h3>
+      <div class="role">Sourcing Specialist — Source & Attract</div>
+      <p>Finds talent before anyone else. Scans job boards, parses CVs, enriches candidate profiles, masks PII for POPIA compliance, and builds longlists matched to role requirements.</p>
+      <div class="agent-tasks"><span class="agent-task">CV Parsing</span><span class="agent-task">PII Masking</span><span class="agent-task">Role Matching</span></div>
     </div>
   </div>
 
-  <h2>Partnership</h2>
+  <div class="agent-card">
+    <div class="agent-avatar" style="background:#30D158">G</div>
+    <div>
+      <h3>Grant</h3>
+      <div class="role">Interview Conductor — Screen & Interview</div>
+      <p>Runs structured AI screening interviews with real-time bias monitoring. Adapts questions to role requirements and produces explainable, auditable scorecards.</p>
+      <div class="agent-tasks"><span class="agent-task">AI Interviews</span><span class="agent-task">Bias Detection</span><span class="agent-task">Scorecards</span></div>
+    </div>
+  </div>
 
-  <p>Agilex is a build partner on the 2nth.ai platform — contributing enterprise-grade skills and building AI capabilities for their clients. Full showcase coming soon.</p>
+  <div class="agent-card">
+    <div class="agent-avatar" style="background:#BF5AF2">I</div>
+    <div>
+      <h3>Iris</h3>
+      <div class="role">Insights Analyst — Assess & Decide</div>
+      <p>Turns hiring data into decisions. Analyses screening results, produces EE compliance reports, benchmarks candidates, and generates governance audit packages.</p>
+      <div class="agent-tasks"><span class="agent-task">EE Reports</span><span class="agent-task">Analytics</span><span class="agent-task">Benchmarking</span></div>
+    </div>
+  </div>
+
+  <div class="agent-card">
+    <div class="agent-avatar" style="background:#FFD60A;color:#18181b">L</div>
+    <div>
+      <h3>Leo</h3>
+      <div class="role">Liaison Coordinator — Engage & Schedule</div>
+      <p>Owns relationship logistics. Schedules interviews, sends confirmations and reminders, handles rescheduling, and keeps all parties seamlessly coordinated.</p>
+      <div class="agent-tasks"><span class="agent-task">Scheduling</span><span class="agent-task">Reminders</span><span class="agent-task">Coordination</span></div>
+    </div>
+  </div>
+
+  <div class="agent-card">
+    <div class="agent-avatar" style="background:#64D2FF">E</div>
+    <div>
+      <h3>Elle</h3>
+      <div class="role">Experience Manager — Offer & Onboard</div>
+      <p>Ensures every candidate has an exceptional experience. Drafts offer communications, manages onboarding documents, sends empathetic rejection feedback, and tracks NPS.</p>
+      <div class="agent-tasks"><span class="agent-task">Offer Letters</span><span class="agent-task">Onboarding</span><span class="agent-task">NPS Tracking</span></div>
+    </div>
+  </div>
+
+  <h2>Skills contributed</h2>
+
+  <div class="skill-card">
+    <h3>CV Parsing & Enrichment</h3>
+    <p>Extracts structured data from CVs in any format (PDF, Word, image). Normalises job titles, skills, and education. Enriches with public profile data. POPIA PII masking built in.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-starter">Starter</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/cv-parsing</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>AI Screening Interview</h3>
+    <p>Structured conversational interviews adapted to role requirements. Real-time bias monitoring, explainable scoring, multi-language support. Produces audit-ready scorecards.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-designer">Designer</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">biz/ai-interview</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>Employment Equity Compliance</h3>
+    <p>Generates EE reports per South African Employment Equity Act. Tracks demographic targets, flags non-compliant shortlists, produces governance audit packages for BBBEE scoring.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-designer">Designer</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">leg/ee-compliance</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>ATS Integration Layer</h3>
+    <p>Vendor-neutral integration standard for Applicant Tracking Systems. Read/write candidates, jobs, activities via API or MCP. Supports Bullhorn, JobAdder, Mercury, Vincere.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-builder">Builder</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa">tech/ats-integration</span>
+    </div>
+  </div>
+
+  <h2>Platform capabilities</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Command Centre</h3>
+      <p>Real missions, real progress. Human-in-the-loop approval with live cost tracking in ZAR per task.</p>
+    </div>
+    <div class="card">
+      <h3>Model Registry</h3>
+      <p>Multi-provider: Anthropic, OpenAI, Google, self-hosted Ollama. Each agent picks the right model for its task.</p>
+    </div>
+    <div class="card">
+      <h3>Governance</h3>
+      <p>Full audit trail, explainable AI scoring, bias monitoring, Employment Equity compliance reporting.</p>
+    </div>
+    <div class="card">
+      <h3>POPIA + Data Residency</h3>
+      <p>PII masking at the prompt layer. All inference via Africa-South-1 endpoints. Data never leaves South Africa.</p>
+    </div>
+  </div>
+
+  <h2>Build partnership</h2>
+
+  <p>AgileX is a <strong>build partner</strong> — they're building a full recruitment AI platform on the 2nth.ai infrastructure. Their 5 agents, 4 skills, and ATS integration spec demonstrate the depth of what build partners create.</p>
+
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:24px;margin:24px 0">
+    <pre style="background:none;border:none;padding:0;margin:0"><code style="color:#52525b">Recruitment agency uses agilex.co.za
+    &rarr; Recruiter creates a mission: "Fill Senior Developer role"
+    &rarr; Ava sources candidates from job boards + database
+    &rarr; Grant conducts AI screening interviews
+    &rarr; Iris analyses results, produces EE compliance report
+    &rarr; Leo schedules panel interviews with hiring manager
+    &rarr; Elle manages offers and onboarding docs
+
+All agents powered by 2nth.ai:
+    &rarr; Skills resolved via agents.2nth.ai
+    &rarr; Tokens track cost per mission (R28/day starting)
+    &rarr; AgileX earns 20% revenue share on skill usage
+    &rarr; Full audit trail for governance</code></pre>
+  </div>
 
   <h2>Enquire</h2>
+
+  <p>Interested in AI-powered recruitment or becoming a build partner?</p>
 
   <div id="enquiry-msg" style="padding:12px 16px;border-radius:6px;margin-bottom:16px;font-size:13px;display:none"></div>
 
@@ -90,12 +255,23 @@
       <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Email</label>
       <input type="email" id="eq-email" required placeholder="you@company.com" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
     </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Interest</label>
+      <select id="eq-interest" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;background:#fff">
+        <option value="ai-recruitment">AI recruitment platform</option>
+        <option value="build-partner">Become a build partner</option>
+        <option value="ats-integration">ATS integration</option>
+        <option value="demo">Book a demo</option>
+      </select>
+    </div>
     <div style="margin-bottom:20px">
       <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Message</label>
-      <textarea id="eq-message" rows="3" placeholder="Tell us about your project..." style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;resize:vertical"></textarea>
+      <textarea id="eq-message" rows="3" placeholder="Tell us about your recruitment challenges..." style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;resize:vertical"></textarea>
     </div>
     <button type="submit" id="eq-submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;background:#7c3aed;color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer">Send enquiry</button>
   </form>
+
+  <p style="text-align:center"><a href="https://agilex.co.za" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a">Visit agilex.co.za &rarr;</a></p>
 
 </div>
 </main>
@@ -111,10 +287,7 @@ function submitEnquiry(e) {
   e.preventDefault();
   var msg = document.getElementById('enquiry-msg');
   var btn = document.getElementById('eq-submit');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  msg.style.display = 'none';
-
+  btn.disabled = true; btn.textContent = 'Sending...'; msg.style.display = 'none';
   fetch('/api/enquiry', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -122,29 +295,17 @@ function submitEnquiry(e) {
       name: document.getElementById('eq-name').value,
       company: document.getElementById('eq-company').value,
       email: document.getElementById('eq-email').value,
+      interest: document.getElementById('eq-interest').value,
       message: document.getElementById('eq-message').value,
       partner: 'agilex',
-      interest: 'build-partner',
     }),
-  })
-  .then(function() {
-    msg.style.display = 'block';
-    msg.style.background = 'rgba(5,150,105,.06)';
-    msg.style.border = '1px solid rgba(5,150,105,.2)';
-    msg.style.color = '#059669';
+  }).then(function() {
+    msg.style.display = 'block'; msg.style.background = 'rgba(5,150,105,.06)'; msg.style.border = '1px solid rgba(5,150,105,.2)'; msg.style.color = '#059669';
     msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
-    document.getElementById('enquiry-form').reset();
-    btn.disabled = false;
-    btn.textContent = 'Send enquiry';
-  })
-  .catch(function() {
-    msg.style.display = 'block';
-    msg.style.background = 'rgba(5,150,105,.06)';
-    msg.style.border = '1px solid rgba(5,150,105,.2)';
-    msg.style.color = '#059669';
-    msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
-    btn.disabled = false;
-    btn.textContent = 'Send enquiry';
+    document.getElementById('enquiry-form').reset(); btn.disabled = false; btn.textContent = 'Send enquiry';
+  }).catch(function() {
+    msg.style.display = 'block'; msg.style.background = 'rgba(5,150,105,.06)'; msg.style.border = '1px solid rgba(5,150,105,.2)'; msg.style.color = '#059669';
+    msg.textContent = 'Enquiry sent!'; btn.disabled = false; btn.textContent = 'Send enquiry';
   });
 }
 </script>
