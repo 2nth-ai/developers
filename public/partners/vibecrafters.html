@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VibeCrafters — 2nth.ai Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    :root { --vc-primary:#7C3AED; --vc-pink:#EC4899; --vc-cyan:#06B6D4; --vc-bg:#0F0A1E; }
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--vc-primary),var(--vc-pink));display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;font-weight:700}
+    .badge-production{background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#059669}
+    .badge-build{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:#7C3AED}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .how-it-works{background:var(--vc-bg);border-radius:12px;padding:32px;margin:32px 0;color:#F1F0FF}
+    .how-it-works h2{color:#fff;border:none;margin-top:0}
+    .step-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;margin-top:24px;position:relative}
+    .flow-node{padding:20px;text-align:center;position:relative}
+    .flow-node::after{content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:18px}
+    .flow-node:last-child::after{display:none}
+    .flow-icon{width:44px;height:44px;border-radius:10px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .flow-node h4{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.9);margin:0 0 4px}
+    .flow-node p{font-size:12px;color:rgba(255,255,255,.45);margin:0}
+    .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:20px 0}
+    .service-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;transition:border-color .15s}
+    .service-card:hover{border-color:var(--vc-primary)}
+    .service-card .price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#18181b;line-height:1}
+    .service-card .period{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:#a1a1aa;text-transform:uppercase}
+    .service-card h3{font-size:15px;color:#18181b;margin:10px 0 4px}
+    .service-card p{font-size:13px;color:#71717a;margin:0}
+    .tech-stack{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+    .tech-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:4px;background:#f5f3ff;border:1px solid #ede9f6;color:#7c3aed}
+    .channel-list{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .channel{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;padding:6px 12px;border-radius:6px;border:1px solid #e4e4e7;color:#52525b}
+    .channel.active{border-color:rgba(5,150,105,.3);color:#059669;background:rgba(5,150,105,.04)}
+    .partner-model{background:#f5f3ff;border:1px solid #ede9f6;border-radius:10px;padding:24px;margin:24px 0}
+    .model-row{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid #ede9f6;align-items:start}
+    .model-row:last-child{border-bottom:none;padding-bottom:0}
+    .model-who{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#7c3aed;width:80px;flex-shrink:0;padding-top:2px}
+    .model-what{font-size:13px;color:#52525b;line-height:1.5}
+    .cta-bar{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;padding-top:24px;border-top:1px solid #e4e4e7}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;border-radius:6px;border:none;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-primary{background:var(--vc-primary);color:#fff}.btn-primary:hover{background:#6d28d9;text-decoration:none}
+    .btn-outline{background:none;border:1px solid #e4e4e7;color:#52525b}.btn-outline:hover{border-color:var(--vc-primary);color:var(--vc-primary);text-decoration:none}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/portal.html">Portal</a>
+      <a href="https://github.com/2nth-ai">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/portal.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to portal</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo">VC</div>
+    <div>
+      <h1 style="margin:0;font-size:2rem">VibeCrafters</h1>
+      <div class="partner-meta">
+        <span>vibecrafters.com</span>
+        <span>South Africa</span>
+        <span>Digital Agency</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <span class="badge badge-production">&#9679; Production</span>
+        <span class="badge badge-build">Build Partner</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:1.05rem;color:#52525b;max-width:640px;line-height:1.7">
+    VibeCrafters is a next-generation AI-powered digital agency — delivering what traditional agencies deliver (websites, social media, brand) but faster and better because AI is native to everything they build. Built entirely on the 2nth.ai platform with their own Cloudflare environment.
+  </p>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="value">3</div>
+      <div class="label">AI Channels</div>
+    </div>
+    <div class="stat">
+      <div class="value">CF</div>
+      <div class="label">Own Infra</div>
+    </div>
+    <div class="stat">
+      <div class="value">ZAR</div>
+      <div class="label">Market</div>
+    </div>
+    <div class="stat">
+      <div class="value">Vibe</div>
+      <div class="label">AI Persona</div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-it-works">
+    <h2>How this partnership works</h2>
+    <p style="color:rgba(255,255,255,.55);font-size:14px;margin-bottom:0">VibeCrafters is a <strong style="color:#fff">build partner</strong> — they own the client relationship, billing, and brand. 2nth.ai provides the AI infrastructure and skills engine under the hood.</p>
+    <div class="step-flow">
+      <div class="flow-node">
+        <div class="flow-icon" style="background:rgba(124,58,237,.2)">&#128196;</div>
+        <h4>Fork template</h4>
+        <p>Partner forks 2nth-ai/partner-template to their GitHub</p>
+      </div>
+      <div class="flow-node">
+        <div class="flow-icon" style="background:rgba(236,72,153,.2)">&#9729;</div>
+        <h4>Own Cloudflare</h4>
+        <p>Deploy to partner's own CF account — their infra, their control</p>
+      </div>
+      <div class="flow-node">
+        <div class="flow-icon" style="background:rgba(6,182,212,.2)">&#127760;</div>
+        <h4>Custom domain</h4>
+        <p>app.vibecrafters.com routes to their Pages project</p>
+      </div>
+      <div class="flow-node">
+        <div class="flow-icon" style="background:rgba(5,150,105,.2)">&#9889;</div>
+        <h4>Skills engine</h4>
+        <p>2nth.ai AI Gateway powers the skills — partner earns revenue share</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <h2>Services offered</h2>
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="price">R2,800</div><div class="period">/ month</div>
+      <h3>AI Chat Agent</h3>
+      <p>WhatsApp and web chat — answers enquiries, qualifies leads, books appointments.</p>
+    </div>
+    <div class="service-card">
+      <div class="price">R1,900</div><div class="period">/ month</div>
+      <h3>Social Media AI</h3>
+      <p>Automate Instagram DMs and story responses with an AI that sounds like your brand.</p>
+    </div>
+    <div class="service-card">
+      <div class="price">R15,000</div><div class="period">once-off</div>
+      <h3>AI-Powered Website</h3>
+      <p>Edge-deployed site with built-in AI chat, lead capture, and CRM integration.</p>
+    </div>
+    <div class="service-card" style="border-color:var(--vc-primary);background:#faf8ff">
+      <div class="price">R7,500</div><div class="period">/ month</div>
+      <h3>Full Stack AI ★</h3>
+      <p>Everything — website, WhatsApp, Instagram, email automation, CRM.</p>
+    </div>
+  </div>
+
+  <!-- TECH & CHANNELS -->
+  <h2>Tech stack</h2>
+  <div class="tech-stack">
+    <span class="tech-tag">Cloudflare Pages</span>
+    <span class="tech-tag">Workers AI</span>
+    <span class="tech-tag">D1 SQLite</span>
+    <span class="tech-tag">KV Sessions</span>
+    <span class="tech-tag">Claude Sonnet 4.6</span>
+    <span class="tech-tag">Llama 3.1 8B (routing)</span>
+    <span class="tech-tag">2nth AI Gateway</span>
+    <span class="tech-tag">Resend</span>
+  </div>
+
+  <h2>AI channels</h2>
+  <div class="channel-list">
+    <div class="channel active">&#9679; WhatsApp</div>
+    <div class="channel active">&#9679; Instagram DMs</div>
+    <div class="channel active">&#9679; Web Chat</div>
+    <div class="channel" style="opacity:.4">&#9675; X / Twitter — coming</div>
+  </div>
+
+  <!-- PARTNER MODEL -->
+  <h2>Responsibility model</h2>
+  <div class="partner-model">
+    <div class="model-row">
+      <div class="model-who">VibeCrafters</div>
+      <div class="model-what">Client relationships, pricing, billing, brand, support, content. Owns the <code>vibecrafters.com</code> domain and Cloudflare account.</div>
+    </div>
+    <div class="model-row">
+      <div class="model-who">2nth.ai</div>
+      <div class="model-what">AI Gateway, skills engine, platform template updates, AI routing (Llama → Claude), token billing, DNS subdomain (<code>vibecrafters.par.2nth.ai</code>).</div>
+    </div>
+    <div class="model-row">
+      <div class="model-who">Revenue</div>
+      <div class="model-what">VibeCrafters bills clients directly in ZAR. 2nth.ai charges at token cost + platform fee. Partner margin is theirs to keep.</div>
+    </div>
+  </div>
+
+  <!-- AI PERSONA -->
+  <h2>AI persona — Vibe</h2>
+  <blockquote style="border-left:3px solid var(--vc-primary);padding-left:20px;margin:16px 0;color:#52525b;font-style:italic;font-size:15px;line-height:1.7">
+    "Energetic creative director who also codes. Sharp, warm, no waffle. Speaks like a smart person in a Slack message, not a press release."
+  </blockquote>
+  <p style="font-size:13px;color:#71717a">Vibe runs on Claude Sonnet 4.6 via the 2nth.ai AI Gateway, pre-classified by Llama 3.1 8B at the edge to keep response latency low.</p>
+
+  <div class="cta-bar">
+    <a href="https://vibecrafters.com" target="_blank" class="btn btn-primary">Visit VibeCrafters &rarr;</a>
+    <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    <a href="mailto:craig@2nth.ai" class="btn btn-outline">Become a build partner</a>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a> &middot; <a href="/vision.html">Vision</a> &middot; <a href="/docs.html">Docs</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
