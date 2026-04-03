@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agilex — 2nth.ai Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;background:#2563eb;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:1px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/">Docs</a>
+      <a href="/portal.html">Portal</a>
+      <a href="https://github.com/2nth-ai/skills">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to docs</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo">AG</div>
+    <div>
+      <h1 style="margin-bottom:0">Agilex</h1>
+      <div class="partner-meta">
+        <span>Build Partner since April 2026</span>
+        <span>|</span>
+        <span><a href="https://agilex.co.za">agilex.co.za</a></span>
+        <span>|</span>
+        <span>South Africa</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lead">Enterprise technology solutions and digital transformation. Agilex partners with 2nth.ai to bring AI-powered automation to business operations.</p>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="value">Build</div>
+      <div class="label">Partner type</div>
+    </div>
+    <div class="stat">
+      <div class="value">20%</div>
+      <div class="label">Revenue share</div>
+    </div>
+    <div class="stat">
+      <div class="value">Builder</div>
+      <div class="label">Partner tier</div>
+    </div>
+  </div>
+
+  <h2>Partnership</h2>
+
+  <p>Agilex is a build partner on the 2nth.ai platform — contributing enterprise-grade skills and building AI capabilities for their clients. Full showcase coming soon.</p>
+
+  <h2>Enquire</h2>
+
+  <div id="enquiry-msg" style="padding:12px 16px;border-radius:6px;margin-bottom:16px;font-size:13px;display:none"></div>
+
+  <form id="enquiry-form" onsubmit="submitEnquiry(event)" style="background:#fff;border:1px solid #ede9f6;border-radius:12px;padding:28px;margin-bottom:24px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Name</label>
+        <input type="text" id="eq-name" required placeholder="Your name" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+      </div>
+      <div>
+        <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Company</label>
+        <input type="text" id="eq-company" required placeholder="Company name" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Email</label>
+      <input type="email" id="eq-email" required placeholder="you@company.com" style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none">
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px">Message</label>
+      <textarea id="eq-message" rows="3" placeholder="Tell us about your project..." style="width:100%;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;resize:vertical"></textarea>
+    </div>
+    <button type="submit" id="eq-submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;background:#7c3aed;color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer">Send enquiry</button>
+  </form>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+function submitEnquiry(e) {
+  e.preventDefault();
+  var msg = document.getElementById('enquiry-msg');
+  var btn = document.getElementById('eq-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msg.style.display = 'none';
+
+  fetch('/api/enquiry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: document.getElementById('eq-name').value,
+      company: document.getElementById('eq-company').value,
+      email: document.getElementById('eq-email').value,
+      message: document.getElementById('eq-message').value,
+      partner: 'agilex',
+      interest: 'build-partner',
+    }),
+  })
+  .then(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(5,150,105,.06)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = '#059669';
+    msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
+    document.getElementById('enquiry-form').reset();
+    btn.disabled = false;
+    btn.textContent = 'Send enquiry';
+  })
+  .catch(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(5,150,105,.06)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = '#059669';
+    msg.textContent = 'Enquiry sent! We\'ll be in touch within 24 hours.';
+    btn.disabled = false;
+    btn.textContent = 'Send enquiry';
+  });
+}
+</script>
+</body>
+</html>
