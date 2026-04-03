@@ -153,6 +153,67 @@
     <li><strong>Financial modelling</strong> &rarr; Occupancy data feeds into cash flow forecasting across locations</li>
   </ul>
 
+  <h2>Partner Skills Hub</h2>
+
+  <p>Proximity Green runs their own branded skills hub at their domain, powered by the 2nth.ai skill tree. Their hub shows only the skills relevant to shared-space operations while inheriting the full platform infrastructure.</p>
+
+  <div style="background:#fff;border:1px solid #e4e4e7;border-radius:8px;padding:24px;margin:24px 0">
+    <h3 style="margin-top:0">How it works</h3>
+
+    <pre><code>skills.proximity.green          (partner-branded hub)
+        |
+        ├── biz/shared-space-ops    (Proximity Green skills)
+        ├── biz/tenant-billing
+        ├── biz/access-governance
+        |
+        ├── biz/hubspot-crm         (shared 2nth.ai skills)
+        ├── fin/cash-flow-forecaster
+        ├── collab/meeting-agent
+        |
+        └── 2nth.ai skill tree      (full resolution via API)
+            └── skills.2nth.ai/resolve?path=biz/shared-space-ops</code></pre>
+
+    <p style="font-size:13px;color:#71717a;margin:16px 0 0">The partner hub cherry-picks skills from the 2nth.ai tree relevant to their domain. Skills resolve dependencies automatically — if <code>shared-space-ops</code> depends on <code>hubspot-crm</code>, both are included.</p>
+  </div>
+
+  <h3>Setting up a partner skills hub</h3>
+
+  <ol class="step-list">
+    <li>
+      <strong>Fork the skills repo</strong>
+      Fork <a href="https://github.com/2nth-ai/skills">2nth-ai/skills</a> into your org. Add your domain-specific skills.
+    </li>
+    <li>
+      <strong>Create your hub</strong>
+      Use the <a href="https://github.com/2nth-ai/clients">2nth-ai/clients</a> template to scaffold a branded skills hub. Configure your domain, logo, and which skill categories to display.
+    </li>
+    <li>
+      <strong>Map your domains</strong>
+      Choose which 2nth.ai skill domains appear on your hub. Proximity Green maps: <code>biz/*</code> (all business skills), <code>fin/*</code> (finance), <code>collab/*</code> (collaboration).
+    </li>
+    <li>
+      <strong>Deploy to your domain</strong>
+      Deploy to Cloudflare Pages on your own domain (<code>skills.proximity.green</code>). The hub connects to <code>agents.2nth.ai</code> for skill resolution and AI inference.
+    </li>
+    <li>
+      <strong>Token billing flows through</strong>
+      Your customers use tokens from the 2nth.ai platform. When they execute a Proximity Green skill, your 15% revenue share is tracked automatically.
+    </li>
+  </ol>
+
+  <div style="background:rgba(8,145,178,.04);border:1px solid rgba(8,145,178,.15);border-radius:8px;padding:20px;margin:24px 0">
+    <h3 style="margin-top:0;color:#0891b2">Architecture</h3>
+    <pre style="background:none;border:none;padding:0;margin:0"><code style="color:#52525b">Customer visits skills.proximity.green
+    → Browses shared-space skills (branded UI)
+    → Signs in via 2nth.ai SSO (Domain=.2nth.ai cookie)
+    → Runs a skill (e.g. "Analyse my occupancy data")
+    → agents.2nth.ai resolves skill + dependencies
+    → AI inference via Cloudflare Workers AI
+    → Tokens deducted from customer balance
+    → skill_usage logged: contributor=craigproxgreen, share=15%
+    → Monthly settlement: Proximity Green earns 15% of skill revenue</code></pre>
+  </div>
+
   <h2>Build repo</h2>
 
   <p>Proximity Green's skill development and contributions are tracked in their build repo:</p>
