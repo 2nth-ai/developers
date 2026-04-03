@@ -3,7 +3,6 @@ export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
-  const state = url.searchParams.get('state');
 
   if (!code) {
     return Response.redirect(`${env.SITE_URL}/?error=no_code`, 302);
@@ -38,7 +37,6 @@ export async function onRequestGet(context) {
   });
   const user = await userRes.json();
 
-  // Build a simple session cookie with user info (not the token itself)
   const session = JSON.stringify({
     login: user.login,
     name: user.name || user.login,
@@ -47,12 +45,16 @@ export async function onRequestGet(context) {
   });
 
   const sessionB64 = btoa(session);
+  const maxAge = 60 * 60 * 24 * 7;
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: `${env.SITE_URL}/portal.html`,
-      'Set-Cookie': `dev_session=${sessionB64}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`,
-    },
-  });
+  // Set two cookies:
+  // dev_session (HttpOnly) — for server-side API validation
+  // dev_user (JS-readable) — for client-side UI rendering
+  const headers = new Headers({ Location: `${env.SITE_URL}/portal.html` });
+  headers.append('Set-Cookie', `dev_session=${sessionB64}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`);
+  headers.append('Set-Cookie', `dev_user=${sessionB64}; Path=/; Secure; SameSite=Lax; Max-Age=${maxAge}`);
+  // Also store the access token for idea submission
+  headers.append('Set-Cookie', `dev_gh_token=${tokenData.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`);
+
+  return new Response(null, { status: 302, headers });
 }

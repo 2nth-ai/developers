@@ -277,8 +277,17 @@ example here
 </footer>
 
 <script>
-// Session is injected server-side by functions/portal.js to avoid Bot Fight Mode
-let currentUser = window.__DEV_SESSION || null;
+// Read session from JS-readable dev_user cookie — no fetch needed
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return match ? match[1] : null;
+}
+
+let currentUser = null;
+try {
+  const raw = getCookie('dev_user');
+  if (raw) currentUser = JSON.parse(atob(decodeURIComponent(raw)));
+} catch {}
 
 function init() {
   document.getElementById('loading').style.display = 'none';
@@ -291,57 +300,59 @@ function init() {
   document.getElementById('portal').style.display = 'block';
   document.getElementById('welcome-name').textContent = currentUser.name;
   document.getElementById('res-username').textContent = currentUser.login;
-  document.getElementById('user-area').innerHTML = `
-    <div class="user-bar">
-      <img src="${currentUser.avatar}" class="avatar" alt="">
-      <span class="user-name">${currentUser.login}</span>
-      <a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>
-    </div>
-  `;
+  document.getElementById('user-area').innerHTML =
+    '<div class="user-bar">' +
+    '<img src="' + currentUser.avatar + '" class="avatar" alt="">' +
+    '<span class="user-name">' + currentUser.login + '</span>' +
+    '<a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>' +
+    '</div>';
 }
 
 function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
   document.getElementById('tab-' + name).classList.add('active');
   event.target.classList.add('active');
 }
 
-async function submitIdea(e) {
+function submitIdea(e) {
   e.preventDefault();
-  const msg = document.getElementById('idea-msg');
-  const btn = document.getElementById('idea-submit');
+  var msg = document.getElementById('idea-msg');
+  var btn = document.getElementById('idea-submit');
   msg.className = 'msg';
   btn.disabled = true;
   btn.textContent = 'Submitting...';
 
-  try {
-    const res = await fetch('/api/ideas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: document.getElementById('idea-title').value,
-        type: document.getElementById('idea-type').value,
-        description: document.getElementById('idea-desc').value,
-      }),
-    });
-    const data = await res.json();
+  var body = JSON.stringify({
+    title: document.getElementById('idea-title').value,
+    type: document.getElementById('idea-type').value,
+    description: document.getElementById('idea-desc').value,
+  });
 
+  fetch('/api/ideas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: body,
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
     if (data.success) {
       msg.className = 'msg show msg-success';
-      msg.innerHTML = `Idea submitted! <a href="${data.issue_url}" target="_blank">View on GitHub &rarr;</a>`;
+      msg.innerHTML = 'Idea submitted! <a href="' + data.issue_url + '" target="_blank">View on GitHub &rarr;</a>';
       document.getElementById('idea-form').reset();
     } else {
       msg.className = 'msg show msg-error';
       msg.textContent = data.error || 'Failed to submit.';
     }
-  } catch {
+    btn.disabled = false;
+    btn.textContent = 'Submit idea';
+  })
+  .catch(function() {
     msg.className = 'msg show msg-error';
     msg.textContent = 'Network error. Try again.';
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Submit idea';
+    btn.disabled = false;
+    btn.textContent = 'Submit idea';
+  });
 }
 
 init();
