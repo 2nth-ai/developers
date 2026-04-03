@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --c-carbon:#0a0a0a; --c-graphite:#141414; --c-titanium:#fafafa;
-      --c-steel-400:#c4c4cc; --c-steel-600:#71717a; --c-steel-700:#52525b;
-      --c-border:hsla(0,0%,100%,.06); --c-input-bg:#141414;
+      --c-carbon:#f4f5f7; --c-graphite:#ffffff; --c-titanium:#0a0a0a;
+      --c-steel-400:#374151; --c-steel-600:#6b7280; --c-steel-700:#9ca3af;
+      --c-border:rgba(0,0,0,.1); --c-input-bg:#f9fafb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -40,7 +40,7 @@
     }
     .btn {
       width: 100%; margin-top: 12px; padding: 12px; border: 1px solid #06B6D4; border-radius: 4px;
-      background: #06B6D4; color: #0a0a0a; cursor: pointer;
+      background: #06B6D4; color: #ffffff; cursor: pointer;
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
       letter-spacing: 1px; text-transform: uppercase;
       transition: background 0.15s;
@@ -73,8 +73,8 @@
     .alt-btn:hover { border-color: #06B6D4; color: #06B6D4; }
     .msg { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 12px; border-radius: 4px; margin-bottom: 12px; display: none; }
     .msg.show { display: block; }
-    .msg-err { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); color: #EF4444; }
-    .msg-ok { background: rgba(6,182,212,.08); border: 1px solid rgba(6,182,212,.2); color: #06B6D4; }
+    .msg-err { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25); color: #dc2626; }
+    .msg-ok { background: rgba(6,182,212,.1); border: 1px solid rgba(6,182,212,.3); color: #0891b2; }
     .features { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
     .feat { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--c-steel-600); }
     .dot { width: 5px; height: 5px; border-radius: 50%; background: #06B6D4; }
@@ -96,14 +96,14 @@
     <div id="emailStep">
       <label class="label">Sign in with your email</label>
       <input type="email" id="email" class="input" placeholder="you@company.com">
-      <button type="button" class="btn" onclick="sendCode()">Send sign-in code</button>
+      <button type="button" class="btn" id="sendBtn">Send sign-in code</button>
     </div>
 
     <div class="code-step" id="codeStep">
       <label class="label">Enter your 6-digit code</label>
       <input type="text" id="code" class="input input-code" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-      <button type="button" class="btn" id="verifyBtn" onclick="verifyCode()">Verify code</button>
-      <button type="button" class="btn-ghost" onclick="resendCode()">Resend code</button>
+      <button type="button" class="btn" id="verifyBtn">Verify code</button>
+      <button type="button" class="btn-ghost" id="resendBtn">Resend code</button>
       <div class="code-hint">Check your inbox — code expires in 10 minutes.</div>
     </div>
 
@@ -216,13 +216,14 @@ async function resendCode() {
   } catch {}
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('email').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') sendCode();
-  });
-  document.getElementById('code').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') verifyCode();
-  });
+document.getElementById('sendBtn').addEventListener('click', sendCode);
+document.getElementById('verifyBtn').addEventListener('click', verifyCode);
+document.getElementById('resendBtn').addEventListener('click', resendCode);
+document.getElementById('email').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendCode();
+});
+document.getElementById('code').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') verifyCode();
 });
 </script>
 </body>
