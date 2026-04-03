@@ -55,15 +55,7 @@
 <main>
 <div class="container">
 
-  <div id="loading" class="loading">Loading...</div>
-
-  <div id="signed-out" style="display:none;text-align:center;padding:80px 0">
-    <h1>Developer Portal</h1>
-    <p class="lead">Sign in with GitHub to contribute skills, submit ideas, and track your work on the 2nth.ai platform.</p>
-    <a href="/api/auth/login" class="btn btn-primary" style="font-size:12px;padding:12px 28px">Sign in with GitHub</a>
-  </div>
-
-  <div id="portal" style="display:none">
+  <div id="portal">
 
     <h1>Developer Portal</h1>
 
@@ -130,6 +122,11 @@
     <div id="tab-ideas" class="tab-content">
       <h2 style="border:none;margin-top:0;padding-top:0">Submit an idea</h2>
       <p>Have an idea for a new skill, integration, or platform improvement? Submit it here and the team will review it.</p>
+
+      <div id="signin-gate" style="background:#fff;border:1px solid #e4e4e7;border-radius:8px;padding:24px;text-align:center;margin-bottom:24px">
+        <p style="margin-bottom:12px;color:#52525b">Sign in with GitHub to submit ideas</p>
+        <a href="/api/auth/login" class="btn btn-primary">Sign in with GitHub</a>
+      </div>
 
       <div id="idea-msg" class="msg"></div>
 
@@ -290,22 +287,21 @@ try {
 } catch {}
 
 function init() {
-  document.getElementById('loading').style.display = 'none';
-
-  if (!currentUser) {
-    document.getElementById('signed-out').style.display = 'block';
-    return;
+  if (currentUser) {
+    document.getElementById('welcome-name').textContent = currentUser.name;
+    document.getElementById('res-username').textContent = currentUser.login;
+    document.getElementById('user-area').innerHTML =
+      '<div class="user-bar">' +
+      '<img src="' + currentUser.avatar + '" class="avatar" alt="">' +
+      '<span class="user-name">' + currentUser.login + '</span>' +
+      '<a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>' +
+      '</div>';
+    document.getElementById('signin-gate').style.display = 'none';
+  } else {
+    document.getElementById('welcome-name').textContent = 'developer';
+    document.getElementById('user-area').innerHTML =
+      '<a href="/api/auth/login" class="btn btn-primary btn-sm">Sign in with GitHub</a>';
   }
-
-  document.getElementById('portal').style.display = 'block';
-  document.getElementById('welcome-name').textContent = currentUser.name;
-  document.getElementById('res-username').textContent = currentUser.login;
-  document.getElementById('user-area').innerHTML =
-    '<div class="user-bar">' +
-    '<img src="' + currentUser.avatar + '" class="avatar" alt="">' +
-    '<span class="user-name">' + currentUser.login + '</span>' +
-    '<a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>' +
-    '</div>';
 }
 
 function showTab(name) {
