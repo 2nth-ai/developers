@@ -277,28 +277,25 @@ example here
 </footer>
 
 <script>
-let currentUser = null;
+// Session is injected server-side by functions/portal.js to avoid Bot Fight Mode
+let currentUser = window.__DEV_SESSION || null;
 
-async function init() {
-  const res = await fetch('/api/auth/session');
-  const { user } = await res.json();
-  currentUser = user;
-
+function init() {
   document.getElementById('loading').style.display = 'none';
 
-  if (!user) {
+  if (!currentUser) {
     document.getElementById('signed-out').style.display = 'block';
     return;
   }
 
   document.getElementById('portal').style.display = 'block';
-  document.getElementById('welcome-name').textContent = user.name;
-  document.getElementById('res-username').textContent = user.login;
+  document.getElementById('welcome-name').textContent = currentUser.name;
+  document.getElementById('res-username').textContent = currentUser.login;
   document.getElementById('user-area').innerHTML = `
     <div class="user-bar">
-      <img src="${user.avatar}" class="avatar" alt="">
-      <span class="user-name">${user.login}</span>
-      <button class="btn btn-outline btn-sm" onclick="logout()">Sign out</button>
+      <img src="${currentUser.avatar}" class="avatar" alt="">
+      <span class="user-name">${currentUser.login}</span>
+      <a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>
     </div>
   `;
 }
@@ -345,11 +342,6 @@ async function submitIdea(e) {
 
   btn.disabled = false;
   btn.textContent = 'Submit idea';
-}
-
-async function logout() {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  window.location.href = '/';
 }
 
 init();
