@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2nth.ai — Developer Portal</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#3f3f46;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="#skills">Skills</a>
+      <a href="#contribute">Contribute</a>
+      <a href="#release-cycle">Releases</a>
+      <a href="#licensing">Licensing</a>
+      <a href="https://github.com/2nth-ai/skills">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <h1>Build with 2nth.ai</h1>
+  <p class="lead">2nth.ai is an AI agent platform with 300+ skills across business, education, engineering, finance, legal, and health. Partners and developers contribute skills, integrations, and agents.</p>
+
+  <div class="section-nav">
+    <a href="#platform">Platform</a>
+    <a href="#skills">Skills</a>
+    <a href="#contribute">How to contribute</a>
+    <a href="#release-cycle">Release cycle</a>
+    <a href="#environments">Environments</a>
+    <a href="#licensing">Licensing</a>
+    <a href="#plans">Plans</a>
+  </div>
+
+  <!-- ─── PLATFORM ─────────────────────────────────────────── -->
+
+  <h2 id="platform">Platform overview</h2>
+
+  <p>The 2nth.ai platform is a collection of services that work together:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="tag">Public</div>
+      <h3>Skills Registry</h3>
+      <p>300+ AI agent skill definitions across 6 domains. Open-source documentation.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Platform</div>
+      <h3>Skills Hub</h3>
+      <p>Browse and demo live skills. Tier-gated access with token billing.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Platform</div>
+      <h3>Agents</h3>
+      <p>15+ domain agents including Penny (orchestrator). AI inference with token metering.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Platform</div>
+      <h3>Build Platform</h3>
+      <p>Project briefs, AI analysis, billing, and admin. Token-based pricing in ZAR.</p>
+    </div>
+  </div>
+
+  <h3>Single sign-on</h3>
+  <p>Sign in once at <code>2nth.ai</code> and you're authenticated across all subdomains — skills hub, agents, and the build platform. No separate accounts needed.</p>
+
+  <!-- ─── SKILLS ───────────────────────────────────────────── -->
+
+  <h2 id="skills">Skills</h2>
+
+  <p>Skills are the building blocks of the platform. Each skill is a documented AI capability with a standardised format.</p>
+
+  <h3>Domains</h3>
+
+  <table>
+    <thead>
+      <tr><th>Domain</th><th>Code</th><th>Examples</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Business</td><td><code>biz</code></td><td>HubSpot CRM, Shopify AI, Sage X3, Xero</td></tr>
+      <tr><td>Education</td><td><code>edu</code></td><td>Curriculum designer, research assistant</td></tr>
+      <tr><td>Engineering</td><td><code>tech</code></td><td>Ollama, code architecture, DevOps, security audit</td></tr>
+      <tr><td>Finance</td><td><code>fin</code></td><td>Cash flow forecaster, financial modelling</td></tr>
+      <tr><td>Legal</td><td><code>leg</code></td><td>Contract review, compliance checker</td></tr>
+      <tr><td>Health</td><td><code>health</code></td><td>Practitioner copilot, nutrition advisor, booking</td></tr>
+    </tbody>
+  </table>
+
+  <h3>SKILL.md format</h3>
+
+  <p>Every skill has a <code>SKILL.md</code> file with YAML frontmatter and structured markdown:</p>
+
+  <pre><code>---
+name: Your Skill Name
+domain: tech
+tier: explorer
+version: 1.0.0
+status: active
+contributor: your-github-handle
+contributor_type: community
+license: CC-BY-SA-4.0
+platform_license: 2nth-platform-v1
+revenue_share: 5
+tags: [tech, integration]
+---
+
+# Skill Name — Domain
+
+Brief description.
+
+## What it does
+
+1. Capability one
+2. Capability two
+
+## Configuration options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+
+## Example output
+
+```json
+{ "example": "output" }
+```</code></pre>
+
+  <h3>Required frontmatter fields</h3>
+
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>string</td><td>Human-readable skill name</td></tr>
+      <tr><td><code>domain</code></td><td>string</td><td>tech, biz, edu, fin, leg, health</td></tr>
+      <tr><td><code>tier</code></td><td>string</td><td>Minimum plan: explorer, starter, designer, builder</td></tr>
+      <tr><td><code>version</code></td><td>semver</td><td>e.g. 1.0.0</td></tr>
+      <tr><td><code>status</code></td><td>enum</td><td>draft, beta, active, deprecated</td></tr>
+      <tr><td><code>contributor</code></td><td>string</td><td>GitHub handle</td></tr>
+      <tr><td><code>contributor_type</code></td><td>enum</td><td>core, partner, community</td></tr>
+      <tr><td><code>license</code></td><td>string</td><td>CC-BY-SA-4.0</td></tr>
+      <tr><td><code>revenue_share</code></td><td>number</td><td>0-30 (percentage)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── CONTRIBUTE ───────────────────────────────────────── -->
+
+  <h2 id="contribute">How to contribute</h2>
+
+  <h3>Contributing skills (anyone)</h3>
+
+  <p>The <a href="https://github.com/2nth-ai/skills">skills repo</a> is public. Fork it, add your skill, and open a PR.</p>
+
+  <ol>
+    <li>Fork <code>2nth-ai/skills</code></li>
+    <li>Create your skill directory: <code>tech/your-skill-name/</code></li>
+    <li>Write <code>SKILL.md</code> with the frontmatter above</li>
+    <li>Open a PR targeting <code>dev</code></li>
+    <li>CI validates your frontmatter</li>
+    <li>Team reviews and merges</li>
+  </ol>
+
+  <h3>Contributing code (partners)</h3>
+
+  <ol>
+    <li>Sign the partner agreement</li>
+    <li>Get org access (outside collaborator)</li>
+    <li>Create a <code>partner/</code> branch from <code>dev</code></li>
+    <li>Open a PR targeting <code>dev</code></li>
+    <li>CI checks run automatically</li>
+    <li>Team reviews your code</li>
+    <li>After merge, changes deploy to the dev environment for testing</li>
+  </ol>
+
+  <h3>Branch naming</h3>
+
+  <table>
+    <thead>
+      <tr><th>Prefix</th><th>Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>feature/</code></td><td>New functionality</td></tr>
+      <tr><td><code>fix/</code></td><td>Bug fixes</td></tr>
+      <tr><td><code>security/</code></td><td>Security patches (fast-track)</td></tr>
+      <tr><td><code>skill/</code></td><td>New or updated skill definitions</td></tr>
+      <tr><td><code>partner/</code></td><td>Partner-contributed features</td></tr>
+    </tbody>
+  </table>
+
+  <h3>What we review for</h3>
+
+  <ul>
+    <li><strong>Security</strong> — auth, input validation, injection prevention</li>
+    <li><strong>Correctness</strong> — does it work as described?</li>
+    <li><strong>Simplicity</strong> — is this the simplest solution?</li>
+    <li><strong>Cross-service impact</strong> — does it break other subdomains?</li>
+  </ul>
+
+  <!-- ─── RELEASE CYCLE ────────────────────────────────────── -->
+
+  <h2 id="release-cycle">Release cycle</h2>
+
+  <p>Code flows through three environments before reaching production:</p>
+
+  <div class="flow">
+    <div class="flow-step">Feature branch</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step active">dev</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">beta</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">main (production)</div>
+  </div>
+
+  <h3>Quality gates</h3>
+
+  <table>
+    <thead>
+      <tr><th>Gate</th><th>dev</th><th>beta</th><th>production</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ESLint / TypeScript</td><td>Required</td><td>Required</td><td>Required</td></tr>
+      <tr><td>PR review</td><td>1 approval</td><td>1 approval</td><td>1 approval (core team)</td></tr>
+      <tr><td>Partner testing</td><td>—</td><td>Recommended</td><td>Required (min 3 days)</td></tr>
+      <tr><td>Security review</td><td>—</td><td>—</td><td>Required for auth/billing</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Versioning</h3>
+
+  <pre><code>v0.X.Y[-beta.N]
+
+v0   — pre-1.0 (current phase)
+X    — feature release
+Y    — patch release
+-beta.N — beta pre-release</code></pre>
+
+  <!-- ─── ENVIRONMENTS ─────────────────────────────────────── -->
+
+  <h2 id="environments">Environments</h2>
+
+  <table>
+    <thead>
+      <tr><th>Environment</th><th>Branch</th><th>URL pattern</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-cyan">Dev</span></td><td><code>dev</code></td><td><code>dev.*.pages.dev</code></td><td>Active development, may break</td></tr>
+      <tr><td><span class="badge badge-amber">Beta</span></td><td><code>beta</code></td><td><code>beta.*.pages.dev</code></td><td>Partner testing, feature-complete</td></tr>
+      <tr><td><span class="badge badge-green">Production</span></td><td><code>main</code></td><td><code>*.2nth.ai</code></td><td>Live users, stable only</td></tr>
+    </tbody>
+  </table>
+
+  <p>Each push to a branch auto-deploys to its environment. Pull requests get their own preview URL for code review.</p>
+
+  <!-- ─── LICENSING ────────────────────────────────────────── -->
+
+  <h2 id="licensing">Licensing</h2>
+
+  <p>2nth.ai uses a dual-layer licensing model:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="tag">Open</div>
+      <h3>Skills documentation</h3>
+      <p>CC BY-SA 4.0 — read, copy, share, adapt with attribution. Fork and build on any skill definition.</p>
+    </div>
+    <div class="card">
+      <div class="tag">Commercial</div>
+      <h3>Platform execution</h3>
+      <p>Token-metered access to agents, AI inference, and infrastructure. Usage tracked per skill invocation.</p>
+    </div>
+  </div>
+
+  <h3>Contributor tiers</h3>
+
+  <table>
+    <thead>
+      <tr><th>Tier</th><th>Who</th><th>Revenue share</th><th>Requirements</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Core</strong></td><td>2nth.ai team</td><td>N/A</td><td>Internal</td></tr>
+      <tr><td><strong>Partner</strong></td><td>Contracted partners</td><td>10-30%</td><td>Partner agreement + code review</td></tr>
+      <tr><td><strong>Community</strong></td><td>Open contributors</td><td>5%</td><td>PR accepted, skill active 30+ days</td></tr>
+    </tbody>
+  </table>
+
+  <h3>What you keep</h3>
+
+  <ul>
+    <li>Copyright of your original skill content</li>
+    <li>Revenue share based on actual skill usage</li>
+    <li>Right to withdraw skills with 30 days notice</li>
+    <li>Output generated by your skills belongs to the user</li>
+  </ul>
+
+  <!-- ─── PLANS ────────────────────────────────────────────── -->
+
+  <h2 id="plans">Plans & tokens</h2>
+
+  <p>Tokens are the universal unit of work — they cover AI inference, build cycles, and infrastructure.</p>
+
+  <table>
+    <thead>
+      <tr><th>Plan</th><th>Tokens</th><th>Price (ZAR)</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-cyan">Explorer</span></td><td>50K</td><td>Free</td><td>Try the platform, submit a brief</td></tr>
+      <tr><td><span class="badge badge-green">Starter</span></td><td>500K</td><td>R1,850</td><td>Landing page, small feature</td></tr>
+      <tr><td><span class="badge badge-amber">Designer</span></td><td>3M</td><td>R9,250</td><td>Web app, brand system</td></tr>
+      <tr><td><span class="badge badge-green">Builder</span></td><td>8M</td><td>R18,500</td><td>Full SaaS MVP, cross-pillar product</td></tr>
+    </tbody>
+  </table>
+
+  <p>All plans access all skills. Higher tiers get more tokens, priority inference, and dedicated support.</p>
+
+  <!-- ─── GET STARTED ──────────────────────────────────────── -->
+
+  <h2 id="start">Get started</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Browse skills</h3>
+      <p>Explore 300+ skills in the public registry.</p>
+      <p><a href="https://github.com/2nth-ai/skills">github.com/2nth-ai/skills</a></p>
+    </div>
+    <div class="card">
+      <h3>Try the platform</h3>
+      <p>Sign up for free — 50K tokens, no card required.</p>
+      <p><a href="https://2nth.ai/join.html">2nth.ai/join</a></p>
+    </div>
+    <div class="card">
+      <h3>Become a partner</h3>
+      <p>Contribute skills, earn revenue share.</p>
+      <p><a href="mailto:craig@2nth.ai">Contact us</a></p>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai — from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
