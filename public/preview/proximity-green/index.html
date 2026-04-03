@@ -116,22 +116,9 @@
       .cta-section{padding:32px 20px}
     }
   </style>
+  <script src="/gate.js"></script>
 </head>
 <body>
-
-<!-- Access gate -->
-<div id="access-gate" class="gate-overlay">
-  <div class="gate-card">
-    <div style="width:48px;height:48px;border-radius:12px;background:var(--pg-green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-    </div>
-    <h2>Proximity Green</h2>
-    <p>This is a partner preview. Enter your authorised email to access the skills hub.</p>
-    <input type="email" id="gate-email" class="gate-input" placeholder="you@proximity.green" onkeydown="if(event.key==='Enter')checkAccess()">
-    <div id="gate-error" class="gate-error">This email is not authorised. Contact your Proximity Green admin.</div>
-    <button onclick="checkAccess()" class="btn btn-green" style="width:100%;justify-content:center">Access skills hub</button>
-  </div>
-</div>
 
 <header>
   <div class="container">
@@ -562,33 +549,6 @@
 </footer>
 
 <script>
-// Access gate — allowed emails (simple hash check)
-var ALLOWED = [
-  'craig@proximity.green',
-  'mark@proximity.green',
-  'craig@2nth.ai',
-  'craig@imbila.ai'
-];
-
-function checkAccess() {
-  var email = document.getElementById('gate-email').value.trim().toLowerCase();
-  if (ALLOWED.indexOf(email) !== -1) {
-    localStorage.setItem('pg_access', email);
-    document.getElementById('access-gate').style.display = 'none';
-  } else {
-    document.getElementById('gate-error').style.display = 'block';
-    document.getElementById('gate-email').style.borderColor = '#dc2626';
-  }
-}
-
-// Check if already authorised
-(function() {
-  var stored = localStorage.getItem('pg_access');
-  if (stored && ALLOWED.indexOf(stored) !== -1) {
-    document.getElementById('access-gate').style.display = 'none';
-  }
-})();
-
 function filterSkills(cat) {
   var cards = document.querySelectorAll('.skill-card');
   cards.forEach(function(card) {
