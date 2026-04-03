@@ -3,10 +3,7 @@
 // Set window.GATE_RETURN_PATH before including, or it defaults to the current page.
 
 (async function () {
-  const returnTo = encodeURIComponent(
-    window.location.origin + (window.GATE_RETURN_PATH || window.location.pathname)
-  );
-  const signInUrl = 'https://2nth.ai/?return=' + returnTo;
+  const signInUrl = '/?return=' + encodeURIComponent(window.location.pathname);
 
   try {
     const res = await fetch('/api/auth/session', { credentials: 'include' });

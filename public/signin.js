@@ -62,7 +62,8 @@ function verifyCode() {
   .then(function(res) { return res.json().then(function(data) { return { res: res, data: data }; }); })
   .then(function(r) {
     if (!r.res.ok || !r.data.ok) throw new Error(r.data.error || 'Invalid code');
-    window.location.href = '/portal.html';
+    var params = new URLSearchParams(window.location.search);
+    window.location.href = params.get('return') || '/portal.html';
   })
   .catch(function(e) {
     showMsg(e.message, 'err');

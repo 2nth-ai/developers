@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
-
   <style>
     .user-bar{display:flex;align-items:center;gap:12px}
     .avatar{width:32px;height:32px;border-radius:50%;border:2px solid #e4e4e7}
@@ -21,8 +20,8 @@
     .step-list li{counter-increment:steps;position:relative;padding:16px 16px 16px 56px;margin-bottom:12px;background:#fff;border:1px solid #e4e4e7;border-radius:8px}
     .step-list li::before{content:counter(steps);position:absolute;left:16px;top:16px;width:28px;height:28px;border-radius:50%;background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.25);color:#0891b2;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
     .step-list li strong{color:#18181b;display:block;margin-bottom:4px}
-    .tab-bar{display:flex;gap:0;border-bottom:2px solid #e4e4e7;margin-bottom:32px}
-    .tab{padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+    .tab-bar{display:flex;gap:0;border-bottom:2px solid #e4e4e7;margin-bottom:32px;overflow-x:auto}
+    .tab{padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
     .tab:hover{color:#52525b}
     .tab.active{color:#0891b2;border-bottom-color:#0891b2}
     .tab-content{display:none}.tab-content.active{display:block}
@@ -38,10 +37,16 @@
     .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:24px 0}
     .quick-link{display:flex;align-items:center;gap:12px;padding:16px;background:#fff;border:1px solid #e4e4e7;border-radius:8px;text-decoration:none;color:#18181b;transition:all .15s}
     .quick-link:hover{border-color:#0891b2;text-decoration:none;box-shadow:0 2px 8px rgba(8,145,178,.06)}
-    .quick-link .icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(8,145,178,.06);border-radius:6px}
+    .quick-link .icon{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(8,145,178,.06);border-radius:6px;flex-shrink:0}
     .quick-link .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a}
     .quick-link .title{font-size:14px;font-weight:600}
-    .loading{text-align:center;padding:60px;color:#a1a1aa}
+    .partner-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:24px 0}
+    .partner-card{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:20px;text-decoration:none;color:#18181b;transition:all .15s;display:block}
+    .partner-card:hover{border-color:#0891b2;box-shadow:0 2px 12px rgba(8,145,178,.08);text-decoration:none}
+    .partner-card .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;margin-bottom:8px}
+    .partner-card h3{font-size:16px;font-weight:700;margin:0 0 6px;color:#18181b}
+    .partner-card p{font-size:13px;color:#71717a;margin:0 0 12px;line-height:1.5}
+    .partner-card .cta{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#0891b2}
   </style>
 </head>
 <body>
@@ -55,20 +60,19 @@
 
 <main>
 <div class="container">
-
   <div id="portal">
 
     <h1>Developer Portal</h1>
 
     <div class="tab-bar">
-      <div class="tab active" onclick="showTab('start')">Get started</div>
-      <div class="tab" onclick="showTab('ideas')">Submit idea</div>
-      <div class="tab" onclick="showTab('contribute')">Contribute</div>
-      <div class="tab" onclick="showTab('resources')">Resources</div>
+      <div class="tab active" data-tab="start">Get started</div>
+      <div class="tab" data-tab="showcase">Showcase</div>
+      <div class="tab" data-tab="ideas">Submit idea</div>
+      <div class="tab" data-tab="contribute">Contribute</div>
+      <div class="tab" data-tab="resources">Resources</div>
     </div>
 
     <!-- ─── GET STARTED ──────────────────────────────────── -->
-
     <div id="tab-start" class="tab-content active">
       <h2 style="border:none;margin-top:0;padding-top:0">Welcome, <span id="welcome-name"></span></h2>
       <p>Here's how to start contributing to the 2nth.ai platform.</p>
@@ -83,11 +87,11 @@
           <div class="icon">&#128218;</div>
           <div><div class="label">Browse</div><div class="title">Explore 300+ skills</div></div>
         </a>
-        <a href="https://2nth.ai/join.html" target="_blank" class="quick-link">
+        <a href="/vision.html" class="quick-link">
           <div class="icon">&#9889;</div>
-          <div><div class="label">Try it</div><div class="title">Get 50K free tokens</div></div>
+          <div><div class="label">Vision</div><div class="title">Platform roadmap</div></div>
         </a>
-        <a href="/" class="quick-link">
+        <a href="/docs.html" class="quick-link">
           <div class="icon">&#128196;</div>
           <div><div class="label">Learn</div><div class="title">Read the docs</div></div>
         </a>
@@ -105,7 +109,7 @@
         </li>
         <li>
           <strong>Write your SKILL.md</strong>
-          Include the YAML frontmatter (name, domain, tier, version, contributor) and document what the skill does, configuration options, and example output. See the <a href="/#skills">format guide</a>.
+          Include the YAML frontmatter (name, domain, tier, version, contributor) and document what the skill does, configuration options, and example output. See the <a href="/docs.html">format guide</a>.
         </li>
         <li>
           <strong>Open a pull request</strong>
@@ -118,38 +122,59 @@
       </ol>
     </div>
 
-    <!-- ─── SUBMIT IDEA ──────────────────────────────────── -->
+    <!-- ─── SHOWCASE ─────────────────────────────────────── -->
+    <div id="tab-showcase" class="tab-content">
+      <h2 style="border:none;margin-top:0;padding-top:0">Partner showcase</h2>
+      <p>Live deployments built on the 2nth.ai platform. Each partner hub is a branded instance of the skills engine.</p>
 
+      <div class="partner-grid">
+        <a href="/partners/agilex.html" class="partner-card">
+          <div class="tag">PropTech · Project Management</div>
+          <h3>AgilEx</h3>
+          <p>AI-powered project management for construction and property development. Skills for scheduling, compliance, and site reporting.</p>
+          <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/partners/gridlineprop.html" class="partner-card">
+          <div class="tag">Real Estate · Analytics</div>
+          <h3>GridLineProp</h3>
+          <p>Property analytics and market intelligence hub. Valuation models, rental yield calculators, and market trend skills.</p>
+          <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/partners/scanman.html" class="partner-card">
+          <div class="tag">Field Operations · IoT</div>
+          <h3>ScanMan</h3>
+          <p>Field asset scanning and inspection workflow automation. Integrates with IoT sensors and drone data feeds.</p>
+          <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/partners/proximity-green.html" class="partner-card">
+          <div class="tag">Sustainability · ESG</div>
+          <h3>Proximity Green</h3>
+          <p>ESG reporting and sustainability skills for property portfolios. Carbon tracking, green certification guidance.</p>
+          <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/partners/dronescan.html" class="partner-card">
+          <div class="tag">Aerial · Inspection</div>
+          <h3>DroneScan</h3>
+          <p>Drone survey analysis and automated inspection reporting. AI-powered defect detection and site mapping skills.</p>
+          <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/vision.html" class="partner-card" style="border-style:dashed;background:#fafafa">
+          <div class="tag">Coming soon</div>
+          <h3>Your hub here</h3>
+          <p>Build a branded AI skills hub for your industry. Revenue share from day one.</p>
+          <div class="cta">Read the vision &rarr;</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ─── SUBMIT IDEA ──────────────────────────────────── -->
     <div id="tab-ideas" class="tab-content">
       <h2 style="border:none;margin-top:0;padding-top:0">Submit an idea</h2>
       <p>Have an idea for a new skill, integration, or platform improvement? Submit it here and the team will review it.</p>
 
-      <div id="signin-gate" style="background:#fff;border:1px solid #e4e4e7;border-radius:8px;padding:24px;text-align:center;margin-bottom:24px">
-        <p style="margin-bottom:16px;color:#52525b">Sign in to submit ideas</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-          <a href="/api/auth/login" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:6px">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-            GitHub
-          </a>
-          <button onclick="showEmailSignin()" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:6px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Email
-          </button>
-        </div>
-        <div id="email-signin" style="display:none;margin-top:20px;text-align:left">
-          <div class="form-group" style="margin-bottom:12px">
-            <label>Email address</label>
-            <input type="email" id="signin-email" placeholder="you@company.com">
-          </div>
-          <div id="signin-msg" class="msg"></div>
-          <button onclick="sendMagicLink()" class="btn btn-primary" id="signin-btn" style="width:100%">Send sign-in link</button>
-          <p style="font-size:12px;color:#a1a1aa;margin-top:8px;text-align:center">We'll email you a magic link. No password needed.</p>
-        </div>
-      </div>
-
       <div id="idea-msg" class="msg"></div>
 
-      <form id="idea-form" onsubmit="submitIdea(event)">
+      <form id="idea-form">
         <div class="form-group">
           <label>Title</label>
           <input type="text" id="idea-title" placeholder="e.g. Slack notification skill for project updates" required>
@@ -173,7 +198,6 @@
     </div>
 
     <!-- ─── CONTRIBUTE ───────────────────────────────────── -->
-
     <div id="tab-contribute" class="tab-content">
       <h2 style="border:none;margin-top:0;padding-top:0">Contribution guide</h2>
 
@@ -203,7 +227,7 @@
         <thead><tr><th>Tier</th><th>Share</th><th>Requirements</th></tr></thead>
         <tbody>
           <tr><td>Community</td><td>5%</td><td>PR accepted, skill active 30+ days</td></tr>
-          <tr><td>Partner</td><td>10-30%</td><td>Partner agreement + code review</td></tr>
+          <tr><td>Partner</td><td>10–30%</td><td>Partner agreement + code review</td></tr>
         </tbody>
       </table>
 
@@ -212,12 +236,11 @@
     </div>
 
     <!-- ─── RESOURCES ────────────────────────────────────── -->
-
     <div id="tab-resources" class="tab-content">
       <h2 style="border:none;margin-top:0;padding-top:0">Resources</h2>
 
       <div class="quick-links">
-        <a href="/" class="quick-link">
+        <a href="/docs.html" class="quick-link">
           <div class="icon">&#128214;</div>
           <div><div class="label">Docs</div><div class="title">Platform documentation</div></div>
         </a>
@@ -229,9 +252,9 @@
           <div class="icon">&#128203;</div>
           <div><div class="label">Track</div><div class="title">Roadmap board</div></div>
         </a>
-        <a href="https://2nth.ai" target="_blank" class="quick-link">
-          <div class="icon">&#127968;</div>
-          <div><div class="label">Platform</div><div class="title">2nth.ai main site</div></div>
+        <a href="/vision.html" class="quick-link">
+          <div class="icon">&#127759;</div>
+          <div><div class="label">Vision</div><div class="title">Platform roadmap</div></div>
         </a>
       </div>
 
@@ -242,7 +265,7 @@ domain: tech
 tier: explorer
 version: 1.0.0
 status: draft
-contributor: <span id="res-username">your-github-handle</span>
+contributor: <span id="res-username">your-handle</span>
 contributor_type: community
 license: CC-BY-SA-4.0
 platform_license: 2nth-platform-v1
@@ -288,138 +311,11 @@ example here
 
 <footer>
   <div class="container">
-    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a> &middot; <a href="/vision.html">Vision</a> &middot; <a href="/docs.html">Docs</a></p>
   </div>
 </footer>
 
-<script>
-// Read session from JS-readable dev_user cookie — no fetch needed
-function getCookie(name) {
-  const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-  return match ? match[1] : null;
-}
-
-let currentUser = null;
-try {
-  const raw = getCookie('dev_user');
-  if (raw) currentUser = JSON.parse(atob(decodeURIComponent(raw)));
-} catch {}
-
-function init() {
-  if (currentUser) {
-    document.getElementById('welcome-name').textContent = currentUser.name;
-    document.getElementById('res-username').textContent = currentUser.login;
-    document.getElementById('user-area').innerHTML =
-      '<div class="user-bar">' +
-      '<img src="' + currentUser.avatar + '" class="avatar" alt="">' +
-      '<span class="user-name">' + currentUser.login + '</span>' +
-      '<a href="/api/auth/logout" class="btn btn-outline btn-sm">Sign out</a>' +
-      '</div>';
-    document.getElementById('signin-gate').style.display = 'none';
-  } else {
-    document.getElementById('welcome-name').textContent = 'developer';
-    document.getElementById('user-area').innerHTML =
-      '<a href="/api/auth/login" class="btn btn-primary btn-sm">Sign in</a>';
-  }
-}
-
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
-}
-
-function submitIdea(e) {
-  e.preventDefault();
-  var msg = document.getElementById('idea-msg');
-  var btn = document.getElementById('idea-submit');
-  msg.className = 'msg';
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
-
-  var body = JSON.stringify({
-    title: document.getElementById('idea-title').value,
-    type: document.getElementById('idea-type').value,
-    description: document.getElementById('idea-desc').value,
-  });
-
-  fetch('/api/ideas', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: body,
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (data.success) {
-      msg.className = 'msg show msg-success';
-      msg.innerHTML = 'Idea submitted! <a href="' + data.issue_url + '" target="_blank">View on GitHub &rarr;</a>';
-      document.getElementById('idea-form').reset();
-    } else {
-      msg.className = 'msg show msg-error';
-      msg.textContent = data.error || 'Failed to submit.';
-    }
-    btn.disabled = false;
-    btn.textContent = 'Submit idea';
-  })
-  .catch(function() {
-    msg.className = 'msg show msg-error';
-    msg.textContent = 'Network error. Try again.';
-    btn.disabled = false;
-    btn.textContent = 'Submit idea';
-  });
-}
-
-function showEmailSignin() {
-  var el = document.getElementById('email-signin');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-  if (el.style.display === 'block') document.getElementById('signin-email').focus();
-}
-
-function sendMagicLink() {
-  var email = document.getElementById('signin-email').value.trim();
-  var msg = document.getElementById('signin-msg');
-  var btn = document.getElementById('signin-btn');
-  if (!email || email.indexOf('@') === -1) {
-    msg.className = 'msg show msg-error';
-    msg.textContent = 'Enter a valid email address.';
-    return;
-  }
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  msg.className = 'msg';
-
-  fetch('https://2nth.ai/api/auth/send-magic-link', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, returnTo: window.location.href }),
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
-    if (data.error) {
-      msg.className = 'msg show msg-error';
-      msg.textContent = data.error;
-    } else {
-      msg.className = 'msg show msg-success';
-      msg.textContent = 'Check your email for the sign-in link.';
-    }
-    btn.disabled = false;
-    btn.textContent = 'Send sign-in link';
-  })
-  .catch(function() {
-    msg.className = 'msg show msg-success';
-    msg.textContent = 'Check your email for the sign-in link.';
-    btn.disabled = false;
-    btn.textContent = 'Send sign-in link';
-  });
-}
-
-// Allow Enter key on email field
-document.getElementById('signin-email').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { e.preventDefault(); sendMagicLink(); }
-});
-
-init();
-</script>
+<script src="/gate.js"></script>
+<script src="/portal.js"></script>
 </body>
 </html>
