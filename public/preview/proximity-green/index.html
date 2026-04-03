@@ -349,12 +349,186 @@
   </div>
 </div>
 
-<!-- CTA -->
-<div class="container">
-  <div class="cta-section">
-    <h2>Start managing your spaces with AI</h2>
-    <p>Get 50,000 free tokens to explore skills. No credit card required.</p>
-    <a href="https://2nth.ai/join.html" class="btn btn-green" style="font-size:14px;padding:12px 28px">Get started free</a>
+<!-- Lead registration -->
+<div class="section" id="register">
+  <div class="container">
+    <div class="section-title">Get started</div>
+    <h2>Register your space</h2>
+    <p>Tell us about your operation and we'll set up your AI-managed workspace. Free to explore — no credit card required.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start">
+
+      <!-- Registration form -->
+      <div style="background:#fff;border:1px solid var(--pg-border);border-radius:12px;padding:28px">
+        <div id="reg-msg" style="padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none"></div>
+
+        <div id="reg-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Name</label>
+              <input type="text" id="r-name" placeholder="Your name" required style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--pg-green)'" onblur="this.style.borderColor=''">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Company</label>
+              <input type="text" id="r-company" placeholder="Company name" required style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--pg-green)'" onblur="this.style.borderColor=''">
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Work email</label>
+            <input type="email" id="r-email" placeholder="you@company.com" required style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--pg-green)'" onblur="this.style.borderColor=''">
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Phone</label>
+            <input type="tel" id="r-phone" placeholder="+27 XX XXX XXXX" style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--pg-green)'" onblur="this.style.borderColor=''">
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Space type</label>
+              <select id="r-space" style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;background:#fff">
+                <option value="coworking">Coworking / flex office</option>
+                <option value="student">Student accommodation</option>
+                <option value="corporate">Corporate campus</option>
+                <option value="sports">Sports & recreation</option>
+                <option value="ev">EV infrastructure</option>
+                <option value="mixed">Mixed portfolio</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Number of sites</label>
+              <select id="r-sites" style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;background:#fff">
+                <option value="1">1 site</option>
+                <option value="2-5">2–5 sites</option>
+                <option value="6-10">6–10 sites</option>
+                <option value="10+">10+ sites</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">Country</label>
+            <select id="r-country" style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;background:#fff">
+              <option value="ZA">South Africa</option>
+              <option value="RW">Rwanda</option>
+              <option value="MU">Mauritius</option>
+              <option value="KE">Kenya</option>
+              <option value="NG">Nigeria</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--pg-muted);margin-bottom:5px">What are you looking to solve?</label>
+            <textarea id="r-needs" rows="3" placeholder="e.g. We need better occupancy tracking across 4 coworking locations in Cape Town..." style="width:100%;padding:10px 14px;border:1px solid var(--pg-border);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;color:var(--pg-dark);outline:none;resize:vertical;transition:border-color .15s" onfocus="this.style.borderColor='var(--pg-green)'" onblur="this.style.borderColor=''"></textarea>
+          </div>
+
+          <button onclick="submitRegistration()" id="r-submit" class="btn btn-green" style="width:100%;justify-content:center;font-size:13px;padding:12px">Register &amp; explore skills</button>
+          <p style="font-size:11px;color:var(--pg-muted);text-align:center;margin-top:10px">Free explorer account with 50,000 AI tokens. No card required.</p>
+        </div>
+      </div>
+
+      <!-- What happens next -->
+      <div>
+        <div style="background:#fff;border:1px solid var(--pg-border);border-radius:12px;padding:24px;margin-bottom:16px">
+          <h3 style="font-size:14px;font-weight:700;color:var(--pg-dark);margin:0 0 16px">What happens next</h3>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--pg-green-light);color:var(--pg-green);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+              <div><div style="font-size:13px;font-weight:600;color:var(--pg-dark)">Instant access</div><div style="font-size:12px;color:var(--pg-muted)">Explore all skills with your free 50K tokens</div></div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--pg-green-light);color:var(--pg-green);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+              <div><div style="font-size:13px;font-weight:600;color:var(--pg-dark)">Discovery call</div><div style="font-size:12px;color:var(--pg-muted)">We review your needs and recommend a skills package</div></div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--pg-green-light);color:var(--pg-green);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+              <div><div style="font-size:13px;font-weight:600;color:var(--pg-dark)">Configuration</div><div style="font-size:12px;color:var(--pg-muted)">Connect your ERP, set up governance rules, map your sites</div></div>
+            </div>
+            <div style="display:flex;gap:12px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--pg-green-light);color:var(--pg-green);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>
+              <div><div style="font-size:13px;font-weight:600;color:var(--pg-dark)">Go live</div><div style="font-size:12px;color:var(--pg-muted)">AI skills managing your spaces within 2 weeks</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid var(--pg-border);border-radius:12px;padding:24px">
+          <h3 style="font-size:14px;font-weight:700;color:var(--pg-dark);margin:0 0 12px">Trusted by</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--pg-warm);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--pg-muted)">W17</div>
+              <div><span style="font-weight:600;color:var(--pg-dark)">Workshop17</span><span style="color:var(--pg-muted)"> — 16+ locations, South Africa</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+              <div style="width:32px;height:32px;border-radius:6px;background:var(--pg-warm);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--pg-muted)">KO</div>
+              <div><span style="font-weight:600;color:var(--pg-dark)">KOFISI Africa</span><span style="color:var(--pg-muted)"> — East Africa expansion</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Lead processing pipeline (shows how PG manages their leads) -->
+<div class="section" id="pipeline" style="background:#fff;border-top:1px solid var(--pg-border);border-bottom:1px solid var(--pg-border)">
+  <div class="container">
+    <div class="section-title">Lead processing</div>
+    <h2>How Proximity Green manages enquiries</h2>
+    <p>Every registration flows through an automated pipeline — from first touch to active customer.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin:24px 0;border-radius:12px;overflow:hidden">
+      <div style="background:var(--pg-green-light);padding:16px 12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--pg-green-dark)">Lead</div>
+        <div style="font-size:11px;color:var(--pg-green);margin-top:4px;font-weight:600">Registration</div>
+        <div style="font-size:10px;color:var(--pg-muted);margin-top:6px">Form submitted, 50K tokens granted</div>
+      </div>
+      <div style="background:#dbeafe;padding:16px 12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:#1e40af">Qualify</div>
+        <div style="font-size:11px;color:#2563eb;margin-top:4px;font-weight:600">Auto-scored</div>
+        <div style="font-size:10px;color:var(--pg-muted);margin-top:6px">Sites, space type, country scored</div>
+      </div>
+      <div style="background:#fef3c7;padding:16px 12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:#92400e">Demo</div>
+        <div style="font-size:11px;color:#d97706;margin-top:4px;font-weight:600">Discovery call</div>
+        <div style="font-size:10px;color:var(--pg-muted);margin-top:6px">Skills demo, needs assessment</div>
+      </div>
+      <div style="background:#f3e8ff;padding:16px 12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:#6b21a8">Config</div>
+        <div style="font-size:11px;color:#7c3aed;margin-top:4px;font-weight:600">Setup</div>
+        <div style="font-size:10px;color:var(--pg-muted);margin-top:6px">ERP connect, site mapping, policies</div>
+      </div>
+      <div style="background:var(--pg-green);padding:16px 12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:#fff">Live</div>
+        <div style="font-size:11px;color:var(--pg-green-light);margin-top:4px;font-weight:600">Active customer</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.7);margin-top:6px">AI skills running, tokens billing</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px">
+      <div style="background:var(--pg-warm);border-radius:10px;padding:20px">
+        <h3 style="font-size:14px;font-weight:700;color:var(--pg-dark);margin:0 0 10px">Automated actions</h3>
+        <ul style="font-size:13px;color:var(--pg-muted);list-style:none;padding:0;margin:0">
+          <li style="padding:4px 0">&#9889; Lead score calculated from registration data</li>
+          <li style="padding:4px 0">&#9889; Welcome email with platform access link</li>
+          <li style="padding:4px 0">&#9889; CRM stage auto-advances on first skill usage</li>
+          <li style="padding:4px 0">&#9889; Discovery call auto-scheduled for qualified leads</li>
+          <li style="padding:4px 0">&#9889; Skill usage tracked for revenue forecasting</li>
+        </ul>
+      </div>
+      <div style="background:var(--pg-warm);border-radius:10px;padding:20px">
+        <h3 style="font-size:14px;font-weight:700;color:var(--pg-dark);margin:0 0 10px">Integration points</h3>
+        <ul style="font-size:13px;color:var(--pg-muted);list-style:none;padding:0;margin:0">
+          <li style="padding:4px 0">&#128204; Dynamics 365 — contract and invoice sync</li>
+          <li style="padding:4px 0">&#128204; Xero — automated billing reconciliation</li>
+          <li style="padding:4px 0">&#128204; Governance engine — policy auto-provisioning</li>
+          <li style="padding:4px 0">&#128204; Event ledger — full audit trail from day one</li>
+          <li style="padding:4px 0">&#128204; 2nth.ai — token billing and skill usage analytics</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -375,17 +549,72 @@ function filterSkills(cat) {
       card.style.display = 'none';
     }
   });
-
-  // Highlight selected category
   document.querySelectorAll('.cat-card').forEach(function(c) {
     c.style.borderColor = '';
     c.style.background = '';
   });
   event.currentTarget.style.borderColor = 'var(--pg-green)';
   event.currentTarget.style.background = 'var(--pg-green-light)';
-
-  // Scroll to skills
   document.getElementById('skills').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function submitRegistration() {
+  var msg = document.getElementById('reg-msg');
+  var btn = document.getElementById('r-submit');
+  var name = document.getElementById('r-name').value.trim();
+  var company = document.getElementById('r-company').value.trim();
+  var email = document.getElementById('r-email').value.trim();
+
+  if (!name || !company || !email) {
+    msg.style.display = 'block';
+    msg.style.background = 'rgba(220,38,38,.06)';
+    msg.style.border = '1px solid rgba(220,38,38,.15)';
+    msg.style.color = '#dc2626';
+    msg.textContent = 'Please fill in your name, company, and email.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Registering...';
+  msg.style.display = 'none';
+
+  var data = {
+    name: name,
+    company: company,
+    email: email,
+    phone: document.getElementById('r-phone').value,
+    space_type: document.getElementById('r-space').value,
+    sites: document.getElementById('r-sites').value,
+    country: document.getElementById('r-country').value,
+    needs: document.getElementById('r-needs').value,
+    partner: 'proximity-green',
+    interest: 'customer-registration',
+  };
+
+  fetch('/api/enquiry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  .then(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'var(--pg-green-light)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = 'var(--pg-green-dark)';
+    msg.innerHTML = '<strong>You\'re registered!</strong> Check your email for your access link. Your 50,000 AI tokens are ready to use.';
+    document.getElementById('reg-form').style.display = 'none';
+    btn.disabled = false;
+    btn.textContent = 'Register & explore skills';
+  })
+  .catch(function() {
+    msg.style.display = 'block';
+    msg.style.background = 'var(--pg-green-light)';
+    msg.style.border = '1px solid rgba(5,150,105,.2)';
+    msg.style.color = 'var(--pg-green-dark)';
+    msg.innerHTML = '<strong>You\'re registered!</strong> Check your email for your access link. Your 50,000 AI tokens are ready to use.';
+    document.getElementById('reg-form').style.display = 'none';
+    btn.disabled = false;
+  });
 }
 </script>
 
