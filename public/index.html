@@ -119,45 +119,8 @@
 </footer>
 
 <script>
-var ALLOWED = [
-  'craig@2nth.ai','craig@imbila.ai','craig@b2bs.co.za',
-  'craig@proximity.green','mark@proximity.green',
-  'support@scanman.co.za',
-  'craig@agilex.co.za','mike@agilex.co.za',
-  'grant@gridlineprop.co.za'
-];
-
-// If already authorised, go straight to docs
-(function() {
-  var stored = localStorage.getItem('2nth_dev_access');
-  if (stored && ALLOWED.indexOf(stored) !== -1) {
-    window.location.href = '/docs.html';
-  }
-})();
-
-function signIn() {
-  var email = document.getElementById('email').value.trim().toLowerCase();
-  var msg = document.getElementById('msg');
-  var btn = document.getElementById('signin-btn');
-
-  if (!email || email.indexOf('@') === -1) {
-    msg.className = 'msg show msg-error';
-    msg.textContent = 'Enter a valid email address.';
-    return;
-  }
-
-  if (ALLOWED.indexOf(email) !== -1) {
-    localStorage.setItem('2nth_dev_access', email);
-    btn.disabled = true;
-    btn.textContent = 'Redirecting...';
-    msg.className = 'msg show msg-success';
-    msg.textContent = 'Access granted. Redirecting...';
-    setTimeout(function() { window.location.href = '/docs.html'; }, 500);
-  } else {
-    msg.className = 'msg show msg-error';
-    msg.innerHTML = 'This email is not authorised for early access. <a href="mailto:craig@2nth.ai?subject=Portal Access: ' + encodeURIComponent(email) + '" style="color:#7c3aed">Request an invite</a>';
-  }
-}
+// Gate removed — redirect straight to docs
+window.location.href = '/docs.html';
 </script>
 </body>
 </html>
