@@ -124,8 +124,26 @@
       <p>Have an idea for a new skill, integration, or platform improvement? Submit it here and the team will review it.</p>
 
       <div id="signin-gate" style="background:#fff;border:1px solid #e4e4e7;border-radius:8px;padding:24px;text-align:center;margin-bottom:24px">
-        <p style="margin-bottom:12px;color:#52525b">Sign in with GitHub to submit ideas</p>
-        <a href="/api/auth/login" class="btn btn-primary">Sign in with GitHub</a>
+        <p style="margin-bottom:16px;color:#52525b">Sign in to submit ideas</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="/api/auth/login" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:6px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+          </a>
+          <button onclick="showEmailSignin()" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:6px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Email
+          </button>
+        </div>
+        <div id="email-signin" style="display:none;margin-top:20px;text-align:left">
+          <div class="form-group" style="margin-bottom:12px">
+            <label>Email address</label>
+            <input type="email" id="signin-email" placeholder="you@company.com">
+          </div>
+          <div id="signin-msg" class="msg"></div>
+          <button onclick="sendMagicLink()" class="btn btn-primary" id="signin-btn" style="width:100%">Send sign-in link</button>
+          <p style="font-size:12px;color:#a1a1aa;margin-top:8px;text-align:center">We'll email you a magic link. No password needed.</p>
+        </div>
       </div>
 
       <div id="idea-msg" class="msg"></div>
@@ -300,7 +318,7 @@ function init() {
   } else {
     document.getElementById('welcome-name').textContent = 'developer';
     document.getElementById('user-area').innerHTML =
-      '<a href="/api/auth/login" class="btn btn-primary btn-sm">Sign in with GitHub</a>';
+      '<a href="/api/auth/login" class="btn btn-primary btn-sm">Sign in</a>';
   }
 }
 
@@ -350,6 +368,55 @@ function submitIdea(e) {
     btn.textContent = 'Submit idea';
   });
 }
+
+function showEmailSignin() {
+  var el = document.getElementById('email-signin');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  if (el.style.display === 'block') document.getElementById('signin-email').focus();
+}
+
+function sendMagicLink() {
+  var email = document.getElementById('signin-email').value.trim();
+  var msg = document.getElementById('signin-msg');
+  var btn = document.getElementById('signin-btn');
+  if (!email || email.indexOf('@') === -1) {
+    msg.className = 'msg show msg-error';
+    msg.textContent = 'Enter a valid email address.';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msg.className = 'msg';
+
+  fetch('https://2nth.ai/api/auth/send-magic-link', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, returnTo: window.location.href }),
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.error) {
+      msg.className = 'msg show msg-error';
+      msg.textContent = data.error;
+    } else {
+      msg.className = 'msg show msg-success';
+      msg.textContent = 'Check your email for the sign-in link.';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Send sign-in link';
+  })
+  .catch(function() {
+    msg.className = 'msg show msg-success';
+    msg.textContent = 'Check your email for the sign-in link.';
+    btn.disabled = false;
+    btn.textContent = 'Send sign-in link';
+  });
+}
+
+// Allow Enter key on email field
+document.getElementById('signin-email').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); sendMagicLink(); }
+});
 
 init();
 </script>
