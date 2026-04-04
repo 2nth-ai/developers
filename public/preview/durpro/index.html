@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DurPro — AI-Powered Workforce Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:#fafaf8;color:#4a4a56;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    :root{--navy:#1e1e24;--charcoal:#2d2d35;--slate:#4a4a56;--red:#e4373c;--red-dark:#c22e32;--red-light:#fef2f2;--blue:#006ba1;--blue-light:#e8f4fb;--text:#1e1e24;--text2:#4a4a56;--muted:#8e8e9a;--border:#e0e0e4;--bg:#fafaf8;--bg2:#fff;--bg3:#f0f0f4;--green:#2a9d8f;--amber:#e8a838;--purple:#7c3aed}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+    header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(247,248,250,.92);backdrop-filter:blur(12px)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'DM Sans',sans-serif;font-size:20px;font-weight:700;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:.04em;text-transform:uppercase}
+    .logo-mark{width:32px;height:32px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--red)}
+    .logo span{color:var(--red)}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none}
+    nav a:hover{color:var(--blue)}
+    .nav-cta{background:var(--red);color:#fff!important;padding:7px 18px;border-radius:6px;font-weight:600}
+    .nav-cta:hover{background:var(--red-dark)}
+
+    .hero{padding:80px 0 48px;position:relative}
+    .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,107,161,.05),transparent 70%);pointer-events:none}
+    .hero-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .hero-tag .pulse{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(36px,6vw,56px);font-weight:400;color:var(--navy);line-height:1.08;margin-bottom:20px;letter-spacing:-.02em}
+    .hero h1 span{color:var(--red)}
+    .hero p{font-size:17px;color:var(--text2);max-width:580px;line-height:1.65;margin-bottom:28px}
+    .hero-stats{display:flex;gap:36px;flex-wrap:wrap}
+    .hero-stat .num{font-family:'Instrument Serif',serif;font-size:28px;font-weight:400;color:var(--navy)}
+    .hero-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    .section{padding:64px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(24px,4vw,36px);font-weight:400;color:var(--navy);line-height:1.15;margin-bottom:14px}
+
+    /* Pipeline viz */
+    .pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:28px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .pipe{padding:20px 14px;text-align:center;border-right:1px solid var(--border);transition:background .2s}
+    .pipe:last-child{border:none}
+    .pipe:hover{background:var(--blue-light)}
+    .pipe-num{font-family:'Instrument Serif',serif;font-size:28px;font-weight:400;color:var(--red)}
+    .pipe-label{font-size:10px;color:var(--muted);margin-top:2px}
+    .pipe-name{font-size:12px;font-weight:600;color:var(--text);margin-top:4px}
+
+    /* Role cards */
+    .roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:28px 0}
+    .role{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px;transition:all .2s;position:relative;overflow:hidden}
+    .role:hover{border-color:var(--red);transform:translateY(-2px)}
+    .role::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
+    .role:hover::before{opacity:1}
+    .role-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
+    .tag-perm{color:var(--red);background:var(--red-light);border:1px solid rgba(0,107,161,.15)}
+    .tag-temp{color:var(--red);background:var(--red-light);border:1px solid rgba(228,55,60,.15)}
+    .tag-contract{color:var(--purple);background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15)}
+    .role h3{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);margin-bottom:4px}
+    .role p{font-size:12px;color:var(--text2);margin:0 0 10px}
+    .role-ai{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);background:var(--red-light);padding:8px 12px;border-radius:6px;margin-top:8px}
+
+    /* AI demo */
+    .demo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0}
+    .demo-header{background:var(--bg3);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .demo-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+    .demo-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);font-weight:600}
+    .demo-body{padding:20px;display:flex;flex-direction:column;gap:12px}
+    .msg{padding:12px 16px;border-radius:10px;font-size:12px;line-height:1.5;max-width:88%}
+    .msg-ai{background:var(--bg3);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+    .msg-user{background:var(--red);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+    .msg-ai strong{color:var(--red)}
+    .msg-data{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.7}
+
+    /* Skills */
+    .skills{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+    .skill{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s}
+    .skill:hover{border-color:var(--red)}
+    .skill h3{font-family:'Instrument Serif',serif;font-size:15px;color:var(--text);margin-bottom:4px}
+    .skill p{font-size:12px;color:var(--text2);margin:0 0 8px}
+    .skill-ask{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);font-style:italic;background:var(--red-light);padding:6px 10px;border-radius:6px}
+
+    .cta-section{background:var(--navy);border-radius:16px;padding:56px;text-align:center;margin:40px 0}
+    .cta-section h2{color:#fff;margin-bottom:8px}
+    .cta-section p{color:rgba(255,255,255,.5);margin-bottom:24px;font-size:16px}
+    .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-dark)}
+    .btn-ghost{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;margin-left:12px}.btn-ghost:hover{border-color:var(--red);color:var(--blue)}
+
+    footer{border-top:1px solid var(--border);padding:20px 0}
+    footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--blue);text-decoration:none}
+
+    @media(max-width:768px){.pipeline{grid-template-columns:1fr}.pipe{border-right:none;border-bottom:1px solid var(--border)}.roles,.skills{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="logo"><div class="logo-mark">DP</div> Dur<span>Pro</span></a>
+    <nav>
+      <a href="#roles">AI Roles</a>
+      <a href="#demo">AI Demo</a>
+      <a href="#skills">Skills</a>
+      <a href="/preview/durpro/brian.html" style="color:var(--red);font-weight:600">Ask Brian</a>
+      <a href="https://www.durpro.co.za" class="nav-cta">durpro.co.za</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag"><span class="pulse"></span> Specialist recruitment partner &middot; 2nth.ai</div>
+    <h1>Unleashing human potential<br>in an <span>AI-powered</span> world.</h1>
+    <p>AI doesn't replace people — it transforms what people do. DurPro finds the humans who thrive alongside AI: warehouse operators who read dashboards, lodge managers who run off-grid systems, and consultants who leverage AI strategy tools. 30 years of workforce expertise, now powering the AI economy.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">100+</div><div class="lbl">Brands served</div></div>
+      <div class="hero-stat"><div class="num">30+</div><div class="lbl">Years experience</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="lbl">National offices</div></div>
+      <div class="hero-stat"><div class="num">1992</div><div class="lbl">Established</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- The pipeline -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">Recruitment pipeline</div>
+    <h2>From brief to placement — AI-assisted</h2>
+    <div class="pipeline">
+      <div class="pipe"><div class="pipe-num">1</div><div class="pipe-name">AI Role Design</div><div class="pipe-label">Redesign JD for AI augmentation</div></div>
+      <div class="pipe"><div class="pipe-num">2</div><div class="pipe-name">Source &amp; Screen</div><div class="pipe-label">AI-scored candidate matching</div></div>
+      <div class="pipe"><div class="pipe-num">3</div><div class="pipe-name">Interview</div><div class="pipe-label">Competency + AI tool assessment</div></div>
+      <div class="pipe"><div class="pipe-num">4</div><div class="pipe-name">Place &amp; Onboard</div><div class="pipe-label">Compliance verified, tools trained</div></div>
+      <div class="pipe"><div class="pipe-num">5</div><div class="pipe-name">Manage &amp; Grow</div><div class="pipe-label">Performance, payroll, upskilling</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI-augmented roles -->
+<section class="section" id="roles">
+  <div class="container">
+    <div class="sec-label">What AI-ready looks like</div>
+    <h2>Roles DurPro fills for 2nth.ai partners</h2>
+
+    <div class="roles">
+      <div class="role">
+        <span class="role-tag tag-perm">Permanent</span>
+        <h3>Warehouse Operations Manager</h3>
+        <p>Manages warehouse floor where ScanMan AI handles pick-path optimisation and DroneScan robots do aerial counts. Reads AI dashboards, acts on anomaly alerts, leads team of 20+ pickers.</p>
+        <div class="role-ai">AI tools: ScanMan dashboard, DroneScan fleet, ERPNext</div>
+      </div>
+      <div class="role">
+        <span class="role-tag tag-temp">Seasonal</span>
+        <h3>Packhouse Supervisor — Citrus</h3>
+        <p>Supervises 50+ seasonal staff during Feb-Sep packing season. Works with AI yield forecasts, quality grading tools, and cold chain monitoring. PPECB liaison.</p>
+        <div class="role-ai">AI tools: Cash flow forecaster, quality grading AI, cold chain alerts</div>
+      </div>
+      <div class="role">
+        <span class="role-tag tag-perm">Permanent</span>
+        <h3>Conservation Lodge Manager</h3>
+        <p>Manages luxury lodge in game reserve. Operates off-grid systems (solar, rainwater, passive climate), coordinates bookings, leads hospitality team. Tech-fluent, guest-focused.</p>
+        <div class="role-ai">AI tools: Luthuli lodge dashboard, booking system, off-grid monitoring</div>
+      </div>
+      <div class="role">
+        <span class="role-tag tag-contract">Contract</span>
+        <h3>AI Implementation Consultant</h3>
+        <p>Deploys 2nth.ai solutions at partner sites. Conducts readiness assessments, configures skills, trains staff, manages go-live. Technical + people skills.</p>
+        <div class="role-ai">AI tools: Full 2nth.ai platform, Ctrl Future readiness skills</div>
+      </div>
+      <div class="role">
+        <span class="role-tag tag-perm">Permanent</span>
+        <h3>Shared Space Operations Coordinator</h3>
+        <p>Runs day-to-day operations at a Proximity Green coworking site. Uses AI occupancy tools, manages tenant billing, handles access governance. Multi-site potential.</p>
+        <div class="role-ai">AI tools: Proximity Green dashboard, spatial gallery, access systems</div>
+      </div>
+      <div class="role">
+        <span class="role-tag tag-temp">Temporary</span>
+        <h3>Data Capture &amp; Scanner Operator</h3>
+        <p>Operates barcode scanners in warehouse environments. Trained on ScanMan workflows: receiving, putaway, picking, cycle counts. Entry-level, AI-tool trained.</p>
+        <div class="role-ai">AI tools: ScanMan mobile scanner, barcode workflows</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI demo -->
+<section class="section" id="demo">
+  <div class="container">
+    <div class="sec-label">AI in action</div>
+    <h2>Workforce planning, powered by AI</h2>
+
+    <div class="demo">
+      <div class="demo-header"><span class="demo-dot"></span><span class="demo-title">DurPro AI — Workforce Intelligence</span></div>
+      <div class="demo-body">
+        <div class="msg msg-user">ScanMan is deploying AI in a 15,000m² warehouse with 45 staff. What workforce changes do I need?</div>
+        <div class="msg msg-ai">
+          Running <code>biz/hr/workforce-planning</code> against ScanMan deployment model...
+          <div class="msg-data">
+WORKFORCE IMPACT ANALYSIS — ScanMan AI Deployment
+
+Current headcount: 45
+Post-deployment: 42 (-3 roles, +2 new roles, 12 upskilled)
+
+ROLES ELIMINATED (3):
+  ✗ Manual stock counter ×2 (replaced by DroneScan)
+  ✗ Data entry clerk ×1 (automated by scan-to-ERP)
+
+NEW ROLES NEEDED (2):
+  + Drone/robot technician ×1 — maintains scanning fleet
+  + AI operations analyst ×1 — monitors dashboards, acts on alerts
+
+ROLES UPSKILLED (12):
+  → 8 pickers: trained on AI pick-path (2-day course)
+  → 2 supervisors: dashboard interpretation (1-day)
+  → 1 receiving clerk: anomaly detection workflows
+  → 1 warehouse manager: AI strategy + reporting
+
+TIMELINE:
+  Week 1-2: Role redesign (biz/hr/ai-role-design skill)
+  Week 3-4: Source drone tech + AI analyst (DurPro)
+  Week 5-6: Upskilling programme (12 staff)
+  Week 7-8: Go-live with parallel running
+
+COST IMPACT:
+  3 roles saved: -R42K/month
+  2 new roles: +R38K/month
+  Net saving: R4K/month + 23% productivity gain
+  Upskilling cost: R48K (once-off, 12 staff)
+          </div>
+        </div>
+        <div class="msg msg-user">Draft the job spec for the AI operations analyst</div>
+        <div class="msg msg-ai">
+          Running <code>biz/hr/ai-role-design</code>...
+          <div class="msg-data">
+JOB SPECIFICATION — AI OPERATIONS ANALYST
+
+Company: [Client] via DurPro Workforce Solutions
+Location: Hillcrest DC, KwaZulu-Natal
+Type: Permanent | Reports to: Warehouse Manager
+
+PURPOSE:
+Monitor AI-powered warehouse systems, interpret
+analytics, and drive operational decisions from
+real-time data.
+
+KEY RESPONSIBILITIES:
+  • Monitor ScanMan AI dashboard (inventory accuracy,
+    pick performance, anomaly alerts)
+  • Act on DroneScan discrepancy reports
+  • Generate weekly AI performance reports
+  • Train floor staff on AI tool updates
+  • Liaise with 2nth.ai support for skill issues
+
+REQUIREMENTS:
+  • Diploma in Supply Chain / IT / Data Analytics
+  • 2+ years warehouse or logistics experience
+  • Comfortable with data dashboards and analytics
+  • Basic understanding of AI/ML concepts
+  • Strong communication (English + isiZulu preferred)
+
+NICE TO HAVE:
+  • ERPNext or SAP experience
+  • Exposure to IoT/sensor systems
+  • Interest in AI and automation
+
+SALARY: R18,000 — R22,000/month (market-related)
+BENEFITS: Medical aid, provident fund, 15 days leave
+
+Ready to post? I can push this to DurPro's candidate
+database and LinkedIn simultaneously.
+          </div>
+        </div>
+        <div class="msg msg-user">Check the contract is LRA compliant</div>
+        <div class="msg msg-ai">
+          Running <code>leg/employment/compliance</code>...
+          <div class="msg-data">
+COMPLIANCE CHECK — AI Operations Analyst Contract
+
+✓ Working hours: 45hrs/week — compliant (BCEA S9)
+✓ Leave: 15 days — meets minimum (BCEA S20: 15 days)
+✓ Probation: 3 months — reasonable (LRA S8)
+✓ Notice period: 1 month — compliant (BCEA S37)
+✓ Restraint of trade: None specified — no issue
+✓ POPIA consent clause: Present — compliant
+
+⚠ RECOMMENDATIONS:
+  • Add AI tool IP clause — employee-created automations
+    belong to employer (Copyright Act S21(1)(d))
+  • Add data handling clause — employee accesses AI
+    systems with customer data (POPIA S19)
+  • Specify shift work provisions if 24/7 monitoring
+    is planned (BCEA S17)
+
+Overall: COMPLIANT with 2 recommended additions.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="container">
+    <div class="sec-label">AI Skills</div>
+    <h2>Three skills for the future of work</h2>
+    <div class="skills">
+      <div class="skill">
+        <h3>AI-Augmented Role Design</h3>
+        <p>Takes a traditional JD and redesigns it for AI augmentation. Which tasks automate? Which get AI assist? What new skills are needed?</p>
+        <div class="skill-ask">"Redesign this warehouse picker role for ScanMan AI"</div>
+      </div>
+      <div class="skill">
+        <h3>Workforce Planning</h3>
+        <p>Models the workforce impact of any AI deployment. Headcount changes, upskilling needs, hiring timelines, cost impact analysis.</p>
+        <div class="skill-ask">"What staff changes do I need for a DroneScan rollout?"</div>
+      </div>
+      <div class="skill">
+        <h3>Labour Compliance</h3>
+        <p>Screens contracts and arrangements against SA labour law. LRA, BCEA, EE Act, POPIA. Flags risks before they become CCMA cases.</p>
+        <div class="skill-ask">"Check this TES contract for Section 198 compliance"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h2>AI needs humans. We find the right ones.</h2>
+    <p>Adaptable staffing solutions for the AI-powered economy.</p>
+    <a href="https://www.durpro.co.za" class="btn btn-red">durpro.co.za</a>
+    <a href="/partners/durpro.html" class="btn btn-ghost">View partnership</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>DurPro Workforce Solutions &mdash; Specialist Recruitment Partner of <a href="https://2nth.ai">2nth.ai</a></p>
+    <p>Durban &middot; Johannesburg &middot; Cape Town &middot; <a href="https://www.durpro.co.za">durpro.co.za</a> &middot; Jacqui Denny, MD</p>
+  </div>
+</footer>
+
+</body>
+</html>

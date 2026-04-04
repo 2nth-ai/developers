@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soleil Sitrus — Citrus Farm Cash Flow Forecaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#fafbf7;color:#4a5043;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--citrus:#e8860c;--citrus-dark:#c27008;--citrus-light:#fef5e7;--leaf:#3d7a3e;--leaf-light:#e8f5e9;--leaf-dark:#2d5a2e;--text:#1b2316;--text2:#4a5043;--muted:#8a9182;--border:#dde3d6;--bg:#fafbf7;--bg2:#fff;--bg3:#f2f5ee;--red:#dc2626;--amber:#d97706;--blue:#2563eb}
+    .container{max-width:1160px;margin:0 auto;padding:0 20px}
+
+    header{background:var(--leaf-dark);padding:12px 0;color:#fafbf7}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#fafbf7;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-icon{width:28px;height:28px;border-radius:6px;background:var(--citrus);display:flex;align-items:center;justify-content:center;font-size:14px}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,251,247,.6);text-decoration:none;margin-left:16px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#fafbf7}
+
+    h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,4vw,28px);font-weight:700;color:var(--text);margin-bottom:4px}
+    h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin:24px 0 10px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    /* Stats */
+    .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0}
+    .stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+    .stat-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+    .stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    /* Chart area */
+    .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+    .chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .chart-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+    .chart-legend{display:flex;gap:12px;font-size:10px;color:var(--muted)}
+    .legend-dot{width:8px;height:8px;border-radius:2px;display:inline-block;vertical-align:middle;margin-right:3px}
+    .chart{display:flex;gap:2px;align-items:flex-end;height:160px}
+    .chart-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;position:relative}
+    .chart-bar{border-radius:2px 2px 0 0;transition:height .8s;min-height:1px}
+    .chart-month{text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;letter-spacing:.5px}
+    .chart-val{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);white-space:nowrap}
+
+    /* Two-col layout */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+    /* Table */
+    .tbl{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;font-size:12px}
+    .tbl th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg3)}
+    .tbl td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+    .tbl tr:last-child td{border:none}
+    .tbl .num{font-family:'JetBrains Mono',monospace;text-align:right}
+    .tbl .pos{color:var(--leaf)}
+    .tbl .neg{color:var(--red)}
+    .tbl .total{font-weight:700;color:var(--text);background:var(--bg3)}
+
+    /* Scenario cards */
+    .scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+    .scenario{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .2s;cursor:pointer}
+    .scenario:hover{border-color:var(--citrus)}
+    .scenario.active{border-color:var(--leaf);box-shadow:0 0 0 1px var(--leaf)}
+    .scenario-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .scenario-desc{font-size:11px;color:var(--muted);margin-bottom:8px}
+    .scenario-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700}
+
+    /* Inputs */
+    .input-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:12px 0}
+    .input-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .input-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+    .input-field input,.input-field select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);outline:none}
+    .input-field input:focus{border-color:var(--leaf)}
+    .btn{padding:8px 18px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+    .btn-leaf{background:var(--leaf);color:#fff}.btn-leaf:hover{background:var(--leaf-dark)}
+    .btn-ghost{background:none;border:1px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--leaf)}
+
+    /* AI chat */
+    .ai-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
+    .ai-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--bg3)}
+    .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--leaf);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .ai-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text)}
+    .ai-body{padding:16px;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto}
+    .msg{padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.5;max-width:88%}
+    .msg-ai{background:var(--bg3);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+    .msg-user{background:var(--leaf);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+    .msg-ai strong{color:var(--leaf)}
+    .msg-data{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.7}
+    .ai-input{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
+    .ai-input input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none}
+    .ai-input button{padding:8px 14px;background:var(--leaf);color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer}
+
+    /* Alerts */
+    .alert{display:flex;align-items:start;gap:8px;padding:12px 16px;border-radius:8px;font-size:12px;margin:8px 0}
+    .alert-warn{background:rgba(232,134,12,.06);border:1px solid rgba(232,134,12,.15);color:var(--text2)}
+    .alert-ok{background:rgba(61,122,62,.06);border:1px solid rgba(61,122,62,.15);color:var(--text2)}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:32px}
+    footer a{color:var(--leaf)}
+    @media(max-width:768px){.stats{grid-template-columns:repeat(3,1fr)}.two-col,.scenarios,.input-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="brand"><span class="brand-icon">&#127818;</span> Soleil Sitrus — Cash Flow Forecaster</a>
+    <nav>
+      <a href="#forecast" class="active">Forecast</a>
+      <a href="#scenarios">Scenarios</a>
+      <a href="#ai">AI Analysis</a>
+      <a href="https://www.soleilsitrus.co.za">soleilsitrus.co.za</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:20px">
+
+  <h1>Cash Flow Forecast — 2026/27 Season</h1>
+  <div class="sub">Soleil Sitrus Group &middot; Hoedspruit, Limpopo &middot; Citrus, Mango &amp; Nuts &middot; 370 permanent + 500 seasonal employees</div>
+
+  <!-- KPIs -->
+  <div class="stats">
+    <div class="stat"><div class="stat-val" style="color:var(--leaf)">R48.2M</div><div class="stat-lbl">Projected revenue</div></div>
+    <div class="stat"><div class="stat-val">R31.6M</div><div class="stat-lbl">Total costs</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--leaf)">R16.6M</div><div class="stat-lbl">Net cash flow</div></div>
+    <div class="stat"><div class="stat-val">34.4%</div><div class="stat-lbl">Margin</div></div>
+    <div class="stat"><div class="stat-val">8,200</div><div class="stat-lbl">Tonnes (est.)</div></div>
+    <div class="stat"><div class="stat-val">R5,878</div><div class="stat-lbl">Avg price/tonne</div></div>
+  </div>
+
+  <!-- Monthly cash flow chart -->
+  <div class="chart-card" id="forecast">
+    <div class="chart-head">
+      <div class="chart-title">Monthly Cash Flow — Feb 2026 to Jan 2027</div>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:var(--leaf)"></span> Revenue</span>
+        <span><span class="legend-dot" style="background:var(--citrus)"></span> Costs</span>
+        <span><span class="legend-dot" style="background:var(--red)"></span> Net negative</span>
+      </div>
+    </div>
+    <div class="chart" id="cf-chart"></div>
+    <div style="display:flex;gap:2px;margin-top:2px" id="cf-months"></div>
+  </div>
+
+  <!-- Revenue + Cost breakdown -->
+  <div class="two-col">
+    <div>
+      <h2>Revenue by crop &amp; market</h2>
+      <table class="tbl">
+        <thead><tr><th>Crop / Market</th><th class="num">Tonnes</th><th class="num">Price/t</th><th class="num">Revenue</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Valencia oranges</strong></td><td class="num">3,200</td><td class="num">R6,200</td><td class="num pos">R19.8M</td></tr>
+          <tr><td>&nbsp;&nbsp;↳ EU export (55%)</td><td class="num">1,760</td><td class="num">R7,400</td><td class="num">R13.0M</td></tr>
+          <tr><td>&nbsp;&nbsp;↳ Asia/Middle East (30%)</td><td class="num">960</td><td class="num">R5,800</td><td class="num">R5.6M</td></tr>
+          <tr><td>&nbsp;&nbsp;↳ Local market (15%)</td><td class="num">480</td><td class="num">R2,500</td><td class="num">R1.2M</td></tr>
+          <tr><td><strong>Lemons</strong></td><td class="num">2,400</td><td class="num">R5,800</td><td class="num pos">R13.9M</td></tr>
+          <tr><td><strong>Soft citrus (mandarin)</strong></td><td class="num">1,800</td><td class="num">R6,500</td><td class="num pos">R11.7M</td></tr>
+          <tr><td><strong>Mangoes</strong></td><td class="num">500</td><td class="num">R4,200</td><td class="num pos">R2.1M</td></tr>
+          <tr><td><strong>Macadamia nuts</strong></td><td class="num">300</td><td class="num">R2,200/kg</td><td class="num pos">R0.7M</td></tr>
+          <tr class="total"><td><strong>Total</strong></td><td class="num"><strong>8,200</strong></td><td class="num"></td><td class="num pos"><strong>R48.2M</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h2>Cost structure</h2>
+      <table class="tbl">
+        <thead><tr><th>Category</th><th class="num">Annual</th><th class="num">% of Rev</th></tr></thead>
+        <tbody>
+          <tr><td>Labour (permanent — 370)</td><td class="num neg">R8.4M</td><td class="num">17.4%</td></tr>
+          <tr><td>Labour (seasonal — 500)</td><td class="num neg">R5.2M</td><td class="num">10.8%</td></tr>
+          <tr><td>Packhouse operations</td><td class="num neg">R4.8M</td><td class="num">10.0%</td></tr>
+          <tr><td>Fertiliser &amp; chemicals</td><td class="num neg">R3.6M</td><td class="num">7.5%</td></tr>
+          <tr><td>Logistics &amp; cold chain</td><td class="num neg">R3.2M</td><td class="num">6.6%</td></tr>
+          <tr><td>Electricity &amp; water</td><td class="num neg">R2.8M</td><td class="num">5.8%</td></tr>
+          <tr><td>PPECB &amp; certification</td><td class="num neg">R1.2M</td><td class="num">2.5%</td></tr>
+          <tr><td>Admin, insurance, overhead</td><td class="num neg">R2.4M</td><td class="num">5.0%</td></tr>
+          <tr class="total"><td><strong>Total costs</strong></td><td class="num neg"><strong>R31.6M</strong></td><td class="num"><strong>65.6%</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="alert alert-warn">&#9888;&#65039; <div><strong>Loadshedding risk:</strong> Generator diesel costs up 18% YoY. Consider solar + battery for packhouse — est. R2.4M capex, 3.2yr payback.</div></div>
+      <div class="alert alert-ok">&#9989; <div><strong>EU MRL compliance:</strong> All 2026 spray programmes within Maximum Residue Limits. GlobalGAP audit passed Feb 2026.</div></div>
+    </div>
+  </div>
+
+  <!-- Detailed monthly -->
+  <h2>Monthly cash flow detail</h2>
+  <div style="overflow-x:auto">
+  <table class="tbl" style="font-size:11px">
+    <thead><tr><th>Month</th><th class="num">Revenue</th><th class="num">Costs</th><th class="num">Net</th><th class="num">Cumulative</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Feb 26</td><td class="num pos">R1.2M</td><td class="num neg">R3.8M</td><td class="num neg">-R2.6M</td><td class="num neg">-R2.6M</td><td>Season start. Packhouse prep + seasonal hire</td></tr>
+      <tr><td>Mar 26</td><td class="num pos">R3.4M</td><td class="num neg">R3.4M</td><td class="num">R0.0M</td><td class="num neg">-R2.6M</td><td>Early lemons + soft citrus packing begins</td></tr>
+      <tr><td>Apr 26</td><td class="num pos">R5.8M</td><td class="num neg">R3.2M</td><td class="num pos">R2.6M</td><td class="num">R0.0M</td><td>Peak lemon exports. First EU shipments</td></tr>
+      <tr><td>May 26</td><td class="num pos">R7.2M</td><td class="num neg">R3.0M</td><td class="num pos">R4.2M</td><td class="num pos">R4.2M</td><td>Valencia + soft citrus peak. Breakeven crossed</td></tr>
+      <tr><td>Jun 26</td><td class="num pos">R8.4M</td><td class="num neg">R2.8M</td><td class="num pos">R5.6M</td><td class="num pos">R9.8M</td><td>Peak season. Maximum packhouse throughput</td></tr>
+      <tr><td>Jul 26</td><td class="num pos">R7.8M</td><td class="num neg">R2.6M</td><td class="num pos">R5.2M</td><td class="num pos">R15.0M</td><td>Late Valencias. Asia shipments peak</td></tr>
+      <tr><td>Aug 26</td><td class="num pos">R5.6M</td><td class="num neg">R2.4M</td><td class="num pos">R3.2M</td><td class="num pos">R18.2M</td><td>Season tail. Seasonal labour wind-down</td></tr>
+      <tr><td>Sep 26</td><td class="num pos">R3.2M</td><td class="num neg">R2.2M</td><td class="num pos">R1.0M</td><td class="num pos">R19.2M</td><td>Final export shipments. Packhouse close</td></tr>
+      <tr><td>Oct 26</td><td class="num pos">R1.8M</td><td class="num neg">R2.0M</td><td class="num neg">-R0.2M</td><td class="num pos">R19.0M</td><td>Off-season. Mango prep begins</td></tr>
+      <tr><td>Nov 26</td><td class="num pos">R1.4M</td><td class="num neg">R2.2M</td><td class="num neg">-R0.8M</td><td class="num pos">R18.2M</td><td>Mango season start. Tree maintenance</td></tr>
+      <tr><td>Dec 26</td><td class="num pos">R1.2M</td><td class="num neg">R2.0M</td><td class="num neg">-R0.8M</td><td class="num pos">R17.4M</td><td>Mango peak. Macadamia harvest</td></tr>
+      <tr><td>Jan 27</td><td class="num pos">R1.2M</td><td class="num neg">R2.0M</td><td class="num neg">-R0.8M</td><td class="num pos">R16.6M</td><td>Off-season. Fertiliser programme begins</td></tr>
+      <tr class="total"><td><strong>Total</strong></td><td class="num pos"><strong>R48.2M</strong></td><td class="num neg"><strong>R31.6M</strong></td><td class="num pos"><strong>R16.6M</strong></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Scenarios -->
+  <h2 id="scenarios">Scenario analysis</h2>
+  <div class="sub">Click a scenario to see its impact on the forecast.</div>
+  <div class="scenarios">
+    <div class="scenario active" onclick="setScenario('base',this)">
+      <div class="scenario-name">Base case</div>
+      <div class="scenario-desc">Current projections. Normal season, average pricing, no disruptions.</div>
+      <div class="scenario-val" style="color:var(--leaf)">R16.6M net</div>
+    </div>
+    <div class="scenario" onclick="setScenario('drought',this)">
+      <div class="scenario-name">Drought stress</div>
+      <div class="scenario-desc">20% yield reduction. Water restrictions. Smaller fruit size = lower packout %.</div>
+      <div class="scenario-val" style="color:var(--amber)">R8.2M net</div>
+    </div>
+    <div class="scenario" onclick="setScenario('boom',this)">
+      <div class="scenario-name">Strong EU demand</div>
+      <div class="scenario-desc">15% price premium on EU exports. Weak ZAR boosts margins. Full capacity.</div>
+      <div class="scenario-val" style="color:var(--leaf)">R22.4M net</div>
+    </div>
+  </div>
+
+  <!-- Assumptions -->
+  <h2>Model assumptions</h2>
+  <div class="input-card">
+    <div class="input-grid">
+      <div class="input-field"><label>Total hectares</label><input type="number" value="850" id="inp-ha"></div>
+      <div class="input-field"><label>Yield (t/ha)</label><input type="number" value="9.6" step="0.1" id="inp-yield"></div>
+      <div class="input-field"><label>Packout %</label><input type="number" value="78" id="inp-packout"></div>
+      <div class="input-field"><label>EUR/ZAR</label><input type="number" value="20.40" step="0.1" id="inp-fx"></div>
+      <div class="input-field"><label>EU price (€/t)</label><input type="number" value="362" id="inp-euprice"></div>
+      <div class="input-field"><label>Labour inflation %</label><input type="number" value="7.5" step="0.5" id="inp-labinf"></div>
+      <div class="input-field"><label>Diesel cost (R/L)</label><input type="number" value="24.80" step="0.1" id="inp-diesel"></div>
+      <div class="input-field"><label>Loadshedding (hrs/day)</label><input type="number" value="4" id="inp-ls"></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn btn-leaf" onclick="alert('Model recalculated (simulation)')">Recalculate forecast</button>
+      <button class="btn btn-ghost">Export to Excel</button>
+      <button class="btn btn-ghost">Share with Gananda</button>
+    </div>
+  </div>
+
+  <!-- AI Panel -->
+  <h2 id="ai">AI Cash Flow Advisor</h2>
+  <div class="ai-panel">
+    <div class="ai-head"><span class="ai-dot"></span><span class="ai-title">Gananda AI — Citrus Cash Flow Intelligence</span></div>
+    <div class="ai-body" id="ai-chat">
+      <div class="msg msg-ai">
+        <strong>Good morning, Barry.</strong> I've analysed Soleil Sitrus's 2026/27 season forecast. Key findings:
+        <div class="msg-data">
+CASH FLOW HEALTH: GOOD (score: 82/100)
+
+Net cash flow: R16.6M (34.4% margin)
+Breakeven: April 2026 (month 3 of season)
+Peak cash: June 2026 (R9.8M cumulative)
+Lowest point: February 2026 (-R2.6M — season start)
+
+RISKS:
+  ⚠ Loadshedding: 4 hrs/day = R680K extra diesel/yr
+  ⚠ ZAR volatility: R1 move = ±R1.3M revenue impact
+  ⚠ EU MRL tightening: new limits on chlorpyrifos from Jul 2026
+
+OPPORTUNITIES:
+  ✓ Weak ZAR favours exporters (+R3.8M if EUR/ZAR hits 22)
+  ✓ Soft citrus premium: +18% YoY in EU retail
+  ✓ Macadamia expansion: 50ha new plantings yielding 2028
+        </div>
+      </div>
+      <div class="msg msg-user">What happens if loadshedding goes to 8 hours?</div>
+      <div class="msg msg-ai">
+        Doubling loadshedding from 4 to 8 hrs/day impacts three areas:
+        <div class="msg-data">
+GENERATOR DIESEL:
+  Current: R1.4M/season (4 hrs/day)
+  At 8 hrs: R2.8M/season (+R1.4M)
+
+PACKHOUSE THROUGHPUT:
+  Current: 120 tonnes/day
+  At 8 hrs: ~95 tonnes/day (-21%)
+  Season extends by ~12 days
+  Additional seasonal labour: +R380K
+
+COLD CHAIN RISK:
+  Temperature breaks in cold rooms: HIGH
+  Est. fruit loss: 2-3% of packed volume
+  Revenue impact: -R720K to -R1.1M
+
+TOTAL IMPACT: -R2.5M to -R2.9M on net cash flow
+  Base case R16.6M → R13.7M to R14.1M
+
+RECOMMENDATION:
+  Solar + battery for packhouse: R2.4M capex
+  Payback: 2.8 years at 8hr loadshedding
+  Eliminates diesel dependency + cold chain risk
+  Qualifies for Section 12B tax incentive (125% deduction)
+        </div>
+      </div>
+      <div class="msg msg-user">Compare our pricing to the industry</div>
+      <div class="msg msg-ai">
+        Running <code>fin/cash-flow</code> + <code>data/analysis</code> against CGA industry data:
+        <div class="msg-data">
+SOLEIL vs INDUSTRY BENCHMARK (2025/26 actual):
+
+                  Soleil    Industry   Delta
+Valencia $/t:     R6,200    R5,800     +6.9% ✓ Above avg
+Lemon $/t:        R5,800    R5,600     +3.6% ✓ Above avg
+Soft citrus $/t:  R6,500    R6,800     -4.4% ⚠ Below avg
+Packout %:        78%       74%        +4pt  ✓ Strong
+Cost/tonne:       R3,854    R3,620     +6.5% ⚠ Above avg
+
+DIAGNOSIS:
+  ✓ Premium pricing on Valencias (quality + EU access)
+  ⚠ Soft citrus underperforming — check variety mix
+  ⚠ Costs above industry — labour ratio is the driver
+    (870 employees for 8,200t = 9.4t/employee vs 12.1t avg)
+
+ACTION: Review soft citrus marketing agent.
+  Switching from current to Capespan could yield +R680K.
+        </div>
+      </div>
+    </div>
+    <div class="ai-input">
+      <input type="text" id="ai-in" placeholder="Ask about cash flow, pricing, costs, scenarios..." onkeydown="if(event.key==='Enter')sendAI()">
+      <button onclick="sendAI()">Ask</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    Soleil Sitrus Cash Flow Forecaster &middot; <a href="https://www.soleilsitrus.co.za">soleilsitrus.co.za</a> &middot; Powered by <a href="https://2nth.ai">2nth.ai</a> for <a href="/partners/gananda.html">Gananda</a>
+  </div>
+</footer>
+
+<script>
+// Monthly data: [revenue, costs] in R millions
+var months = ['Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan'];
+var data = {
+  base: {rev:[1.2,3.4,5.8,7.2,8.4,7.8,5.6,3.2,1.8,1.4,1.2,1.2], cost:[3.8,3.4,3.2,3.0,2.8,2.6,2.4,2.2,2.0,2.2,2.0,2.0]},
+  drought: {rev:[0.8,2.4,4.2,5.4,6.4,5.8,4.2,2.4,1.4,1.0,0.8,0.8], cost:[3.8,3.2,3.0,2.8,2.6,2.4,2.2,2.0,1.8,2.0,1.8,1.8]},
+  boom: {rev:[1.4,4.0,7.0,8.8,10.2,9.4,6.8,3.8,2.0,1.6,1.4,1.4], cost:[3.8,3.4,3.2,3.0,2.8,2.6,2.4,2.2,2.0,2.2,2.0,2.0]}
+};
+
+function renderChart(scenario) {
+  var d = data[scenario];
+  var maxVal = Math.max.apply(null, d.rev.concat(d.cost));
+  var chartEl = document.getElementById('cf-chart');
+  var monthsEl = document.getElementById('cf-months');
+  chartEl.innerHTML = ''; monthsEl.innerHTML = '';
+
+  months.forEach(function(m, i) {
+    var net = d.rev[i] - d.cost[i];
+    var col = document.createElement('div');
+    col.className = 'chart-col';
+
+    var revBar = document.createElement('div');
+    revBar.className = 'chart-bar';
+    revBar.style.height = (d.rev[i] / maxVal * 100) + '%';
+    revBar.style.background = 'var(--leaf)';
+    revBar.style.opacity = '0.7';
+    revBar.title = m + ' revenue: R' + d.rev[i].toFixed(1) + 'M';
+
+    var costBar = document.createElement('div');
+    costBar.className = 'chart-bar';
+    costBar.style.height = (d.cost[i] / maxVal * 100) + '%';
+    costBar.style.background = net < 0 ? 'var(--red)' : 'var(--citrus)';
+    costBar.style.opacity = '0.5';
+    costBar.title = m + ' costs: R' + d.cost[i].toFixed(1) + 'M';
+
+    col.appendChild(revBar);
+    col.appendChild(costBar);
+    chartEl.appendChild(col);
+
+    var mLabel = document.createElement('div');
+    mLabel.className = 'chart-month';
+    mLabel.style.flex = '1';
+    mLabel.style.textAlign = 'center';
+    mLabel.textContent = m;
+    monthsEl.appendChild(mLabel);
+  });
+}
+
+function setScenario(name, el) {
+  document.querySelectorAll('.scenario').forEach(function(s){s.classList.remove('active')});
+  el.classList.add('active');
+  renderChart(name);
+}
+
+renderChart('base');
+
+function sendAI() {
+  var inp = document.getElementById('ai-in');
+  var text = inp.value.trim(); if (!text) return;
+  var chat = document.getElementById('ai-chat');
+  var msg = document.createElement('div'); msg.className = 'msg msg-user'; msg.textContent = text;
+  chat.appendChild(msg); inp.value = '';
+  setTimeout(function() {
+    var reply = document.createElement('div'); reply.className = 'msg msg-ai';
+    reply.innerHTML = '<strong>Analysing...</strong> I\'m querying Soleil Sitrus data via <code>fin/cash-flow</code> and <code>data/analysis</code> skills. In production, this would return real insights from your farm management system and Sage/ERPNext data.';
+    chat.appendChild(reply); chat.scrollTop = chat.scrollHeight;
+  }, 1200);
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+</body>
+</html>

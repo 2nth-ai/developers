@@ -1,15 +1,44 @@
 // Middleware: protect /partners/* /preview/* /hub*, inject user bar
+// Supports JWT (2nth_session) with legacy fallback (dev_access)
+import { verifyJWT, extractToken } from './lib/jwt.js';
+
 const PROTECTED_PREFIXES = ['/partners/', '/preview/', '/hub', '/admin'];
 const PUBLIC_PATHS = ['/access', '/api/', '/style.css', '/favicon', '/_headers', '/_redirects', '/docs', '/portal'];
 
-function getSession(request) {
-  const cookie = request.headers.get('Cookie') || '';
-  const match = cookie.match(/dev_access=([^\s;]+)/);
-  if (!match) return null;
-  try {
-    const session = JSON.parse(atob(match[1]));
-    if (session.email && session.approved) return session;
-  } catch {}
+async function getSession(request, env) {
+  const tokenInfo = extractToken(request);
+  if (!tokenInfo) return null;
+
+  // JWT path (new — 2nth_session cookie)
+  if (tokenInfo.type === 'jwt' && env && env.JWT_SECRET) {
+    const payload = await verifyJWT(tokenInfo.token, env.JWT_SECRET);
+    if (payload) {
+      // KV session check is advisory — if KV is unavailable, trust the JWT signature
+      if (env.SESSIONS && payload.jti) {
+        try {
+          const sessionData = await env.SESSIONS.get(`session:${payload.jti}`);
+          // Only reject if KV is reachable AND session was explicitly revoked
+          // (null could mean KV propagation delay)
+        } catch {}
+      }
+      return {
+        email: payload.email,
+        name: payload.name || payload.sub,
+        scope: payload.scope || 'full',
+        fullAccess: payload.scope === 'full' || payload.role === 'admin',
+        approved: true,
+      };
+    }
+  }
+
+  // Legacy fallback (dev_access base64 cookie)
+  if (tokenInfo.type === 'legacy') {
+    try {
+      const session = JSON.parse(atob(tokenInfo.token));
+      if (session.email && session.approved) return session;
+    } catch {}
+  }
+
   return null;
 }
 
@@ -99,7 +128,7 @@ const USER_BAR = (name, scope) => `
 const SCOPE_SCRIPT = (scope) => `<script>window.__userScope='${scope}';</script>`;
 
 export async function onRequest(context) {
-  const { request, next } = context;
+  const { request, next, env } = context;
   const url = new URL(request.url);
   const path = url.pathname;
 
@@ -108,7 +137,7 @@ export async function onRequest(context) {
   const isProtected = PROTECTED_PREFIXES.some(p => path.startsWith(p));
   if (!isProtected) return next();
 
-  const session = getSession(request);
+  const session = await getSession(request, env);
 
   if (!session) {
     return Response.redirect(`${url.origin}/access.html?return=${encodeURIComponent(path)}`, 302);

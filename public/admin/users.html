@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management — 2nth.ai Admin</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .admin{max-width:900px;margin:32px auto 0;padding:0 24px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
+    .sub{font-size:13px;color:#71717a;margin-bottom:24px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    .user-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e4e4e7;border-radius:10px;overflow:hidden;font-size:12px}
+    .user-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e4e7;background:#fafafa}
+    .user-table td{padding:8px 12px;border-bottom:1px solid #f4f4f5;color:#52525b;vertical-align:middle}
+    .user-table tr:last-child td{border:none}
+    .user-table tr:hover{background:#fafafa}
+    .user-name{font-weight:600;color:#18181b}
+    .user-email{font-family:'JetBrains Mono',monospace;font-size:10px;color:#71717a}
+    .user-scope{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;display:inline-block}
+    .scope-full{background:rgba(124,58,237,.06);color:#7c3aed;border:1px solid rgba(124,58,237,.15)}
+    .scope-partner{background:rgba(5,150,105,.06);color:#059669;border:1px solid rgba(5,150,105,.15)}
+    .user-code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#f4f4f5;padding:2px 8px;border-radius:3px;cursor:pointer;user-select:all}
+    .user-link{font-family:'JetBrains Mono',monospace;font-size:9px;color:#7c3aed;cursor:pointer;text-decoration:none}
+    .user-link:hover{text-decoration:underline}
+    .copy-toast{position:fixed;bottom:20px;right:20px;background:#18181b;color:#fff;padding:10px 20px;border-radius:8px;font-size:12px;display:none;z-index:100}
+
+    .add-form{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:20px;margin:24px 0}
+    .add-form h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:#18181b;margin-bottom:12px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+    .form-row.wide{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+    .form-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-bottom:4px}
+    .form-field input,.form-field select{width:100%;padding:8px 10px;border:1px solid #e4e4e7;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;outline:none;color:#18181b}
+    .form-field input:focus{border-color:#7c3aed}
+    .btn{padding:8px 18px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+    .btn-add{background:#7c3aed;color:#fff}.btn-add:hover{background:#6d28d9}
+    .btn-send{background:#059669;color:#fff;font-size:9px;padding:4px 10px}.btn-send:hover{background:#047857}
+    .btn-copy{background:none;border:1px solid #e4e4e7;color:#71717a;font-size:9px;padding:4px 10px}.btn-copy:hover{border-color:#7c3aed;color:#7c3aed}
+
+    .stats{display:flex;gap:20px;margin-bottom:20px}
+    .stat{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a}
+    .stat strong{color:#18181b;font-size:16px;display:block}
+
+    footer{border-top:1px solid #e4e4e7;padding:16px 0;text-align:center;font-size:10px;color:#a1a1aa;margin-top:40px}
+    footer a{color:#7c3aed}
+    @media(max-width:768px){.form-row,.form-row.wide{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">ADMIN</span></a>
+    <nav>
+      <a href="/hub.html">Hub</a>
+      <a href="/docs.html">Docs</a>
+    </nav>
+  </div>
+</header>
+
+<div class="admin">
+  <h1>USER MANAGEMENT</h1>
+  <div class="sub">Manage partner access PINs, scopes, and sign-in links. Admin only.</div>
+
+  <div class="stats" id="stats"></div>
+  <div id="source-label" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa;margin-bottom:12px">Loading from KV...</div>
+
+  <!-- User table -->
+  <table class="user-table">
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Email</th><th>Partnership</th><th>PIN</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="user-body"></tbody>
+  </table>
+
+  <!-- Add user form -->
+  <div class="add-form">
+    <h2>ADD USER</h2>
+    <div class="form-row wide">
+      <div class="form-field"><label>User ID</label><input type="text" id="a-id" placeholder="e.g. john"></div>
+      <div class="form-field"><label>Full name</label><input type="text" id="a-name" placeholder="John Smith"></div>
+      <div class="form-field"><label>Email</label><input type="email" id="a-email" placeholder="john@company.com"></div>
+      <div class="form-field"><label>Scope</label>
+        <select id="a-scope">
+          <option value="full">Full access (Admin)</option>
+          <option value="">Partner-specific...</option>
+          <option value="proximity-green">Proximity Green</option>
+          <option value="luthuli">Luthuli</option>
+          <option value="dronescan,scanman">DroneScan + ScanMan</option>
+          <option value="ctrl-future">Ctrl Future</option>
+          <option value="republic-lifestyle">Republic Lifestyle</option>
+          <option value="vibecrafters">VibeCrafters</option>
+          <option value="durpro">DurPro</option>
+          <option value="gananda">Gananda</option>
+          <option value="b2bs">B2BS</option>
+        </select>
+      </div>
+      <div class="form-field"><label>PIN code</label><input type="text" id="a-code" placeholder="4 digits" maxlength="4" pattern="[0-9]{4}"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-add" onclick="addUser()">Add user</button>
+      <span style="font-size:11px;color:#a1a1aa;padding-top:10px" id="add-msg"></span>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:20px;margin:24px 0">
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:#18181b;margin-bottom:8px">HOW IT WORKS</h2>
+    <ul style="font-size:12px;color:#52525b;padding-left:18px;display:flex;flex-direction:column;gap:6px">
+      <li>Users are stored in the Worker source code (access-signin.js) — changes require redeployment</li>
+      <li><strong>To make this live:</strong> copy the user data from here to the access-signin.js file and redeploy</li>
+      <li><strong>Future:</strong> Move user storage to Cloudflare KV for instant updates without redeploy</li>
+      <li>Admin domains (@2nth.ai, @2nth.io, @b2bs.co.za) get full access automatically</li>
+      <li>Sign-in links can be WhatsApped directly — one tap access, no code needed</li>
+    </ul>
+  </div>
+</div>
+
+<div id="copy-toast" class="copy-toast">Copied!</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai Admin &middot; <a href="/hub.html">Partner Hub</a></p>
+  </div>
+</footer>
+
+<script>
+var users = [];
+var kvLoaded = false;
+
+// Load users from KV API (live data), fall back to empty
+async function loadUsers() {
+  try {
+    var res = await fetch('/api/admin/users');
+    var data = await res.json();
+    if (data.users && data.users.length > 0) {
+      users = data.users.map(function(u) {
+        return { id: u.id, name: u.name, email: u.email, scope: u.scope, code: u.pin || '—', active: u.active !== false };
+      });
+      kvLoaded = true;
+      document.getElementById('source-label').textContent = 'Source: Cloudflare KV (live)';
+      document.getElementById('source-label').style.color = '#059669';
+    }
+  } catch(e) {
+    document.getElementById('source-label').textContent = 'Source: KV unavailable — showing empty';
+    document.getElementById('source-label').style.color = '#dc2626';
+  }
+  render();
+}
+
+function render() {
+  var body = document.getElementById('user-body');
+  body.innerHTML = '';
+  var fullCount = 0, partnerCount = 0;
+
+  var partnerships = {
+    'full': { name: '2nth.ai Admin', color: '#7c3aed', link: null },
+    'proximity-green': { name: 'Proximity Green', color: '#059669', link: '/partners/proximity-green.html' },
+    'proximity-green,luthuli': { name: 'Proximity Green + Luthuli', color: '#059669', link: '/partners/proximity-green.html' },
+    'luthuli': { name: 'Luthuli Conservation', color: '#6b5c4d', link: '/preview/luthuli/' },
+    'dronescan': { name: 'DroneScan', color: '#0891b2', link: '/partners/dronescan.html' },
+    'dronescan,scanman': { name: 'DroneScan + ScanMan', color: '#0891b2', link: '/partners/dronescan.html' },
+    'dronescan,scanman,luthuli': { name: 'DroneScan + ScanMan + Luthuli', color: '#0891b2', link: '/partners/dronescan.html' },
+    'scanman': { name: 'ScanMan', color: '#22873a', link: '/partners/scanman.html' },
+    'ctrl-future': { name: 'Ctrl Future', color: '#14b8a6', link: '/partners/ctrl-future.html' },
+    'republic-lifestyle': { name: 'Republic Lifestyle', color: '#8a7a5a', link: '/partners/republic-lifestyle.html' },
+    'vibecrafters': { name: 'VibeCrafters', color: '#ff6b6b', link: '/partners/vibecrafters.html' },
+    'durpro': { name: 'DurPro Workforce', color: '#e4373c', link: '/partners/durpro.html' },
+    'gananda': { name: 'Gananda Connect', color: '#d97706', link: '/partners/gananda.html' },
+    'b2bs': { name: 'B2B AI Solutions', color: '#003459', link: '/partners/b2bs-ai.html' },
+    'rohrs': { name: 'Rohrs Associates', color: '#1e40af', link: null },
+  };
+
+  function partnerBadge(scope) {
+    var p = partnerships[scope];
+    if (!p) return '<span class="user-scope scope-partner" style="border-color:' + '#a1a1aa' + '">' + scope + '</span>';
+    var html = '<span class="user-scope" style="color:' + p.color + ';background:' + p.color + '0f;border:1px solid ' + p.color + '26">';
+    if (p.link) html = '<a href="' + p.link + '" style="text-decoration:none">' + html;
+    html += p.name + '</span>';
+    if (p.link) html += '</a>';
+    return html;
+  }
+
+  users.forEach(function(u) {
+    var isFull = u.scope === 'full';
+    if (isFull) fullCount++; else partnerCount++;
+    var signInUrl = 'https://developers.2nth.ai/api/access-signin?email=' + encodeURIComponent(u.email) + '&return=/hub.html';
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="mono" style="font-size:10px;color:#a1a1aa">' + u.id + '</td>' +
+      '<td class="user-name">' + u.name + '</td>' +
+      '<td class="user-email">' + u.email + '</td>' +
+      '<td>' + partnerBadge(u.scope) + '</td>' +
+      '<td><span class="user-code" onclick="copyText(\'' + u.code + '\')" title="Click to copy">' + u.code + '</span></td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn-copy" onclick="copyText(\'' + signInUrl + '\')">Copy link</button> ' +
+        '<button class="btn-send" onclick="sendWelcome(\'' + u.email + '\',\'' + u.name + '\',\'' + u.scope + '\',\'' + u.code + '\')">Send email</button>' +
+      '</td>';
+    body.appendChild(tr);
+  });
+
+  document.getElementById('stats').innerHTML =
+    '<div class="stat"><strong>' + users.length + '</strong> Total users</div>' +
+    '<div class="stat"><strong>' + fullCount + '</strong> Admin (full)</div>' +
+    '<div class="stat"><strong>' + partnerCount + '</strong> Partner (scoped)</div>' +
+    '<div class="stat"><strong>3</strong> Admin domains</div>';
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text);
+  var toast = document.getElementById('copy-toast');
+  toast.style.display = 'block';
+  setTimeout(function() { toast.style.display = 'none'; }, 1500);
+}
+
+async function addUser() {
+  var id = document.getElementById('a-id').value.trim();
+  var name = document.getElementById('a-name').value.trim();
+  var email = document.getElementById('a-email').value.trim();
+  var scope = document.getElementById('a-scope').value;
+  var code = document.getElementById('a-code').value.trim();
+  if (!id || !name || !email || !code) { document.getElementById('add-msg').textContent = 'All fields required'; return; }
+  if (code.length !== 4) { document.getElementById('add-msg').textContent = 'Code must be 4 digits'; return; }
+
+  // Write to KV via API
+  document.getElementById('add-msg').textContent = 'Saving to KV...';
+  try {
+    var res = await fetch('/api/admin/users', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id:id, email:email, name:name, scope:scope||'full', pin:code })
+    });
+    var data = await res.json();
+    if (data.success) {
+      document.getElementById('add-msg').textContent = data.action === 'created' ? 'User created in KV!' : 'User updated in KV!';
+      document.getElementById('add-msg').style.color = '#059669';
+      document.getElementById('a-id').value = '';
+      document.getElementById('a-name').value = '';
+      document.getElementById('a-email').value = '';
+      document.getElementById('a-code').value = '';
+      // Reload from KV
+      await loadUsers();
+    } else {
+      document.getElementById('add-msg').textContent = 'Error: ' + (data.error || 'unknown');
+      document.getElementById('add-msg').style.color = '#dc2626';
+    }
+  } catch(e) {
+    document.getElementById('add-msg').textContent = 'Network error';
+    document.getElementById('add-msg').style.color = '#dc2626';
+  }
+}
+
+function sendWelcome(email, name, scope, code) {
+  var tier = scope === 'full' ? 'Admin' : 'Partner (' + scope + ')';
+  var signInUrl = 'https://developers.2nth.ai/api/access-signin?email=' + encodeURIComponent(email) + '&return=/hub.html';
+  fetch('/api/send-welcome', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ to:email, cc:'craig@2nth.ai', name:name, tier:tier, code:code, signInUrl:signInUrl, tokens:'As allocated' })
+  }).then(function(r){ return r.json() }).then(function(d) {
+    if (d.success) { alert('Welcome email sent to ' + email); }
+    else { alert('Failed: ' + (d.error || 'unknown')); }
+  }).catch(function() { alert('Network error'); });
+}
+
+loadUsers();
+</script>
+</body>
+</html>

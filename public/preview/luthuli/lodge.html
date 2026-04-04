@@ -123,7 +123,9 @@
     <a href="/preview/luthuli/" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
     <nav>
       <a href="#" class="active">Dashboard</a>
-      <a href="#bookings">Bookings</a>
+      <a href="/preview/luthuli/bookings.html">Bookings</a>
+      <a href="/preview/luthuli/rooms.html">Rooms</a>
+      <a href="/preview/luthuli/offgrid.html">Off-Grid</a>
       <a href="#wildlife">Wildlife</a>
       <a href="#maintenance">Maintenance</a>
       <a href="/preview/luthuli/">About</a>
@@ -182,7 +184,7 @@
     <div>
       <div class="sec-head">
         <div class="sec-title">Pavilions</div>
-        <a class="sec-action">Manage rooms &rarr;</a>
+        <a class="sec-action" href="/preview/luthuli/rooms.html">Manage rooms &rarr;</a>
       </div>
       <div class="pavilions">
 
@@ -233,7 +235,7 @@
     <div>
       <div class="sec-head">
         <div class="sec-title">Off-Grid Systems</div>
-        <a class="sec-action">Full report &rarr;</a>
+        <a class="sec-action" href="/preview/luthuli/offgrid.html">Full report &rarr;</a>
       </div>
       <div class="systems">
         <div class="sys">
@@ -267,7 +269,7 @@
     <div id="bookings">
       <div class="sec-head">
         <div class="sec-title">Bookings</div>
-        <a class="sec-action">Add booking &rarr;</a>
+        <a class="sec-action" href="/preview/luthuli/bookings.html">Add booking &rarr;</a>
       </div>
       <div class="bookings">
         <table class="book-table">
@@ -287,9 +289,21 @@
     <div id="wildlife">
       <div class="sec-head">
         <div class="sec-title">Wildlife Sightings — This Week</div>
-        <a class="sec-action">Log sighting &rarr;</a>
+        <a class="sec-action" onclick="document.getElementById('sight-form').style.display=document.getElementById('sight-form').style.display==='none'?'block':'none'" style="cursor:pointer">Log sighting &rarr;</a>
       </div>
-      <div class="wildlife">
+      <!-- Sighting form -->
+      <div id="sight-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+          <select id="sf-animal" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px"><option>Leopard</option><option>Elephant</option><option>Rhino</option><option>Nyala</option><option>Suni</option><option>Buffalo</option><option>Fish Eagle</option><option>Wild Dog</option><option>Other</option></select>
+          <input id="sf-location" type="text" placeholder="Location" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+          <input id="sf-count" type="number" value="1" min="1" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="sf-notes" type="text" placeholder="Notes..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+          <button onclick="logSighting()" style="padding:8px 16px;background:#5a7a5c;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">Log</button>
+        </div>
+      </div>
+      <div class="wildlife" id="wildlife-list">
         <div class="sight">
           <div class="sight-animal">&#129421; Leopard</div>
           <div class="sight-detail">Female + cub, north waterhole<br>3 Apr, 05:48 — spotted from Host Pavilion deck<br>Logged by: Guy Hamlin</div>
@@ -321,9 +335,21 @@
     <div id="maintenance">
       <div class="sec-head">
         <div class="sec-title">Maintenance &amp; Tasks</div>
-        <a class="sec-action">Add task &rarr;</a>
+        <a class="sec-action" onclick="document.getElementById('task-form').style.display=document.getElementById('task-form').style.display==='none'?'block':'none'" style="cursor:pointer">Add task &rarr;</a>
       </div>
-      <div class="tasks">
+      <!-- Task form -->
+      <div id="task-form" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+          <input id="tf-title" type="text" placeholder="Task title" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+          <select id="tf-pri" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px"><option value="low">Low priority</option><option value="med" selected>Medium</option><option value="high">High</option></select>
+          <input id="tf-due" type="date" style="padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="tf-desc" type="text" placeholder="Description..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:12px">
+          <button onclick="addTask()" style="padding:8px 16px;background:#5a7a5c;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">Add</button>
+        </div>
+      </div>
+      <div class="tasks" id="tasks-list">
         <div class="task">
           <div class="task-pri pri-high"></div>
           <div class="task-text"><strong>Water pump filter</strong> — Replace sediment filter on rainwater pump. Flow rate dropping.</div>
@@ -379,5 +405,68 @@
   </div>
 </footer>
 
+<script>
+var emojis = {'Leopard':'&#129421;','Elephant':'&#128024;','Rhino':'&#129423;','Nyala':'&#129420;','Suni':'&#129422;','Buffalo':'&#128003;','Fish Eagle':'&#129413;','Wild Dog':'&#128054;','Other':'&#128062;'};
+var feedEl = document.querySelector('.feed');
+
+function now() { return new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'}); }
+
+function addFeedItem(text, color) {
+  var div = document.createElement('div');
+  div.className = 'feed-item';
+  div.innerHTML = '<div class="feed-time">' + now() + '</div><div class="feed-dot" style="background:' + (color||'var(--green)') + '"></div><div class="feed-text">' + text + '</div>';
+  feedEl.insertBefore(div, feedEl.firstChild);
+}
+
+function logSighting() {
+  var animal = document.getElementById('sf-animal').value;
+  var loc = document.getElementById('sf-location').value || 'Near lodge';
+  var count = document.getElementById('sf-count').value;
+  var notes = document.getElementById('sf-notes').value;
+  var emoji = emojis[animal] || '&#128062;';
+  // Add to wildlife list
+  var wl = document.getElementById('wildlife-list');
+  var div = document.createElement('div');
+  div.className = 'sight';
+  div.innerHTML = '<div class="sight-animal">' + emoji + ' ' + animal + '</div><div class="sight-detail">' + count + ' &middot; ' + loc + '<br>' + now() + (notes ? ' — ' + notes : '') + '<br>Logged by: Guy Hamlin</div>';
+  wl.insertBefore(div, wl.firstChild);
+  // Add to feed
+  addFeedItem('<strong>Wildlife sighting</strong> logged: ' + animal + ' (' + count + ') at ' + loc + '.', 'var(--sage)');
+  document.getElementById('sf-notes').value = '';
+  document.getElementById('sight-form').style.display = 'none';
+}
+
+function addTask() {
+  var title = document.getElementById('tf-title').value;
+  var pri = document.getElementById('tf-pri').value;
+  var due = document.getElementById('tf-due').value;
+  var desc = document.getElementById('tf-desc').value;
+  if (!title) return;
+  var tl = document.getElementById('tasks-list');
+  var div = document.createElement('div');
+  div.className = 'task';
+  div.innerHTML = '<div class="task-pri pri-' + pri + '"></div><div class="task-text"><strong>' + title + '</strong>' + (desc ? ' — ' + desc : '') + '</div><div class="task-due">' + (due || 'No date') + '</div>';
+  tl.insertBefore(div, tl.firstChild);
+  addFeedItem('<strong>Task added:</strong> ' + title + ' (' + pri + ' priority)', 'var(--amber)');
+  document.getElementById('tf-title').value = '';
+  document.getElementById('tf-desc').value = '';
+  document.getElementById('task-form').style.display = 'none';
+}
+
+// Auto-updating feed simulation
+var autoEvents = [
+  { text: '<strong>Solar</strong> battery reached <strong>96%</strong>. Charging continues.', color: 'var(--green)', delay: 15000 },
+  { text: '<strong>Water pump</strong> cycled. Pressure holding at 2.4 bar.', color: 'var(--blue)', delay: 30000 },
+  { text: '<strong>Occupancy sensor</strong>: Living Pavilion occupied (4 guests).', color: 'var(--sage)', delay: 45000 },
+  { text: '<strong>Temperature</strong>: Host Family pavilion 25°C (fan auto-on).', color: 'var(--amber)', delay: 60000 },
+  { text: '<strong>Wildlife camera</strong>: Movement detected at north waterhole.', color: 'var(--sage)', delay: 80000 },
+  { text: '<strong>Solar</strong> battery reached <strong>98%</strong>. Full charge imminent.', color: 'var(--green)', delay: 100000 },
+  { text: '<strong>Kitchen</strong>: Gas hob ignited — lunch prep.', color: 'var(--blue)', delay: 120000 },
+  { text: '<strong>Gate sensor</strong>: Reserve vehicle passed main gate.', color: 'var(--muted)', delay: 150000 },
+];
+autoEvents.forEach(function(ev) {
+  setTimeout(function() { addFeedItem(ev.text, ev.color); }, ev.delay);
+});
+</script>
 </body>
 </html>

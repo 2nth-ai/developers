@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Off-Grid Systems — Luthuli Lodge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--earth:#6b5c4d;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{background:var(--earth-dark);padding:12px 0;color:#faf9f6}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,249,246,.6);text-decoration:none;margin-left:18px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#faf9f6}
+    h1{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:4px}
+    h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);margin:28px 0 12px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    .sys-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:20px 0}
+    .sys-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px}
+    .sys-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .sys-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+    .sys-title .icon{font-size:20px}
+    .sys-badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+    .badge-ok{background:rgba(5,150,105,.08);color:var(--green)}
+    .badge-warn{background:rgba(217,119,6,.08);color:var(--amber)}
+    .badge-crit{background:rgba(220,38,38,.08);color:var(--red)}
+
+    .gauge{position:relative;height:12px;background:var(--border);border-radius:6px;margin:12px 0 6px;overflow:hidden}
+    .gauge-fill{height:100%;border-radius:6px;transition:width 1s}
+    .gauge-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+
+    .metric-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+    .metric-row:last-child{border:none}
+    .metric-k{color:var(--muted)}
+    .metric-v{color:var(--text);font-weight:500}
+
+    .chart{display:flex;gap:3px;align-items:flex-end;height:80px;margin:16px 0}
+    .chart-bar{flex:1;border-radius:3px 3px 0 0;transition:height .6s}
+    .chart-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)}
+
+    .alert{background:rgba(217,119,6,.04);border:1px solid rgba(217,119,6,.12);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:12px;color:var(--text2);display:flex;align-items:start;gap:8px}
+    .alert-icon{font-size:16px;flex-shrink:0}
+
+    .log{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+    .log-header{padding:12px 16px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+    .log-item{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border);font-size:12px}
+    .log-item:last-child{border:none}
+    .log-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:44px}
+    .log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:40px}
+    footer a{color:var(--sage)}
+    @media(max-width:768px){.sys-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="/preview/luthuli/lodge.html" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
+    <nav>
+      <a href="/preview/luthuli/lodge.html">Dashboard</a>
+      <a href="/preview/luthuli/bookings.html">Bookings</a>
+      <a href="/preview/luthuli/rooms.html">Rooms</a>
+      <a href="#" class="active">Off-Grid</a>
+      <a href="/preview/luthuli/">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:24px">
+  <h1>Off-Grid Systems Report</h1>
+  <div class="sub">Luthuli Lodge operates fully off-grid. All power, water, and climate systems are self-contained.</div>
+
+  <div class="sys-grid">
+    <!-- Solar -->
+    <div class="sys-card">
+      <div class="sys-head">
+        <div class="sys-title"><span class="icon">&#9728;&#65039;</span> Solar Power</div>
+        <span class="sys-badge badge-ok">Healthy</span>
+      </div>
+      <div style="font-size:36px;font-weight:700;color:var(--text)" id="solar-pct">94%</div>
+      <div style="font-size:11px;color:var(--muted)">Battery state of charge</div>
+      <div class="gauge"><div class="gauge-fill" id="solar-gauge" style="width:94%;background:var(--green)"></div></div>
+      <div class="gauge-label"><span>0%</span><span>100%</span></div>
+      <div class="metric-row"><span class="metric-k">Array capacity</span><span class="metric-v">8.4 kWp (24 panels)</span></div>
+      <div class="metric-row"><span class="metric-k">Battery bank</span><span class="metric-v">14.4 kWh LiFePO4</span></div>
+      <div class="metric-row"><span class="metric-k">Today's generation</span><span class="metric-v">6.2 kWh so far</span></div>
+      <div class="metric-row"><span class="metric-k">Current draw</span><span class="metric-v">3.2 kW (fridge, fans, lights)</span></div>
+      <div class="metric-row"><span class="metric-k">Est. full charge</span><span class="metric-v">09:00 today</span></div>
+      <div class="metric-row"><span class="metric-k">Inverter</span><span class="metric-v">Victron MultiPlus 5kVA</span></div>
+      <div class="metric-row"><span class="metric-k">Last panel clean</span><span class="metric-v">14 Mar — <span style="color:var(--amber)">due 7 Apr</span></span></div>
+
+      <h2 style="font-size:14px">Generation — last 7 days</h2>
+      <div class="chart" id="solar-chart"></div>
+      <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    </div>
+
+    <!-- Water -->
+    <div class="sys-card">
+      <div class="sys-head">
+        <div class="sys-title"><span class="icon">&#128167;</span> Rainwater</div>
+        <span class="sys-badge badge-warn">Monitor</span>
+      </div>
+      <div style="font-size:36px;font-weight:700;color:var(--amber)" id="water-pct">68%</div>
+      <div style="font-size:11px;color:var(--muted)">Tank capacity</div>
+      <div class="gauge"><div class="gauge-fill" id="water-gauge" style="width:68%;background:var(--amber)"></div></div>
+      <div class="gauge-label"><span>0 L</span><span>10,000 L</span></div>
+      <div class="metric-row"><span class="metric-k">Tank capacity</span><span class="metric-v">10,000 litres (JoJo tank)</span></div>
+      <div class="metric-row"><span class="metric-k">Current level</span><span class="metric-v">6,800 litres</span></div>
+      <div class="metric-row"><span class="metric-k">Daily consumption</span><span class="metric-v">~280 L/day (4 guests)</span></div>
+      <div class="metric-row"><span class="metric-k">Days remaining</span><span class="metric-v">~24 days at current rate</span></div>
+      <div class="metric-row"><span class="metric-k">Last rain</span><span class="metric-v">28 March — 18mm</span></div>
+      <div class="metric-row"><span class="metric-k">Pump pressure</span><span class="metric-v">2.4 bar — <span style="color:var(--amber)">filter due</span></span></div>
+      <div class="metric-row"><span class="metric-k">Greywater recycling</span><span class="metric-v">Active — irrigation only</span></div>
+
+      <div class="alert"><span class="alert-icon">&#9888;&#65039;</span><div><strong>Pump filter alert:</strong> Sediment filter on rainwater pump needs replacement. Flow rate declining. Scheduled for 5 Apr.</div></div>
+
+      <h2 style="font-size:14px">Consumption — last 7 days</h2>
+      <div class="chart" id="water-chart"></div>
+      <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    </div>
+
+    <!-- Climate -->
+    <div class="sys-card">
+      <div class="sys-head">
+        <div class="sys-title"><span class="icon">&#127777;&#65039;</span> Climate Control</div>
+        <span class="sys-badge badge-ok">Comfortable</span>
+      </div>
+      <div style="font-size:36px;font-weight:700;color:var(--text)">24°C</div>
+      <div style="font-size:11px;color:var(--muted)">Average interior temperature</div>
+      <div class="metric-row"><span class="metric-k">Living Pavilion</span><span class="metric-v">24°C — fans on low</span></div>
+      <div class="metric-row"><span class="metric-k">Host Family</span><span class="metric-v">23°C — fan off, windows open</span></div>
+      <div class="metric-row"><span class="metric-k">Guest Pavilion</span><span class="metric-v">22°C — vacant, closed</span></div>
+      <div class="metric-row"><span class="metric-k">Outdoor</span><span class="metric-v">31°C — partly cloudy</span></div>
+      <div class="metric-row"><span class="metric-k">Humidity (outdoor)</span><span class="metric-v">62%</span></div>
+      <div class="metric-row"><span class="metric-k">Wind</span><span class="metric-v">12 km/h NE</span></div>
+      <div class="metric-row"><span class="metric-k">Cooling method</span><span class="metric-v">Passive — cross ventilation + overhang shading</span></div>
+      <div class="metric-row"><span class="metric-k">Heating method</span><span class="metric-v">Fireplace (Living) + thermal mass (stone walls)</span></div>
+    </div>
+
+    <!-- Power load -->
+    <div class="sys-card">
+      <div class="sys-head">
+        <div class="sys-title"><span class="icon">&#128268;</span> Power Load</div>
+        <span class="sys-badge badge-ok">Normal</span>
+      </div>
+      <div style="font-size:36px;font-weight:700;color:var(--text)">3.2 kW</div>
+      <div style="font-size:11px;color:var(--muted)">Current total draw</div>
+      <div class="gauge"><div class="gauge-fill" style="width:64%;background:var(--blue)"></div></div>
+      <div class="gauge-label"><span>0 kW</span><span>5 kW (max)</span></div>
+      <div class="metric-row"><span class="metric-k">Fridges (3)</span><span class="metric-v">1.2 kW</span></div>
+      <div class="metric-row"><span class="metric-k">Ceiling fans (4)</span><span class="metric-v">0.3 kW</span></div>
+      <div class="metric-row"><span class="metric-k">Lighting (LED)</span><span class="metric-v">0.2 kW</span></div>
+      <div class="metric-row"><span class="metric-k">Water pump</span><span class="metric-v">0.8 kW</span></div>
+      <div class="metric-row"><span class="metric-k">USB/device charging</span><span class="metric-v">0.1 kW</span></div>
+      <div class="metric-row"><span class="metric-k">Kitchen (gas + electric)</span><span class="metric-v">0.6 kW (electric kettle)</span></div>
+      <div class="metric-row"><span class="metric-k">Headroom</span><span class="metric-v" style="color:var(--green)">1.8 kW available</span></div>
+    </div>
+  </div>
+
+  <!-- System log -->
+  <div class="log">
+    <div class="log-header">System events — today</div>
+    <div class="log-item"><span class="log-time">07:15</span><span class="log-dot" style="background:var(--green)"></span>Solar reached 94%. Full charge est. 09:00.</div>
+    <div class="log-item"><span class="log-time">06:45</span><span class="log-dot" style="background:var(--blue)"></span>Water pump started. Pressure 2.4 bar (low — filter needed).</div>
+    <div class="log-item"><span class="log-time">06:30</span><span class="log-dot" style="background:var(--green)"></span>Kitchen power on. Kettle + toaster: 1.8 kW spike (within limits).</div>
+    <div class="log-item"><span class="log-time">05:30</span><span class="log-dot" style="background:var(--amber)"></span>Battery at 78% (overnight draw: 2.3 kWh). Solar charging started.</div>
+    <div class="log-item"><span class="log-time">05:00</span><span class="log-dot" style="background:var(--amber)"></span>Water tank at 68%. Consumption trending normal for 4 guests.</div>
+    <div class="log-item"><span class="log-time">22:00</span><span class="log-dot" style="background:var(--green)"></span>All systems overnight mode. Fridges + security lights only.</div>
+  </div>
+</div>
+
+<footer><div class="container">Luthuli Lodge &middot; Mkuzi Game Reserve &middot; <a href="/preview/luthuli/">Luthuli</a> &middot; <a href="https://2nth.ai">2nth.ai</a></div></footer>
+
+<script>
+function bars(id, data, color) {
+  var el = document.getElementById(id);
+  var max = Math.max.apply(null, data);
+  data.forEach(function(v) {
+    var bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.style.height = (v / max * 100) + '%';
+    bar.style.background = color;
+    bar.title = v + (id.includes('solar') ? ' kWh' : ' L');
+    el.appendChild(bar);
+  });
+}
+bars('solar-chart', [7.1, 6.8, 5.2, 7.4, 6.9, 7.2, 6.2], 'var(--green)');
+bars('water-chart', [260, 310, 280, 245, 290, 320, 280], 'var(--blue)');
+
+// Simulate solar climbing
+setInterval(function() {
+  var pct = parseInt(document.getElementById('solar-pct').textContent);
+  if (pct < 100) {
+    pct++;
+    document.getElementById('solar-pct').textContent = pct + '%';
+    document.getElementById('solar-gauge').style.width = pct + '%';
+  }
+}, 8000);
+</script>
+</body>
+</html>

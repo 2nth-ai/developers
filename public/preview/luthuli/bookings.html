@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookings — Luthuli Lodge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--earth:#6b5c4d;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{background:var(--earth-dark);padding:12px 0;color:#faf9f6}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,249,246,.6);text-decoration:none;margin-left:18px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#faf9f6}
+    h1{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:4px}
+    h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);margin:28px 0 12px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
+    .stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .stat-val{font-size:22px;font-weight:700;color:var(--text)}
+    .stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    /* Calendar */
+    .cal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+    .cal-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .cal-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+    .cal-day-head{padding:8px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border)}
+    .cal-day{padding:8px 6px;text-align:center;min-height:64px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-size:11px;position:relative}
+    .cal-day:nth-child(7n){border-right:none}
+    .cal-num{font-weight:600;color:var(--text);margin-bottom:4px}
+    .cal-booking{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 4px;border-radius:2px;margin-bottom:2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cb-owner{background:rgba(90,122,92,.1);color:var(--sage)}
+    .cb-guest{background:rgba(37,99,235,.08);color:var(--blue)}
+    .cb-pending{background:rgba(217,119,6,.08);color:var(--amber)}
+    .cb-group{background:rgba(124,58,237,.08);color:#7c3aed}
+    .cal-today{background:rgba(5,150,105,.03)}
+
+    /* Booking list */
+    .book-table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+    .book-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg)}
+    .book-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2)}
+    .book-table tr:last-child td{border:none}
+    .book-table .guest{font-weight:600;color:var(--text)}
+    .bs{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
+    .bs-in{background:rgba(5,150,105,.08);color:var(--green)}
+    .bs-conf{background:rgba(37,99,235,.08);color:var(--blue)}
+    .bs-dep{background:rgba(124,58,237,.08);color:#7c3aed}
+    .bs-pend{background:rgba(217,119,6,.08);color:var(--amber)}
+
+    /* Add booking form */
+    .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0}
+    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .form-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .form-field input,.form-field select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+    .form-field input:focus,.form-field select:focus{border-color:var(--sage)}
+    .btn{padding:10px 20px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+    .btn-primary{background:var(--sage);color:#fff}.btn-primary:hover{background:var(--earth-dark)}
+
+    .revenue{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0}
+    .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+    .rev-item{text-align:center}
+    .rev-val{font-size:22px;font-weight:700;color:var(--text)}
+    .rev-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:40px}
+    footer a{color:var(--sage)}
+    @media(max-width:768px){.stats-row{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.cal-grid{font-size:10px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="/preview/luthuli/lodge.html" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
+    <nav>
+      <a href="/preview/luthuli/lodge.html">Dashboard</a>
+      <a href="#" class="active">Bookings</a>
+      <a href="/preview/luthuli/rooms.html">Rooms</a>
+      <a href="/preview/luthuli/offgrid.html">Off-Grid</a>
+      <a href="/preview/luthuli/">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:24px">
+  <h1>Bookings</h1>
+  <div class="sub">Manage reservations, rates, and revenue for Luthuli Lodge.</div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">67%</div><div class="stat-lbl">April occupancy</div></div>
+    <div class="stat"><div class="stat-val">18</div><div class="stat-lbl">Guest nights (Apr)</div></div>
+    <div class="stat"><div class="stat-val">R42,300</div><div class="stat-lbl">Revenue (Apr)</div></div>
+    <div class="stat"><div class="stat-val">R3,200</div><div class="stat-lbl">Conservation levy</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-lbl">Bookings this month</div></div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="cal">
+    <div class="cal-head">
+      <div class="cal-title">April 2026</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(90,122,92,.3);vertical-align:middle"></span> Owner
+        <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(37,99,235,.3);vertical-align:middle;margin-left:8px"></span> Guest
+        <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(124,58,237,.3);vertical-align:middle;margin-left:8px"></span> Group
+        <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(217,119,6,.3);vertical-align:middle;margin-left:8px"></span> Pending
+      </div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-day-head">Mon</div><div class="cal-day-head">Tue</div><div class="cal-day-head">Wed</div><div class="cal-day-head">Thu</div><div class="cal-day-head">Fri</div><div class="cal-day-head">Sat</div><div class="cal-day-head">Sun</div>
+      <div class="cal-day"><div class="cal-num" style="color:var(--muted)">30</div></div>
+      <div class="cal-day"><div class="cal-num">1</div></div>
+      <div class="cal-day"><div class="cal-num">2</div><span class="cal-booking cb-owner">Hamlin ✓</span></div>
+      <div class="cal-day"><div class="cal-num">3</div><span class="cal-booking cb-owner">Hamlin</span></div>
+      <div class="cal-day cal-today"><div class="cal-num" style="color:var(--sage)">4</div><span class="cal-booking cb-owner">Hamlin</span></div>
+      <div class="cal-day"><div class="cal-num">5</div><span class="cal-booking cb-owner">Hamlin</span></div>
+      <div class="cal-day"><div class="cal-num">6</div><span class="cal-booking cb-owner">Hamlin</span><span class="cal-booking cb-guest">VdMerwe ✓</span></div>
+      <div class="cal-day"><div class="cal-num">7</div><span class="cal-booking cb-owner">Hamlin</span><span class="cal-booking cb-guest">VdMerwe</span></div>
+      <div class="cal-day"><div class="cal-num">8</div><span class="cal-booking cb-owner">Hamlin ⇥</span><span class="cal-booking cb-guest">VdMerwe</span></div>
+      <div class="cal-day"><div class="cal-num">9</div><span class="cal-booking cb-guest">VdMerwe</span></div>
+      <div class="cal-day"><div class="cal-num">10</div><span class="cal-booking cb-guest">VdMerwe ⇥</span></div>
+      <div class="cal-day"><div class="cal-num">11</div></div>
+      <div class="cal-day"><div class="cal-num">12</div><span class="cal-booking cb-group">Ndlovu ✓</span></div>
+      <div class="cal-day"><div class="cal-num">13</div><span class="cal-booking cb-group">Ndlovu</span></div>
+      <div class="cal-day"><div class="cal-num">14</div><span class="cal-booking cb-group">Ndlovu</span></div>
+      <div class="cal-day"><div class="cal-num">15</div><span class="cal-booking cb-group">Ndlovu ⇥</span></div>
+      <div class="cal-day"><div class="cal-num">16</div></div>
+      <div class="cal-day"><div class="cal-num">17</div></div>
+      <div class="cal-day"><div class="cal-num">18</div><span class="cal-booking cb-pending">Thompson ?</span></div>
+      <div class="cal-day"><div class="cal-num">19</div><span class="cal-booking cb-pending">Thompson</span></div>
+      <div class="cal-day"><div class="cal-num">20</div><span class="cal-booking cb-pending">Thompson</span></div>
+      <div class="cal-day"><div class="cal-num">21</div><span class="cal-booking cb-pending">Thompson ⇥</span></div>
+      <div class="cal-day"><div class="cal-num">22</div></div>
+      <div class="cal-day"><div class="cal-num">23</div></div>
+      <div class="cal-day"><div class="cal-num">24</div></div>
+      <div class="cal-day"><div class="cal-num">25</div><span class="cal-booking cb-group">Birding SA ✓</span></div>
+      <div class="cal-day"><div class="cal-num">26</div><span class="cal-booking cb-group">Birding SA</span></div>
+      <div class="cal-day"><div class="cal-num">27</div><span class="cal-booking cb-group">Birding SA</span></div>
+      <div class="cal-day"><div class="cal-num">28</div><span class="cal-booking cb-group">Birding SA ⇥</span></div>
+      <div class="cal-day"><div class="cal-num">29</div></div>
+      <div class="cal-day"><div class="cal-num">30</div></div>
+      <div class="cal-day"><div class="cal-num" style="color:var(--muted)">1</div></div>
+    </div>
+  </div>
+
+  <!-- Bookings table -->
+  <h2>All bookings — April 2026</h2>
+  <table class="book-table">
+    <thead><tr><th>Guest</th><th>Pavilion</th><th>Arrive</th><th>Depart</th><th>Nights</th><th>Guests</th><th>Rate</th><th>Total</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="guest">Hamlin family</td><td>Host Family</td><td>2 Apr</td><td>8 Apr</td><td>6</td><td>4</td><td>Owner</td><td>—</td><td><span class="bs bs-in">In-house</span></td></tr>
+      <tr><td class="guest">Van der Merwe</td><td>Guest</td><td>6 Apr</td><td>10 Apr</td><td>4</td><td>2</td><td>R2,800/n</td><td>R11,200</td><td><span class="bs bs-conf">Confirmed</span></td></tr>
+      <tr><td class="guest">Ndlovu &amp; party</td><td>Host + Guest</td><td>12 Apr</td><td>15 Apr</td><td>3</td><td>6</td><td>R4,200/n</td><td>R12,600</td><td><span class="bs bs-dep">Deposit paid</span></td></tr>
+      <tr><td class="guest">Thompson</td><td>Guest</td><td>18 Apr</td><td>21 Apr</td><td>3</td><td>2</td><td>R2,800/n</td><td>R8,400</td><td><span class="bs bs-pend">Pending</span></td></tr>
+      <tr><td class="guest">Birding SA group</td><td>Full lodge</td><td>25 Apr</td><td>28 Apr</td><td>3</td><td>8</td><td>R6,500/n</td><td>R19,500</td><td><span class="bs bs-conf">Confirmed</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Add booking -->
+  <h2>Add booking</h2>
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-field"><label>Guest name</label><input type="text" placeholder="Full name"></div>
+      <div class="form-field"><label>Email</label><input type="email" placeholder="guest@email.com"></div>
+      <div class="form-field"><label>Phone</label><input type="tel" placeholder="+27..."></div>
+      <div class="form-field"><label>Pavilion</label><select><option>Guest Pavilion</option><option>Host Family</option><option>Full Lodge</option></select></div>
+      <div class="form-field"><label>Arrive</label><input type="date"></div>
+      <div class="form-field"><label>Depart</label><input type="date"></div>
+      <div class="form-field"><label>Guests</label><input type="number" value="2" min="1" max="8"></div>
+      <div class="form-field"><label>Rate per night</label><input type="text" placeholder="R2,800"></div>
+      <div class="form-field"><label>Notes</label><input type="text" placeholder="Special requests..."></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="alert('Booking saved (simulation)')">Save booking</button>
+      <button class="btn" style="background:var(--bg);border:1px solid var(--border)">Send confirmation email</button>
+    </div>
+  </div>
+
+  <!-- Revenue -->
+  <div class="revenue">
+    <h2 style="margin:0 0 4px">Revenue summary — April 2026</h2>
+    <div style="font-size:12px;color:var(--muted)">Excluding owner stays. Conservation levy R180/guest night.</div>
+    <div class="rev-grid">
+      <div class="rev-item"><div class="rev-val">R51,700</div><div class="rev-lbl">Gross revenue</div></div>
+      <div class="rev-item"><div class="rev-val">R3,200</div><div class="rev-lbl">Conservation levy</div></div>
+      <div class="rev-item"><div class="rev-val">R48,500</div><div class="rev-lbl">Net revenue</div></div>
+    </div>
+  </div>
+</div>
+
+<footer><div class="container">Luthuli Lodge &middot; Mkuzi Game Reserve &middot; <a href="/preview/luthuli/">Luthuli</a> &middot; <a href="https://2nth.ai">2nth.ai</a></div></footer>
+</body>
+</html>
