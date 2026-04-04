@@ -18,6 +18,7 @@ const FALLBACK_USERS = {
   'murray':   { id:'murray', email: 'murray@dronescan.co',        name: 'Murray Paton',         scope: 'dronescan',            pin: '4471' },
   'brian':    { id:'brian', email: 'brian.denny@deneys.co.za',  name: 'Brian Denny',          scope: 'durpro',               pin: '7741' },
   'barryr':   { id:'barryr', email: 'barry.rohrs@rohrsassociates.com', name: 'Barry Röhrs',    scope: 'rohrs',                pin: '2026' },
+  'erica':    { id:'erica', email: 'erica@eatfitsa.com',              name: 'Erica Jankovich', scope: 'eatfitsa',             pin: '2016' },
 };
 
 async function getUser(env, id) {

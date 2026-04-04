@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EatFit AI — Intelligent Patient Onboarding &amp; Screening</title>
+  <meta name="description" content="AI-powered patient screening, symptom assessment, and dietitian referral for EatFitSA. Gut health, IBS, FODMAP, IBD.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--green:#4a9e7d;--green-dark:#3a8268;--green-light:#e8f5ef;--green-glow:rgba(74,158,125,.06);--gray:#6b7280;--gray-light:#9ca3af;--gray-dark:#374151;--text:#1f2937;--text2:#4b5563;--text3:#6b7280;--muted:#9ca3af;--border:#e5e7eb;--bg:#f9fafb;--white:#fff;--warm:#fefce8;--red-soft:#fef2f2;--red:#dc2626}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--green);text-decoration:none}
+
+    .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--white);position:relative}
+
+    /* Header */
+    .header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-name{font-size:24px;font-weight:700;color:var(--gray-dark);letter-spacing:-0.5px}
+    .brand-name span{color:var(--green)}
+    .brand-tag{font-size:10px;color:var(--muted);letter-spacing:0.5px}
+    .ai-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:4px 10px;border-radius:20px;background:var(--green-light);color:var(--green);border:1px solid rgba(74,158,125,.2)}
+
+    /* Steps indicator */
+    .steps{display:flex;gap:4px;padding:12px 24px;background:var(--bg)}
+    .step-dot{flex:1;height:3px;border-radius:3px;background:var(--border);transition:background .3s}
+    .step-dot.active{background:var(--green)}
+    .step-dot.done{background:var(--green-dark)}
+
+    /* Screen container */
+    .screen{padding:24px;display:none;animation:fadeIn .3s ease}
+    .screen.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    .screen h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .screen .subtitle{font-size:14px;color:var(--text3);margin-bottom:20px}
+
+    /* Form elements */
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
+    .field textarea{resize:vertical;min-height:80px}
+
+    /* Checkbox group */
+    .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .check-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--text2)}
+    .check-item:hover{border-color:var(--green)}
+    .check-item.checked{border-color:var(--green);background:var(--green-light);color:var(--green-dark);font-weight:600}
+    .check-item input{display:none}
+
+    /* Severity slider */
+    .severity{display:flex;gap:6px;margin-top:8px}
+    .sev-btn{flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;background:var(--white)}
+    .sev-btn:hover{border-color:var(--green)}
+    .sev-btn.selected{border-color:var(--green);background:var(--green-light);color:var(--green-dark)}
+
+    /* Buttons */
+    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-primary{background:var(--green);color:var(--white)}
+    .btn-primary:hover{background:var(--green-dark);transform:translateY(-1px)}
+    .btn-outline{background:var(--white);color:var(--green);border:2px solid var(--green)}
+    .btn-outline:hover{background:var(--green-light)}
+    .btn-row{display:flex;gap:10px;margin-top:20px}
+    .btn-row .btn{width:auto;flex:1;padding:12px}
+    .btn-back{background:var(--bg);color:var(--text3);border:1px solid var(--border)}
+
+    /* Result cards */
+    .result-card{border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;transition:border-color .2s}
+    .result-card:hover{border-color:var(--green)}
+    .result-card h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .result-card p{font-size:13px;color:var(--text3);line-height:1.6;margin:0}
+    .result-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:4px;margin-top:8px}
+    .tag-green{background:var(--green-light);color:var(--green-dark)}
+    .tag-amber{background:var(--warm);color:#92400e}
+    .tag-red{background:var(--red-soft);color:var(--red)}
+
+    /* Referral card */
+    .referral{background:var(--green-light);border:1px solid rgba(74,158,125,.2);border-radius:12px;padding:20px;margin-top:16px}
+    .referral h3{font-size:16px;font-weight:700;color:var(--green-dark);margin-bottom:8px}
+    .referral p{font-size:13px;color:var(--text2);line-height:1.6}
+    .dietitian-card{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:12px}
+    .dietitian-avatar{width:40px;height:40px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+    .dietitian-info h4{font-size:14px;font-weight:700;color:var(--text);margin:0 0 2px}
+    .dietitian-info p{font-size:11px;color:var(--text3);margin:0}
+
+    /* AI thinking animation */
+    .ai-thinking{text-align:center;padding:40px 20px}
+    .ai-thinking .dots{display:inline-flex;gap:6px;margin-bottom:16px}
+    .ai-thinking .dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:bounce 1.4s ease-in-out infinite}
+    .ai-thinking .dot:nth-child(2){animation-delay:.2s}
+    .ai-thinking .dot:nth-child(3){animation-delay:.4s}
+    @keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+    .ai-thinking p{font-size:14px;color:var(--text3)}
+
+    /* Footer */
+    .footer{padding:16px 24px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--muted)}
+    .footer a{color:var(--green)}
+
+    .demo-badge{position:fixed;top:12px;right:12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:4px 10px;border-radius:4px;background:rgba(74,158,125,.08);border:1px solid rgba(74,158,125,.15);color:var(--green);z-index:10}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="demo-badge">Concept Demo</div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div>
+        <div class="brand-name">Eat<span>Fit</span></div>
+        <div class="brand-tag">Eat Better. Feel Better. Live Life.</div>
+      </div>
+    </div>
+    <div class="ai-badge">AI Screening</div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step-dot active" id="dot-0"></div>
+    <div class="step-dot" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+  </div>
+
+  <!-- Screen 0: Welcome -->
+  <div class="screen active" id="screen-0">
+    <div style="text-align:center;padding:20px 0 10px">
+      <div style="font-size:48px;margin-bottom:12px">&#127813;</div>
+      <h2>Welcome to EatFit AI</h2>
+      <p class="subtitle">Your first step to better gut health. This short screening will help us understand your symptoms and connect you with the right care.</p>
+    </div>
+    <div style="background:var(--green-light);border-radius:10px;padding:16px;margin:16px 0;font-size:13px;color:var(--green-dark)">
+      <strong>How it works:</strong> Answer a few questions about your symptoms and history. Our AI will assess your needs and recommend the best path forward &mdash; whether that's our self-help programme, a consultation with Erica, or a referral to an EatFit-trained dietitian near you.
+    </div>
+    <button class="btn btn-primary" onclick="goTo(1)">Start Screening</button>
+    <p style="text-align:center;margin-top:12px;font-size:11px;color:var(--muted)">Takes about 2 minutes. Your information is confidential.</p>
+  </div>
+
+  <!-- Screen 1: Basic Info -->
+  <div class="screen" id="screen-1">
+    <h2>About You</h2>
+    <p class="subtitle">Let's start with the basics.</p>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="e.g. Sarah van der Merwe">
+    </div>
+    <div class="field">
+      <label>Age</label>
+      <input type="number" id="age" placeholder="e.g. 34">
+    </div>
+    <div class="field">
+      <label>Location</label>
+      <select id="location">
+        <option value="">Select your province...</option>
+        <option>Western Cape</option>
+        <option>Gauteng</option>
+        <option>KwaZulu-Natal</option>
+        <option>Eastern Cape</option>
+        <option>Free State</option>
+        <option>Mpumalanga</option>
+        <option>Limpopo</option>
+        <option>North West</option>
+        <option>Northern Cape</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Have you seen a dietitian before?</label>
+      <div class="severity">
+        <div class="sev-btn" onclick="selectOpt(this)">Never</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Once</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Regularly</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(0)">Back</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Next</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Symptoms -->
+  <div class="screen" id="screen-2">
+    <h2>Your Symptoms</h2>
+    <p class="subtitle">Select all that apply. This helps us understand your gut health picture.</p>
+    <div class="check-grid" id="symptoms">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Bloating</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Abdominal pain</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Diarrhoea</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Constipation</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Gas / wind</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Nausea</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Reflux / heartburn</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Food intolerances</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Fatigue</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Weight changes</div>
+    </div>
+    <div class="field" style="margin-top:16px">
+      <label>How severe are your symptoms?</label>
+      <div class="severity">
+        <div class="sev-btn" onclick="selectOpt(this)">Mild</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Moderate</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Severe</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>How long have you had these symptoms?</label>
+      <div class="severity">
+        <div class="sev-btn" onclick="selectOpt(this)">&lt; 1 month</div>
+        <div class="sev-btn" onclick="selectOpt(this)">1-6 months</div>
+        <div class="sev-btn" onclick="selectOpt(this)">6+ months</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(1)">Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Medical History -->
+  <div class="screen" id="screen-3">
+    <h2>Medical History</h2>
+    <p class="subtitle">Any existing diagnoses or conditions we should know about.</p>
+    <div class="check-grid" id="conditions">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> IBS diagnosed</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> IBD (Crohn's / UC)</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Coeliac disease</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> GERD / reflux</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Diabetes</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Thyroid condition</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Anxiety / stress</div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> None of these</div>
+    </div>
+    <div class="field" style="margin-top:16px">
+      <label>Current medications (if any)</label>
+      <textarea id="meds" placeholder="List any medications, supplements, or probiotics you're currently taking..."></textarea>
+    </div>
+    <div class="field">
+      <label>Have you tried eliminating foods before?</label>
+      <div class="severity">
+        <div class="sev-btn" onclick="selectOpt(this)">No</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Yes, on my own</div>
+        <div class="sev-btn" onclick="selectOpt(this)">Yes, with guidance</div>
+      </div>
+    </div>
+
+    <div style="background:var(--red-soft);border:1px solid rgba(220,38,38,.15);border-radius:10px;padding:14px;margin:16px 0;font-size:12px;color:#991b1b">
+      <strong>Red flags:</strong> If you have unexplained weight loss, blood in stool, severe pain, or difficulty swallowing, please see your GP or gastroenterologist immediately. These require medical investigation before dietary intervention.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(2)">Back</button>
+      <button class="btn btn-primary" onclick="analyse()">Analyse My Symptoms</button>
+    </div>
+  </div>
+
+  <!-- Screen 4: AI Analysis + Results -->
+  <div class="screen" id="screen-4">
+    <!-- AI thinking (shown first, then replaced) -->
+    <div id="thinking">
+      <div class="ai-thinking">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <p>Analysing your symptoms and history...</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">Matching to clinical protocols and dietitian network</p>
+      </div>
+    </div>
+
+    <!-- Results (hidden initially) -->
+    <div id="results" style="display:none">
+      <h2>Your Assessment</h2>
+      <p class="subtitle">Based on your responses, here's what we recommend.</p>
+
+      <div class="result-card">
+        <h3>Symptom Profile: Likely IBS Pattern</h3>
+        <p>Your combination of bloating, abdominal pain, and altered bowel habits lasting 6+ months is consistent with an IBS-type presentation. A structured Low FODMAP elimination and reintroduction protocol is the evidence-based first-line dietary intervention.</p>
+        <span class="result-tag tag-amber">Moderate &mdash; Dietitian Recommended</span>
+      </div>
+
+      <div class="result-card">
+        <h3>Recommended Path: EatFit Consultation + Programme</h3>
+        <p>We recommend a 1:1 consultation with an EatFit-trained dietitian followed by enrolment in the EatFit Patient Programme. This combines individual assessment with group support for the elimination and reintroduction phases.</p>
+        <span class="result-tag tag-green">Best Match</span>
+      </div>
+
+      <div class="referral">
+        <h3>Your Matched Dietitian</h3>
+        <p>Based on your location and symptom profile, we recommend:</p>
+        <div class="dietitian-card">
+          <div class="dietitian-avatar">EJ</div>
+          <div class="dietitian-info">
+            <h4>Erica Jankovich RD(SA)</h4>
+            <p>EatFit Founder &middot; GI Specialist &middot; Cape Town</p>
+            <p style="color:var(--green);font-weight:600;margin-top:4px">Available for online consultation</p>
+          </div>
+        </div>
+        <div class="dietitian-card">
+          <div class="dietitian-avatar" style="background:var(--gray)">LM</div>
+          <div class="dietitian-info">
+            <h4>Lisa Moorcroft RD(SA)</h4>
+            <p>EatFit Trained &middot; IBS &amp; FODMAP &middot; Johannesburg</p>
+            <p style="color:var(--green);font-weight:600;margin-top:4px">In-person &amp; online available</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card" style="margin-top:16px">
+        <h3>Alternative: EatFit for IBS Self-Help</h3>
+        <p>If you'd prefer to start on your own, the EatFit for IBS online course guides you through the Low FODMAP protocol step by step with video lessons, meal plans, and community support.</p>
+        <span class="result-tag tag-green">Self-Paced Option</span>
+      </div>
+
+      <button class="btn btn-primary" style="margin-top:20px" onclick="alert('In production: this would book a consultation or enrol in the programme.')">Book Consultation</button>
+      <button class="btn btn-outline" style="margin-top:10px" onclick="alert('In production: this would enrol you in the EatFit for IBS self-help course.')">Start Self-Help Course</button>
+      <button class="btn btn-back" style="margin-top:10px" onclick="goTo(0)">Start Over</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://eatfitsa.com">EatFitSA</a> &middot; Powered by <a href="https://2nth.ai">2nth.ai</a><br>
+    <span style="font-size:10px">This is a concept demo. Not a substitute for medical advice.</span>
+  </div>
+
+</div>
+
+<script>
+var currentStep = 0;
+
+function goTo(step) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + step).classList.add('active');
+
+  document.querySelectorAll('.step-dot').forEach(function(d, i) {
+    d.classList.remove('active', 'done');
+    if (i < step) d.classList.add('done');
+    if (i === step) d.classList.add('active');
+  });
+
+  currentStep = step;
+  window.scrollTo(0, 0);
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('input').checked = el.classList.contains('checked');
+}
+
+function selectOpt(el) {
+  el.parentElement.querySelectorAll('.sev-btn').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function analyse() {
+  goTo(4);
+  document.getElementById('thinking').style.display = '';
+  document.getElementById('results').style.display = 'none';
+
+  setTimeout(function() {
+    document.getElementById('thinking').style.display = 'none';
+    document.getElementById('results').style.display = '';
+  }, 2500);
+}
+</script>
+
+</body>
+</html>
