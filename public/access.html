@@ -11,19 +11,21 @@
   <style>
     .access-wrap{max-width:420px;margin:60px auto 0;padding:0 24px}
     .lock-icon{width:56px;height:56px;border-radius:14px;background:#7c3aed;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-    .card{background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:24px;margin-top:20px}
+    .card{background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:24px;margin-top:16px}
+    .signin-link{display:block;padding:12px 16px;border:1px solid #e4e4e7;border-radius:8px;margin-bottom:8px;text-decoration:none;transition:all .15s;color:#18181b;font-size:14px;font-weight:500}
+    .signin-link:hover{border-color:#7c3aed;background:rgba(124,58,237,.03)}
+    .signin-link .email{font-family:'JetBrains Mono',monospace;font-size:12px;color:#71717a;display:block;margin-top:2px}
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e4e4e7}
     label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px}
     input,textarea{width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;margin-bottom:14px;background:#fff}
     textarea{resize:vertical}
-    .btn{width:100%;padding:12px;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer;transition:all .15s}
-    .btn-primary{background:#7c3aed;color:#fff}.btn-primary:hover{background:#6d28d9}
-    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn{width:100%;padding:12px;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer;background:#7c3aed;color:#fff}
+    .btn:hover{background:#6d28d9}
     .msg{padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:14px}
+    .msg-ok{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);color:#059669}
     .msg-err{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:#ef4444}
-    .msg-scope{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);color:#92400e}
     .hidden{display:none}
-    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
-    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e4e4e7}
   </style>
 </head>
 <body>
@@ -33,7 +35,7 @@
     <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
     <nav>
       <a href="/docs.html">Docs</a>
-      <a href="/portal.html">Portal</a>
+      <a href="/hub.html">Hub</a>
     </nav>
   </div>
 </header>
@@ -46,24 +48,20 @@
   </div>
 
   <h1 style="text-align:center;font-size:22px;color:#18181b;margin-bottom:4px">Partner Portal</h1>
-  <p style="text-align:center;font-size:13px;color:#71717a">Sign in with your email to access partner materials.</p>
+  <p style="text-align:center;font-size:13px;color:#71717a;margin-bottom:0">Sign in to access partner materials.</p>
 
-  <div class="msg msg-err hidden" id="msg-err"></div>
-  <div class="msg msg-scope hidden" id="msg-scope">You don't have access to that area. Try a different email or request access below.</div>
+  <div class="msg msg-err hidden" id="msg"></div>
 
-  <!-- Sign in — uses GET redirect (the pattern that works) -->
-  <form class="card" id="signin-form" action="/api/access-signin" method="GET">
-    <input type="hidden" name="return" id="f-return">
-    <label>Email address</label>
-    <input type="email" name="email" id="f-email" required placeholder="you@company.com" autofocus>
-    <button type="submit" class="btn btn-primary">Sign in</button>
-  </form>
+  <!-- Quick sign-in links for known users -->
+  <div class="card" id="quick-links">
+    <p style="font-size:12px;color:#a1a1aa;margin:0 0 12px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">Quick sign in</p>
+    <div id="links"></div>
+  </div>
 
   <div class="divider">or request access</div>
 
-  <!-- Request access for unknown users -->
-  <div class="card" id="request-card">
-    <p style="font-size:13px;color:#71717a;margin:0 0 14px">Don't have access? Fill in the form and we'll review your request.</p>
+  <!-- Request form for unknown users -->
+  <div class="card">
     <label>Full name</label>
     <input type="text" id="r-name" placeholder="Your name">
     <label>Email</label>
@@ -71,9 +69,8 @@
     <label>Company</label>
     <input type="text" id="r-company" placeholder="Company name">
     <label>Why do you need access?</label>
-    <textarea id="r-reason" rows="2" placeholder="e.g. reviewing partnership, evaluating integration..."></textarea>
-    <button class="btn btn-primary" id="r-submit" onclick="requestAccess()">Request Access</button>
-    <div class="msg msg-err hidden" id="r-msg"></div>
+    <textarea id="r-reason" rows="2" placeholder="e.g. reviewing partnership materials..."></textarea>
+    <button class="btn" onclick="requestAccess()">Request Access</button>
   </div>
 
 </div>
@@ -87,58 +84,71 @@
 
 <script>
 var params = new URLSearchParams(window.location.search);
-var returnTo = params.get('return') || '/partners/';
-document.getElementById('f-return').value = returnTo;
+var returnTo = params.get('return') || '/hub.html';
 
-// Show error messages from redirects
-var error = params.get('error');
-if (error === 'scope') document.getElementById('msg-scope').classList.remove('hidden');
-if (error === 'unknown') {
-  var el = document.getElementById('msg-err');
-  el.textContent = 'Email not recognised. Request access below or check your email address.';
-  el.classList.remove('hidden');
+// Build direct sign-in links — no form, no JS fetch, just <a> tags
+var users = [
+  { label: 'Craig Leppan', id: 'craig', scope: 'Admin' },
+  { label: 'Craig (Proximity Green)', id: 'craig-pg', scope: 'Proximity Green' },
+  { label: 'Mark', id: 'mark', scope: 'Proximity Green' },
+  { label: 'Guy Hamlin', id: 'guy', scope: 'Luthuli' },
+];
+
+var linksDiv = document.getElementById('links');
+users.forEach(function(u) {
+  var div = document.createElement('div');
+  div.className = 'signin-link';
+  div.style.cursor = 'pointer';
+  div.innerHTML = u.label + '<span class="email">' + u.scope + '</span>';
+  div.onclick = function() { showCodeInput(u.id, u.label); };
+  linksDiv.appendChild(div);
+});
+
+function showCodeInput(userId, userName) {
+  var card = document.getElementById('quick-links');
+  card.innerHTML = '<p style="font-size:14px;font-weight:600;color:#18181b;margin:0 0 4px">Sign in as ' + userName + '</p>' +
+    '<p style="font-size:12px;color:#71717a;margin:0 0 14px">Enter your 4-digit access code</p>' +
+    '<div style="display:flex;gap:8px">' +
+    '<input type="password" id="access-code" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="----" ' +
+    'style="flex:1;padding:12px 16px;border:1px solid #e4e4e7;border-radius:8px;font-family:JetBrains Mono,monospace;font-size:20px;text-align:center;letter-spacing:8px;color:#18181b;outline:none">' +
+    '<button onclick="submitCode(\'' + userId + '\')" style="padding:12px 20px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:1px">GO</button>' +
+    '</div>' +
+    '<div id="code-err" class="hidden" style="margin-top:8px;font-size:12px;color:#ef4444"></div>' +
+    '<p style="margin-top:12px;font-size:11px;color:#a1a1aa;cursor:pointer" onclick="location.reload()">&#8592; Back to user list</p>';
+  document.getElementById('access-code').focus();
+  document.getElementById('access-code').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitCode(userId);
+  });
+}
+
+function submitCode(userId) {
+  var code = document.getElementById('access-code').value;
+  if (!code || code.length !== 4) {
+    document.getElementById('code-err').textContent = 'Enter a 4-digit code';
+    document.getElementById('code-err').classList.remove('hidden');
+    return;
+  }
+  window.location.href = '/api/access-signin?id=' + encodeURIComponent(userId) + '&code=' + encodeURIComponent(code) + '&return=' + encodeURIComponent(returnTo);
 }
 
 async function requestAccess() {
   var name = document.getElementById('r-name').value.trim();
   var email = document.getElementById('r-email').value.trim();
-  var company = document.getElementById('r-company').value.trim();
-  var reason = document.getElementById('r-reason').value.trim();
-  var msg = document.getElementById('r-msg');
+  var msg = document.getElementById('msg');
   msg.classList.add('hidden');
-
-  if (!name || !email) {
-    msg.textContent = 'Name and email are required.';
-    msg.classList.remove('hidden');
-    return;
-  }
-
-  var btn = document.getElementById('r-submit');
-  btn.disabled = true; btn.textContent = 'Sending...';
-
+  if (!name || !email) { msg.textContent = 'Name and email required.'; msg.classList.remove('hidden'); return; }
   try {
     var res = await fetch('/api/access-request', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ email:email, name:name, company:company, reason:reason, returnTo:returnTo }),
+      body: JSON.stringify({ email:email, name:name, company:document.getElementById('r-company').value.trim(), reason:document.getElementById('r-reason').value.trim(), returnTo:returnTo }),
     });
     var data = await res.json();
-
-    if (data.approved) {
-      window.location.href = returnTo;
-    } else if (data.success) {
-      msg.style.background = 'rgba(5,150,105,.06)';
-      msg.style.borderColor = 'rgba(5,150,105,.2)';
-      msg.style.color = '#059669';
-      msg.innerHTML = '<strong>Request sent!</strong> You\'ll receive a sign-in link by email once approved.';
-      msg.classList.remove('hidden');
-      document.getElementById('request-card').querySelectorAll('input,textarea,button').forEach(function(el){el.disabled=true});
+    if (data.approved) { window.location.href = returnTo; }
+    else if (data.success) {
+      msg.className = 'msg msg-ok'; msg.innerHTML = '<strong>Request sent!</strong> You\'ll get a sign-in link by email once approved.'; msg.classList.remove('hidden');
     }
-  } catch(err) {
-    msg.textContent = 'Error sending request. Please email craig@2nth.ai directly.';
-    msg.classList.remove('hidden');
-  }
-  btn.disabled = false; btn.textContent = 'Request Access';
+  } catch(e) { msg.textContent = 'Error. Email craig@2nth.ai directly.'; msg.className = 'msg msg-err'; }
 }
 </script>
 </body>
