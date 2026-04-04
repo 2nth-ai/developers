@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Future of Cash &amp; Payments — AI Intelligence Platform</title>
+  <meta name="description" content="AI-powered cash and payments intelligence for South Africa. SMART Cash analytics, ATM network optimisation, payments ecosystem mapping, and financial inclusion intelligence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0c4a6e;--navy-deep:#082f49;--cyan:#0ea5e9;--cyan-dark:#0284c7;--cyan-glow:rgba(14,165,233,.06);--green:#059669;--green-dim:rgba(5,150,105,.06);--amber:#d97706;--amber-dim:rgba(217,119,6,.06);--text:#0f172a;--text2:#475569;--text3:#64748b;--muted:#94a3b8;--border:#e2e8f0;--bg:#f8fafc;--bg2:#fff;--font-display:'Bebas Neue',sans-serif;--font-body:'Barlow',sans-serif;--font-mono:'JetBrains Mono',monospace}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--cyan-dark);text-decoration:none}a:hover{text-decoration:underline}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    .nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 0}
+    .nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:.06em;color:var(--text);text-decoration:none}
+    .nav-logo span{color:var(--cyan)}
+    .nav-links{display:flex;gap:20px;align-items:center}
+    .nav-links a{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .nav-cta{background:var(--navy);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+
+    .hero{padding:80px 0 60px;text-align:center}
+    .hero-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:var(--cyan-glow);border:1px solid rgba(14,165,233,.2);color:var(--cyan-dark);margin-bottom:20px}
+    .hero h1{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);letter-spacing:.03em;color:var(--text);line-height:1.05;margin-bottom:16px}
+    .hero h1 span{color:var(--cyan)}
+    .hero p{font-size:18px;color:var(--text3);max-width:640px;margin:0 auto;line-height:1.6}
+
+    .section{padding:60px 0}
+    .section-alt{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .section-dark{background:var(--navy-deep);color:#fff}
+    .section-dark h2{color:#fff}
+    .section-dark p{color:rgba(255,255,255,.75)}
+    .section-dark .sec-label{color:var(--cyan)}
+    .sec-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--cyan-dark);margin-bottom:10px}
+    h2{font-family:var(--font-display);font-size:36px;letter-spacing:.02em;color:var(--text);line-height:1.1;margin-bottom:16px}
+
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:24px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .2s}
+    .card:hover{border-color:var(--cyan);transform:translateY(-2px)}
+    .section-dark .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+    .section-dark .card:hover{border-color:var(--cyan)}
+    .card-icon{font-size:28px;margin-bottom:14px}
+    .card h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .section-dark .card h3{color:#fff}
+    .card p{font-size:14px;color:var(--text3);line-height:1.6;margin:0}
+    .section-dark .card p{color:rgba(255,255,255,.6)}
+    .card-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;display:inline-block;margin-top:12px}
+    .tag-pay{color:var(--cyan-dark);background:var(--cyan-glow);border:1px solid rgba(14,165,233,.2)}
+    .tag-cash{color:var(--green);background:var(--green-dim);border:1px solid rgba(5,150,105,.2)}
+    .tag-fin{color:var(--amber);background:var(--amber-dim);border:1px solid rgba(217,119,6,.2)}
+
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:30px 0}
+    .stat-card{text-align:center;padding:24px 16px}
+    .stat-val{font-family:var(--font-display);font-size:42px;letter-spacing:.02em;line-height:1}
+    .section-dark .stat-val{color:var(--cyan)}
+    .stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+    .section-dark .stat-label{color:rgba(255,255,255,.4)}
+
+    /* SA Payments Map */
+    .ecosystem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+    .eco-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .15s}
+    .eco-card:hover{border-color:var(--cyan)}
+    .eco-role{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan-dark);margin-bottom:6px;font-weight:700}
+    .eco-card h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .eco-card p{font-size:12px;color:var(--text3);line-height:1.5;margin:0}
+
+    .cta-section{text-align:center;padding:80px 0;background:#f0f9ff}
+    .cta-btn{display:inline-block;background:var(--navy);color:#fff;padding:14px 36px;border-radius:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none;transition:all .2s}
+    .cta-btn:hover{background:var(--cyan-dark);transform:translateY(-2px);text-decoration:none}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:12px;color:var(--muted)}
+
+    @media(max-width:640px){.hero h1{font-size:36px}.stat-row{grid-template-columns:repeat(2,1fr)}.card-grid{grid-template-columns:1fr}.ecosystem-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container">
+    <a href="#" class="nav-logo"><span>FUTURE</span> OF CASH</a>
+    <div class="nav-links">
+      <a href="https://thefutureofcash.com">Conference</a>
+      <a href="https://developers.2nth.ai/partners/rohrs-associates.html">Partner Profile</a>
+      <a href="https://2nth.ai" class="nav-cta">Powered by 2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">Rohrs &amp; Associates + 2nth.ai</div>
+    <h1>AI for the <span>Future of Cash</span><br>&amp; Payments</h1>
+    <p>How AI transforms cash infrastructure, payments intelligence, and financial inclusion across South Africa's R4.2 trillion payments ecosystem.</p>
+  </div>
+</div>
+
+<!-- SA Payments Landscape -->
+<div class="section section-dark">
+  <div class="container">
+    <div class="sec-label">South Africa Payments Ecosystem</div>
+    <h2>The players. The rails. The opportunity.</h2>
+    <p style="font-size:16px;max-width:640px">South Africa has one of the most sophisticated payments ecosystems in Africa &mdash; and one of the most complex. AI can map, monitor, and optimise across every layer.</p>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-val">R4.2T</div>
+        <div class="stat-label">Annual payments value</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">30K+</div>
+        <div class="stat-label">ATMs nationwide</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">85%</div>
+        <div class="stat-label">Adults with bank accounts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">40%</div>
+        <div class="stat-label">Still cash-dependent</div>
+      </div>
+    </div>
+
+    <div class="ecosystem-grid">
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Regulator</div>
+        <h4 style="color:#fff">SARB</h4>
+        <p style="color:rgba(255,255,255,.6)">South African Reserve Bank. Monetary policy, financial stability, Project Khokha (CBDC research)</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Scheme Operator</div>
+        <h4 style="color:#fff">PASA</h4>
+        <p style="color:rgba(255,255,255,.6)">Payments Association of SA. Scheme rules, participation, clearing system governance</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Clearing House</div>
+        <h4 style="color:#fff">BankservAfrica</h4>
+        <p style="color:rgba(255,255,255,.6)">EFT, RTC (real-time clearing), DebiCheck, card switching, AEDO</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Big 5 Banks</div>
+        <h4 style="color:#fff">ABSA, FNB, Nedbank, Standard Bank, Capitec</h4>
+        <p style="color:rgba(255,255,255,.6)">Issuing, acquiring, ATM networks, branch cash, digital wallets</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Card Networks</div>
+        <h4 style="color:#fff">Visa, Mastercard</h4>
+        <p style="color:rgba(255,255,255,.6)">Card scheme rules, interchange, fraud monitoring, contactless</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">CIT</div>
+        <h4 style="color:#fff">SBV, Fidelity Cash Solutions</h4>
+        <p style="color:rgba(255,255,255,.6)">Cash-in-transit, cash centres, ATM replenishment, vault management</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Fintech / Mobile</div>
+        <h4 style="color:#fff">PayShap, Ozow, Yoco, Peach Payments</h4>
+        <p style="color:rgba(255,255,255,.6)">Instant EFT, QR payments, merchant acquiring, e-commerce</p>
+      </div>
+      <div class="eco-card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)">
+        <div class="eco-role">Inclusion</div>
+        <h4 style="color:#fff">SASSA, Postbank, Retail agents</h4>
+        <p style="color:rgba(255,255,255,.6)">Social grants, agent banking, cash-to-digital bridges, rural access</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI-Powered Capabilities -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">AI-Powered Intelligence</div>
+    <h2>What AI enables for cash &amp; payments</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128176;</div>
+        <h3>SMART Cash Analytics</h3>
+        <p>AI-driven cash demand forecasting, ATM replenishment optimisation, and cash cycle analytics. Predict denomination mix, reduce CIT trips, and cut cash holding costs &mdash; while ensuring availability where it matters most.</p>
+        <span class="card-tag tag-cash">SMART Cash</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127758;</div>
+        <h3>ATM Network Intelligence</h3>
+        <p>Geospatial analysis of ATM coverage, transaction pattern analytics, deployment optimisation, and interchange economics modelling. Answer: where should the next ATM go, and is the current network financially sustainable?</p>
+        <span class="card-tag tag-cash">ATM Economics</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>Payments Flow Monitoring</h3>
+        <p>Real-time visibility across payment rails: EFT volumes, RTC adoption, card transaction trends, PayShap growth, and cash withdrawal patterns. AI detects anomalies, forecasts shifts, and identifies infrastructure stress points.</p>
+        <span class="card-tag tag-pay">Payments</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128101;</div>
+        <h3>Financial Inclusion Intelligence</h3>
+        <p>Map the unbanked and underbanked. AI analyses SASSA grant distribution, agent banking coverage, cash access deserts, and mobile money adoption to identify where inclusion interventions will have the highest impact.</p>
+        <span class="card-tag tag-fin">Inclusion</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#9889;</div>
+        <h3>Crisis Resilience Modelling</h3>
+        <p>What happens to payments when the power goes out? AI models the impact of load shedding, network failures, and natural disasters on payment system availability. Build redundancy plans grounded in data, not assumptions.</p>
+        <span class="card-tag tag-pay">Resilience</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127974;</div>
+        <h3>CBDC Impact Analysis</h3>
+        <p>Model the implications of a South African retail CBDC (Project Khokha) on cash infrastructure, commercial bank deposits, payment service providers, and the existing clearing architecture. Scenario planning for the digital rand.</p>
+        <span class="card-tag tag-pay">CBDC</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Before/After -->
+<div class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Transformation</div>
+    <h2>Cash infrastructure, before and after AI</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:20px">
+      <thead>
+        <tr><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Challenge</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Traditional</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan-dark)">With AI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">ATM cash forecasting</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Weekly schedules, buffer stock</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--cyan-dark)">Daily demand prediction, 15% fewer CIT trips</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Network coverage gaps</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Annual reviews, gut feel</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--cyan-dark)">Geospatial AI, real-time transaction heatmaps</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Load shedding impact</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Reactive, count failures after</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--cyan-dark)">Predictive modelling, pre-position cash</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Regulatory reporting</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Manual compilation, quarterly</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--cyan-dark)">Automated SARB/PASA reporting, real-time</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Inclusion measurement</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Census-based, years old</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--cyan-dark)">Live agent/ATM/POS density + transaction data</td></tr>
+        <tr><td style="padding:12px">CBDC impact</td><td style="padding:12px;color:var(--text3)">Policy papers, speculation</td><td style="padding:12px;font-weight:600;color:var(--cyan-dark)">Agent-based simulation of deposit migration</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <div class="sec-label">Get Started</div>
+    <h2 style="margin-bottom:12px">The future of cash needs AI now</h2>
+    <p style="font-size:16px;color:var(--text3);max-width:520px;margin:0 auto 28px">Rohrs &amp; Associates + 2nth.ai. Specialist domain expertise meets AI capability. Intelligence for the payments ecosystem that keeps South Africa moving.</p>
+    <a href="https://thefutureofcash.com" class="cta-btn">Future of Cash Conference</a>
+    <a href="https://2nth.ai" class="cta-btn" style="margin-left:12px;background:var(--text)">Explore 2nth.ai</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Rohrs &amp; Associates &mdash; SMART Cash for South Africa. Powered by <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -14,6 +14,8 @@ const USERS = {
   'barry':    { email: 'barry@gananda.net',           name: 'Barry Hawke',          scope: 'full',                 code: '5233' },
   'jacqui':   { email: 'jacqui.denny@durpro.co.za',  name: 'Jacqui Denny',         scope: 'durpro',               code: '1992' },
   'murray':   { email: 'murray@dronescan.co',        name: 'Murray Paton',         scope: 'dronescan',            code: '4471' },
+  'brian':    { email: 'brian.denny@deneys.co.za',  name: 'Brian Denny',          scope: 'durpro',               code: '7741' },
+  'barryr':   { email: 'barry.rohrs@rohrsassociates.com', name: 'Barry Röhrs',    scope: 'rohrs',                code: '2026' },
 };
 const ADMIN_DOMAINS = ['2nth.ai', '2nth.io', 'b2bs.co.za'];
 
