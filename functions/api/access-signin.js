@@ -11,6 +11,7 @@ const USERS = {
   'kath':     { email: 'kath@ctrlfuture.co.za', name: 'Katherine Janisch', scope: 'ctrl-future',          code: '4418' },
   'republic': { email: 'info@republiclifestyle.co.za', name: 'Republic Lifestyle', scope: 'republic-lifestyle', code: '1971' },
   'emma':     { email: 'emma@vibecrafters.com',       name: 'Emma Leppan',         scope: 'vibecrafters',         code: '0902' },
+  'barry':    { email: 'barry@gananda.net',           name: 'Barry Hawke',          scope: 'gananda',              code: '5233' },
 };
 const ADMIN_DOMAINS = ['2nth.ai', '2nth.io', 'b2bs.co.za'];
 

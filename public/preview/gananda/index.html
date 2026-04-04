@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gananda Connect — AI-Powered Financial Advisory for Africa</title>
+  <meta name="description" content="How AI transforms Gananda Connect's mission: smarter deal intelligence, automated investor readiness, agricultural analytics, and Africa market intelligence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--earth:#78350f;--earth-light:#92400e;--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#059669;--green-dim:rgba(5,150,105,.06);--warm:#fffbeb;--text:#1c1917;--text2:#57534e;--text3:#78716c;--muted:#a8a29e;--border:#e7e5e4;--bg:#fafaf9;--bg2:#fff;--font-display:'Bebas Neue',sans-serif;--font-body:'Barlow',sans-serif;--font-mono:'JetBrains Mono',monospace}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--earth-light);text-decoration:none}a:hover{text-decoration:underline}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+
+    /* Nav */
+    .nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 0}
+    .nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:.06em;color:var(--text);text-decoration:none}
+    .nav-logo span{color:var(--earth)}
+    .nav-links{display:flex;gap:20px;align-items:center}
+    .nav-links a{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .nav-links a:hover{color:var(--earth);text-decoration:none}
+    .nav-cta{background:var(--earth);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+
+    /* Hero */
+    .hero{padding:80px 0 60px;text-align:center}
+    .hero-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:var(--amber-dim);border:1px solid rgba(251,191,36,.3);color:var(--earth);margin-bottom:20px}
+    .hero h1{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);letter-spacing:.03em;color:var(--text);line-height:1.05;margin-bottom:16px}
+    .hero h1 span{color:var(--earth)}
+    .hero p{font-size:18px;color:var(--text3);max-width:640px;margin:0 auto;line-height:1.6}
+
+    /* Section */
+    .section{padding:60px 0}
+    .section-alt{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .section-earth{background:var(--earth);color:#fff}
+    .section-earth .sec-label{color:var(--amber)}
+    .section-earth h2{color:#fff}
+    .section-earth p{color:rgba(255,255,255,.8)}
+    .sec-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--earth);margin-bottom:10px}
+    h2{font-family:var(--font-display);font-size:36px;letter-spacing:.02em;color:var(--text);line-height:1.1;margin-bottom:16px}
+
+    /* Cards */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:24px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:border-color .15s,transform .15s}
+    .card:hover{border-color:var(--earth);transform:translateY(-2px)}
+    .section-earth .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)}
+    .section-earth .card:hover{border-color:var(--amber)}
+    .card-icon{font-size:28px;margin-bottom:14px}
+    .card h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .section-earth .card h3{color:#fff}
+    .card p{font-size:14px;color:var(--text3);line-height:1.6;margin:0}
+    .section-earth .card p{color:rgba(255,255,255,.7)}
+    .card-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;display:inline-block;margin-top:12px}
+    .tag-fin{color:var(--earth);background:var(--amber-dim);border:1px solid rgba(251,191,36,.2)}
+    .tag-agri{color:var(--green);background:var(--green-dim);border:1px solid rgba(5,150,105,.2)}
+    .tag-deal{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .tag-africa{color:#dc2626;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2)}
+
+    /* Stats */
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:30px 0}
+    .stat-card{text-align:center;padding:24px 16px}
+    .stat-val{font-family:var(--font-display);font-size:42px;letter-spacing:.02em;color:var(--earth);line-height:1}
+    .section-earth .stat-val{color:var(--amber)}
+    .stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+    .section-earth .stat-label{color:rgba(255,255,255,.5)}
+
+    /* Timeline */
+    .timeline{position:relative;padding-left:32px;margin-top:24px}
+    .timeline::before{content:'';position:absolute;left:10px;top:10px;bottom:10px;width:2px;background:var(--border)}
+    .tl-item{position:relative;margin-bottom:28px}
+    .tl-item::before{content:'';position:absolute;left:-26px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--earth);border:3px solid var(--bg)}
+    .tl-item h3{font-size:16px;color:var(--text);margin-bottom:4px}
+    .tl-item p{font-size:14px;color:var(--text3);line-height:1.6}
+    .tl-item .tl-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--earth);margin-bottom:4px}
+
+    /* CTA */
+    .cta-section{text-align:center;padding:80px 0}
+    .cta-btn{display:inline-block;background:var(--earth);color:#fff;padding:14px 36px;border-radius:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none;transition:all .2s}
+    .cta-btn:hover{background:var(--earth-light);transform:translateY(-2px);text-decoration:none}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:12px;color:var(--muted)}
+
+    @media(max-width:640px){.hero h1{font-size:36px}.stat-row{grid-template-columns:repeat(2,1fr)}.card-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container">
+    <a href="https://gananda.net" class="nav-logo"><span>GANANDA</span> CONNECT</a>
+    <div class="nav-links">
+      <a href="https://gananda.net">Main Site</a>
+      <a href="https://developers.2nth.ai/partners/gananda.html">Partner Profile</a>
+      <a href="https://2nth.ai" class="nav-cta">Powered by 2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">Gananda Connect + 2nth.ai</div>
+    <h1>Financial Advisory,<br><span>Amplified by AI</span></h1>
+    <p>How artificial intelligence transforms Gananda's mission of connecting business opportunities across Africa &mdash; from deal intelligence to agricultural analytics.</p>
+  </div>
+</div>
+
+<!-- The Opportunity -->
+<div class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Opportunity</div>
+    <h2>Africa's growth story needs smarter capital</h2>
+    <p style="font-size:16px;max-width:680px;line-height:1.65">South Africa's agricultural sector has more than doubled in volume and value since democracy. AI-driven technologies are reshaping farming, deal-making, and capital allocation. Gananda sits at the intersection of all three &mdash; and AI makes every advisory engagement faster, deeper, and more informed.</p>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-val">2X</div>
+        <div class="stat-label">SA agri growth since '94</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">$8.5B</div>
+        <div class="stat-label">Africa agri-tech opportunity</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">72%</div>
+        <div class="stat-label">Deals with data gaps</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">3X</div>
+        <div class="stat-label">Faster due diligence with AI</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI-Powered Services -->
+<div class="section section-earth">
+  <div class="container">
+    <div class="sec-label">AI-Powered Advisory</div>
+    <h2>Every service, transformed</h2>
+    <p style="font-size:16px;max-width:640px">AI doesn't replace Barry's judgement &mdash; it amplifies it. Each of Gananda's three service verticals gains new capabilities that were previously impossible for a specialist advisory firm.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>AI Deal Intelligence</h3>
+        <p>Automated target screening across African markets. AI agents scan company registries, financial filings, agricultural output data, and news to surface acquisition targets that match client criteria &mdash; before competitors see them.</p>
+        <span class="card-tag tag-deal">M&amp;A Advisory</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128176;</div>
+        <h3>Smart Capital Raising</h3>
+        <p>AI-generated investor-ready documents: business plans, financial models, pitch decks, and funding memoranda. The AI drafts from Gananda's proven templates, Barry refines with domain expertise. Days become hours.</p>
+        <span class="card-tag tag-fin">Capital Raising</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127793;</div>
+        <h3>Agricultural Analytics</h3>
+        <p>Satellite imagery analysis, crop yield forecasting, and farm-level financial modelling. AI processes NDVI data, weather patterns, and commodity prices to give investors a data-backed view of agricultural asset value.</p>
+        <span class="card-tag tag-agri">Agri-Tech</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128269;</div>
+        <h3>Automated Due Diligence</h3>
+        <p>AI-powered document analysis: extract key terms from contracts, flag risks in financial statements, cross-reference directors against PEP lists, and generate structured DD reports. The CFA analysis, at machine speed.</p>
+        <span class="card-tag tag-deal">Due Diligence</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127757;</div>
+        <h3>Africa Market Intelligence</h3>
+        <p>Real-time regulatory monitoring, cross-border deal flow analysis, and market entry risk scoring across African jurisdictions. AI agents track policy changes, currency movements, and sector trends that affect deal timing.</p>
+        <span class="card-tag tag-africa">Africa Markets</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128202;</div>
+        <h3>Investor Readiness Engine</h3>
+        <p>Automated assessment of investment readiness: governance gaps, financial model stress-testing, valuation benchmarking against comparable African transactions. Clients get a roadmap to fundability.</p>
+        <span class="card-tag tag-fin">Investor Readiness</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skills Platform -->
+<div class="section">
+  <div class="container">
+    <div class="sec-label">The 2nth.ai Skill Platform</div>
+    <h2>Domain expertise, codified as AI skills</h2>
+    <p style="font-size:16px;max-width:680px;margin-bottom:8px">Barry's unique combination of BSc Agriculture, MBA, and CFA creates skills that no pure-tech partner can build. Each skill on the 2nth.ai platform encodes decades of domain knowledge into reusable AI capabilities.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-tag">fin/capital-raising</div>
+        <h3>Capital Raise Workflow</h3>
+        <p>Business plan structuring, funding document preparation, investor pitch decks, and guided capital raise process. Grounded in real deal experience across African markets.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">fin/m-and-a</div>
+        <h3>M&amp;A Deal Advisory</h3>
+        <p>Acquisition screening, commercial and financial due diligence, deal structuring, negotiation support. Specialised in mid-market African transactions.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">agri/sustainable-farming</div>
+        <h3>Agricultural Sector Intelligence</h3>
+        <p>Sustainable farming practices, agri-tech adoption, crop economics, farm-to-market value chains. The investment thesis behind Africa's agricultural transformation.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">agri/agri-tech-investment</div>
+        <h3>Agri-Tech Investment Assessment</h3>
+        <p>AI crop analytics, precision farming, drone monitoring, yield optimisation. Bridging agricultural science and investment-grade technology evaluation.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">biz/africa-market-entry</div>
+        <h3>Africa Market Entry Strategy</h3>
+        <p>Regulatory landscape, cross-border deal flow, local partner identification, risk assessment. Built from on-the-ground deal-making across the continent.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">fin/financial-strategy</div>
+        <h3>Corporate Financial Strategy</h3>
+        <p>Capital allocation frameworks, growth planning, financial modelling, scenario analysis. CFA-grounded quantitative rigour with African business context.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tag">fin/investor-readiness</div>
+        <h3>Investor Readiness Assessment</h3>
+        <p>Financial model review, pitch narrative, valuation benchmarking, governance pre-checks. Tailored for African businesses seeking PE/VC funding.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Before/After -->
+<div class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Transformation</div>
+    <h2>Before AI vs. with AI</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:20px">
+      <thead>
+        <tr><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Capability</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Traditional</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--earth)">With AI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Target screening</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Manual research, weeks</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--earth)">AI agent scans markets in hours</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Business plan drafting</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">5-10 days per document</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--earth)">AI draft in hours, Barry refines</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Due diligence</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Manual document review, 4-6 weeks</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--earth)">AI extracts, flags, reports in days</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Farm asset valuation</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Site visits + spreadsheets</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--earth)">Satellite data + AI yield models + site visit</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Market intelligence</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Periodic reports, stale data</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--earth)">Real-time AI monitoring across Africa</td></tr>
+        <tr><td style="padding:12px">Investor matching</td><td style="padding:12px;color:var(--text3)">Personal network only</td><td style="padding:12px;font-weight:600;color:var(--earth)">AI-ranked investor fit + warm network</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section" style="background:var(--warm)">
+  <div class="container">
+    <div class="sec-label" style="color:var(--earth)">Get Started</div>
+    <h2 style="margin-bottom:12px">Ready to amplify your advisory?</h2>
+    <p style="font-size:16px;color:var(--text3);max-width:480px;margin:0 auto 28px">Gananda Connect + 2nth.ai. Domain expertise meets AI capability. The future of African financial advisory starts here.</p>
+    <a href="https://gananda.net" class="cta-btn">Contact Gananda</a>
+    <a href="https://2nth.ai" class="cta-btn" style="margin-left:12px;background:var(--text)">Explore 2nth.ai</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Gananda Connect &mdash; Connecting Opportunities in Africa. Powered by <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
