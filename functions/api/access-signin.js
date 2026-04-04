@@ -9,6 +9,8 @@ const USERS = {
   'jasper':   { email: 'jasper@dronescan.co',  name: 'Jasper',        scope: 'dronescan,scanman,luthuli', code: '3847' },
   'craig-b2b':{ email: 'craig@b2bs.co.za',   name: 'Craig Leppan',  scope: 'full',                    code: '3325' },
   'kath':     { email: 'kath@ctrlfuture.co.za', name: 'Katherine Janisch', scope: 'ctrl-future',          code: '4418' },
+  'republic': { email: 'info@republiclifestyle.co.za', name: 'Republic Lifestyle', scope: 'republic-lifestyle', code: '1971' },
+  'emma':     { email: 'emma@vibecrafters.com',       name: 'Emma Leppan',         scope: 'vibecrafters',         code: '0902' },
 };
 const ADMIN_DOMAINS = ['2nth.ai', '2nth.io', 'b2bs.co.za'];
 
