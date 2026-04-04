@@ -2,11 +2,15 @@
 // No emails exposed in URLs or HTML
 
 const USERS = {
-  'craig':    { email: 'craig@2nth.ai',         name: 'Craig Leppan',  scope: 'full',                    code: '2684' },
-  'craig-pg': { email: 'craig@proximity.green', name: 'Craig Leppan',  scope: 'proximity-green,luthuli', code: '2684' },
+  'craig':    { email: 'craig@2nth.ai',         name: 'Craig Leppan',  scope: 'full',                    code: '3325' },
+  'craig-pg': { email: 'craig@proximity.green', name: 'Craig Leppan',  scope: 'proximity-green,luthuli', code: '3325' },
   'mark':     { email: 'mark@proximity.green',  name: 'Mark',          scope: 'proximity-green',         code: '7746' },
-  'guy':      { email: 'guy@rumf.co.za',        name: 'Guy Hamlin',    scope: 'luthuli',                 code: '5591' },
+  'guy':      { email: 'guy@rumf.co.za',        name: 'Guy Hamlin',    scope: 'full',                     code: '5591' },
+  'jasper':   { email: 'jasper@dronescan.co',  name: 'Jasper',        scope: 'dronescan,scanman,luthuli', code: '3847' },
+  'craig-b2b':{ email: 'craig@b2bs.co.za',   name: 'Craig Leppan',  scope: 'full',                    code: '3325' },
+  'kath':     { email: 'kath@ctrlfuture.co.za', name: 'Katherine Janisch', scope: 'ctrl-future',          code: '4418' },
 };
+const ADMIN_DOMAINS = ['2nth.ai', '2nth.io', 'b2bs.co.za'];
 
 export async function onRequestGet(context) {
   const { request } = context;

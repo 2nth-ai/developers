@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B AI Solutions — Premier 2nth.ai Partner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:#f7f9fb;color:#6b8299;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    :root{--navy:#003459;--navy-deep:#001f3f;--cyan:#00a8e8;--cyan-dark:#0090c8;--text:#0d1b2a;--text2:#6b8299;--muted:#9bb0c4;--border:#dce4ec;--bg:#f7f9fb;--bg2:#fff;--bg3:#eef2f6}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+    header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(247,249,251,.92);backdrop-filter:blur(12px)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:10px}
+    .logo-mark{width:32px;height:32px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:-.5px}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--navy)}
+    .nav-cta{background:var(--cyan);color:#fff!important;padding:7px 18px;border-radius:6px;font-weight:600}
+    .nav-cta:hover{background:var(--cyan-dark)}
+
+    .hero{padding:80px 0 48px;position:relative}
+    .hero::before{content:'';position:absolute;top:-150px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,168,232,.06),transparent 70%);pointer-events:none}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);font-weight:600;padding:6px 14px;border-radius:6px;background:rgba(0,168,232,.06);border:1px solid rgba(0,168,232,.15);margin-bottom:20px}
+    .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,60px);font-weight:700;color:var(--navy);line-height:1.08;margin-bottom:20px;letter-spacing:-.02em}
+    .hero h1 em{font-style:italic;color:var(--cyan)}
+    .hero p{font-size:17px;color:var(--text2);max-width:580px;line-height:1.65;margin-bottom:32px}
+    .hero-stats{display:flex;gap:36px;flex-wrap:wrap}
+    .hero-stat .num{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--navy)}
+    .hero-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    .section{padding:64px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:14px}
+
+    /* Tier card */
+    .tier-banner{background:linear-gradient(135deg,var(--navy-deep),var(--navy));border-radius:12px;padding:32px;margin:24px 0;color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+    .tier-banner h3{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
+    .tier-banner p{color:rgba(255,255,255,.7);font-size:14px;margin:0}
+    .tier-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+    .tier-list li{font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px}
+    .tier-list li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+    /* Practice cards */
+    .practices{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0}
+    .practice{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all .2s;position:relative;overflow:hidden}
+    .practice:hover{border-color:var(--cyan);transform:translateY(-2px)}
+    .practice::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cyan);opacity:0;transition:opacity .2s}
+    .practice:hover::before{opacity:1}
+    .practice-num{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--border);margin-bottom:8px}
+    .practice h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin-bottom:6px}
+    .practice p{font-size:13px;color:var(--text2);margin-bottom:10px}
+    .practice-skills{display:flex;gap:4px;flex-wrap:wrap}
+    .p-skill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;background:rgba(0,168,232,.06);color:var(--cyan);border:1px solid rgba(0,168,232,.12)}
+
+    /* Solutions grid */
+    .solutions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+    .solution{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px;transition:border-color .2s}
+    .solution:hover{border-color:var(--cyan)}
+    .solution-icon{font-size:28px;margin-bottom:8px}
+    .solution h3{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:4px}
+    .solution p{font-size:12px;color:var(--text2);margin:0 0 10px}
+    .solution-link{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan);text-decoration:none}
+
+    /* Timeline */
+    .timeline{position:relative;padding-left:24px;margin:24px 0}
+    .timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:var(--border)}
+    .tl-item{position:relative;margin-bottom:20px;padding-left:20px}
+    .tl-item::before{content:'';position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg)}
+    .tl-now::before{background:var(--cyan)}
+    .tl-next::before{background:var(--navy)}
+    .tl-later::before{background:var(--muted)}
+    .tl-date{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:2px}
+    .tl-title{font-size:14px;font-weight:700;color:var(--navy)}
+    .tl-desc{font-size:12px;color:var(--text2);margin-top:2px}
+
+    /* Arch diagram */
+    .arch{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin:24px 0;overflow-x:auto}
+    .arch pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);line-height:1.8;margin:0}
+    .arch .hl{color:var(--cyan);font-weight:600}
+
+    /* CTA */
+    .cta-section{background:linear-gradient(135deg,var(--navy-deep),var(--navy));border-radius:16px;padding:56px;text-align:center;margin:40px 0}
+    .cta-section h2{color:#fff;font-family:'Playfair Display',serif;margin-bottom:8px}
+    .cta-section p{color:rgba(255,255,255,.6);margin-bottom:28px;font-size:16px}
+    .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-cyan{background:var(--cyan);color:#fff}.btn-cyan:hover{background:var(--cyan-dark)}
+    .btn-ghost{background:none;border:1px solid rgba(255,255,255,.25);color:#fff;margin-left:12px}.btn-ghost:hover{border-color:#fff}
+
+    footer{border-top:1px solid var(--border);padding:20px 0}
+    footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--cyan);text-decoration:none}
+
+    @media(max-width:768px){.practices,.solutions{grid-template-columns:1fr}.tier-banner{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="logo">
+      <div class="logo-mark">B2B</div>
+      B2B AI Solutions
+    </a>
+    <nav>
+      <a href="#practices">Practices</a>
+      <a href="#solutions">Solutions</a>
+      <a href="#launch">Launch Plan</a>
+      <a href="https://www.b2bs.co.za">b2bs.co.za</a>
+      <a href="https://ai.b2bs.co.za" class="nav-cta">AI Agents</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge"><span class="dot"></span> Premier developer partner &mdash; 2nth.ai &amp; 2nth.io</div>
+    <h1>The commercial<br>engine, <em>reimagined</em>.</h1>
+    <p>B2B AI Solutions is the premier developer partner of 2nth.ai — full platform access across all tiers, all skills, all domains. 30 years of B2B consulting distilled into AI agents that deliver strategy, sales playbooks, and growth plans. Demonstrating and selling the full 2nth.ai stack to enterprise customers from 1 May 2026.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">Premier</div><div class="lbl">Partner tier</div></div>
+      <div class="hero-stat"><div class="num">300+</div><div class="lbl">AI skills access</div></div>
+      <div class="hero-stat"><div class="num">10</div><div class="lbl">Specialist agents</div></div>
+      <div class="hero-stat"><div class="num">1 May</div><div class="lbl">Launch date</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Premier tier -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">Partnership</div>
+    <h2>Premier Developer Partner</h2>
+
+    <div class="tier-banner">
+      <div>
+        <h3>Full platform access</h3>
+        <p>B2B AI Solutions operates at the highest tier of the 2nth.ai partner programme — authorised to demonstrate, deploy, and sell the complete platform stack to enterprise customers.</p>
+      </div>
+      <ul class="tier-list">
+        <li>All 300+ skills across 12 domains (tech, biz, fin, leg, data, health, edu, mkt, iot)</li>
+        <li>Full 2nth.ai + 2nth.io platform API access</li>
+        <li>White-label deployment rights for customer demos</li>
+        <li>Custom agent development and branded hubs</li>
+        <li>Premier revenue share (highest tier)</li>
+        <li>Direct roadmap input and co-development</li>
+        <li>Pre-release access to all new skills and features</li>
+        <li>Enterprise customer onboarding and support</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Practices -->
+<section class="section" id="practices">
+  <div class="container">
+    <div class="sec-label">Four practices</div>
+    <h2>Consulting meets AI</h2>
+    <p style="max-width:560px;margin-bottom:8px">Each practice area maps to 2nth.ai skill domains. Traditional consulting expertise — now powered by AI agents that produce real deliverables.</p>
+
+    <div class="practices">
+      <div class="practice">
+        <div class="practice-num">01</div>
+        <h3>Go-to-Market Strategy</h3>
+        <p>ICP definition, positioning, pricing, competitive analysis, market entry playbooks. AI agents produce actionable GTM plans, not slide decks.</p>
+        <div class="practice-skills">
+          <span class="p-skill">mkt/go-to-market</span>
+          <span class="p-skill">mkt/demand-gen</span>
+          <span class="p-skill">biz/sales/prospecting</span>
+          <span class="p-skill">data/analysis</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-num">02</div>
+        <h3>Sales Engine &amp; Commercial Systems</h3>
+        <p>Pipeline architecture, CRM design, sales playbooks, forecasting, revenue intelligence. From underperforming pipeline to revenue machine.</p>
+        <div class="practice-skills">
+          <span class="p-skill">biz/sales/pipeline</span>
+          <span class="p-skill">biz/sales/forecasting</span>
+          <span class="p-skill">biz/sales/revops</span>
+          <span class="p-skill">tech/zoho</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-num">03</div>
+        <h3>AI-Enabled Marketing &amp; Growth</h3>
+        <p>Content workflows, outbound intelligence, proposal automation, campaign strategy. AI-native marketing that executes, not just advises.</p>
+        <div class="practice-skills">
+          <span class="p-skill">mkt/content</span>
+          <span class="p-skill">mkt/performance</span>
+          <span class="p-skill">biz/sales/proposal</span>
+          <span class="p-skill">tech/meta/whatsapp</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-num">04</div>
+        <h3>Fractional Leadership (CTO/CSO)</h3>
+        <p>Product roadmaps, technical architecture, cross-functional alignment, strategic advisory. Embedded C-suite on demand, backed by the full skill tree.</p>
+        <div class="practice-skills">
+          <span class="p-skill">tech/architecture</span>
+          <span class="p-skill">tech/cloudflare</span>
+          <span class="p-skill">fin/modelling</span>
+          <span class="p-skill">leg/contracts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Solutions — what B2BS can demo/sell -->
+<section class="section" id="solutions">
+  <div class="container">
+    <div class="sec-label">Solutions portfolio</div>
+    <h2>What B2B AI Solutions demonstrates &amp; sells</h2>
+    <p style="max-width:580px;margin-bottom:8px">As a premier partner, B2BS has access to the full 2nth.ai and 2nth.io stack. Every partner solution, every skill domain, every demo — available to show enterprise customers.</p>
+
+    <div class="solutions">
+      <div class="solution">
+        <div class="solution-icon">&#128230;</div>
+        <h3>Warehouse &amp; Logistics AI</h3>
+        <p>ScanMan WMS + DroneScan robotics. Inventory intelligence, pick optimisation, safety compliance. ERPNext swarm architecture.</p>
+        <a href="/preview/scanman/warehouse.html" class="solution-link">Live warehouse demo &rarr;</a>
+      </div>
+      <div class="solution">
+        <div class="solution-icon">&#127970;</div>
+        <h3>Shared Space Operations</h3>
+        <p>Proximity Green spatial gallery. Coworking, student housing, campuses. FOAM-inspired proof of presence, zone governance.</p>
+        <a href="/preview/proximity-green/gallery/" class="solution-link">Workshop17 demo &rarr;</a>
+      </div>
+      <div class="solution">
+        <div class="solution-icon">&#127966;</div>
+        <h3>Conservation Architecture</h3>
+        <p>Luthuli lodge management. Off-grid systems, wildlife sighting logs, heritage assessments, EIA pre-screening. Game reserve AI.</p>
+        <a href="/preview/luthuli/lodge.html" class="solution-link">Luthuli lodge demo &rarr;</a>
+      </div>
+      <div class="solution">
+        <div class="solution-icon">&#128188;</div>
+        <h3>B2B Growth &amp; GTM</h3>
+        <p>10 specialist agents for go-to-market, sales engine, AI marketing, fractional leadership. 50K free tokens to start.</p>
+        <a href="https://ai.b2bs.co.za" class="solution-link">ai.b2bs.co.za &rarr;</a>
+      </div>
+      <div class="solution">
+        <div class="solution-icon">&#128100;</div>
+        <h3>Recruitment AI</h3>
+        <p>AgileX — 5 autonomous agents for sourcing, AI interviews, EE compliance, scheduling, onboarding. From R28/day.</p>
+        <a href="/partners/agilex.html" class="solution-link">AgileX partner &rarr;</a>
+      </div>
+      <div class="solution">
+        <div class="solution-icon">&#128218;</div>
+        <h3>Skills Platform</h3>
+        <p>300+ AI skills across 12 domains. Partner hubs, token billing, revenue sharing. The platform itself as a product.</p>
+        <a href="https://dev.2nth-skills.pages.dev/" class="solution-link">Browse skills &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Launch plan -->
+<section class="section" id="launch">
+  <div class="container">
+    <div class="sec-label">Launch plan</div>
+    <h2>May 1st and beyond</h2>
+
+    <div class="timeline">
+      <div class="tl-item tl-now">
+        <div class="tl-date">April 2026 — Now</div>
+        <div class="tl-title">Platform onboarding &amp; demo preparation</div>
+        <div class="tl-desc">Full partner agreement signed. All demos built and tested. Sales collateral prepared. Customer prospect list qualified.</div>
+      </div>
+      <div class="tl-item tl-now">
+        <div class="tl-date">1 May 2026 — Launch</div>
+        <div class="tl-title">B2B AI Solutions goes live</div>
+        <div class="tl-desc">Premier partner status active. Begin customer demos and pilot deployments. All 2nth.ai + 2nth.io capabilities available for enterprise sales.</div>
+      </div>
+      <div class="tl-item tl-next">
+        <div class="tl-date">May — June 2026</div>
+        <div class="tl-title">First pilots &amp; enterprise demos</div>
+        <div class="tl-desc">Target: 5 pilot customers across warehouse, shared space, GTM, and recruitment verticals. 90-day transformation programmes using the full skill stack.</div>
+      </div>
+      <div class="tl-item tl-next">
+        <div class="tl-date">Q3 2026</div>
+        <div class="tl-title">Scale &amp; expand</div>
+        <div class="tl-desc">Branded B2BS skills hub live. Custom agents for enterprise customers. Revenue share tracking in production. Pan-African expansion via existing partner network.</div>
+      </div>
+      <div class="tl-item tl-later">
+        <div class="tl-date">Q4 2026</div>
+        <div class="tl-title">Enterprise tier</div>
+        <div class="tl-desc">White-label deployments for large enterprise customers. Dedicated infrastructure. SLA-backed support. Full ERP integration suite.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The three layers -->
+<section class="section" id="stack">
+  <div class="container">
+    <div class="sec-label">The stack</div>
+    <h2>Three platforms. One partner.</h2>
+    <p style="max-width:600px;margin-bottom:8px">As premier partner, B2B AI Solutions sells the complete stack — research, skills, and infrastructure. Each layer serves a different need. Together they're the full picture.</p>
+
+    <!-- Three columns -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0">
+
+      <!-- imbila.ai -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0f766e,#ccfbf1)"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#0f766e;font-weight:700;margin:8px 0 12px">imbila.ai</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Research &amp; IP</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">The thinking layer. AI methodology, agent architecture patterns, SKILL.md open format, and the research that powers everything below.</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2)">
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#0f766e">&#9679;</span> Agent architecture research</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#0f766e">&#9679;</span> SKILL.md — the open skill format</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#0f766e">&#9679;</span> Daily intel &amp; model analysis</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#0f766e">&#9679;</span> Africa-first AI economics</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:#0f766e">&#9679;</span> Education — Baobab, Claude mastery</div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+          <a href="https://dev.imbila.ai" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#0f766e;text-decoration:none">dev.imbila.ai &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 2nth.ai -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--cyan),#b6e8f7)"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:700;margin:8px 0 12px">2nth.ai</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Skills &amp; Agents</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">The execution layer. 300+ production AI skills across 12 domains, 15 named agents, token billing, partner hubs, and the developer portal.</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2)">
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">&#9679;</span> 300+ skills (tech, biz, fin, leg, data, health, mkt, edu, iot)</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">&#9679;</span> 15 domain agents (Penny, Tom, Grant...)</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">&#9679;</span> Token-based billing in ZAR</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">&#9679;</span> Partner branded skill hubs</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">&#9679;</span> Revenue sharing (5–30%)</div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+          <a href="https://2nth.ai" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan);text-decoration:none">2nth.ai &rarr;</a>
+        </div>
+      </div>
+
+      <!-- 2nth.io -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--navy),#4a7ab5)"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:8px 0 12px">2nth.io</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:8px">Infrastructure</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">The enterprise layer. White-label deployments, dedicated instances, SLA-backed infrastructure, and the tooling that makes 2nth.ai run at scale.</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2)">
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--navy)">&#9679;</span> Cloudflare edge — Workers AI, D1, KV, R2, Queues</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--navy)">&#9679;</span> White-label platform deployments</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--navy)">&#9679;</span> ERPNext elastic swarm instances</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--navy)">&#9679;</span> Enterprise SLA &amp; dedicated support</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="color:var(--navy)">&#9679;</span> Data residency (af-south-1, POPIA, GDPR)</div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">2nth.io — launching Q3 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- How they connect -->
+    <div class="arch">
+      <pre><code><span class="hl">HOW THE THREE LAYERS CONNECT</span>
+
+  imbila.ai                    2nth.ai                       2nth.io
+  ─────────                    ───────                       ───────
+  Researches agent             Implements skills,            Runs the infrastructure
+  patterns, publishes          agents, billing,              at scale — Cloudflare
+  SKILL.md format,             partner hubs, and             edge, D1, KV, R2,
+  daily intel, and             the developer portal.         ERPNext elastic,
+  education.                   300+ skills, 12 domains.      white-label deploys.
+
+       │                            │                             │
+       │    Methodology flows       │    Skills execute on        │
+       │    into skills ──────────▸ │    infrastructure ────────▸ │
+       │                            │                             │
+       └────────────────────────────┴─────────────────────────────┘
+                                    │
+                          ┌─────────▼─────────┐
+                          │  B2B AI Solutions  │
+                          │  (Premier Partner) │
+                          │                    │
+                          │  Sells all three   │
+                          │  to enterprise     │
+                          │  customers         │
+                          └────────────────────┘
+
+  <span class="hl">WHAT B2BS SELLS FROM EACH LAYER:</span>
+
+  From imbila.ai:    AI strategy consulting, methodology workshops,
+                     Claude mastery training, research briefings
+
+  From 2nth.ai:      Skills-as-a-service, agent deployments, partner hubs,
+                     domain-specific AI (warehouse, space, conservation, GTM)
+
+  From 2nth.io:      Dedicated infrastructure, white-label platforms,
+                     ERPNext per-site instances, enterprise SLA, data residency</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">Architecture</div>
+    <h2>Premier partner stack</h2>
+
+    <div class="arch">
+      <pre><code><span class="hl">B2B AI SOLUTIONS — PREMIER PARTNER ARCHITECTURE</span>
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  B2B AI Solutions (Premier Partner)                             │
+  │  b2bs.co.za &middot; ai.b2bs.co.za                                     │
+  │                                                                 │
+  │  Demonstrates &amp; sells the full stack to enterprise customers   │
+  └────────────────────────────┬────────────────────────────────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+  ┌───────────▼──┐  ┌─────────▼────┐  ┌────────▼─────────┐
+  │  2nth.ai     │  │  2nth.io     │  │  imbila.ai       │
+  │  Platform    │  │  Enterprise  │  │  Research &amp; IP   │
+  │              │  │              │  │                   │
+  │  300+ skills │  │  White-label │  │  Methodology      │
+  │  15 agents   │  │  Custom hubs │  │  Daily intel      │
+  │  Token bill  │  │  SLA support │  │  Education        │
+  └──────┬───────┘  └──────┬───────┘  └───────────────────┘
+         │                 │
+         │    ┌────────────┼────────────┐
+         │    │            │            │
+    ┌────▼────▼──┐  ┌──────▼───┐  ┌────▼──────┐
+    │ Warehouse  │  │ Shared   │  │ Custom    │
+    │ ScanMan    │  │ Spaces   │  │ Enterprise│
+    │ DroneScan  │  │ Prox Grn │  │ Builds    │
+    │ ERPNext    │  │ Luthuli  │  │           │
+    └────────────┘  └──────────┘  └───────────┘
+
+<span class="hl">REVENUE MODEL</span>
+
+  Customer pays B2BS for consulting + AI access
+    → B2BS uses 2nth.ai tokens for skill execution
+    → B2BS earns premier revenue share
+    → Partner skills (ScanMan, PG, etc.) earn their share
+    → 2nth.ai platform earns infrastructure share
+    → Everyone wins. Token-metered. Transparent.</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h2>Ready to scale your commercial engine?</h2>
+    <p>30 years of B2B consulting. 300+ AI skills. One platform.</p>
+    <a href="https://www.b2bs.co.za" class="btn btn-cyan">b2bs.co.za</a>
+    <a href="https://ai.b2bs.co.za" class="btn btn-ghost">Try the AI agents</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>B2B AI Solutions &mdash; Premier Developer Partner of <a href="https://2nth.ai">2nth.ai</a> &amp; <a href="https://2nth.io">2nth.io</a></p>
+    <p>Johannesburg, South Africa &middot; <a href="https://www.b2bs.co.za">b2bs.co.za</a> &middot; Powered by <a href="https://dev.imbila.ai">imbila.ai</a> &middot; Launch: 1 May 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>

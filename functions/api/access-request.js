@@ -10,8 +10,8 @@ const KNOWN_USERS = {
   'guy@rumf.co.za':        { name: 'Guy Hamlin',    scope: 'luthuli' },
 };
 
-// All @2nth.ai and @2nth.io emails are full-access admin
-const ADMIN_DOMAINS = ['2nth.ai', '2nth.io'];
+// All @2nth.ai, @2nth.io, @b2bs.co.za emails are full-access admin
+const ADMIN_DOMAINS = ['2nth.ai', '2nth.io', 'b2bs.co.za'];
 
 // Route-specific reviewers for approval notifications
 const ROUTE_REVIEWERS = {

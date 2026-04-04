@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScanMan AI — Live Warehouse Simulation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f9faf9;color:#57534e;-webkit-font-smoothing:antialiased;font-size:13px}
+    :root{--green:#22873a;--green-dark:#1a6b2e;--green-light:#f0fdf4;--leaf:#6cc04a;--mid:#4ead5b;--text:#1c1917;--text2:#57534e;--muted:#a8a29e;--border:#e2e8e4;--bg:#f9faf9;--bg2:#fff;--bg3:#f3f5f3;--red:#dc2626;--amber:#d97706;--blue:#2563eb}
+
+    /* Layout */
+    .app{display:grid;grid-template-columns:260px 1fr 320px;grid-template-rows:48px 1fr;height:100vh;overflow:hidden}
+    .topbar{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:16px}
+    .sidebar{grid-row:2;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:12px}
+    .main{grid-row:2;overflow-y:auto;padding:16px}
+    .panel{grid-row:2;background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+
+    /* Topbar */
+    .tb-logo{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+    .tb-squares{display:flex;gap:2px}
+    .tb-sq{width:10px;height:10px;border-radius:2px}
+    .tb-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-left:auto}
+    .tb-status{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green)}
+    .tb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .tb-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);margin-left:16px}
+
+    /* Sidebar */
+    .sb-section{margin-bottom:16px}
+    .sb-head{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding:0 4px}
+    .sb-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:6px;cursor:pointer;transition:background .1s}
+    .sb-item:hover{background:var(--bg3)}
+    .sb-item.active{background:var(--green-light)}
+    .sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .sb-item-text{flex:1}
+    .sb-item-name{font-size:12px;font-weight:600;color:var(--text)}
+    .sb-item-meta{font-size:10px;color:var(--muted)}
+    .sb-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--bg3);padding:2px 6px;border-radius:3px}
+
+    /* Main — Warehouse floor */
+    .floor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .floor-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+    .floor-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+
+    /* Stats row */
+    .stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px}
+    .stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+    .stat-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+    .stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    /* Warehouse grid */
+    .wh-grid{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}
+    .wh-zones{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+    .wh-zone{border-radius:4px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .2s;position:relative;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .wh-zone:hover{transform:scale(1.05);z-index:1}
+    .wh-zone-id{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.8)}
+    .wh-zone-items{font-size:16px;font-weight:700;color:#fff}
+    .wh-zone-cap{font-size:8px;color:rgba(255,255,255,.6)}
+    .zone-full{background:#dc2626}
+    .zone-high{background:#d97706}
+    .zone-normal{background:var(--green)}
+    .zone-low{background:#60a5fa}
+    .zone-empty{background:#d4d4d4}
+    .zone-dock{background:#1e293b;border-radius:4px}
+
+    /* Legend */
+    .legend{display:flex;gap:12px;margin:8px 0;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+    .legend-dot{width:10px;height:10px;border-radius:2px}
+
+    /* Recent scans table */
+    .scan-table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .scan-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--bg3)}
+    .scan-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:11px}
+    .scan-table tr:last-child td{border:none}
+    .scan-table .sku{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green)}
+    .scan-table .alert{color:var(--red);font-weight:600}
+    .scan-table .ok{color:var(--green)}
+    .scan-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:3px;font-weight:600}
+    .badge-ok{background:var(--green-light);color:var(--green)}
+    .badge-warn{background:#fef3c7;color:var(--amber)}
+    .badge-err{background:#fef2f2;color:var(--red)}
+
+    /* Panel — AI chat */
+    .panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .panel-avatar{width:28px;height:28px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#fff}
+    .panel-name{font-size:13px;font-weight:700;color:var(--text)}
+    .panel-role{font-size:10px;color:var(--muted)}
+    .chat{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+    .msg{max-width:90%;padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.5}
+    .msg-ai{background:var(--bg3);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+    .msg-user{background:var(--green);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+    .msg-ai strong{color:var(--green)}
+    .msg-ai code{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg2);padding:1px 4px;border-radius:3px}
+    .msg-data{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.6}
+    .chat-input{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
+    .chat-input input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;font-family:'Inter',sans-serif}
+    .chat-input button{padding:8px 14px;background:var(--green);color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.5px}
+
+    /* ERPNext doctypes panel */
+    .erp-section{padding:12px 16px;border-bottom:1px solid var(--border)}
+    .erp-head{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .erp-doc{display:flex;align-items:center;justify-content:space-between;padding:4px 0;font-size:11px}
+    .erp-doc-name{color:var(--text);font-weight:500}
+    .erp-doc-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+
+    @media(max-width:1024px){.app{grid-template-columns:1fr}.sidebar,.panel{display:none}}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-logo">
+      <div class="tb-squares"><div class="tb-sq" style="background:#4ead5b;opacity:.5"></div><div class="tb-sq" style="background:#22873a"></div><div class="tb-sq" style="background:#6cc04a;opacity:.6"></div></div>
+      SCANMAN
+    </div>
+    <div class="tb-status"><span class="tb-dot"></span> Simulation running</div>
+    <div class="tb-title">Hush Puppies SA — Hillcrest DC</div>
+    <div class="tb-time" id="clock"></div>
+  </div>
+
+  <!-- Sidebar — ERPNext Doctypes -->
+  <div class="sidebar">
+
+    <div class="sb-section">
+      <div class="sb-head">Warehouses</div>
+      <div class="sb-item active"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">Hillcrest DC</div><div class="sb-item-meta">Main distribution centre</div></div><span class="sb-count">6 zones</span></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--blue)"></span><div class="sb-item-text"><div class="sb-item-name">Pinetown Overflow</div><div class="sb-item-meta">Seasonal overflow</div></div><span class="sb-count">3 zones</span></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--muted)"></span><div class="sb-item-text"><div class="sb-item-name">Cape Town Transit</div><div class="sb-item-meta">Cross-dock facility</div></div><span class="sb-count">2 zones</span></div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-head">ERPNext Doctypes</div>
+      <div class="erp-doc"><span class="erp-doc-name">Item</span><span class="erp-doc-count">1,247</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Stock Entry</span><span class="erp-doc-count">89 today</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Purchase Receipt</span><span class="erp-doc-count">4 pending</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Pick List</span><span class="erp-doc-count">12 active</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Putaway Rule</span><span class="erp-doc-count">18 rules</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Batch</span><span class="erp-doc-count">342 active</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Stock Reconciliation</span><span class="erp-doc-count">1 in progress</span></div>
+      <div class="erp-doc"><span class="erp-doc-name">Delivery Note</span><span class="erp-doc-count">7 today</span></div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-head">Active Pickers</div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">Sipho M.</div><div class="sb-item-meta">Zone A — 42 picks</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">Thandi K.</div><div class="sb-item-meta">Zone C — 38 picks</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--amber)"></span><div class="sb-item-text"><div class="sb-item-name">David N.</div><div class="sb-item-meta">Zone B — 15 picks (slow)</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">Nomsa Z.</div><div class="sb-item-meta">Receiving dock — intake</div></div></div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-head">Scanners Online</div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">HC-SCAN-01</div><div class="sb-item-meta">Zebra TC52 — Sipho</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">HC-SCAN-02</div><div class="sb-item-meta">Zebra TC52 — Thandi</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--amber)"></span><div class="sb-item-text"><div class="sb-item-name">HC-SCAN-03</div><div class="sb-item-meta">Zebra TC52 — David (low batt)</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--green)"></span><div class="sb-item-text"><div class="sb-item-name">HC-SCAN-04</div><div class="sb-item-meta">Zebra TC52 — Nomsa</div></div></div>
+      <div class="sb-item"><span class="sb-dot" style="background:var(--muted)"></span><div class="sb-item-text"><div class="sb-item-name">HC-SCAN-05</div><div class="sb-item-meta">Zebra TC52 — charging</div></div></div>
+    </div>
+  </div>
+
+  <!-- Main — Warehouse floor -->
+  <div class="main">
+    <div class="floor-header">
+      <div class="floor-title">Hillcrest DC — Floor Map</div>
+      <div class="floor-meta">1,247 SKUs &middot; 4,892 units &middot; Last scan: <span id="last-scan-time">just now</span></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="s-accuracy">98.4%</div><div class="stat-lbl">Accuracy</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-picks">342</div><div class="stat-lbl">Picks today</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-received">128</div><div class="stat-lbl">Received</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-dispatched">97</div><div class="stat-lbl">Dispatched</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-expiry" style="color:var(--amber)">12</div><div class="stat-lbl">Expiry alerts</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-errors" style="color:var(--red)">3</div><div class="stat-lbl">Anomalies</div></div>
+    </div>
+
+    <!-- Warehouse zones grid -->
+    <div class="wh-grid">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Zone occupancy — live</span>
+        <span style="font-size:10px;color:var(--muted)" id="zone-update">Updating...</span>
+      </div>
+      <div class="wh-zones" id="wh-zones"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Full (&gt;95%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> High (80-95%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Normal (40-80%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Low (&lt;40%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1e293b"></div> Dock</div>
+      </div>
+    </div>
+
+    <!-- Recent scans -->
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Recent Scans</div>
+    <table class="scan-table">
+      <thead><tr><th>Time</th><th>SKU</th><th>Item</th><th>Zone</th><th>Action</th><th>Qty</th><th>Status</th></tr></thead>
+      <tbody id="scan-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Right panel — Jasper AI -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-avatar">J</div>
+      <div>
+        <div class="panel-name">Jasper</div>
+        <div class="panel-role">ScanMan AI &middot; Warehouse Intelligence</div>
+      </div>
+    </div>
+
+    <div class="chat" id="chat">
+      <div class="msg msg-ai">
+        <strong>Good morning.</strong> I'm monitoring Hillcrest DC. Here's your briefing:
+        <div class="msg-data">
+Accuracy: 98.4% (up from 97.9% yesterday)
+Picks today: 342 (on track for 520 target)
+Expiry alerts: 12 items within 14 days
+Anomalies: 3 (Zone B discrepancy, dock PO mismatch, FIFO violation)
+        </div>
+      </div>
+      <div class="msg msg-user">What's the Zone B issue?</div>
+      <div class="msg msg-ai">
+        Zone B has a <strong>stock discrepancy</strong> on 3 SKUs:
+        <div class="msg-data">
+HP-BT-4471  Hush Puppies Chelsea Boot
+  ERPNext: 48 units  |  Last scan: 42 units
+  Variance: -6  |  Since: 2 Apr cycle count
+
+HP-SN-2290  Hush Puppies Slip-on Navy
+  ERPNext: 24 units  |  Last scan: 24 units ✓
+
+HP-LF-1180  Hush Puppies Loafer Brown
+  ERPNext: 36 units  |  Last scan: 31 units
+  Variance: -5  |  Since: 3 Apr pick wave #38
+        </div>
+        David is picking in Zone B and running slow (15 picks vs target 35). The variance may be from mispicks. I've flagged a <strong>recount for HP-BT-4471 and HP-LF-1180</strong> in the next cycle.
+      </div>
+      <div class="msg msg-user">Show me the expiry risk</div>
+      <div class="msg msg-ai">
+        <strong>12 items</strong> expire within 14 days. Top risk:
+        <div class="msg-data">
+HP-CL-9920  Leather Conditioner 250ml
+  Batch: LC-2025-08  |  Expiry: 8 Apr (4 days)
+  Qty: 24 units  |  Zone A, Bin A-14
+  ⚠ Recommend: 40% markdown NOW
+
+HP-PL-3350  Shoe Polish Neutral
+  Batch: SP-2025-11  |  Expiry: 12 Apr (8 days)
+  Qty: 36 units  |  Zone A, Bin A-22
+  ⚠ Recommend: Move to front-of-store display
+
+HP-IN-7780  Insoles Comfort Gel
+  Batch: IG-2025-09  |  Expiry: 15 Apr (11 days)
+  Qty: 18 units  |  Zone C, Bin C-08
+  ✓ Normal sell-through. Monitor.
+        </div>
+        I've created a <code>Stock Entry</code> draft to transfer HP-CL-9920 to the markdown zone. Approve?
+      </div>
+      <div class="msg msg-user">Yes, approve the transfer</div>
+      <div class="msg msg-ai">
+        Done. <strong>Stock Entry SE-2026-0892</strong> submitted:
+        <div class="msg-data">
+Type: Material Transfer
+From: Zone A, Bin A-14
+To: Markdown Zone M-01
+Item: HP-CL-9920 (Leather Conditioner)
+Qty: 24 units
+Batch: LC-2025-08
+Status: Submitted ✓
+ERPNext docstatus: 1
+        </div>
+        Markdown price updated to R89.40 (was R149.00). POS systems synced.
+      </div>
+      <div class="msg msg-user">How's the PO from Wolverine?</div>
+      <div class="msg msg-ai">
+        <strong>PO-2026-0447</strong> from Wolverine Worldwide:
+        <div class="msg-data">
+Status: Partially received
+Ordered: 480 units (12 SKUs)
+Received: 432 units (10 SKUs)
+Outstanding: 48 units (2 SKUs)
+
+Missing:
+  HP-BT-5510 Desert Boot Tan — 24 units
+  HP-OX-3300 Oxford Black — 24 units
+
+Nomsa received the shipment at 08:15.
+Receiving anomaly: carton count matches (20/20)
+but unit count short by 48. Supplier flagged.
+
+Recommendation: Accept partial, raise
+Purchase Receipt for 432 units, create
+Debit Note for 48 units shortage.
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="chat-in" placeholder="Ask Jasper about your warehouse..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">ASK</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Clock
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+setInterval(updateClock,1000);updateClock();
+
+// Warehouse zones
+var zones = [
+  {id:'DOCK-1',name:'Receiving',cap:100,items:72,type:'dock'},
+  {id:'DOCK-2',name:'Dispatch',cap:100,items:45,type:'dock'},
+  {id:'A-01',name:'Zone A',cap:200,items:168},{id:'A-02',name:'Zone A',cap:200,items:182},
+  {id:'A-03',name:'Zone A',cap:150,items:145},{id:'A-04',name:'Zone A',cap:150,items:88},
+  {id:'B-01',name:'Zone B',cap:200,items:190},{id:'B-02',name:'Zone B',cap:200,items:175},
+  {id:'B-03',name:'Zone B',cap:150,items:142},{id:'B-04',name:'Zone B',cap:150,items:120},
+  {id:'C-01',name:'Zone C',cap:180,items:72},{id:'C-02',name:'Zone C',cap:180,items:95},
+  {id:'C-03',name:'Zone C',cap:120,items:48},{id:'C-04',name:'Zone C',cap:120,items:35},
+  {id:'D-01',name:'Zone D',cap:160,items:155},{id:'D-02',name:'Zone D',cap:160,items:148},
+  {id:'M-01',name:'Markdown',cap:80,items:24,type:'special'},
+  {id:'QC-01',name:'QC Hold',cap:50,items:12,type:'special'},
+];
+
+function renderZones(){
+  var el=document.getElementById('wh-zones');el.innerHTML='';
+  zones.forEach(function(z){
+    var pct=z.items/z.cap*100;
+    var cls=z.type==='dock'?'zone-dock':z.type==='special'?'zone-low':pct>95?'zone-full':pct>80?'zone-high':pct>40?'zone-normal':'zone-low';
+    var div=document.createElement('div');
+    div.className='wh-zone '+cls;
+    div.title=z.id+' — '+z.items+'/'+z.cap+' ('+Math.round(pct)+'%)';
+    div.innerHTML='<div class="wh-zone-id">'+z.id+'</div><div class="wh-zone-items">'+z.items+'</div><div class="wh-zone-cap">/ '+z.cap+'</div>';
+    el.appendChild(div);
+  });
+}
+renderZones();
+
+// Simulate zone changes
+setInterval(function(){
+  var i=Math.floor(Math.random()*zones.length);
+  var delta=Math.random()>.5?1:-1;
+  zones[i].items=Math.max(0,Math.min(zones[i].cap,zones[i].items+delta));
+  renderZones();
+  document.getElementById('zone-update').textContent='Updated '+new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+},3000);
+
+// Scan feed
+var skus=[
+  {sku:'HP-BT-4471',name:'Chelsea Boot Tan',zone:'B-01'},
+  {sku:'HP-SN-2290',name:'Slip-on Navy',zone:'B-02'},
+  {sku:'HP-LF-1180',name:'Loafer Brown',zone:'B-03'},
+  {sku:'HP-CL-9920',name:'Leather Conditioner',zone:'A-01'},
+  {sku:'HP-OX-3300',name:'Oxford Black',zone:'A-02'},
+  {sku:'HP-BT-5510',name:'Desert Boot Tan',zone:'A-03'},
+  {sku:'HP-PL-3350',name:'Shoe Polish Neutral',zone:'A-04'},
+  {sku:'HP-IN-7780',name:'Insoles Comfort Gel',zone:'C-01'},
+  {sku:'HP-SB-6640',name:'Suede Brush Kit',zone:'C-02'},
+  {sku:'HP-WB-1120',name:'Waterproof Boot',zone:'D-01'},
+];
+var actions=['Pick','Receive','Count','Transfer','Putaway'];
+var scanCount=0;
+
+function addScan(){
+  var s=skus[Math.floor(Math.random()*skus.length)];
+  var a=actions[Math.floor(Math.random()*actions.length)];
+  var qty=Math.floor(Math.random()*12)+1;
+  var ok=Math.random()>.15;
+  var time=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var body=document.getElementById('scan-body');
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>'+time+'</td><td class="sku">'+s.sku+'</td><td>'+s.name+'</td><td>'+s.zone+'</td><td>'+a+'</td><td>'+qty+'</td><td><span class="scan-badge '+(ok?'badge-ok':'badge-warn')+'">'+(ok?'OK':'Check')+'</span></td>';
+  body.insertBefore(tr,body.firstChild);
+  if(body.children.length>15)body.removeChild(body.lastChild);
+  scanCount++;
+  document.getElementById('s-picks').textContent=342+scanCount;
+  document.getElementById('last-scan-time').textContent=time;
+}
+// Initial scans
+for(var i=0;i<8;i++)addScan();
+// Live scans
+setInterval(addScan,4000);
+
+// Update stats periodically
+setInterval(function(){
+  var acc=98+Math.random()*.8;
+  document.getElementById('s-accuracy').textContent=acc.toFixed(1)+'%';
+},10000);
+
+// Chat
+function sendMsg(){
+  var inp=document.getElementById('chat-in');
+  var text=inp.value.trim();if(!text)return;
+  var chat=document.getElementById('chat');
+  var msg=document.createElement('div');msg.className='msg msg-user';msg.textContent=text;
+  chat.appendChild(msg);inp.value='';
+  setTimeout(function(){
+    var reply=document.createElement('div');reply.className='msg msg-ai';
+    reply.innerHTML='<strong>Processing...</strong> I\'m querying ERPNext via <code>GET /api/resource/Item?filters=[["item_group","=","Footwear"]]</code> and cross-referencing with the latest scan data. This is a simulation — in production, I\'d return real results from your warehouse.';
+    chat.appendChild(reply);chat.scrollTop=chat.scrollHeight;
+  },1200);
+  chat.scrollTop=chat.scrollHeight;
+}
+</script>
+</body>
+</html>
