@@ -19,6 +19,7 @@ const FALLBACK_USERS = {
   'brian':    { id:'brian', email: 'brian.denny@deneys.co.za',  name: 'Brian Denny',          scope: 'durpro',               pin: '7741' },
   'barryr':   { id:'barryr', email: 'barry.rohrs@rohrsassociates.com', name: 'Barry Röhrs',    scope: 'rohrs',                pin: '2026' },
   'erica':    { id:'erica', email: 'erica@eatfitsa.com',              name: 'Erica Jankovich', scope: 'eatfitsa',             pin: '2016' },
+  'jonty':    { id:'jonty', email: 'jonty@seaharvestgroup.co.za',    name: 'Jonty Jankovich-Besan', scope: 'jankovich',      pin: '1968' },
 };
 
 async function getUser(env, id) {
