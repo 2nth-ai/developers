@@ -1,5 +1,5 @@
 // Middleware: protect /partners/* /preview/* /hub*, inject user bar
-const PROTECTED_PREFIXES = ['/partners/', '/preview/', '/hub'];
+const PROTECTED_PREFIXES = ['/partners/', '/preview/', '/hub', '/admin'];
 const PUBLIC_PATHS = ['/access', '/api/', '/style.css', '/favicon', '/_headers', '/_redirects', '/docs', '/portal'];
 
 function getSession(request) {
@@ -15,14 +15,73 @@ function getSession(request) {
 
 function hasAccess(session, path) {
   if (!session) return false;
+  if (path.startsWith('/admin') && session.scope !== 'full' && !session.fullAccess) return false;
   if (session.scope === 'full' || session.fullAccess) return true;
-  // Hub is accessible to all authenticated users
   if (path.startsWith('/hub')) return true;
+  if (path.startsWith('/docs') || path.startsWith('/portal')) return true;
   if (session.scope) {
-    const scopes = session.scope.split(',');
+    const scopes = session.scope.split(',').map(s => s.trim());
     return scopes.some(s => path.includes(s));
   }
-  return true;
+  return false;
+}
+
+function canSeeGroup(groupScope, userScopes) {
+  const gs = groupScope.split(',').map(s => s.trim());
+  return gs.some(g => {
+    if (g === 'platform') return true;
+    if (g === 'imbila' || g === 'imbila,platform') return true;
+    if (g === 'admin') return false;
+    return userScopes.includes(g);
+  });
+}
+
+function filterHubGroups(html, scope) {
+  if (scope === 'full') return html;
+  const userScopes = scope ? scope.split(',').map(s => s.trim()) : [];
+
+  // Find each <div class="group" data-scope="..."> and its matching </div>
+  const groupRe = /<div class="group" data-scope="([^"]*)">/g;
+  let match;
+  const removals = [];
+
+  while ((match = groupRe.exec(html)) !== null) {
+    const groupScope = match[1];
+    if (canSeeGroup(groupScope, userScopes)) continue;
+
+    // Find the matching closing </div> by counting depth
+    const startIdx = match.index;
+    let depth = 0;
+    let i = startIdx;
+    let endIdx = -1;
+
+    while (i < html.length) {
+      if (html.substr(i, 4) === '<div') {
+        depth++;
+        i += 4;
+      } else if (html.substr(i, 6) === '</div>') {
+        depth--;
+        if (depth === 0) {
+          endIdx = i + 6;
+          break;
+        }
+        i += 6;
+      } else {
+        i++;
+      }
+    }
+
+    if (endIdx > startIdx) {
+      removals.push([startIdx, endIdx]);
+    }
+  }
+
+  // Remove from end to start so indices stay valid
+  for (let r = removals.length - 1; r >= 0; r--) {
+    html = html.slice(0, removals[r][0]) + html.slice(removals[r][1]);
+  }
+
+  return html;
 }
 
 const USER_BAR = (name, scope) => `
@@ -37,7 +96,6 @@ const USER_BAR = (name, scope) => `
 </div>
 <style>body{padding-bottom:32px}</style>`;
 
-// Inject scope data into hub page so JS can filter links
 const SCOPE_SCRIPT = (scope) => `<script>window.__userScope='${scope}';</script>`;
 
 export async function onRequest(context) {
@@ -65,7 +123,13 @@ export async function onRequest(context) {
 
   if (!contentType.includes('text/html')) return response;
 
-  const html = await response.text();
+  let html = await response.text();
+
+  // Server-side: strip hub groups the user shouldn't see
+  if (path.startsWith('/hub') && session.scope !== 'full' && !session.fullAccess) {
+    html = filterHubGroups(html, session.scope);
+  }
+
   const bar = USER_BAR(session.name, session.scope);
   const scopeTag = SCOPE_SCRIPT(session.scope);
   const injected = html.replace('</body>', bar + scopeTag + '</body>');
