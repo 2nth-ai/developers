@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workshop17 Gallery — Proximity Green</title>
+  <meta name="description" content="Browse Workshop17 coworking spaces across Cape Town. Live availability, verified occupancy, instant booking. Powered by Proximity Green spatial gallery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#fafaf9;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    :root{
+      --pg:#059669;--pg-light:#d1fae5;--pg-dark:#065f46;
+      --dark:#1c1917;--warm:#f5f5f4;--border:#e7e5e4;--muted:#78716c;--text:#292524;
+      --amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#7c3aed;
+    }
+
+    .container{max-width:1120px;margin:0 auto;padding:0 24px}
+
+    /* Header */
+    header{background:#fff;border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:50}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .brand-icon{width:32px;height:32px;border-radius:8px;background:var(--pg);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px}
+    .brand-name{font-weight:700;font-size:17px;color:var(--dark);letter-spacing:-.02em}
+    .brand-tag{font-size:10px;color:var(--muted);font-weight:600;margin-left:8px;padding-left:8px;border-left:1px solid var(--border);text-transform:uppercase;letter-spacing:1px}
+    nav{display:flex;gap:16px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--pg)}
+    nav a.active{color:var(--pg);font-weight:700}
+    .nav-cta{background:var(--pg);color:#fff!important;padding:7px 16px;border-radius:6px;font-weight:700;font-size:11px;letter-spacing:.5px}
+    .nav-cta:hover{background:var(--pg-dark)}
+
+    /* Hero */
+    .hero{padding:48px 0 32px}
+    .hero h1{font-size:clamp(28px,5vw,42px);font-weight:800;color:var(--dark);letter-spacing:-.03em;line-height:1.1;margin-bottom:10px}
+    .hero h1 span{color:var(--pg)}
+    .hero p{font-size:16px;color:var(--muted);max-width:560px}
+
+    /* Stats bar */
+    .stats{display:flex;gap:28px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:28px}
+    .stat-item{text-align:center}
+    .stat-num{font-size:28px;font-weight:800;color:var(--dark);line-height:1}
+    .stat-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+    /* Filters */
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    .filter{font-size:11px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+    .filter:hover{border-color:var(--pg);color:var(--pg)}
+    .filter.active{background:var(--pg);color:#fff;border-color:var(--pg)}
+
+    /* View toggle */
+    .view-toggle{display:flex;gap:4px;margin-left:auto}
+    .view-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s}
+    .view-btn:hover,.view-btn.active{border-color:var(--pg);color:var(--pg)}
+
+    /* Site cards */
+    .sites-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:32px}
+    .site-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s;cursor:pointer}
+    .site-card:hover{border-color:var(--pg);box-shadow:0 4px 20px rgba(5,150,105,.08)}
+    .site-hero{height:160px;position:relative;overflow:hidden}
+    .site-hero img{width:100%;height:100%;object-fit:cover}
+    .site-hero-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6));padding:12px 16px}
+    .site-hero-overlay h3{color:#fff;font-size:18px;font-weight:700;margin:0}
+    .site-hero-overlay .loc{color:rgba(255,255,255,.8);font-size:11px;margin-top:2px}
+    .site-badge{position:absolute;top:12px;right:12px;font-size:9px;font-weight:700;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:1px}
+    .badge-verified{background:rgba(5,150,105,.9);color:#fff}
+    .badge-certified{background:rgba(217,119,6,.9);color:#fff}
+    .badge-listed{background:rgba(255,255,255,.9);color:var(--muted)}
+    .site-body{padding:16px}
+    .site-stats{display:flex;gap:16px;margin-bottom:12px}
+    .site-stat{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+    .site-stat strong{color:var(--dark)}
+    .avail-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+    .dot-green{background:#22c55e}
+    .dot-amber{background:#f59e0b}
+    .dot-red{background:#ef4444}
+    .site-uri{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);background:var(--warm);padding:4px 8px;border-radius:4px;display:inline-block;margin-bottom:10px}
+    .site-spaces{display:flex;gap:6px;flex-wrap:wrap}
+    .space-chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;background:var(--warm);color:var(--muted);border:1px solid var(--border)}
+
+    /* Space detail (expanded) */
+    .space-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px}
+    .space-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .15s}
+    .space-card:hover{border-color:var(--pg)}
+    .space-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
+    .type-desk{color:var(--blue);background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)}
+    .type-room{color:var(--purple);background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15)}
+    .type-office{color:var(--pg);background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15)}
+    .type-event{color:var(--amber);background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15)}
+    .space-card h4{font-size:15px;font-weight:700;color:var(--dark);margin:0 0 4px}
+    .space-card .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .space-amenities{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+    .amenity{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;background:var(--warm);color:var(--muted)}
+    .space-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+    .space-rate{font-size:14px;font-weight:800;color:var(--dark)}
+    .space-rate span{font-size:11px;font-weight:500;color:var(--muted)}
+    .space-avail{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+    .avail-now{color:#22c55e}
+    .avail-busy{color:var(--red)}
+    .avail-soon{color:var(--amber)}
+    .book-btn{font-size:10px;font-weight:700;padding:6px 14px;border-radius:5px;border:1px solid var(--pg);color:var(--pg);background:none;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+    .book-btn:hover{background:var(--pg);color:#fff}
+
+    /* Presence feed */
+    .feed{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px}
+    .feed h3{font-size:14px;font-weight:700;color:var(--dark);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+    .feed h3 .live{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .feed-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--warm)}
+    .feed-item:last-child{border:none}
+    .feed-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:50px;flex-shrink:0}
+    .feed-event{font-size:12px;color:var(--text)}
+    .feed-event strong{font-weight:600}
+    .feed-signal{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;background:var(--warm);color:var(--muted);margin-left:auto;flex-shrink:0}
+
+    /* Floor plan placeholder */
+    .floor-plan{background:#fff;border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px;text-align:center}
+    .floor-plan-grid{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(4,1fr);gap:4px;max-width:600px;margin:16px auto;aspect-ratio:2/1}
+    .fp-cell{border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;transition:all .2s;cursor:pointer;position:relative}
+    .fp-cell:hover{transform:scale(1.05);z-index:1}
+    .fp-cell.occupied{background:rgba(239,68,68,.7)}
+    .fp-cell.available{background:rgba(34,197,94,.7)}
+    .fp-cell.reserved{background:rgba(245,158,11,.7)}
+    .fp-cell.wall{background:#d6d3d1;cursor:default}
+    .fp-cell.wall:hover{transform:none}
+    .fp-cell.corridor{background:#f5f5f4;cursor:default}
+    .fp-cell.corridor:hover{transform:none}
+
+    footer{border-top:1px solid var(--border);padding:20px 0;text-align:center}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--pg)}
+
+    @media(max-width:640px){
+      .sites-grid{grid-template-columns:1fr}
+      .space-grid{grid-template-columns:1fr}
+      .stats{gap:16px}
+      nav{display:none}
+      .floor-plan-grid{grid-template-columns:repeat(6,1fr)}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="brand">
+      <div class="brand-icon">W17</div>
+      <span class="brand-name">Workshop17</span>
+      <span class="brand-tag">Gallery</span>
+    </a>
+    <nav>
+      <a href="#sites" class="active">Sites</a>
+      <a href="#spaces">Spaces</a>
+      <a href="#floorplan">Floor Plan</a>
+      <a href="#feed">Live Feed</a>
+      <a href="#" class="nav-cta">Book a Space</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1>Find your <span>space</span>.</h1>
+    <p>Browse Workshop17 locations across Cape Town. Live availability from verified sensors. Book instantly.</p>
+
+    <div class="stats">
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Locations</div></div>
+      <div class="stat-item"><div class="stat-num">186</div><div class="stat-label">Total spaces</div></div>
+      <div class="stat-item"><div class="stat-num">47</div><div class="stat-label">Available now</div></div>
+      <div class="stat-item"><div class="stat-num">73%</div><div class="stat-label">Occupancy</div></div>
+      <div class="stat-item"><div class="stat-num" style="color:var(--pg)">Verified</div><div class="stat-label">Gallery tier</div></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="filters">
+        <button class="filter active" onclick="filterSites('all',this)">All sites</button>
+        <button class="filter" onclick="filterSites('coworking',this)">Coworking</button>
+        <button class="filter" onclick="filterSites('meeting',this)">Meeting rooms</button>
+        <button class="filter" onclick="filterSites('private',this)">Private offices</button>
+        <button class="filter" onclick="filterSites('event',this)">Event spaces</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sites -->
+<section id="sites">
+<div class="container">
+
+  <div class="sites-grid">
+
+    <div class="site-card" data-type="coworking meeting private event">
+      <div class="site-hero" style="background:linear-gradient(135deg,#059669,#0d9488)">
+        <div class="site-badge badge-certified">Certified</div>
+        <div class="site-hero-overlay">
+          <h3>The Silo District</h3>
+          <div class="loc">V&amp;A Waterfront, Cape Town</div>
+        </div>
+      </div>
+      <div class="site-body">
+        <div class="site-uri">pg://workshop17/cpt/silo</div>
+        <div class="site-stats">
+          <div class="site-stat"><span class="avail-dot dot-green"></span> <strong>12</strong> available</div>
+          <div class="site-stat">42 spaces</div>
+          <div class="site-stat">3 floors</div>
+        </div>
+        <div class="site-spaces">
+          <span class="space-chip">Hot desks</span>
+          <span class="space-chip">Private offices</span>
+          <span class="space-chip">Boardroom</span>
+          <span class="space-chip">Event hall</span>
+          <span class="space-chip">Podcast studio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-card" data-type="coworking meeting private">
+      <div class="site-hero" style="background:linear-gradient(135deg,#0d9488,#06b6d4)">
+        <div class="site-badge badge-verified">Verified</div>
+        <div class="site-hero-overlay">
+          <h3>Kloof Street</h3>
+          <div class="loc">City Bowl, Cape Town</div>
+        </div>
+      </div>
+      <div class="site-body">
+        <div class="site-uri">pg://workshop17/cpt/kloof</div>
+        <div class="site-stats">
+          <div class="site-stat"><span class="avail-dot dot-amber"></span> <strong>3</strong> available</div>
+          <div class="site-stat">28 spaces</div>
+          <div class="site-stat">2 floors</div>
+        </div>
+        <div class="site-spaces">
+          <span class="space-chip">Hot desks</span>
+          <span class="space-chip">Dedicated desks</span>
+          <span class="space-chip">Meeting rooms</span>
+          <span class="space-chip">Phone booths</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-card" data-type="coworking meeting">
+      <div class="site-hero" style="background:linear-gradient(135deg,#134e4a,#059669)">
+        <div class="site-badge badge-verified">Verified</div>
+        <div class="site-hero-overlay">
+          <h3>Rondebosch</h3>
+          <div class="loc">Southern Suburbs, Cape Town</div>
+        </div>
+      </div>
+      <div class="site-body">
+        <div class="site-uri">pg://workshop17/cpt/ronde</div>
+        <div class="site-stats">
+          <div class="site-stat"><span class="avail-dot dot-red"></span> <strong>0</strong> available</div>
+          <div class="site-stat">18 spaces</div>
+          <div class="site-stat">1 floor</div>
+        </div>
+        <div class="site-spaces">
+          <span class="space-chip">Hot desks</span>
+          <span class="space-chip">Meeting rooms</span>
+          <span class="space-chip">Focus pods</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-card" data-type="coworking meeting private event">
+      <div class="site-hero" style="background:linear-gradient(135deg,#065f46,#134e4a)">
+        <div class="site-badge badge-certified">Certified</div>
+        <div class="site-hero-overlay">
+          <h3>Tabletop</h3>
+          <div class="loc">CBD, Cape Town</div>
+        </div>
+      </div>
+      <div class="site-body">
+        <div class="site-uri">pg://workshop17/cpt/tabletop</div>
+        <div class="site-stats">
+          <div class="site-stat"><span class="avail-dot dot-green"></span> <strong>22</strong> available</div>
+          <div class="site-stat">64 spaces</div>
+          <div class="site-stat">4 floors</div>
+        </div>
+        <div class="site-spaces">
+          <span class="space-chip">Hot desks</span>
+          <span class="space-chip">Team suites</span>
+          <span class="space-chip">Boardrooms</span>
+          <span class="space-chip">Rooftop event</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-card" data-type="coworking meeting private">
+      <div class="site-hero" style="background:linear-gradient(135deg,#047857,#059669)">
+        <div class="site-badge badge-listed">Listed</div>
+        <div class="site-hero-overlay">
+          <h3>Stellenbosch</h3>
+          <div class="loc">Winelands, Western Cape</div>
+        </div>
+      </div>
+      <div class="site-body">
+        <div class="site-uri">pg://workshop17/stellenbosch</div>
+        <div class="site-stats">
+          <div class="site-stat"><span class="avail-dot dot-green"></span> <strong>10</strong> available</div>
+          <div class="site-stat">34 spaces</div>
+          <div class="site-stat">2 floors</div>
+        </div>
+        <div class="site-spaces">
+          <span class="space-chip">Hot desks</span>
+          <span class="space-chip">Private offices</span>
+          <span class="space-chip">Meeting rooms</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- Spaces detail — Silo District -->
+<section id="spaces" style="padding:32px 0">
+<div class="container">
+  <h2 style="font-size:24px;font-weight:800;color:var(--dark);margin-bottom:4px">The Silo District — Floor 2</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--warm);padding:3px 8px;border-radius:4px">pg://workshop17/cpt/silo/floor-2</span>
+    &nbsp;&middot;&nbsp; 14 spaces &middot; 8 available now
+  </p>
+
+  <div class="space-grid">
+
+    <div class="space-card">
+      <span class="space-type type-desk">Hot desk</span>
+      <h4>Desk 2-01 to 2-08</h4>
+      <div class="meta">Open plan &middot; 8 desks &middot; Power + Wi-Fi</div>
+      <div class="space-amenities">
+        <span class="amenity">Power</span><span class="amenity">Wi-Fi 6</span><span class="amenity">Monitor</span><span class="amenity">Locker</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R180 <span>/ day</span></div>
+        <div class="space-avail avail-now"><span class="avail-dot dot-green"></span> 5 open</div>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <span class="space-type type-room">Meeting room</span>
+      <h4>The Hyrax</h4>
+      <div class="meta">Room 204 &middot; 8 seats &middot; 42m&sup2;</div>
+      <div class="space-amenities">
+        <span class="amenity">Display 65"</span><span class="amenity">Whiteboard</span><span class="amenity">Video conf</span><span class="amenity">Sound-proof</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R350 <span>/ hr</span></div>
+        <div class="space-avail avail-now"><span class="avail-dot dot-green"></span> Available</div>
+      </div>
+      <button class="book-btn" style="width:100%;margin-top:10px">Book now</button>
+    </div>
+
+    <div class="space-card">
+      <span class="space-type type-room">Meeting room</span>
+      <h4>The Baobab</h4>
+      <div class="meta">Room 206 &middot; 12 seats &middot; 56m&sup2;</div>
+      <div class="space-amenities">
+        <span class="amenity">Display 75"</span><span class="amenity">Whiteboard</span><span class="amenity">Video conf</span><span class="amenity">Catering</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R550 <span>/ hr</span></div>
+        <div class="space-avail avail-busy"><span class="avail-dot dot-red"></span> Until 14:00</div>
+      </div>
+      <button class="book-btn" style="width:100%;margin-top:10px">Book from 14:00</button>
+    </div>
+
+    <div class="space-card">
+      <span class="space-type type-office">Private office</span>
+      <h4>Suite 210</h4>
+      <div class="meta">4-person &middot; 28m&sup2; &middot; Lockable</div>
+      <div class="space-amenities">
+        <span class="amenity">Dedicated Wi-Fi</span><span class="amenity">Storage</span><span class="amenity">24/7 access</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R12,500 <span>/ mo</span></div>
+        <div class="space-avail avail-now"><span class="avail-dot dot-green"></span> Available</div>
+      </div>
+      <button class="book-btn" style="width:100%;margin-top:10px">Enquire</button>
+    </div>
+
+    <div class="space-card">
+      <span class="space-type type-office">Private office</span>
+      <h4>Suite 212</h4>
+      <div class="meta">6-person &middot; 38m&sup2; &middot; Lockable</div>
+      <div class="space-amenities">
+        <span class="amenity">Dedicated Wi-Fi</span><span class="amenity">Storage</span><span class="amenity">24/7 access</span><span class="amenity">Balcony</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R18,900 <span>/ mo</span></div>
+        <div class="space-avail avail-busy"><span class="avail-dot dot-red"></span> Occupied</div>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <span class="space-type type-event">Event space</span>
+      <h4>The Greenhouse</h4>
+      <div class="meta">Room 220 &middot; 40 standing &middot; 72m&sup2;</div>
+      <div class="space-amenities">
+        <span class="amenity">AV system</span><span class="amenity">Stage</span><span class="amenity">Catering kitchen</span><span class="amenity">Breakout</span>
+      </div>
+      <div class="space-footer">
+        <div class="space-rate">R4,500 <span>/ half day</span></div>
+        <div class="space-avail avail-soon"><span class="avail-dot dot-amber"></span> From 16:00</div>
+      </div>
+      <button class="book-btn" style="width:100%;margin-top:10px">Book from 16:00</button>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- Floor Plan -->
+<section id="floorplan" style="padding:32px 0">
+<div class="container">
+  <div class="floor-plan">
+    <h3 style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Silo District — Floor 2 — Live occupancy</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">
+      <span class="avail-dot dot-green" style="display:inline-block;vertical-align:middle"></span> Available &nbsp;
+      <span class="avail-dot dot-amber" style="display:inline-block;vertical-align:middle"></span> Reserved &nbsp;
+      <span class="avail-dot dot-red" style="display:inline-block;vertical-align:middle"></span> Occupied &nbsp;
+      <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#d6d3d1;vertical-align:middle"></span> Wall
+    </p>
+    <div class="floor-plan-grid">
+      <div class="fp-cell wall"></div><div class="fp-cell wall"></div><div class="fp-cell occupied" title="Suite 201 — Occupied">201</div><div class="fp-cell occupied" title="Suite 202 — Occupied">202</div><div class="fp-cell corridor"></div><div class="fp-cell available" title="Suite 203 — Available">203</div><div class="fp-cell wall"></div><div class="fp-cell wall"></div>
+      <div class="fp-cell wall"></div><div class="fp-cell available" title="Desk 2-01 — Available">D01</div><div class="fp-cell available" title="Desk 2-02 — Available">D02</div><div class="fp-cell occupied" title="Desk 2-03 — Occupied">D03</div><div class="fp-cell corridor"></div><div class="fp-cell available" title="Room 204 The Hyrax — Available">204</div><div class="fp-cell available" title="Room 205 — Available">205</div><div class="fp-cell wall"></div>
+      <div class="fp-cell wall"></div><div class="fp-cell available" title="Desk 2-04 — Available">D04</div><div class="fp-cell occupied" title="Desk 2-05 — Occupied">D05</div><div class="fp-cell available" title="Desk 2-06 — Available">D06</div><div class="fp-cell corridor"></div><div class="fp-cell occupied" title="Room 206 The Baobab — Occupied">206</div><div class="fp-cell occupied" title="Room 206 — Occupied">206</div><div class="fp-cell wall"></div>
+      <div class="fp-cell wall"></div><div class="fp-cell wall"></div><div class="fp-cell reserved" title="Desk 2-07 — Reserved 14:00">D07</div><div class="fp-cell available" title="Desk 2-08 — Available">D08</div><div class="fp-cell corridor"></div><div class="fp-cell occupied" title="Suite 210 — Occupied">210</div><div class="fp-cell reserved" title="Greenhouse — Reserved 16:00">220</div><div class="fp-cell wall"></div>
+    </div>
+    <p style="font-size:10px;color:var(--muted);margin-top:12px;font-family:'JetBrains Mono',monospace">Last updated: <span id="last-update"></span> &middot; Source: Salto access + IR sensors &middot; Confidence: 0.96</p>
+  </div>
+</div>
+</section>
+
+<!-- Live presence feed -->
+<section id="feed" style="padding:0 0 32px">
+<div class="container">
+  <div class="feed">
+    <h3><span class="live"></span> Live presence feed — Silo Floor 2</h3>
+    <div class="feed-item"><div class="feed-time">11:32</div><div class="feed-event">Room 204 <strong>vacated</strong> — The Hyrax now available</div><div class="feed-signal">salto</div></div>
+    <div class="feed-item"><div class="feed-time">11:28</div><div class="feed-event">Desk 2-06 <strong>occupied</strong> — badge tap</div><div class="feed-signal">salto</div></div>
+    <div class="feed-item"><div class="feed-time">11:15</div><div class="feed-event">Room 206 <strong>occupied</strong> — 6 participants detected</div><div class="feed-signal">sensor</div></div>
+    <div class="feed-item"><div class="feed-time">11:02</div><div class="feed-event">Suite 203 <strong>vacated</strong> — checkout confirmed</div><div class="feed-signal">salto</div></div>
+    <div class="feed-item"><div class="feed-time">10:58</div><div class="feed-event">Desk 2-03 <strong>occupied</strong> — guest pass</div><div class="feed-signal">kisi</div></div>
+    <div class="feed-item"><div class="feed-time">10:45</div><div class="feed-event">Greenhouse <strong>reserved</strong> for 16:00 — 30 pax event</div><div class="feed-signal">booking</div></div>
+    <div class="feed-item"><div class="feed-time">10:30</div><div class="feed-event">Desk 2-07 <strong>reserved</strong> for 14:00 — member pre-book</div><div class="feed-signal">booking</div></div>
+    <div class="feed-item"><div class="feed-time">09:15</div><div class="feed-event">Room 204 <strong>occupied</strong> — The Hyrax, 3 participants</div><div class="feed-signal">salto</div></div>
+  </div>
+</div>
+</section>
+
+<!-- Powered by -->
+<section style="padding:20px 0 40px">
+<div class="container" style="text-align:center">
+  <div style="display:inline-flex;align-items:center;gap:16px;padding:14px 28px;background:#fff;border:1px solid var(--border);border-radius:10px">
+    <div style="font-size:12px;color:var(--muted)">Powered by</div>
+    <a href="https://developers.2nth.ai/partners/proximity-green.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+      <div style="width:24px;height:24px;border-radius:6px;background:var(--pg);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:10px">PG</div>
+      <span style="font-weight:700;font-size:14px;color:var(--dark)">Proximity Green</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--border)"></div>
+    <a href="https://dev.2nth-skills.pages.dev/biz/spatial-gallery.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pg);text-decoration:none">biz/spatial-gallery skill &rarr;</a>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Workshop17 Gallery demo &middot; <a href="https://developers.2nth.ai/partners/proximity-green.html">Proximity Green</a> &middot; <a href="https://2nth.ai">2nth.ai</a> &middot; Architecture inspired by <a href="https://foam.space">FOAM.org</a></p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('last-update').textContent = new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});
+
+function filterSites(type, btn) {
+  document.querySelectorAll('.filter').forEach(function(f){f.classList.remove('active')});
+  btn.classList.add('active');
+  document.querySelectorAll('.site-card').forEach(function(card) {
+    if (type === 'all' || card.dataset.type.includes(type)) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>

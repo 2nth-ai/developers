@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luthuli Lodge — Management Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--earth:#6b5c4d;--earth-light:#d4c8b8;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--sage-dark:#3a5a3c;--sand:#c4b59a;--stone:#8a8075;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+
+    header{background:var(--earth-dark);padding:12px 0;color:#faf9f6}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,249,246,.6);text-decoration:none;margin-left:18px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#faf9f6}
+
+    .dash{display:grid;grid-template-columns:280px 1fr;gap:20px;padding:20px 0;min-height:calc(100vh - 52px)}
+
+    /* Sidebar */
+    .sidebar{display:flex;flex-direction:column;gap:12px}
+    .sb-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .sb-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .sb-val{font-size:22px;font-weight:700;color:var(--text)}
+    .sb-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+    /* Weather widget */
+    .weather{display:flex;align-items:center;gap:12px}
+    .weather-temp{font-size:28px;font-weight:700;color:var(--text)}
+    .weather-detail{font-size:11px;color:var(--muted);line-height:1.5}
+
+    /* Status indicators */
+    .status{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot-green{background:var(--green)}.dot-amber{background:var(--amber)}.dot-red{background:var(--red)}.dot-blue{background:var(--blue)}
+
+    /* Main area */
+    .main{display:flex;flex-direction:column;gap:16px}
+
+    /* Pavilion cards */
+    .pavilions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .pav{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .2s}
+    .pav:hover{border-color:var(--sage)}
+    .pav-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .pav-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+    .pav-status{font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:1px}
+    .pav-occupied{background:rgba(5,150,105,.08);color:var(--green)}
+    .pav-vacant{background:rgba(168,162,158,.08);color:var(--muted)}
+    .pav-maintenance{background:rgba(217,119,6,.08);color:var(--amber)}
+    .pav-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)}
+    .pav-row:last-child{border:none}
+    .pav-row .label{color:var(--muted)}
+    .pav-row .val{color:var(--text);font-weight:500}
+    .pav-guests{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .guest-name{font-size:13px;font-weight:600;color:var(--text)}
+    .guest-detail{font-size:11px;color:var(--muted)}
+
+    /* Section header */
+    .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .sec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text)}
+    .sec-action{font-size:10px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:1px;cursor:pointer;text-decoration:none}
+
+    /* Off-grid systems */
+    .systems{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .sys{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .sys-icon{font-size:20px;margin-bottom:4px}
+    .sys-val{font-size:18px;font-weight:700;color:var(--text)}
+    .sys-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px}
+    .sys-bar{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+    .sys-fill{height:100%;border-radius:2px}
+
+    /* Activity feed */
+    .feed{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .feed-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+    .feed-item:last-child{border:none}
+    .feed-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:44px;flex-shrink:0;padding-top:1px}
+    .feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+    .feed-text{color:var(--text2);line-height:1.4}
+    .feed-text strong{color:var(--text);font-weight:600}
+
+    /* Bookings table */
+    .bookings{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .book-table{width:100%;border-collapse:collapse;font-size:12px}
+    .book-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600}
+    .book-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2)}
+    .book-table tr:last-child td{border:none}
+    .book-table .guest{font-weight:600;color:var(--text)}
+    .book-status{font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
+    .bs-confirmed{background:rgba(5,150,105,.08);color:var(--green)}
+    .bs-pending{background:rgba(217,119,6,.08);color:var(--amber)}
+    .bs-deposit{background:rgba(37,99,235,.08);color:var(--blue)}
+
+    /* Wildlife log */
+    .wildlife{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+    .sight{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;transition:border-color .2s}
+    .sight:hover{border-color:var(--sage)}
+    .sight-animal{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+    .sight-detail{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+    /* Maintenance */
+    .tasks{display:flex;flex-direction:column;gap:6px}
+    .task{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:12px}
+    .task-pri{width:6px;height:28px;border-radius:3px;flex-shrink:0}
+    .pri-high{background:var(--red)}.pri-med{background:var(--amber)}.pri-low{background:var(--sage)}
+    .task-text{flex:1;color:var(--text2)}
+    .task-text strong{color:var(--text);font-weight:600}
+    .task-due{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:20px}
+    footer a{color:var(--sage)}
+
+    @media(max-width:900px){.dash{grid-template-columns:1fr}.pavilions{grid-template-columns:1fr}.systems{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/preview/luthuli/" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
+    <nav>
+      <a href="#" class="active">Dashboard</a>
+      <a href="#bookings">Bookings</a>
+      <a href="#wildlife">Wildlife</a>
+      <a href="#maintenance">Maintenance</a>
+      <a href="/preview/luthuli/">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+<div class="dash">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-card">
+      <div class="sb-label">Location</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text)">Mkuzi Game Reserve</div>
+      <div class="sb-sub">KwaZulu-Natal, South Africa</div>
+      <div class="sb-sub" style="font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px;color:var(--sage)">pg://luthuli/mkuzi/lodge</div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-label">Weather — Mkuzi</div>
+      <div class="weather">
+        <div class="weather-temp">31°</div>
+        <div class="weather-detail">Partly cloudy<br>Humidity 62%<br>Wind 12 km/h NE<br>Sunset 17:42</div>
+      </div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-label">Lodge status</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <div class="status"><span class="dot dot-green"></span> 2 of 3 pavilions occupied</div>
+        <div class="status"><span class="dot dot-green"></span> Solar: 94% charged</div>
+        <div class="status"><span class="dot dot-amber"></span> Water: 68% capacity</div>
+        <div class="status"><span class="dot dot-green"></span> Access: gates secured</div>
+        <div class="status"><span class="dot dot-blue"></span> Next arrival: 6 Apr</div>
+      </div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-label">This month</div>
+      <div class="sb-val">18 <span style="font-size:12px;font-weight:400;color:var(--muted)">guest nights</span></div>
+      <div class="sb-sub">Occupancy: 67% &middot; Revenue: R42,300</div>
+    </div>
+
+    <div class="sb-card">
+      <div class="sb-label">Conservation levy</div>
+      <div class="sb-val">R3,200</div>
+      <div class="sb-sub">R180/guest night &middot; Paid to Ezemvelo KZN Wildlife</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Pavilions -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-title">Pavilions</div>
+        <a class="sec-action">Manage rooms &rarr;</a>
+      </div>
+      <div class="pavilions">
+
+        <div class="pav">
+          <div class="pav-header">
+            <div class="pav-name">Living Pavilion</div>
+            <span class="pav-status pav-occupied">Occupied</span>
+          </div>
+          <div class="pav-row"><span class="label">Capacity</span><span class="val">Shared living / dining</span></div>
+          <div class="pav-row"><span class="label">Temperature</span><span class="val">24°C (passive cooled)</span></div>
+          <div class="pav-row"><span class="label">Last cleaned</span><span class="val">Today, 06:30</span></div>
+          <div class="pav-guests">
+            <div class="guest-detail">Kitchen stocked for 4 guests through 8 Apr</div>
+          </div>
+        </div>
+
+        <div class="pav">
+          <div class="pav-header">
+            <div class="pav-name">Host Family</div>
+            <span class="pav-status pav-occupied">Occupied</span>
+          </div>
+          <div class="pav-row"><span class="label">Capacity</span><span class="val">2 adults + 2 children</span></div>
+          <div class="pav-row"><span class="label">View</span><span class="val">Panoramic — north waterhole</span></div>
+          <div class="pav-row"><span class="label">Checked in</span><span class="val">2 Apr 2026</span></div>
+          <div class="pav-guests">
+            <div class="guest-name">Hamlin family</div>
+            <div class="guest-detail">4 guests &middot; Departing 8 Apr &middot; Private stay</div>
+          </div>
+        </div>
+
+        <div class="pav">
+          <div class="pav-header">
+            <div class="pav-name">Guest Pavilion</div>
+            <span class="pav-status pav-vacant">Vacant</span>
+          </div>
+          <div class="pav-row"><span class="label">Capacity</span><span class="val">2 adults</span></div>
+          <div class="pav-row"><span class="label">View</span><span class="val">Intimate — acacia thicket</span></div>
+          <div class="pav-row"><span class="label">Next booking</span><span class="val">6 Apr — Van der Merwe</span></div>
+          <div class="pav-guests">
+            <div class="guest-detail">Turndown prep scheduled 5 Apr 15:00</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Off-grid systems -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-title">Off-Grid Systems</div>
+        <a class="sec-action">Full report &rarr;</a>
+      </div>
+      <div class="systems">
+        <div class="sys">
+          <div class="sys-icon">&#9728;&#65039;</div>
+          <div class="sys-val">94%</div>
+          <div class="sys-label">Solar battery</div>
+          <div class="sys-bar"><div class="sys-fill" style="width:94%;background:var(--green)"></div></div>
+        </div>
+        <div class="sys">
+          <div class="sys-icon">&#128167;</div>
+          <div class="sys-val">68%</div>
+          <div class="sys-label">Rainwater tank</div>
+          <div class="sys-bar"><div class="sys-fill" style="width:68%;background:var(--amber)"></div></div>
+        </div>
+        <div class="sys">
+          <div class="sys-icon">&#127777;&#65039;</div>
+          <div class="sys-val">24°C</div>
+          <div class="sys-label">Avg interior</div>
+          <div class="sys-bar"><div class="sys-fill" style="width:60%;background:var(--sage)"></div></div>
+        </div>
+        <div class="sys">
+          <div class="sys-icon">&#128268;</div>
+          <div class="sys-val">3.2 kW</div>
+          <div class="sys-label">Current draw</div>
+          <div class="sys-bar"><div class="sys-fill" style="width:40%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming bookings -->
+    <div id="bookings">
+      <div class="sec-head">
+        <div class="sec-title">Bookings</div>
+        <a class="sec-action">Add booking &rarr;</a>
+      </div>
+      <div class="bookings">
+        <table class="book-table">
+          <thead><tr><th>Guest</th><th>Pavilion</th><th>Arrive</th><th>Depart</th><th>Guests</th><th>Rate</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="guest">Hamlin family</td><td>Host Family</td><td>2 Apr</td><td>8 Apr</td><td>4</td><td>Owner stay</td><td><span class="book-status bs-confirmed">In-house</span></td></tr>
+            <tr><td class="guest">Van der Merwe</td><td>Guest</td><td>6 Apr</td><td>10 Apr</td><td>2</td><td>R2,800/night</td><td><span class="book-status bs-confirmed">Confirmed</span></td></tr>
+            <tr><td class="guest">Ndlovu &amp; party</td><td>Host + Guest</td><td>12 Apr</td><td>15 Apr</td><td>6</td><td>R4,200/night</td><td><span class="book-status bs-deposit">Deposit paid</span></td></tr>
+            <tr><td class="guest">Thompson</td><td>Guest</td><td>18 Apr</td><td>21 Apr</td><td>2</td><td>R2,800/night</td><td><span class="book-status bs-pending">Pending</span></td></tr>
+            <tr><td class="guest">Birding SA group</td><td>Full lodge</td><td>25 Apr</td><td>28 Apr</td><td>8</td><td>R6,500/night</td><td><span class="book-status bs-confirmed">Confirmed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Wildlife sightings -->
+    <div id="wildlife">
+      <div class="sec-head">
+        <div class="sec-title">Wildlife Sightings — This Week</div>
+        <a class="sec-action">Log sighting &rarr;</a>
+      </div>
+      <div class="wildlife">
+        <div class="sight">
+          <div class="sight-animal">&#129421; Leopard</div>
+          <div class="sight-detail">Female + cub, north waterhole<br>3 Apr, 05:48 — spotted from Host Pavilion deck<br>Logged by: Guy Hamlin</div>
+        </div>
+        <div class="sight">
+          <div class="sight-animal">&#129423; Nyala herd</div>
+          <div class="sight-detail">12 individuals, acacia thicket<br>4 Apr, 06:15 — daily visitors<br>Logged by: Lodge staff</div>
+        </div>
+        <div class="sight">
+          <div class="sight-animal">&#129413; White rhino</div>
+          <div class="sight-detail">2 adults, south boundary<br>2 Apr, 16:30 — confirmed by reserve warden<br>Logged by: Ezemvelo ranger</div>
+        </div>
+        <div class="sight">
+          <div class="sight-animal">&#129417; African fish eagle</div>
+          <div class="sight-detail">Pair nesting, riverine forest<br>1 Apr, 07:20 — ongoing nest observation<br>Logged by: Birding guide</div>
+        </div>
+        <div class="sight">
+          <div class="sight-animal">&#128018; Elephant</div>
+          <div class="sight-detail">Breeding herd of 8, crossing road<br>3 Apr, 17:15 — game drive<br>Logged by: Lodge staff</div>
+        </div>
+        <div class="sight">
+          <div class="sight-animal">&#129422; Suni antelope</div>
+          <div class="sight-detail">1 male, near Guest Pavilion<br>4 Apr, 05:30 — rare sighting<br>Logged by: Guy Hamlin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance -->
+    <div id="maintenance">
+      <div class="sec-head">
+        <div class="sec-title">Maintenance &amp; Tasks</div>
+        <a class="sec-action">Add task &rarr;</a>
+      </div>
+      <div class="tasks">
+        <div class="task">
+          <div class="task-pri pri-high"></div>
+          <div class="task-text"><strong>Water pump filter</strong> — Replace sediment filter on rainwater pump. Flow rate dropping.</div>
+          <div class="task-due">5 Apr</div>
+        </div>
+        <div class="task">
+          <div class="task-pri pri-med"></div>
+          <div class="task-text"><strong>Guest Pavilion turndown</strong> — Full clean, restock minibar, fresh linen for Van der Merwe arrival.</div>
+          <div class="task-due">5 Apr 15:00</div>
+        </div>
+        <div class="task">
+          <div class="task-pri pri-low"></div>
+          <div class="task-text"><strong>Timber deck inspection</strong> — Annual check on Living Pavilion deck. Look for termite damage, wood rot.</div>
+          <div class="task-due">10 Apr</div>
+        </div>
+        <div class="task">
+          <div class="task-pri pri-med"></div>
+          <div class="task-text"><strong>Solar panel clean</strong> — Dust buildup reducing efficiency. Last cleaned 3 weeks ago.</div>
+          <div class="task-due">7 Apr</div>
+        </div>
+        <div class="task">
+          <div class="task-pri pri-low"></div>
+          <div class="task-text"><strong>Fence line walk</strong> — Monthly perimeter check with reserve warden. Log any breaks.</div>
+          <div class="task-due">12 Apr</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity feed -->
+    <div>
+      <div class="sec-head">
+        <div class="sec-title">Activity Feed</div>
+      </div>
+      <div class="feed">
+        <div class="feed-item"><div class="feed-time">07:15</div><div class="feed-dot dot-green"></div><div class="feed-text"><strong>Solar system</strong> reached 94% charge. Estimated full by 09:00.</div></div>
+        <div class="feed-item"><div class="feed-time">06:30</div><div class="feed-dot dot-blue"></div><div class="feed-text"><strong>Living Pavilion</strong> cleaned and breakfast service prepared.</div></div>
+        <div class="feed-item"><div class="feed-time">06:15</div><div class="feed-dot dot-green"></div><div class="feed-text"><strong>Wildlife sighting</strong> logged: Nyala herd (12) at acacia thicket.</div></div>
+        <div class="feed-item"><div class="feed-time">05:48</div><div class="feed-dot" style="background:var(--earth)"></div><div class="feed-text"><strong>Wildlife sighting</strong> logged: Leopard + cub at north waterhole. Logged by Guy.</div></div>
+        <div class="feed-item"><div class="feed-time">05:30</div><div class="feed-dot dot-green"></div><div class="feed-text"><strong>Wildlife sighting</strong> logged: Suni antelope near Guest Pavilion. Rare — flagged for records.</div></div>
+        <div class="feed-item"><div class="feed-time">05:00</div><div class="feed-dot dot-amber"></div><div class="feed-text"><strong>Water tank</strong> at 68%. Last rain: 28 Mar. Consumption trending normal for 4 guests.</div></div>
+        <div class="feed-item"><div class="feed-time">Yest</div><div class="feed-dot dot-blue"></div><div class="feed-text"><strong>Booking confirmed:</strong> Ndlovu party (6 guests), 12-15 Apr. Deposit R12,600 received.</div></div>
+        <div class="feed-item"><div class="feed-time">Yest</div><div class="feed-dot dot-green"></div><div class="feed-text"><strong>Conservation levy</strong> R720 accrued for Hamlin stay (4 guests &times; R180).</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Luthuli Lodge &middot; Mkuzi Game Reserve &middot; Managed on <a href="/preview/luthuli/">Luthuli</a> &middot; Powered by <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
