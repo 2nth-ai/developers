@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>SkiSpot V1.0.0 — Find Your Ski</title>
+  <meta name="description" content="SkiSpot concept app — BLE ski finder. Rotate to locate your lost ski in deep snow.">
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --border: #d1d9e6;
+      --text: #1a1a2e;
+      --text2: #4a5568;
+      --text3: #718096;
+      --brand: #1e40af;
+      --brand-light: #3b82f6;
+      --green: #16a34a;
+      --green-bg: #22c55e;
+      --red: #dc2626;
+      --red-bg: #ef4444;
+      --blue-ble: #0e4f8b;
+      --purple: #7c3aed;
+      --rssi-line: #ef4444;
+      --compass-ring: #d946ef;
+      --arrow-found: #3b82f6;
+      --arrow-outline: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      min-height: 100vh;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header */
+    .header {
+      background: var(--text);
+      color: #fff;
+      padding: 16px 20px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      font-style: italic;
+    }
+
+    .header-logo span { color: var(--brand-light); }
+
+    .header-ver {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Device list */
+    .device-list {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .device-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .device-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .device-label .name { color: var(--brand); }
+
+    .ble-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: blePulse 2s infinite;
+    }
+
+    .ble-on { background: var(--blue-ble); }
+    .ble-off { background: #cbd5e1; }
+
+    @keyframes blePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .device-check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .device-check.checked {
+      background: var(--brand);
+      border-color: var(--brand);
+    }
+
+    .device-check.checked::after {
+      content: '';
+      width: 6px;
+      height: 10px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-top: -2px;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 16px;
+      padding: 16px 20px;
+      justify-content: center;
+    }
+
+    .btn-action {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: none;
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-start {
+      background: var(--green-bg);
+    }
+
+    .btn-start:hover { background: var(--green); transform: scale(1.05); }
+    .btn-start:active { transform: scale(0.95); }
+    .btn-start:disabled { opacity: 0.3; transform: none; cursor: not-allowed; }
+
+    .btn-stop {
+      background: var(--red-bg);
+    }
+
+    .btn-stop:hover { background: var(--red); transform: scale(1.05); }
+    .btn-stop:active { transform: scale(0.95); }
+    .btn-stop:disabled { opacity: 0.3; transform: none; cursor: not-allowed; }
+
+    /* Status */
+    .status-bar {
+      text-align: center;
+      padding: 4px 20px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .status-idle { color: var(--text3); }
+    .status-scanning { color: var(--green); animation: statusPulse 1.5s infinite; }
+    .status-found { color: var(--arrow-found); }
+
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Compass */
+    .compass-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      position: relative;
+    }
+
+    .compass {
+      width: 260px;
+      height: 260px;
+      position: relative;
+    }
+
+    .compass-ring {
+      width: 100%;
+      height: 100%;
+      border: 3px solid var(--compass-ring);
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .compass-label {
+      position: absolute;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text2);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .label-n { top: -14px; left: 50%; transform: translateX(-50%); color: var(--red); }
+    .label-e { right: -14px; top: 50%; transform: translateY(-50%); }
+    .label-s { bottom: -14px; left: 50%; transform: translateX(-50%); }
+    .label-w { left: -14px; top: 50%; transform: translateY(-50%); }
+
+    .compass-arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60px;
+      height: 120px;
+      transform-origin: center center;
+      transform: translate(-50%, -50%) rotate(0deg);
+      transition: transform 0.3s ease-out;
+    }
+
+    .arrow-body {
+      fill: var(--arrow-outline);
+      stroke: var(--text2);
+      stroke-width: 1;
+      transition: fill 0.5s;
+    }
+
+    .arrow-found .arrow-body {
+      fill: var(--arrow-found);
+      stroke: var(--brand);
+    }
+
+    .compass-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      background: var(--text);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    /* Rotation progress */
+    .rotation-progress {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 240px;
+      height: 240px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* RSSI Graph */
+    .rssi-section {
+      border-top: 1px solid var(--border);
+      padding: 12px 20px 16px;
+    }
+
+    .rssi-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rssi-value {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      color: var(--rssi-line);
+      font-weight: 600;
+    }
+
+    .rssi-graph {
+      width: 100%;
+      height: 80px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .rssi-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Instructions overlay */
+    .instructions {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 24px;
+    }
+
+    .instructions-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 24px;
+      max-width: 340px;
+      width: 100%;
+    }
+
+    .instructions-card h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: var(--brand);
+    }
+
+    .instructions-card ol {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+      padding-left: 18px;
+      margin-bottom: 20px;
+    }
+
+    .instructions-card li { margin-bottom: 6px; }
+
+    .btn-dismiss {
+      width: 100%;
+      padding: 12px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-dismiss:hover { background: var(--brand-light); }
+
+    /* Demo badge */
+    .demo-badge {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(30,64,175,0.08);
+      border: 1px solid rgba(30,64,175,0.15);
+      color: var(--brand);
+      z-index: 5;
+    }
+
+    .partner-bar {
+      background: var(--brand);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 8px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .partner-bar a { color: #fff; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Partner bar -->
+  <div class="partner-bar">
+    <a href="https://www.dronescan.co" target="_blank">DroneScan</a> + <a href="https://2nth.ai" target="_blank">2nth.ai</a> &mdash; Concept Demo
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-logo"><span>Ski</span>Spot</div>
+    <div class="header-ver">V1.0.0</div>
+  </div>
+
+  <!-- Device list -->
+  <div class="device-list">
+    <div class="device-item">
+      <div class="device-label">
+        <span class="name">SkiSpot 01</span> right
+        <div class="ble-indicator ble-on" id="ble-right"></div>
+      </div>
+      <div class="device-check checked" id="check-right" onclick="toggleDevice('right')"></div>
+    </div>
+    <div class="device-item">
+      <div class="device-label">
+        <span class="name">SkiSpot 01</span> left
+        <div class="ble-indicator ble-off" id="ble-left"></div>
+      </div>
+      <div class="device-check" id="check-left" onclick="toggleDevice('left')"></div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn-action btn-start" id="btn-start" onclick="startScan()">Start</button>
+    <button class="btn-action btn-stop" id="btn-stop" onclick="stopScan()" disabled>Stop</button>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar status-idle" id="status">Ready &mdash; Select a device and press Start</div>
+
+  <!-- Compass -->
+  <div class="compass-container">
+    <div class="compass">
+      <div class="compass-ring"></div>
+      <div class="compass-label label-n">N</div>
+      <div class="compass-label label-e">E</div>
+      <div class="compass-label label-s">S</div>
+      <div class="compass-label label-w">W</div>
+
+      <!-- Progress arc -->
+      <svg class="rotation-progress" viewBox="0 0 240 240" id="progress-svg">
+        <circle cx="120" cy="120" r="110" fill="none" stroke="rgba(217,70,239,0.15)" stroke-width="6"/>
+        <circle cx="120" cy="120" r="110" fill="none" stroke="var(--compass-ring)" stroke-width="6"
+          stroke-dasharray="691.15" stroke-dashoffset="691.15" stroke-linecap="round"
+          transform="rotate(-90 120 120)" id="progress-arc"/>
+      </svg>
+
+      <!-- Arrow -->
+      <svg class="compass-arrow" id="compass-arrow" viewBox="0 0 60 120">
+        <polygon class="arrow-body" points="30,8 50,55 38,50 38,112 22,112 22,50 10,55"/>
+      </svg>
+
+      <div class="compass-center"></div>
+    </div>
+  </div>
+
+  <!-- RSSI Graph -->
+  <div class="rssi-section">
+    <div class="rssi-label">
+      <span>RSSI Signal</span>
+      <span class="rssi-value" id="rssi-value">-- dBm</span>
+    </div>
+    <div class="rssi-graph">
+      <canvas class="rssi-canvas" id="rssi-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Instructions overlay -->
+  <div class="instructions" id="instructions">
+    <div class="instructions-card">
+      <h2>How to find your ski</h2>
+      <ol>
+        <li>Wait for the app to find your <strong>SkiSpot devices</strong></li>
+        <li><strong>Select</strong> the device for the ski you want to find</li>
+        <li>Hold the phone <strong>horizontal and close to your chest</strong></li>
+        <li>Press the <strong>green START</strong> button</li>
+        <li><strong>Rotate your body 360 degrees</strong> slowly until the arrow points forward again</li>
+        <li>Press the <strong>red STOP</strong> button</li>
+        <li>The arrow turns <strong style="color:#3b82f6">blue</strong> and points to your ski</li>
+        <li>Walk in that direction &mdash; watch the RSSI graph. <strong>Up = closer!</strong></li>
+      </ol>
+      <button class="btn-dismiss" onclick="dismissInstructions()">Got it &mdash; Let's go</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-badge">Simulation</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var state = {
+    scanning: false,
+    found: false,
+    selectedDevice: 'right',
+    startAngle: 0,
+    currentAngle: 0,
+    scanData: [],
+    rssiHistory: [],
+    animFrame: null,
+    scanStart: 0,
+    targetBearing: 137, // simulated ski direction (SE)
+  };
+
+  var $arrow = document.getElementById('compass-arrow');
+  var $progress = document.getElementById('progress-arc');
+  var $status = document.getElementById('status');
+  var $btnStart = document.getElementById('btn-start');
+  var $btnStop = document.getElementById('btn-stop');
+  var $rssiValue = document.getElementById('rssi-value');
+  var $canvas = document.getElementById('rssi-canvas');
+  var ctx = $canvas.getContext('2d');
+
+  // Resize canvas
+  function resizeCanvas() {
+    var rect = $canvas.parentElement.getBoundingClientRect();
+    $canvas.width = rect.width;
+    $canvas.height = rect.height;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // Toggle device selection
+  window.toggleDevice = function(side) {
+    var el = document.getElementById('check-' + side);
+    var other = document.getElementById('check-' + (side === 'right' ? 'left' : 'right'));
+    el.classList.toggle('checked');
+    if (el.classList.contains('checked')) {
+      state.selectedDevice = side;
+      other.classList.remove('checked');
+      // Simulate different ski directions
+      state.targetBearing = side === 'right' ? 137 : 253;
+    }
+  };
+
+  // Dismiss instructions
+  window.dismissInstructions = function() {
+    document.getElementById('instructions').style.display = 'none';
+  };
+
+  // Simulate RSSI based on angle relative to target
+  function simulateRSSI(angleDeg) {
+    var diff = Math.abs(angleDeg - state.targetBearing);
+    if (diff > 180) diff = 360 - diff;
+
+    // When your body blocks the signal (facing away from ski), RSSI is weakest
+    // Facing ski = body between phone and ski = weakest
+    // Facing opposite = phone towards ski = strongest... no wait:
+    // Per spec: "Your body is good at blocking the signal so when the signal is worst,
+    // the device is behind you." So worst RSSI = ski is BEHIND you.
+    // We want to find where RSSI is LOWEST, and point OPPOSITE.
+    // So when facing the ski (diff=0), body blocks signal = lowest RSSI
+    // When facing away (diff=180), phone can see the ski = highest RSSI
+
+    // RSSI model: strong when facing away, weak when facing towards
+    var blockingFactor = 1 - (diff / 180); // 1 when facing ski, 0 when facing away
+    var baseRSSI = -45; // strong signal baseline
+    var blockingLoss = blockingFactor * 35; // up to -35dB when body blocks
+    var noise = (Math.random() - 0.5) * 8;
+
+    return baseRSSI - blockingLoss + noise;
+  }
+
+  // Start scanning
+  window.startScan = function() {
+    if (state.scanning) return;
+    state.scanning = true;
+    state.found = false;
+    state.scanData = [];
+    state.rssiHistory = [];
+    state.startAngle = 0;
+    state.currentAngle = 0;
+    state.scanStart = Date.now();
+
+    $btnStart.disabled = true;
+    $btnStop.disabled = false;
+    $status.textContent = 'Scanning \u2014 Rotate slowly 360\u00b0';
+    $status.className = 'status-bar status-scanning';
+
+    $arrow.classList.remove('arrow-found');
+    $progress.style.strokeDashoffset = '691.15';
+
+    animate();
+  };
+
+  // Stop scanning
+  window.stopScan = function() {
+    if (!state.scanning) return;
+    state.scanning = false;
+
+    $btnStart.disabled = false;
+    $btnStop.disabled = true;
+
+    if (state.scanData.length < 10) {
+      $status.textContent = 'Not enough data \u2014 Try again, rotate slower';
+      $status.className = 'status-bar status-idle';
+      return;
+    }
+
+    // Find the angle with the lowest RSSI (ski is behind you there)
+    var minRSSI = Infinity;
+    var minAngle = 0;
+    // Smooth the data first
+    for (var i = 0; i < state.scanData.length; i++) {
+      var sum = 0;
+      var count = 0;
+      for (var j = Math.max(0, i - 5); j <= Math.min(state.scanData.length - 1, i + 5); j++) {
+        sum += state.scanData[j].rssi;
+        count++;
+      }
+      var avg = sum / count;
+      if (avg < minRSSI) {
+        minRSSI = avg;
+        minAngle = state.scanData[i].angle;
+      }
+    }
+
+    // Point opposite to where signal was weakest (ski is behind you at weakest point)
+    var resultAngle = (minAngle + 180) % 360;
+
+    state.found = true;
+    $arrow.style.transform = 'translate(-50%, -50%) rotate(' + resultAngle + 'deg)';
+    $arrow.classList.add('arrow-found');
+    $status.textContent = 'Ski found! Walk in the direction of the blue arrow';
+    $status.className = 'status-bar status-found';
+
+    // Continue RSSI animation in found mode
+    animateFound();
+  };
+
+  // Animation loop during scan
+  function animate() {
+    if (!state.scanning) return;
+
+    var elapsed = Date.now() - state.scanStart;
+    var scanDuration = 8000; // 8 seconds for full rotation sim
+    var progress = Math.min(elapsed / scanDuration, 1);
+
+    state.currentAngle = progress * 360;
+
+    // Rotate arrow to show current facing direction
+    $arrow.style.transform = 'translate(-50%, -50%) rotate(' + state.currentAngle + 'deg)';
+
+    // Update progress arc
+    var circumference = 691.15;
+    $progress.style.strokeDashoffset = String(circumference * (1 - progress));
+
+    // Record RSSI data
+    var rssi = simulateRSSI(state.currentAngle);
+    state.scanData.push({ angle: state.currentAngle, rssi: rssi });
+    state.rssiHistory.push(rssi);
+    if (state.rssiHistory.length > 120) state.rssiHistory.shift();
+
+    $rssiValue.textContent = rssi.toFixed(0) + ' dBm';
+    drawRSSI();
+
+    if (progress >= 1) {
+      // Auto-stop after full rotation
+      stopScan();
+      return;
+    }
+
+    state.animFrame = requestAnimationFrame(animate);
+  }
+
+  // Continue RSSI updates after finding
+  function animateFound() {
+    if (state.scanning || !state.found) return;
+
+    // Simulate getting closer (RSSI slowly improving)
+    var trend = state.rssiHistory.length > 0 ? state.rssiHistory[state.rssiHistory.length - 1] : -55;
+    var rssi = trend + 0.05 + (Math.random() - 0.5) * 4;
+    rssi = Math.min(rssi, -30);
+    state.rssiHistory.push(rssi);
+    if (state.rssiHistory.length > 120) state.rssiHistory.shift();
+
+    $rssiValue.textContent = rssi.toFixed(0) + ' dBm';
+    drawRSSI();
+
+    requestAnimationFrame(animateFound);
+  }
+
+  // Draw RSSI chart
+  function drawRSSI() {
+    var w = $canvas.width;
+    var h = $canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    if (state.rssiHistory.length < 2) return;
+
+    // Scale: -90 to -20 dBm
+    var minDB = -90;
+    var maxDB = -20;
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+
+    var step = w / (120 - 1);
+
+    for (var i = 0; i < state.rssiHistory.length; i++) {
+      var x = i * step;
+      var normalized = (state.rssiHistory[i] - minDB) / (maxDB - minDB);
+      var y = h - (normalized * (h - 8)) - 4;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
+
+    // Fill under
+    ctx.lineTo((state.rssiHistory.length - 1) * step, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.06)';
+    ctx.fill();
+  }
+
+  // Ambient BLE indicator animation
+  setInterval(function() {
+    var right = document.getElementById('ble-right');
+    var left = document.getElementById('ble-left');
+    // Simulate left ski being out of range sometimes
+    if (Math.random() > 0.7) {
+      left.classList.toggle('ble-on');
+      left.classList.toggle('ble-off');
+    }
+  }, 3000);
+
+  // Initial RSSI noise
+  for (var i = 0; i < 30; i++) {
+    state.rssiHistory.push(-55 + (Math.random() - 0.5) * 10);
+  }
+  drawRSSI();
+  $rssiValue.textContent = '-55 dBm';
+
+})();
+</script>
+
+</body>
+</html>
