@@ -676,19 +676,15 @@
 </footer>
 
 <style>
-  .access-panel{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:6px;padding:8px 10px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06);border-radius:6px}
-  .access-row{display:flex;align-items:center;gap:6px;padding:3px 0}
-  .access-check{width:14px;height:14px;accent-color:#10b981;cursor:pointer}
-  .access-name{font-size:10px;flex:1}
+  .access-panel{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;padding:10px 12px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06);border-radius:6px}
+  .access-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+  .access-check{width:16px;height:16px;accent-color:#10b981;cursor:pointer}
+  .access-name{font-size:12px;flex:1}
   .access-name.full{color:#7c3aed}
   .access-name.scoped{color:#06b6d4}
   .access-name.off{color:#a1a1aa;text-decoration:line-through;opacity:.5}
-  .access-toggle{font-size:8px;padding:1px 6px;border-radius:3px;cursor:pointer;border:1px solid rgba(0,0,0,.08);background:rgba(0,0,0,.02);color:#71717a;margin-left:auto}
-  .access-toggle:hover{border-color:#7c3aed;color:#7c3aed}
-  .access-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-  .access-count{font-size:9px;color:#a1a1aa}
-  .access-add{font-size:9px;color:#7c3aed;cursor:pointer;border:none;background:none;font-family:inherit;letter-spacing:.5px}
-  .access-add:hover{text-decoration:underline}
+  .access-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .access-count{font-size:11px;color:#71717a}
 </style>
 <script>
 // All registered users with their current scopes
@@ -742,11 +738,11 @@ var ALL_USERS = [
 
         html += '<div class="access-row">' +
           '<input type="checkbox" class="access-check" ' + (hasAccess ? 'checked' : '') +
-            (isFull ? ' disabled title="Full access — cannot remove"' : '') +
-            ' onchange="toggleAccess(\'' + u.id + '\',\'' + groupScopes[0] + '\',this.checked)">' +
+            ' onchange="toggleAccess(\'' + u.id + '\',\'' + groupScopes[0] + '\',this.checked)"' +
+            (isFull ? ' title="Full access user"' : '') + '>' +
           '<span class="access-name ' + (isFull ? 'full' : hasAccess ? 'scoped' : 'off') + '">' +
             u.name + '</span>' +
-          '<span style="font-size:8px;color:#a1a1aa">' + u.email.split('@')[1] + '</span>' +
+          '<span style="font-size:10px;color:#a1a1aa">' + (isFull ? 'full access' : u.email.split('@')[1]) + '</span>' +
         '</div>';
       });
 
@@ -785,32 +781,85 @@ function updateCount(groupScope) {
 }
 
 function toggleAccess(userId, groupScope, granted) {
-  // Find the user
   var user = ALL_USERS.find(function(u) { return u.id === userId; });
-  if (!user || user.scope === 'full') return;
+  if (!user) return;
 
-  var scopes = user.scope.split(',').map(function(s){return s.trim()}).filter(function(s){return s});
+  // If removing full-access user from a group, convert them to specific scopes
+  if (user.scope === 'full' && !granted) {
+    if (!confirm('Remove ' + user.name + ' from full access and limit to specific scopes?')) {
+      event.target.checked = true;
+      return;
+    }
+    // Build scope from all currently-checked groups for this user
+    var allChecked = [];
+    document.querySelectorAll('.group[data-scope]').forEach(function(g) {
+      var gs = g.dataset.scope.split(',')[0].trim();
+      if (gs === 'platform' || gs === 'admin' || gs === 'imbila') return;
+      var checkbox = g.querySelector('.access-row input[onchange*="' + userId + '"]');
+      if (checkbox && checkbox.checked && gs !== groupScope) allChecked.push(gs);
+    });
+    user.scope = allChecked.join(',') || 'none';
+    // Update all name labels for this user
+    document.querySelectorAll('.access-row').forEach(function(row) {
+      if (row.innerHTML.indexOf(userId) >= 0) {
+        var nameEl = row.querySelector('.access-name');
+        if (nameEl && nameEl.classList.contains('full')) {
+          nameEl.classList.remove('full');
+          nameEl.classList.add(row.querySelector('.access-check').checked ? 'scoped' : 'off');
+        }
+      }
+    });
+  }
+
+  var scopes = user.scope.split(',').map(function(s){return s.trim()}).filter(function(s){return s && s !== 'none'});
 
   if (granted) {
-    // Add scope
     if (scopes.indexOf(groupScope) < 0) scopes.push(groupScope);
   } else {
-    // Remove scope
     scopes = scopes.filter(function(s) { return s !== groupScope; });
   }
 
-  user.scope = scopes.join(',') || 'none';
+  var newScope = scopes.join(',') || 'none';
+  user.scope = newScope;
 
-  // Update visual state
+  // Update visual
   var row = event.target.closest('.access-row');
   var nameEl = row.querySelector('.access-name');
   nameEl.className = 'access-name ' + (granted ? 'scoped' : 'off');
-
   updateCount(groupScope);
 
-  // Note: In production this would call an API to persist the scope change.
-  // For now it's client-side only and shows an alert.
-  console.log('Access ' + (granted ? 'granted' : 'revoked') + ': ' + user.name + ' → ' + groupScope + ' (new scope: ' + user.scope + ')');
+  // Persist via API
+  fetch('/api/access-update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: userId, scope: newScope })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ok) {
+      showToast((granted ? '✓ Granted' : '✗ Revoked') + ': ' + user.name + ' → ' + groupScope);
+    } else {
+      showToast('Error: ' + (d.error || 'Unknown'));
+      // Revert checkbox
+      event.target.checked = !granted;
+      nameEl.className = 'access-name ' + (!granted ? 'scoped' : 'off');
+      updateCount(groupScope);
+    }
+  }).catch(function() {
+    showToast('Failed to save. Check connection.');
+  });
+}
+
+function showToast(msg) {
+  var toast = document.getElementById('access-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'access-toast';
+    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#18181b;color:#fff;padding:10px 20px;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:11px;z-index:100;transition:opacity .3s;opacity:0';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function() { toast.style.opacity = '0'; }, 3000);
 }
 
 // Show signed-in user info
