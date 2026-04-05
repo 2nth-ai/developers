@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started — Build with 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .guide{max-width:780px;margin:0 auto;padding:32px 24px 60px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
+    .sub{font-size:14px;color:#71717a;margin-bottom:28px}
+    h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:#18181b;margin:36px 0 12px;padding-top:24px;border-top:1px solid #e4e4e7}
+    h3{font-size:16px;font-weight:700;color:#18181b;margin:20px 0 8px}
+    p{font-size:14px;color:#52525b;line-height:1.7;margin-bottom:12px}
+    ul,ol{font-size:14px;color:#52525b;line-height:1.7;padding-left:20px;margin-bottom:12px}
+    li{margin-bottom:6px}
+    code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#f4f4f5;padding:1px 6px;border-radius:3px;color:#18181b}
+    pre{background:#18181b;color:#e4e4e7;border-radius:8px;padding:16px 20px;margin:12px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7}
+    pre code{background:none;padding:0;color:inherit}
+    .cmd{color:#06b6d4}
+    .comment{color:#71717a}
+    .flag{color:#f59e0b}
+    .str{color:#22c55e}
+    a{color:#06b6d4;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .callout{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.12);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;color:#52525b}
+    .callout strong{color:#18181b}
+    .warn{background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.12)}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;background:#06b6d4;color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-right:8px;flex-shrink:0}
+    .step{display:flex;align-items:start;gap:4px;margin:16px 0}
+    .step-content{flex:1}
+    .toc{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:16px 20px;margin:20px 0}
+    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#a1a1aa;margin-bottom:8px}
+    .toc a{display:block;font-size:13px;color:#52525b;padding:4px 0}
+    .toc a:hover{color:#06b6d4}
+    .platform-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;display:inline-block;margin-right:4px}
+    .tag-win{background:rgba(59,130,246,.06);color:#3b82f6;border:1px solid rgba(59,130,246,.12)}
+    .tag-mac{background:rgba(124,58,237,.06);color:#7c3aed;border:1px solid rgba(124,58,237,.12)}
+    .tag-all{background:rgba(5,150,105,.06);color:#059669;border:1px solid rgba(5,150,105,.12)}
+    .screenshot{background:#f4f4f5;border:1px solid #e4e4e7;border-radius:8px;padding:20px;text-align:center;margin:12px 0;color:#a1a1aa;font-size:12px}
+    footer{border-top:1px solid #e4e4e7;padding:16px 0;text-align:center;font-size:10px;color:#a1a1aa}
+    footer a{color:#06b6d4}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/hub.html">Hub</a>
+      <a href="/docs.html">Docs</a>
+    </nav>
+  </div>
+</header>
+
+<div class="guide">
+
+  <h1>GETTING STARTED</h1>
+  <p class="sub">Everything you need to start building with 2nth.ai — from zero to your first deployed partner project. Works on Windows, Mac, and Linux.</p>
+
+  <div style="margin-bottom:16px"><a href="/guides/platform.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:1px solid #e4e4e7;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#52525b">Next: Building on 2nth.ai — tiers, capabilities, infrastructure &rarr;</a></div>
+
+  <div class="toc">
+    <div class="toc-title">On this page</div>
+    <a href="#overview">1. How it all fits together</a>
+    <a href="#accounts">2. Create your accounts</a>
+    <a href="#windows">3. Windows setup for Claude Code</a>
+    <a href="#mac">4. Mac setup (quick)</a>
+    <a href="#github">5. GitHub — fork, branch, and contribute</a>
+    <a href="#cloudflare">6. Cloudflare — deploy your first site</a>
+    <a href="#first-project">7. Your first partner project</a>
+    <a href="#skills">8. Contributing a skill</a>
+    <a href="#help">9. Getting help</a>
+  </div>
+
+  <!-- 1. Overview -->
+  <h2 id="overview">1. How it all fits together</h2>
+
+  <pre><code><span class="comment"># The 2nth.ai stack</span>
+
+<span class="cmd">You</span> (partner)
+  → Write code + skills using <span class="str">Claude Code</span> (AI programming assistant)
+  → Push to <span class="str">GitHub</span> (version control)
+  → Deploy to <span class="str">Cloudflare Pages</span> (hosting — free tier works)
+  → Skills land in the <span class="str">2nth.ai skill tree</span> (300+ AI skills)
+  → Agents use your skills to serve customers
+  → You earn <span class="str">revenue share</span> on every execution</code></pre>
+
+  <div class="callout">
+    <strong>You need 3 accounts</strong> (all free):<br>
+    1. <a href="https://github.com">GitHub</a> — for code<br>
+    2. <a href="https://dash.cloudflare.com/sign-up">Cloudflare</a> — for hosting<br>
+    3. <a href="https://claude.ai/code">Claude Code</a> — for AI programming (Anthropic account)
+  </div>
+
+  <!-- 2. Accounts -->
+  <h2 id="accounts">2. Create your accounts</h2>
+
+  <div class="step"><span class="step-num">1</span><div class="step-content">
+    <h3>GitHub</h3>
+    <p>Go to <a href="https://github.com/join">github.com/join</a>. Create a free account. You'll use this to store your code and contribute skills.</p>
+  </div></div>
+
+  <div class="step"><span class="step-num">2</span><div class="step-content">
+    <h3>Cloudflare</h3>
+    <p>Go to <a href="https://dash.cloudflare.com/sign-up">Cloudflare sign-up</a>. The free tier gives you: Pages (hosting), Workers (serverless), D1 (database), KV (key-value store). That's the full 2nth.ai stack.</p>
+  </div></div>
+
+  <div class="step"><span class="step-num">3</span><div class="step-content">
+    <h3>Claude Code (Anthropic)</h3>
+    <p>Go to <a href="https://claude.ai">claude.ai</a> and create an account. Claude Code is the AI programming assistant you'll use to write code, create skills, and build your projects. It runs in your terminal.</p>
+  </div></div>
+
+  <!-- 3. Windows Setup -->
+  <h2 id="windows">3. Windows setup for Claude Code</h2>
+
+  <p><span class="platform-tag tag-win">Windows</span> Claude Code runs in the terminal. On Windows, you need a few tools first.</p>
+
+  <div class="step"><span class="step-num">1</span><div class="step-content">
+    <h3>Install Node.js</h3>
+    <p>Download from <a href="https://nodejs.org">nodejs.org</a> — get the LTS version (not Current). Run the installer, accept all defaults.</p>
+    <p>Verify it worked — open <strong>Command Prompt</strong> or <strong>PowerShell</strong> and run:</p>
+    <pre><code><span class="cmd">node</span> <span class="flag">--version</span>    <span class="comment"># Should show v20.x or v22.x</span>
+<span class="cmd">npm</span> <span class="flag">--version</span>     <span class="comment"># Should show 10.x+</span></code></pre>
+  </div></div>
+
+  <div class="step"><span class="step-num">2</span><div class="step-content">
+    <h3>Install Git</h3>
+    <p>Download from <a href="https://git-scm.com/download/win">git-scm.com</a>. Run the installer — accept all defaults. This also installs <strong>Git Bash</strong> which gives you a Unix-like terminal on Windows.</p>
+    <pre><code><span class="cmd">git</span> <span class="flag">--version</span>     <span class="comment"># Should show git version 2.x</span></code></pre>
+  </div></div>
+
+  <div class="step"><span class="step-num">3</span><div class="step-content">
+    <h3>Install VS Code (recommended)</h3>
+    <p>Download from <a href="https://code.visualstudio.com">code.visualstudio.com</a>. This is your code editor. Install the <strong>Claude Code</strong> extension from the VS Code marketplace.</p>
+  </div></div>
+
+  <div class="step"><span class="step-num">4</span><div class="step-content">
+    <h3>Install Claude Code CLI</h3>
+    <p>Open your terminal (PowerShell, Command Prompt, or Git Bash) and run:</p>
+    <pre><code><span class="cmd">npm</span> install <span class="flag">-g</span> @anthropic-ai/claude-code</code></pre>
+    <p>Once installed, authenticate:</p>
+    <pre><code><span class="cmd">claude</span> auth login</code></pre>
+    <p>This opens your browser to sign in with your Anthropic account.</p>
+  </div></div>
+
+  <div class="step"><span class="step-num">5</span><div class="step-content">
+    <h3>Install Wrangler (Cloudflare CLI)</h3>
+    <pre><code><span class="cmd">npm</span> install <span class="flag">-g</span> wrangler</code></pre>
+    <p>Then authenticate with your Cloudflare account:</p>
+    <pre><code><span class="cmd">wrangler</span> login</code></pre>
+  </div></div>
+
+  <div class="step"><span class="step-num">6</span><div class="step-content">
+    <h3>Configure Git</h3>
+    <pre><code><span class="cmd">git</span> config <span class="flag">--global</span> user.name <span class="str">"Your Name"</span>
+<span class="cmd">git</span> config <span class="flag">--global</span> user.email <span class="str">"you@company.com"</span></code></pre>
+  </div></div>
+
+  <div class="callout">
+    <strong>You're ready!</strong> You now have: Node.js, Git, VS Code, Claude Code, and Wrangler. Open a terminal in any folder and type <code>claude</code> to start your AI programming assistant.
+  </div>
+
+  <!-- 4. Mac Setup -->
+  <h2 id="mac">4. Mac setup (quick)</h2>
+
+  <p><span class="platform-tag tag-mac">Mac</span> Mac already has a terminal. You just need the tools.</p>
+
+  <pre><code><span class="comment"># Install Homebrew (if you don't have it)</span>
+/bin/bash -c <span class="str">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
+
+<span class="comment"># Install everything</span>
+<span class="cmd">brew</span> install node git
+<span class="cmd">npm</span> install <span class="flag">-g</span> @anthropic-ai/claude-code wrangler
+
+<span class="comment"># Authenticate</span>
+<span class="cmd">claude</span> auth login
+<span class="cmd">wrangler</span> login
+
+<span class="comment"># Configure Git</span>
+<span class="cmd">git</span> config <span class="flag">--global</span> user.name <span class="str">"Your Name"</span>
+<span class="cmd">git</span> config <span class="flag">--global</span> user.email <span class="str">"you@company.com"</span></code></pre>
+
+  <!-- 5. GitHub -->
+  <h2 id="github">5. GitHub — fork, branch, and contribute</h2>
+
+  <h3>Fork the skills repo</h3>
+  <p>Go to <a href="https://github.com/2nth-ai/skills">github.com/2nth-ai/skills</a> and click <strong>Fork</strong> (top right). This creates your own copy of the skill tree.</p>
+
+  <h3>Clone your fork</h3>
+  <pre><code><span class="cmd">git</span> clone https://github.com/<span class="str">YOUR-USERNAME</span>/skills.git
+<span class="cmd">cd</span> skills</code></pre>
+
+  <h3>Create a branch for your work</h3>
+  <pre><code><span class="comment"># Always branch from dev, not main</span>
+<span class="cmd">git</span> checkout dev
+<span class="cmd">git</span> checkout <span class="flag">-b</span> partner/<span class="str">my-new-skill</span></code></pre>
+
+  <h3>Make your changes, commit, push</h3>
+  <pre><code><span class="comment"># After editing files...</span>
+<span class="cmd">git</span> add .
+<span class="cmd">git</span> commit <span class="flag">-m</span> <span class="str">"feat: add my-new-skill"</span>
+<span class="cmd">git</span> push origin partner/<span class="str">my-new-skill</span></code></pre>
+
+  <h3>Create a Pull Request</h3>
+  <p>Go to your fork on GitHub → click <strong>Compare & pull request</strong> → target the <code>dev</code> branch on <code>2nth-ai/skills</code>. The 2nth team reviews within 5 business days.</p>
+
+  <div class="callout warn">
+    <strong>Important:</strong> Never push directly to <code>main</code>. The <code>main</code> branch is protected and requires a PR with review. Always work on <code>dev</code> or a feature branch.
+  </div>
+
+  <!-- 6. Cloudflare -->
+  <h2 id="cloudflare">6. Cloudflare — deploy your first site</h2>
+
+  <h3>Create a Pages project</h3>
+  <pre><code><span class="comment"># Create a new project folder</span>
+<span class="cmd">mkdir</span> my-partner-site
+<span class="cmd">cd</span> my-partner-site
+<span class="cmd">mkdir</span> public
+
+<span class="comment"># Create a simple index.html</span>
+<span class="cmd">echo</span> <span class="str">'&lt;h1&gt;Hello from my partner site&lt;/h1&gt;'</span> > public/index.html
+
+<span class="comment"># Deploy to Cloudflare Pages</span>
+<span class="cmd">npx</span> wrangler pages deploy public <span class="flag">--project-name</span>=my-partner-site</code></pre>
+
+  <p>Wrangler will create the project and deploy it. You'll get a URL like <code>my-partner-site.pages.dev</code>. That's your site — live on the internet.</p>
+
+  <h3>Add a custom domain (optional)</h3>
+  <p>In the Cloudflare dashboard → Workers & Pages → your project → Custom domains → add your domain.</p>
+
+  <h3>Add serverless functions</h3>
+  <pre><code><span class="comment"># Create a functions directory</span>
+<span class="cmd">mkdir</span> functions/api
+
+<span class="comment"># Create an API endpoint</span>
+<span class="cmd">cat</span> > functions/api/hello.js << 'EOF'
+export async function onRequestGet() {
+  return Response.json({ message: 'Hello from my API!' });
+}
+EOF
+
+<span class="comment"># Redeploy</span>
+<span class="cmd">npx</span> wrangler pages deploy public <span class="flag">--project-name</span>=my-partner-site</code></pre>
+
+  <p>Your API is now at <code>my-partner-site.pages.dev/api/hello</code>.</p>
+
+  <!-- 7. First Project -->
+  <h2 id="first-project">7. Your first partner project</h2>
+
+  <p>The fastest way to build a partner project is with Claude Code. Open your project folder and start a conversation:</p>
+
+  <pre><code><span class="cmd">cd</span> my-partner-site
+<span class="cmd">claude</span>
+
+<span class="comment"># Now you're in Claude Code. Tell it what to build:</span>
+> Build me a landing page for my consulting practice.
+  Use the 2nth.ai design system — Bebas Neue for headings,
+  Barlow for body, JetBrains Mono for code. Light mode.
+  Add an enquiry form that sends to my email via Resend.</code></pre>
+
+  <p>Claude Code will create the HTML, CSS, and serverless functions for you. Review what it writes, approve the changes, and deploy:</p>
+
+  <pre><code><span class="cmd">npx</span> wrangler pages deploy public <span class="flag">--project-name</span>=my-partner-site</code></pre>
+
+  <div class="callout">
+    <strong>Pro tip:</strong> Create a <code>CLAUDE.md</code> file in your project root. This tells Claude Code about your project — what it does, what stack you use, what patterns to follow. Claude reads it every time you start a session.
+  </div>
+
+  <h3>Example CLAUDE.md</h3>
+  <pre><code><span class="comment"># My Partner Project</span>
+
+This is a partner site for [Company Name] on the 2nth.ai platform.
+
+<span class="comment">## Stack</span>
+- Cloudflare Pages (static + Functions)
+- No frameworks — vanilla HTML, CSS, JS
+- Resend for transactional email
+- 2nth.ai design system (Bebas Neue, Barlow, JetBrains Mono)
+
+<span class="comment">## Deploy</span>
+npm run deploy  <span class="comment"># or: npx wrangler pages deploy public</span>
+
+<span class="comment">## Important</span>
+- Light mode by default
+- Never hardcode API keys — use wrangler secrets
+- All pages must work without JavaScript (progressive enhancement)</code></pre>
+
+  <!-- 8. Skills -->
+  <h2 id="skills">8. Contributing a skill</h2>
+
+  <p>A skill is a <code>SKILL.md</code> file that teaches AI agents how to do something. Every skill follows the <a href="https://github.com/2nth-ai/skills/blob/main/SKILL_FORMAT.md">SKILL_FORMAT.md</a> spec.</p>
+
+  <h3>Create your skill</h3>
+  <pre><code><span class="comment"># In your fork of 2nth-ai/skills</span>
+<span class="cmd">mkdir</span> <span class="flag">-p</span> biz/my-skill
+<span class="cmd">cat</span> > biz/my-skill/SKILL.md << 'EOF'
+---
+name: biz/my-skill
+description: |
+  What this skill does and when to use it.
+  (1) use case one,
+  (2) use case two,
+  (3) use case three.
+license: MIT
+metadata:
+  author: your-name
+  version: "1.0.0"
+  categories: "Business, Your Domain"
+---
+
+# My Skill
+
+One paragraph: what it is and why it matters.
+
+## Authentication
+How to authenticate (env vars, never hardcode).
+
+## Core patterns
+The 3-5 most important things.
+
+## Common Gotchas
+- Gotcha 1
+- Gotcha 2
+- Gotcha 3
+EOF</code></pre>
+
+  <h3>Test it locally</h3>
+  <pre><code><span class="comment"># Build the catalog to check your skill renders</span>
+<span class="cmd">node</span> catalog/build.js</code></pre>
+
+  <h3>Submit it</h3>
+  <pre><code><span class="cmd">git</span> add biz/my-skill/
+<span class="cmd">git</span> commit <span class="flag">-m</span> <span class="str">"feat: add biz/my-skill"</span>
+<span class="cmd">git</span> push origin partner/<span class="str">my-new-skill</span>
+<span class="comment"># Then create a PR on GitHub targeting dev branch</span></code></pre>
+
+  <!-- 9. Help -->
+  <h2 id="help">9. Getting help</h2>
+
+  <ul>
+    <li><strong>Partner Portal:</strong> <a href="https://developers.2nth.ai/hub.html">developers.2nth.ai/hub</a> — all partner resources</li>
+    <li><strong>Skill Format:</strong> <a href="https://github.com/2nth-ai/skills/blob/main/SKILL_FORMAT.md">SKILL_FORMAT.md</a> — how to write a skill</li>
+    <li><strong>Partner Terms:</strong> <a href="https://2nth.ai/partner-terms.html">2nth.ai/partner-terms</a> — IP, revenue share, obligations</li>
+    <li><strong>Claude Code docs:</strong> <a href="https://docs.anthropic.com/en/docs/claude-code">docs.anthropic.com/claude-code</a></li>
+    <li><strong>Cloudflare Pages docs:</strong> <a href="https://developers.cloudflare.com/pages">developers.cloudflare.com/pages</a></li>
+    <li><strong>Email:</strong> <a href="mailto:craig@2nth.ai">craig@2nth.ai</a></li>
+  </ul>
+
+  <div class="callout">
+    <strong>Quick reference — common commands:</strong>
+    <pre style="background:#18181b;margin:8px 0 0;padding:12px"><code><span class="cmd">claude</span>                              <span class="comment"># Start Claude Code AI assistant</span>
+<span class="cmd">npx</span> wrangler pages deploy public    <span class="comment"># Deploy to Cloudflare Pages</span>
+<span class="cmd">npx</span> wrangler pages secret put KEY   <span class="comment"># Set a secret (API key etc)</span>
+<span class="cmd">git</span> push origin my-branch           <span class="comment"># Push your changes</span>
+<span class="cmd">gh</span> pr create                        <span class="comment"># Create a pull request (GitHub CLI)</span></code></pre>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai Developer Guide &middot; <a href="/hub.html">Partner Hub</a> &middot; <a href="/docs.html">Docs</a> &middot; <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

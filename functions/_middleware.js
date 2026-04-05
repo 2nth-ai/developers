@@ -3,7 +3,7 @@
 import { verifyJWT, extractToken } from './lib/jwt.js';
 
 const PROTECTED_PREFIXES = ['/partners/', '/preview/', '/hub', '/admin'];
-const PUBLIC_PATHS = ['/access', '/api/', '/style.css', '/favicon', '/_headers', '/_redirects', '/docs', '/portal', '/preview/vibecrafters/games'];
+const PUBLIC_PATHS = ['/access', '/api/', '/style.css', '/favicon', '/_headers', '/_redirects', '/docs', '/portal', '/preview/vibecrafters/games', '/guides'];
 
 async function getSession(request, env) {
   const tokenInfo = extractToken(request);

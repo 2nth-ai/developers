@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building on 2nth.ai — Platform Guide</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .guide{max-width:780px;margin:0 auto;padding:32px 24px 60px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
+    .sub{font-size:14px;color:#71717a;margin-bottom:28px}
+    h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:#18181b;margin:36px 0 12px;padding-top:24px;border-top:1px solid #e4e4e7}
+    h3{font-size:16px;font-weight:700;color:#18181b;margin:20px 0 8px}
+    p{font-size:14px;color:#52525b;line-height:1.7;margin-bottom:12px}
+    ul,ol{font-size:14px;color:#52525b;line-height:1.7;padding-left:20px;margin-bottom:12px}
+    li{margin-bottom:6px}
+    code{font-family:'JetBrains Mono',monospace;font-size:12px;background:#f4f4f5;padding:1px 6px;border-radius:3px;color:#18181b}
+    pre{background:#18181b;color:#e4e4e7;border-radius:8px;padding:16px 20px;margin:12px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7}
+    pre code{background:none;padding:0;color:inherit}
+    .cmd{color:#06b6d4}.comment{color:#71717a}.flag{color:#f59e0b}.str{color:#22c55e}
+    a{color:#06b6d4;text-decoration:none}a:hover{text-decoration:underline}
+    .callout{background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.12);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;color:#52525b}
+    .callout strong{color:#18181b}
+    .warn{background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.12)}
+
+    /* Tier cards */
+    .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+    .tier{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:20px;text-align:center;transition:border-color .2s;position:relative}
+    .tier:hover{border-color:#06b6d4}
+    .tier-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:#18181b}
+    .tier-tokens{font-family:'JetBrains Mono',monospace;font-size:14px;color:#06b6d4;font-weight:700;margin:4px 0}
+    .tier-price{font-size:13px;color:#71717a;margin-bottom:12px}
+    .tier-features{text-align:left;font-size:12px;color:#52525b;list-style:none;padding:0}
+    .tier-features li{padding:4px 0;border-bottom:1px solid #f4f4f5;display:flex;align-items:center;gap:6px}
+    .tier-features li:last-child{border:none}
+    .tier-features .check{color:#059669;flex-shrink:0}
+    .tier-features .dash{color:#d4d4d8;flex-shrink:0}
+    .tier-rec{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 10px;border-radius:3px;background:#06b6d4;color:#fff;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+
+    /* Capability matrix */
+    .matrix{width:100%;border-collapse:collapse;font-size:12px;margin:16px 0}
+    .matrix th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;text-align:center;padding:8px;border-bottom:2px solid #e4e4e7}
+    .matrix th:first-child{text-align:left}
+    .matrix td{padding:8px;border-bottom:1px solid #f4f4f5;text-align:center;color:#52525b}
+    .matrix td:first-child{text-align:left;font-weight:500;color:#18181b}
+    .matrix .yes{color:#059669;font-weight:700}
+    .matrix .no{color:#d4d4d8}
+    .matrix .limit{color:#f59e0b;font-size:10px}
+
+    /* Use case cards */
+    .uses{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+    .use{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:18px;transition:border-color .2s}
+    .use:hover{border-color:#06b6d4}
+    .use-tier{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
+    .ut-explorer{background:rgba(6,182,212,.06);color:#06b6d4;border:1px solid rgba(6,182,212,.12)}
+    .ut-starter{background:rgba(5,150,105,.06);color:#059669;border:1px solid rgba(5,150,105,.12)}
+    .ut-designer{background:rgba(124,58,237,.06);color:#7c3aed;border:1px solid rgba(124,58,237,.12)}
+    .ut-builder{background:rgba(245,158,11,.06);color:#f59e0b;border:1px solid rgba(245,158,11,.12)}
+    .use h3{font-size:15px;color:#18181b;margin:0 0 4px}
+    .use p{font-size:12px;color:#71717a;margin:0}
+
+    /* Architecture */
+    .arch{background:#fff;border:1px solid #e4e4e7;border-radius:10px;padding:20px;margin:16px 0;overflow-x:auto}
+    .arch pre{background:#18181b;margin:0}
+
+    .nav-links{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}
+    .nav-link{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:1px solid #e4e4e7;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#52525b;text-decoration:none;transition:all .15s}
+    .nav-link:hover{border-color:#06b6d4;color:#06b6d4}
+
+    footer{border-top:1px solid #e4e4e7;padding:16px 0;text-align:center;font-size:10px;color:#a1a1aa}
+    footer a{color:#06b6d4}
+    @media(max-width:768px){.tiers{grid-template-columns:repeat(2,1fr)}.uses{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/hub.html">Hub</a>
+      <a href="/docs.html">Docs</a>
+    </nav>
+  </div>
+</header>
+
+<div class="guide">
+
+  <h1>BUILDING ON 2NTH.AI</h1>
+  <p class="sub">What you can build, what each tier unlocks, and how the platform works — from free exploration to full enterprise deployment.</p>
+
+  <div class="nav-links">
+    <a href="/guides/getting-started.html" class="nav-link">&larr; Getting Started (setup)</a>
+    <a href="https://2nth.ai" class="nav-link">2nth.ai &rarr;</a>
+    <a href="https://2nth.ai/partner-terms.html" class="nav-link">Partner Terms &rarr;</a>
+  </div>
+
+  <!-- What is 2nth.ai -->
+  <h2>What is 2nth.ai</h2>
+
+  <p>2nth.ai is an AI platform with <strong>300+ skills</strong> across 12 domains — technology, business, finance, legal, data, health, marketing, education, IoT, and more. Skills are packaged expertise that AI agents use to do real work.</p>
+
+  <p>As a partner, you can:</p>
+  <ul>
+    <li><strong>Use skills</strong> — run AI agents that leverage the skill tree for your clients</li>
+    <li><strong>Contribute skills</strong> — add your domain expertise to the tree and earn revenue share</li>
+    <li><strong>Build products</strong> — create branded hubs, dashboards, and AI-powered tools on the platform</li>
+    <li><strong>Sell the platform</strong> — as a premier partner, demonstrate and sell 2nth.ai to enterprise customers</li>
+  </ul>
+
+  <pre><code><span class="comment"># The 2nth.ai ecosystem</span>
+
+<span class="cmd">imbila.ai</span>     → Research &amp; methodology (the thinking)
+<span class="cmd">2nth.ai</span>       → Skills, agents, billing (the platform)
+<span class="cmd">2nth.io</span>       → Infrastructure, hosting, enterprise (the engine)
+<span class="cmd">developers</span>   → Partner portal, showcases, onboarding (you are here)</code></pre>
+
+  <!-- Tiers -->
+  <h2>Platform tiers</h2>
+
+  <p>Every account starts at Explorer (free). Upgrade as you need more capacity. All tiers use the same platform — the difference is token volume and access to advanced features.</p>
+
+  <div class="tiers">
+    <div class="tier">
+      <div class="tier-name">Explorer</div>
+      <div class="tier-tokens">50K tokens</div>
+      <div class="tier-price">Free</div>
+      <ul class="tier-features">
+        <li><span class="check">&#10003;</span> All public skills</li>
+        <li><span class="check">&#10003;</span> 15 named agents</li>
+        <li><span class="check">&#10003;</span> Basic API access</li>
+        <li><span class="dash">—</span> No branded hub</li>
+        <li><span class="dash">—</span> No custom agents</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <div class="tier-name">Starter</div>
+      <div class="tier-tokens">500K tokens</div>
+      <div class="tier-price">R499/month</div>
+      <ul class="tier-features">
+        <li><span class="check">&#10003;</span> All public skills</li>
+        <li><span class="check">&#10003;</span> 15 named agents</li>
+        <li><span class="check">&#10003;</span> Full API access</li>
+        <li><span class="check">&#10003;</span> Skill contributions</li>
+        <li><span class="dash">—</span> No branded hub</li>
+      </ul>
+    </div>
+    <div class="tier" style="border-color:#06b6d4">
+      <div class="tier-rec">Recommended</div>
+      <div class="tier-name">Designer</div>
+      <div class="tier-tokens">3M tokens</div>
+      <div class="tier-price">R1,999/month</div>
+      <ul class="tier-features">
+        <li><span class="check">&#10003;</span> All skills + advanced</li>
+        <li><span class="check">&#10003;</span> Custom agents</li>
+        <li><span class="check">&#10003;</span> Branded skills hub</li>
+        <li><span class="check">&#10003;</span> Revenue sharing</li>
+        <li><span class="check">&#10003;</span> Priority support</li>
+      </ul>
+    </div>
+    <div class="tier">
+      <div class="tier-name">Builder</div>
+      <div class="tier-tokens">8M tokens</div>
+      <div class="tier-price">R4,999/month</div>
+      <ul class="tier-features">
+        <li><span class="check">&#10003;</span> Everything in Designer</li>
+        <li><span class="check">&#10003;</span> White-label deploy</li>
+        <li><span class="check">&#10003;</span> Per-client workspaces</li>
+        <li><span class="check">&#10003;</span> SLA support</li>
+        <li><span class="check">&#10003;</span> 2nth.io infrastructure</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Tokens are the currency.</strong> Every skill execution costs tokens. A simple query might use 500 tokens. A full business analysis might use 5,000. Your monthly allocation refills each billing cycle. Unused tokens don't roll over.
+  </div>
+
+  <!-- Capability matrix -->
+  <h2>What each tier unlocks</h2>
+
+  <table class="matrix">
+    <thead>
+      <tr><th>Capability</th><th>Explorer</th><th>Starter</th><th>Designer</th><th>Builder</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Public skills (300+)</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+      <tr><td>Named agents (15)</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+      <tr><td>API access</td><td class="limit">Read</td><td class="yes">Full</td><td class="yes">Full</td><td class="yes">Full</td></tr>
+      <tr><td>Contribute skills</td><td class="no">—</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+      <tr><td>Revenue share on skills</td><td class="no">—</td><td class="limit">5%</td><td class="limit">10-20%</td><td class="limit">15-30%</td></tr>
+      <tr><td>Custom agents</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+      <tr><td>Branded skills hub</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+      <tr><td>White-label deployment</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td></tr>
+      <tr><td>Per-client workspaces</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td></tr>
+      <tr><td>2nth.io infrastructure</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td></tr>
+      <tr><td>ERPNext / CRM hosting</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td></tr>
+      <tr><td>SLA &amp; dedicated support</td><td class="no">—</td><td class="no">—</td><td class="limit">Email</td><td class="yes">Slack + SLA</td></tr>
+      <tr><td>Roadmap input</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">&#10003;</td></tr>
+    </tbody>
+  </table>
+
+  <!-- What to build at each tier -->
+  <h2>What to build at each tier</h2>
+
+  <div class="uses">
+    <div class="use">
+      <span class="use-tier ut-explorer">Explorer — Free</span>
+      <h3>Try the agents</h3>
+      <p>Run any of the 15 named agents with 50K tokens. Ask Grant (CFO) to review your financials, Katharine (CRO) to score your pipeline, or Leo (CLO) to review a contract. No code needed.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-starter">Starter — R499/mo</span>
+      <h3>Build your first skill</h3>
+      <p>Contribute domain expertise as a SKILL.md file. Earn 5% revenue share when others use it. Full API access lets you integrate 2nth.ai into your own tools and workflows.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-designer">Designer — R1,999/mo</span>
+      <h3>Launch a branded hub</h3>
+      <p>Your own skills hub on your domain (e.g. skills.yourcompany.com). Custom agents trained on your expertise. Revenue share up to 20%. This is where most partners operate.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-builder">Builder — R4,999/mo</span>
+      <h3>Full platform deployment</h3>
+      <p>White-label the entire platform for your customers. Per-client workspaces. 2nth.io infrastructure — hosted ERPNext, CRM, or custom apps. SLA-backed support. Enterprise-ready.</p>
+    </div>
+  </div>
+
+  <!-- 2nth.io Infrastructure -->
+  <h2>2nth.io — Infrastructure layer</h2>
+
+  <p>2nth.io is the infrastructure that runs behind 2nth.ai. Builder-tier partners get access to deploy managed infrastructure for their customers:</p>
+
+  <div class="uses">
+    <div class="use">
+      <span class="use-tier ut-builder">Infrastructure</span>
+      <h3>Hosted ERPNext</h3>
+      <p>Per-client ERPNext instances — opinionated for your market (warehouse, manufacturing, retail). Deployed on Hetzner, managed by 2nth.io, billed through your partnership.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-builder">Infrastructure</span>
+      <h3>Hosted TwentyCRM</h3>
+      <p>Group CRM for partner ecosystems. Customer, lead, and deal tracking across your client base. Deployed and managed — no DevOps needed.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-builder">Infrastructure</span>
+      <h3>Cloudflare Edge</h3>
+      <p>Workers AI for inference, D1 for databases, KV for sessions, R2 for storage, Queues for async. All at the edge — fast globally, data stays in-region.</p>
+    </div>
+    <div class="use">
+      <span class="use-tier ut-builder">Infrastructure</span>
+      <h3>Custom Deployments</h3>
+      <p>Need something specific? Docker containers on dedicated VMs, custom databases, specialised tooling. 2nth.io provisions and manages it — you sell it to your customers.</p>
+    </div>
+  </div>
+
+  <pre><code><span class="comment"># 2nth.io partner economics example</span>
+
+Your customer pays you:      <span class="str">R5,000/month</span>   (hosted ERPNext + AI skills)
+2nth.io infrastructure cost: <span class="flag">R2,500/month</span>   (VM + database + management)
+Your margin:                 <span class="cmd">R2,500/month</span>   (50% — you keep this)
+
+Plus: skill execution revenue share on AI usage
+Plus: no infrastructure management — 2nth.io handles ops, backups, updates</code></pre>
+
+  <!-- How to build -->
+  <h2>How to build on the platform</h2>
+
+  <h3>Option 1: Use agents directly (all tiers)</h3>
+  <p>Go to <a href="https://2nth.ai">2nth.ai</a>, sign in, and start talking to agents. No code required. Good for consultants who want AI-assisted advisory.</p>
+
+  <h3>Option 2: Integrate via API (Starter+)</h3>
+  <p>Use the 2nth.ai API to call skills from your own applications:</p>
+  <pre><code><span class="comment"># Example: call a skill via API</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> https://api.2nth.ai/v1/skills/execute \
+  <span class="flag">-H</span> <span class="str">"Authorization: Bearer YOUR_TOKEN"</span> \
+  <span class="flag">-d</span> '{
+    "skill": "fin/cash-flow",
+    "input": "Forecast Q3 revenue for a citrus farm with 8,200 tonnes"
+  }'</code></pre>
+
+  <h3>Option 3: Build a branded hub (Designer+)</h3>
+  <p>Fork the skills repo, add your domain skills, deploy to your domain. Your customers see your brand, your skills, powered by the 2nth.ai engine:</p>
+  <pre><code><span class="comment"># Your branded hub</span>
+skills.yourcompany.com
+  ├── Your domain skills        <span class="comment">(your IP, your expertise)</span>
+  ├── Shared 2nth.ai skills     <span class="comment">(300+ skills, auto-resolved)</span>
+  └── 2nth.ai agent runtime     <span class="comment">(inference, billing, auth)</span></code></pre>
+
+  <h3>Option 4: Full platform deployment (Builder)</h3>
+  <p>White-label everything. Your customers get their own workspace, their own data, their own agents — all running on 2nth.io infrastructure. You sell the platform as a product.</p>
+
+  <!-- Partner types -->
+  <h2>Partner types</h2>
+
+  <table class="matrix">
+    <thead><tr><th>Type</th><th>What they do</th><th>Typical tier</th><th>Revenue share</th></tr></thead>
+    <tbody>
+      <tr><td>Community Contributor</td><td>Contributes skills via PR</td><td>Starter</td><td>5%</td></tr>
+      <tr><td>Specialist Partner</td><td>Domain expert, contributes skills + advisory</td><td>Designer</td><td>10-20%</td></tr>
+      <tr><td>Build Partner</td><td>Builds products on the platform</td><td>Designer/Builder</td><td>15-25%</td></tr>
+      <tr><td>Premier Partner</td><td>Sells the full platform to enterprise</td><td>Builder</td><td>20-30%</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Getting started -->
+  <h2>Start now</h2>
+
+  <ol>
+    <li><strong>Sign up</strong> at <a href="https://2nth.ai">2nth.ai</a> — get 50K free tokens as Explorer</li>
+    <li><strong>Try an agent</strong> — ask a question, see what the platform can do</li>
+    <li><strong>Set up your dev environment</strong> — follow the <a href="/guides/getting-started.html">Getting Started guide</a></li>
+    <li><strong>Fork the skills repo</strong> — <a href="https://github.com/2nth-ai/skills">github.com/2nth-ai/skills</a></li>
+    <li><strong>Build your first skill</strong> — follow <a href="https://github.com/2nth-ai/skills/blob/main/SKILL_FORMAT.md">SKILL_FORMAT.md</a></li>
+    <li><strong>Apply as partner</strong> — <a href="https://2nth.ai/partners.html">2nth.ai/partners</a></li>
+    <li><strong>Upgrade when ready</strong> — Starter → Designer → Builder as you grow</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Questions?</strong> Email <a href="mailto:craig@2nth.ai">craig@2nth.ai</a> or visit the <a href="/hub.html">Partner Hub</a>.
+  </div>
+
+  <div class="nav-links">
+    <a href="/guides/getting-started.html" class="nav-link">&larr; Getting Started (setup)</a>
+    <a href="/hub.html" class="nav-link">Partner Hub &rarr;</a>
+    <a href="https://2nth.ai" class="nav-link">2nth.ai &rarr;</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai Platform Guide &middot; <a href="/guides/getting-started.html">Getting Started</a> &middot; <a href="/hub.html">Partner Hub</a> &middot; <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
