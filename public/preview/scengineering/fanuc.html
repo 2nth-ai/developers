@@ -9,12 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--card:#1e1e28;--border:rgba(255,255,255,.06);--border-s:rgba(255,255,255,.1);--text:#e8eaf0;--text2:#94a3b8;--text3:#64748b;--accent:#f59e0b;--accent-dim:#d97706;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--cyan:#06b6d4;--purple:#8b5cf6}
+    .light{--bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--card:#ffffff;--border:rgba(0,0,0,.06);--border-s:rgba(0,0,0,.1);--text:#0f172a;--text2:#475569;--text3:#64748b;--accent:#d97706;--accent-dim:#b45309;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--cyan:#0891b2;--purple:#7c3aed}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased}
     .container{max-width:1000px;margin:0 auto;padding:0 24px}
 
     /* Nav */
     nav{background:rgba(10,10,15,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 0;position:fixed;top:0;left:0;right:0;z-index:50}
+    .light nav{background:rgba(248,250,252,.9)}
+    .theme-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border-s);background:none;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .theme-btn:hover{color:var(--accent);border-color:var(--accent)}
     nav .container{display:flex;align-items:center;justify-content:space-between}
     .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:var(--accent)}
     .nav-brand span{color:var(--text3)}
@@ -96,6 +100,7 @@
       <a href="/preview/scengineering/">SC Engineering</a>
       <a href="/partners/scengineering.html">Partner Profile</a>
       <a href="https://2nth.ai">2nth.ai</a>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle light/dark">&#9728;</button>
     </div>
   </div>
 </nav>
@@ -308,6 +313,18 @@
 </footer>
 
 <script>
+// Theme toggle
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  localStorage.setItem('fanuc-theme', document.body.classList.contains('light') ? 'light' : 'dark');
+}
+(function() {
+  var saved = localStorage.getItem('fanuc-theme');
+  if (saved === 'light' || (!saved && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+    document.body.classList.add('light');
+  }
+})();
+
 // Simulate live dashboard updates
 setInterval(function() {
   var parts = parseInt(document.getElementById('d-parts').textContent);
