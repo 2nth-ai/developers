@@ -647,23 +647,79 @@
 </footer>
 
 <script>
-// Filter hub groups based on user scope injected by middleware
+// User directory for access display
+var USER_DIR = {
+  'proximity-green': ['Craig Leppan','Mark'],
+  'luthuli': ['Craig Leppan','Jasper'],
+  'scengineering': ['Murray Paton'],
+  'dronescan': ['Murray Paton','Jasper'],
+  'vibecrafters': ['Emma Leppan'],
+  'b2bs': ['Craig Leppan'],
+  'ctrl-future': ['Katherine Janisch'],
+  'republic-lifestyle': ['Republic Lifestyle'],
+  'jankovich': ['Jonty Jankovich-Besan'],
+  'eatfitsa': ['Erica Jankovich'],
+  'gananda': ['Barry Hawke'],
+  'presbury': ['Paul Presbury'],
+  'durpro': ['Jacqui Denny','Brian Denny'],
+  'rohrs': ['Barry Röhrs'],
+  'agilex': [],
+  'scanman': ['Jasper'],
+  'platform': ['All members'],
+  'imbila': ['All members'],
+  'admin': ['Admins only'],
+};
+// Full-access users see all
+var FULL_USERS = ['Craig Leppan','Guy Hamlin','Barry Hawke','Paul Presbury'];
+
 (function() {
   var scope = window.__userScope;
-  if (!scope || scope === 'full') return; // Admin sees everything
 
-  var userScopes = scope.split(',');
-  document.querySelectorAll('.group[data-scope]').forEach(function(group) {
-    var groupScopes = group.dataset.scope.split(',');
-    // Show if any user scope matches any group scope
-    // 'platform' is always visible, 'admin' only for full scope
-    var visible = groupScopes.some(function(gs) {
-      if (gs === 'platform') return true;
-      if (gs === 'admin') return scope === 'full';
-      return userScopes.some(function(us) { return gs.trim() === us.trim(); });
+  // Admin: show access badges on each group
+  if (scope === 'full') {
+    document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+      var scopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
+      var users = [];
+      scopes.forEach(function(s) {
+        (USER_DIR[s] || []).forEach(function(u) {
+          if (users.indexOf(u) === -1) users.push(u);
+        });
+      });
+      // Add full-access users for non-platform groups
+      if (scopes.indexOf('platform') === -1 && scopes.indexOf('admin') === -1) {
+        FULL_USERS.forEach(function(u) {
+          if (users.indexOf(u) === -1) users.push(u);
+        });
+      }
+      if (users.length === 0) return;
+
+      var badge = document.createElement('div');
+      badge.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;color:#a1a1aa;margin-top:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap';
+      badge.innerHTML = '<span style="color:#71717a">&#128101;</span> ' +
+        users.map(function(u) {
+          var isFullAccess = FULL_USERS.indexOf(u) >= 0;
+          var color = isFullAccess ? '#7c3aed' : '#06b6d4';
+          return '<span style="padding:1px 6px;border-radius:3px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);font-size:8px;color:' + color + '">' + u + '</span>';
+        }).join(' ');
+
+      var label = group.querySelector('.group-label');
+      if (label) label.after(badge);
     });
-    if (!visible) group.style.display = 'none';
-  });
+  }
+
+  // Non-admin: filter groups
+  if (scope && scope !== 'full') {
+    var userScopes = scope.split(',');
+    document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+      var groupScopes = group.dataset.scope.split(',');
+      var visible = groupScopes.some(function(gs) {
+        if (gs === 'platform') return true;
+        if (gs === 'admin') return false;
+        return userScopes.some(function(us) { return gs.trim() === us.trim(); });
+      });
+      if (!visible) group.style.display = 'none';
+    });
+  }
 })();
 </script>
 </body>
