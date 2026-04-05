@@ -15,7 +15,7 @@ const FALLBACK_USERS = {
   'emma':     { id:'emma', email: 'emma@vibecrafters.com',       name: 'Emma Leppan',         scope: 'vibecrafters',         pin: '0902' },
   'barry':    { id:'barry', email: 'barry@gananda.net',           name: 'Barry Hawke',          scope: 'full',                 pin: '5233' },
   'jacqui':   { id:'jacqui', email: 'jacqui.denny@durpro.co.za',  name: 'Jacqui Denny',         scope: 'durpro',               pin: '1992' },
-  'murray':   { id:'murray', email: 'murray@dronescan.co',        name: 'Murray Paton',         scope: 'dronescan',            pin: '4471' },
+  'murray':   { id:'murray', email: 'murray@scengineering.co.za',  name: 'Murray Paton',         scope: 'dronescan,scengineering', pin: '4471' },
   'brian':    { id:'brian', email: 'brian.denny@deneys.co.za',  name: 'Brian Denny',          scope: 'durpro',               pin: '7741' },
   'barryr':   { id:'barryr', email: 'barry.rohrs@rohrsassociates.com', name: 'Barry Röhrs',    scope: 'rohrs',                pin: '2026' },
   'erica':    { id:'erica', email: 'erica@eatfitsa.com',              name: 'Erica Jankovich', scope: 'eatfitsa',             pin: '2016' },
@@ -78,6 +78,32 @@ export async function onRequestGet(context) {
   if (code !== (user.pin || user.code)) {
     return Response.redirect(`${url.origin}/access.html?error=code&return=${encodeURIComponent(returnTo)}`, 302);
   }
+
+  return mintAndRedirect(env, user, returnTo, isPagesDev);
+}
+
+// POST /api/access-signin — JSON body { id, code }, returns cookie via redirect
+export async function onRequestPost(context) {
+  const { request, env } = context;
+  const url = new URL(request.url);
+  const isPagesDev = url.hostname.includes('.pages.dev');
+
+  let body;
+  try { body = await request.json(); } catch {
+    return Response.json({ error: 'Invalid request' }, { status: 400 });
+  }
+
+  const id = (body.id || '').trim().toLowerCase();
+  const code = (body.code || '').trim();
+  const returnTo = body.returnTo || '/hub.html';
+
+  if (!id) return Response.json({ error: 'Partner ID required' }, { status: 400 });
+  if (!code || code.length !== 4) return Response.json({ error: 'Enter your 4-digit code' }, { status: 400 });
+
+  const user = await getUser(env, id);
+  if (!user) return Response.json({ error: 'Partner ID not found' }, { status: 401 });
+
+  if (code !== (user.pin || user.code)) return Response.json({ error: 'Incorrect code' }, { status: 401 });
 
   return mintAndRedirect(env, user, returnTo, isPagesDev);
 }
