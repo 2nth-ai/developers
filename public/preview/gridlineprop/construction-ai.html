@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI for Construction &amp; QS — The Open Smart Building Platform</title>
+  <meta name="description" content="How AI transforms quantity surveying, estimating, construction management, and building operations. openBIM + AI = the future of the built environment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#faf9f6;--surface:#fff;--surface2:#f5f3ef;--card:#fff;--border:rgba(0,0,0,.06);--border-s:rgba(0,0,0,.1);--text:#1a1a1a;--text2:#4a4a4a;--text3:#7a7a7a;--muted:#a0a0a0;--green:#2d6a4f;--green-light:rgba(45,106,79,.06);--blue:#1d3557;--blue-light:rgba(29,53,87,.06);--gold:#b8860b;--gold-light:rgba(184,134,11,.06);--red:#c0392b;--amber:#d97706}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:1000px;margin:0 auto;padding:0 24px}
+    nav{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0;position:fixed;top:0;left:0;right:0;z-index:50}
+    nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{font-family:'Bebas Neue','Playfair Display',serif;font-size:18px;color:var(--text);letter-spacing:1px}
+    .nav-brand span{color:var(--green)}
+    .nav-links{display:flex;gap:16px;align-items:center}
+    .nav-links a{font-size:11px;font-weight:500;color:var(--text3);text-decoration:none;letter-spacing:.5px;text-transform:uppercase}
+    .nav-links a:hover{color:var(--green)}
+    .nav-cta{background:var(--green);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+
+    .hero{padding:130px 0 70px;text-align:center;position:relative}
+    .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,106,79,.03) 0%,transparent 50%)}
+    .hero-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:16px;padding:6px 18px;border:1px solid rgba(45,106,79,.15);border-radius:20px;background:var(--green-light)}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,48px);color:var(--text);line-height:1.1;margin-bottom:16px;font-weight:400}
+    h1 em{font-style:italic;color:var(--green)}
+    h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);margin-bottom:12px;font-weight:400}
+    h3{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
+    .sec-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+    .section{padding:70px 0}
+    .section-alt{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .section-dark{background:var(--blue);color:#fff}
+    .section-dark h2,.section-dark h3{color:#fff}
+    .section-dark p{color:rgba(255,255,255,.75)}
+    .section-dark .sec-label{color:var(--gold)}
+
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s}
+    .card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.04)}
+    .section-dark .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+    .section-dark .card:hover{border-color:var(--gold)}
+    .card-icon{font-size:28px;margin-bottom:12px}
+    .card p{font-size:13px;color:var(--text3);line-height:1.6}
+    .section-dark .card p{color:rgba(255,255,255,.6)}
+    .card-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-top:10px;background:var(--green-light);color:var(--green);border:1px solid rgba(45,106,79,.15)}
+
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:24px 0}
+    .stat{text-align:center;padding:20px}
+    .stat-val{font-family:'Playfair Display',serif;font-size:36px;color:var(--text)}
+    .section-dark .stat-val{color:var(--gold)}
+    .stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+    .section-dark .stat-label{color:rgba(255,255,255,.4)}
+
+    table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+    th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 12px;border-bottom:2px solid var(--border-s)}
+    td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+    .trad{color:var(--text3)}
+    .ai-col{font-weight:600;color:var(--green)}
+    .section-dark table{border-color:rgba(255,255,255,.1)}
+    .section-dark th{color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.15)}
+    .section-dark td{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.06)}
+    .section-dark .ai-col{color:var(--gold)}
+
+    .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:20px 0}
+    .flow-step{padding:10px 18px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--text);text-align:center}
+    .flow-step.ai{border-color:var(--green);background:var(--green-light);color:var(--green)}
+    .flow-arrow{color:var(--muted);font-size:16px}
+    .section-dark .flow-step{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#fff}
+    .section-dark .flow-step.ai{border-color:var(--gold);background:rgba(184,134,11,.1);color:var(--gold)}
+
+    pre{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;overflow-x:auto;color:var(--text2);margin:12px 0}
+    .section-dark pre{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+
+    .cta-section{text-align:center;padding:80px 0;background:var(--green-light)}
+    .cta-btn{display:inline-block;background:var(--green);color:#fff;padding:14px 32px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;text-decoration:none;transition:all .2s;margin:0 6px}
+    .cta-btn:hover{background:#245840;transform:translateY(-2px)}
+    .cta-btn-outline{background:none;border:1px solid var(--border-s);color:var(--text2)}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:11px;color:var(--muted)}
+    footer a{color:var(--green);text-decoration:none}
+    @media(max-width:640px){.card-grid{grid-template-columns:1fr}.stat-row{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-brand"><span>open</span>BUILD AI</div>
+    <div class="nav-links">
+      <a href="#qs">QS &amp; Estimating</a>
+      <a href="#construction">Construction</a>
+      <a href="#operations">Operations</a>
+      <a href="https://developers.2nth.ai/partners/gridlineprop.html">GridLineProp</a>
+      <a href="https://2nth.ai" class="nav-cta">2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">openBIM + AI = Game Changer</div>
+    <h1>The Construction Industry<br>Is About To <em>Transform</em></h1>
+    <p style="font-size:17px;color:var(--text3);max-width:600px;margin:0 auto 28px;line-height:1.6">Quantity surveying in hours, not weeks. Estimating from BIM models, not spreadsheets. Construction managed by AI, not whiteboards. Buildings that think for themselves, forever.</p>
+    <div class="stat-row" style="max-width:700px;margin:0 auto">
+      <div class="stat"><div class="stat-val">70%</div><div class="stat-label">Faster QS Takeoff</div></div>
+      <div class="stat"><div class="stat-val">R2.4T</div><div class="stat-label">SA Construction GDP</div></div>
+      <div class="stat"><div class="stat-val">30%</div><div class="stat-label">Typical Cost Overrun</div></div>
+      <div class="stat"><div class="stat-val">&lt;5%</div><div class="stat-label">Using BIM in SA</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- The Problem -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Problem</div>
+    <h2>Construction Is the Least Digitalised Industry on Earth</h2>
+    <p style="font-size:15px;max-width:600px;margin-bottom:20px">McKinsey ranks construction second-to-last in digitalisation. Projects routinely run 80% over budget and 20 months late. The industry loses R400B annually in SA alone through rework, waste, and poor coordination. The tools exist to fix this — they're just not being used.</p>
+
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="card" style="text-align:center;border-color:rgba(192,57,43,.15)">
+        <div style="font-size:28px;margin-bottom:8px">&#128196;</div>
+        <h3 style="font-size:14px">Paper BOQs</h3>
+        <p>Quantity surveyors still measure from 2D PDFs. A 200-page BOQ takes 3-4 weeks to produce manually.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(192,57,43,.15)">
+        <div style="font-size:28px;margin-bottom:8px">&#128202;</div>
+        <h3 style="font-size:14px">Spreadsheet Estimates</h3>
+        <p>Cost estimates built in Excel with copy-pasted rates. Version control by filename. Errors propagate silently.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(192,57,43,.15)">
+        <div style="font-size:28px;margin-bottom:8px">&#128172;</div>
+        <h3 style="font-size:14px">WhatsApp Management</h3>
+        <p>Site instructions by voice note. RFIs lost in chat threads. Variation orders disputed because nobody can find the record.</p>
+      </div>
+      <div class="card" style="text-align:center;border-color:rgba(192,57,43,.15)">
+        <div style="font-size:28px;margin-bottom:8px">&#128683;</div>
+        <h3 style="font-size:14px">No Handover Data</h3>
+        <p>Building completes. O&M manuals are PDFs nobody reads. No digital twin. No as-built model. Knowledge walks off site.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QS & Estimating -->
+<section class="section" id="qs">
+  <div class="container">
+    <div class="sec-label">Quantity Surveying &amp; Estimating</div>
+    <h2>From Weeks to Hours</h2>
+    <p style="font-size:15px;max-width:600px;margin-bottom:8px">AI reads the BIM model. Extracts every element — walls, floors, windows, doors, fittings, services. Quantities, materials, specifications. Automatically. Then prices them against your rate library.</p>
+
+    <div class="flow">
+      <div class="flow-step">IFC Model</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">AI Takeoff</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">Auto-Measure</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">Rate Matching</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">Priced BOQ</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">QS Review</div>
+    </div>
+
+    <table>
+      <tr><th>QS Task</th><th>Traditional</th><th>With AI + openBIM</th></tr>
+      <tr><td>Quantity takeoff (200-unit residential)</td><td class="trad">3-4 weeks manual measurement</td><td class="ai-col">4 hours — AI extracts from IFC</td></tr>
+      <tr><td>Bill of Quantities</td><td class="trad">Excel, manual grouping, formatting</td><td class="ai-col">Auto-generated, JBCC/NEC aligned</td></tr>
+      <tr><td>Cost estimate</td><td class="trad">Copy-paste from previous projects</td><td class="ai-col">Live rate database, regional adjustment, inflation</td></tr>
+      <tr><td>Variation costing</td><td class="trad">Re-measure affected areas, 2-3 days</td><td class="ai-col">Model diff: old IFC vs new IFC, instant delta</td></tr>
+      <tr><td>Interim valuations</td><td class="trad">Site visit + manual percentage estimates</td><td class="ai-col">4D BIM progress linked to payment schedule</td></tr>
+      <tr><td>Final account</td><td class="trad">Months of dispute, incomplete records</td><td class="ai-col">Full audit trail from model, every change logged</td></tr>
+    </table>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>AI Takeoff Engine</h3>
+        <p>Reads IFC model elements. Extracts quantities by trade: earthworks (m³), concrete (m³), brickwork (m²), steelwork (kg), joinery (nr), plumbing (m), electrical (pts). Grouped by location, storey, and building.</p>
+        <div class="card-tag">Automated measurement</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128176;</div>
+        <h3>Rate Intelligence</h3>
+        <p>Maintains a living rate database. AI adjusts for region (Cape Town vs Johannesburg), project size, current material costs (steel, cement, timber), and labour rates. Benchmark against AECOM/Langdon rates.</p>
+        <div class="card-tag">Live pricing</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128203;</div>
+        <h3>Tender Analysis</h3>
+        <p>Compares multiple contractor submissions side by side. AI flags pricing anomalies — rates too low (risk), rates too high (opportunity). Normalises for scope differences. Recommends with reasoning.</p>
+        <div class="card-tag">Procurement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Construction Management -->
+<section class="section section-dark" id="construction">
+  <div class="container">
+    <div class="sec-label">Construction Management</div>
+    <h2>The Site Runs Itself</h2>
+    <p style="font-size:15px;max-width:600px;margin-bottom:8px">AI doesn't replace the site manager — it gives them superpowers. Every subcontractor's progress tracked against the programme. Every delivery logged. Every quality issue documented with photos and linked to the model.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#128197;</div>
+        <h3>4D Programme</h3>
+        <p>Construction sequence linked to the 3D model. See which elements should be built this week. AI flags when actual progress deviates from planned — before the programme slips.</p>
+        <div class="card-tag">Scheduling</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128230;</div>
+        <h3>Material Tracking</h3>
+        <p>BIM-extracted material quantities linked to procurement. AI tracks deliveries against requirements. Alerts when stock runs low or surplus builds up. Reduces waste by 15-25%.</p>
+        <div class="card-tag">Procurement</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128247;</div>
+        <h3>Quality Capture</h3>
+        <p>Photo documentation linked to model elements. Take a photo of rebar → AI identifies the element → logs against the IFC GUID → inspector signs off digitally. Full audit trail.</p>
+        <div class="card-tag">Quality</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#9888;</div>
+        <h3>Safety Intelligence</h3>
+        <p>AI analyses site photos for safety violations: missing PPE, unguarded edges, blocked access. Logged with location, time, and responsible subcontractor. Trend analysis identifies repeat offenders.</p>
+        <div class="card-tag">H&amp;S</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128176;</div>
+        <h3>Cost Control</h3>
+        <p>Real-time cost vs. budget at element level. AI predicts final account based on current burn rate and remaining scope. Flags potential overruns 4-6 weeks before they crystallise.</p>
+        <div class="card-tag">Commercial</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128221;</div>
+        <h3>Digital RFIs</h3>
+        <p>Request for Information linked to model location. AI suggests answers from specification, previous RFIs, and design intent. Response time drops from 5 days to 5 hours.</p>
+        <div class="card-tag">Coordination</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px">
+      <h3 style="font-size:14px;margin-bottom:8px">SA Compliance Automation</h3>
+      <p style="font-size:13px;color:rgba(255,255,255,.6)">NHBRC enrollment documentation extracted from BIM. CIDB grading evidence generated automatically. SANS 10400 compliance checking against IFC model properties. OHS Act compliance tracked per site visit. All exportable for municipal submission.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Building Operations -->
+<section class="section" id="operations">
+  <div class="container">
+    <div class="sec-label">Building Operations</div>
+    <h2>The Building Never Stops Learning</h2>
+    <p style="font-size:15px;max-width:600px;margin-bottom:8px">Construction ends. Operations begins. The BIM model becomes a digital twin — connected to IoT sensors, maintenance systems, and energy management. The building manages itself.</p>
+
+    <div class="flow">
+      <div class="flow-step">As-Built IFC</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">IoT Sensors</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">Digital Twin</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step ai">AI Analytics</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">Smart Building</div>
+    </div>
+
+    <table>
+      <tr><th>Operations Task</th><th>Traditional</th><th>With openBIM + IoT</th></tr>
+      <tr><td>Energy management</td><td class="trad">Monthly bill review, reactive</td><td class="ai-col">Real-time monitoring, AI load optimisation, solar integration</td></tr>
+      <tr><td>Maintenance</td><td class="trad">Calendar-based or breakdown</td><td class="ai-col">Predictive — sensor data triggers service before failure</td></tr>
+      <tr><td>Space utilisation</td><td class="trad">Guesswork, annual surveys</td><td class="ai-col">Occupancy sensors per zone, AI optimises HVAC and lighting</td></tr>
+      <tr><td>Tenant requests</td><td class="trad">Email/phone, lost in inbox</td><td class="ai-col">App → AI categorises → routes to right contractor → tracks SLA</td></tr>
+      <tr><td>Asset register</td><td class="trad">Spreadsheet, outdated on day 1</td><td class="ai-col">BIM-linked: every asset has location, spec, install date, warranty</td></tr>
+      <tr><td>Compliance (CoC, fire, lifts)</td><td class="trad">Paper certificates in a file</td><td class="ai-col">Digital register, auto-alerts before expiry, inspector app</td></tr>
+    </table>
+
+    <pre>
+Digital Twin Architecture
+
+IFC As-Built Model
+    │
+    ├── IfcSpace → Occupancy sensor → AI → HVAC schedule
+    ├── IfcSystem (Solar) → Inverter API → Energy dashboard
+    ├── IfcSystem (Water) → Tank levels → Usage forecast
+    ├── IfcSensor (Temp) → Room comfort → Climate AI
+    ├── IfcActuator (Blinds) → Solar position → Auto-shade
+    │
+    └── All linked by GlobalId (GUID)
+        → Every sensor reading traceable to a building element
+        → Every maintenance record linked to the asset in the model
+        → The model IS the operations manual
+    </pre>
+  </div>
+</section>
+
+<!-- The Platform -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Open Platform</div>
+    <h2>Why Open Standards Matter</h2>
+    <p style="font-size:15px;max-width:600px;margin-bottom:20px">Proprietary BIM tools lock your data inside one vendor's format. openBIM means your building data belongs to you — forever. Any architect, any engineer, any contractor, any facilities manager can access it with any compatible tool.</p>
+
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="card" style="text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">&#128275;</div>
+        <h3 style="font-size:14px">No Lock-In</h3>
+        <p>IFC is an ISO standard. Your data is portable across ArchiCAD, Revit, Tekla, Allplan, and 200+ other tools.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">&#128101;</div>
+        <h3 style="font-size:14px">Multi-Disciplinary</h3>
+        <p>Architect, structural, mechanical, electrical, QS — all working on the same model. BCF manages coordination.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">&#128338;</div>
+        <h3 style="font-size:14px">Lifecycle Value</h3>
+        <p>The model outlives the project. Design → construction → operations → renovation. Data compounds over decades.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">&#128640;</div>
+        <h3 style="font-size:14px">AI-Ready</h3>
+        <p>Structured IFC data is what AI needs. No scraping PDFs. No interpreting drawings. The model IS the data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">Return on Investment</div>
+    <h2>The Numbers</h2>
+
+    <div class="stat-row">
+      <div class="stat"><div class="stat-val">70%</div><div class="stat-label">Faster QS Takeoff</div></div>
+      <div class="stat"><div class="stat-val">25%</div><div class="stat-label">Less Material Waste</div></div>
+      <div class="stat"><div class="stat-val">15%</div><div class="stat-label">Fewer Change Orders</div></div>
+      <div class="stat"><div class="stat-val">30%</div><div class="stat-label">Faster RFI Response</div></div>
+      <div class="stat"><div class="stat-val">R72K</div><div class="stat-label">Annual Energy Savings / Unit</div></div>
+    </div>
+
+    <table>
+      <tr><th>For</th><th>Traditional Cost</th><th>With AI + openBIM</th><th>Saving</th></tr>
+      <tr><td>QS takeoff (R50M residential)</td><td>R180,000 (3 weeks)</td><td class="ai-col">R45,000 (4 hours + review)</td><td class="ai-col">R135,000</td></tr>
+      <tr><td>Rework (industry average 12%)</td><td>R6,000,000</td><td class="ai-col">R2,400,000 (clash detection)</td><td class="ai-col">R3,600,000</td></tr>
+      <tr><td>Programme overrun (avg 20%)</td><td>6 months delay</td><td class="ai-col">4D tracking catches slippage early</td><td class="ai-col">2-3 months</td></tr>
+      <tr><td>Energy (per unit, 20 years)</td><td>R1,440,000 grid</td><td class="ai-col">R0 off-grid (after payback)</td><td class="ai-col">R1,200,000+</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <div class="sec-label">Get Started</div>
+    <h2 style="margin-bottom:12px">Build Smarter. Build Open.</h2>
+    <p style="font-size:15px;color:var(--text3);max-width:520px;margin:0 auto 28px">GridLineProp + 2nth.ai. Open standards meet AI capability. The future of SA construction starts with your next project.</p>
+    <a href="mailto:grant@gridline.co.za" class="cta-btn">Contact Grant Kneale</a>
+    <a href="https://developers.2nth.ai/preview/gridlineprop/silvercroft.html" class="cta-btn" style="background:var(--blue)">See Silvercroft Demo</a>
+    <a href="https://dev.skills.2nth.ai/biz/openbim.html" class="cta-btn cta-btn-outline">openBIM Skill</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>openBUILD AI — by <a href="https://gridlineprop.co.za">GridLineProp</a> &amp; <a href="https://2nth.ai">2nth.ai</a>. Built on <a href="https://www.buildingsmart.org/about/openbim/">buildingSMART openBIM</a> standards.</p>
+  </div>
+</footer>
+
+</body>
+</html>
