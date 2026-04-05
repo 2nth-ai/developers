@@ -646,64 +646,88 @@
   </div>
 </footer>
 
+<style>
+  .access-panel{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:6px;padding:8px 10px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06);border-radius:6px}
+  .access-row{display:flex;align-items:center;gap:6px;padding:3px 0}
+  .access-check{width:14px;height:14px;accent-color:#10b981;cursor:pointer}
+  .access-name{font-size:10px;flex:1}
+  .access-name.full{color:#7c3aed}
+  .access-name.scoped{color:#06b6d4}
+  .access-name.off{color:#a1a1aa;text-decoration:line-through;opacity:.5}
+  .access-toggle{font-size:8px;padding:1px 6px;border-radius:3px;cursor:pointer;border:1px solid rgba(0,0,0,.08);background:rgba(0,0,0,.02);color:#71717a;margin-left:auto}
+  .access-toggle:hover{border-color:#7c3aed;color:#7c3aed}
+  .access-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .access-count{font-size:9px;color:#a1a1aa}
+  .access-add{font-size:9px;color:#7c3aed;cursor:pointer;border:none;background:none;font-family:inherit;letter-spacing:.5px}
+  .access-add:hover{text-decoration:underline}
+</style>
 <script>
-// User directory for access display
-var USER_DIR = {
-  'proximity-green': ['Craig Leppan','Mark'],
-  'luthuli': ['Craig Leppan','Jasper'],
-  'scengineering': ['Murray Paton'],
-  'dronescan': ['Murray Paton','Jasper'],
-  'vibecrafters': ['Emma Leppan'],
-  'b2bs': ['Craig Leppan'],
-  'ctrl-future': ['Katherine Janisch'],
-  'republic-lifestyle': ['Republic Lifestyle'],
-  'jankovich': ['Jonty Jankovich-Besan'],
-  'eatfitsa': ['Erica Jankovich'],
-  'gananda': ['Barry Hawke'],
-  'presbury': ['Paul Presbury'],
-  'durpro': ['Jacqui Denny','Brian Denny'],
-  'rohrs': ['Barry Röhrs'],
-  'agilex': [],
-  'scanman': ['Jasper'],
-  'platform': ['All members'],
-  'imbila': ['All members'],
-  'admin': ['Admins only'],
-};
-// Full-access users see all
-var FULL_USERS = ['Craig Leppan','Guy Hamlin','Barry Hawke','Paul Presbury'];
+// All registered users with their current scopes
+var ALL_USERS = [
+  { id:'craig', name:'Craig Leppan', scope:'full', email:'craig@2nth.ai' },
+  { id:'craig-pg', name:'Craig (PG)', scope:'proximity-green,luthuli', email:'craig@proximity.green' },
+  { id:'mark', name:'Mark', scope:'proximity-green', email:'mark@proximity.green' },
+  { id:'guy', name:'Guy Hamlin', scope:'full', email:'guy@rumf.co.za' },
+  { id:'jasper', name:'Jasper', scope:'dronescan,scanman,luthuli', email:'jasper@dronescan.co' },
+  { id:'craig-b2b', name:'Craig (B2B)', scope:'full', email:'craig@b2bs.co.za' },
+  { id:'kath', name:'Katherine Janisch', scope:'ctrl-future', email:'kath@ctrlfuture.co.za' },
+  { id:'republic', name:'Republic Lifestyle', scope:'republic-lifestyle', email:'info@republiclifestyle.co.za' },
+  { id:'emma', name:'Emma Leppan', scope:'vibecrafters', email:'emma@vibecrafters.com' },
+  { id:'barry', name:'Barry Hawke', scope:'full', email:'barry@gananda.net' },
+  { id:'jacqui', name:'Jacqui Denny', scope:'durpro', email:'jacqui.denny@durpro.co.za' },
+  { id:'murray', name:'Murray Paton', scope:'dronescan,scengineering', email:'murray@scengineering.co.za' },
+  { id:'brian', name:'Brian Denny', scope:'durpro', email:'brian.denny@deneys.co.za' },
+  { id:'barryr', name:'Barry Röhrs', scope:'rohrs', email:'barry.rohrs@rohrsassociates.com' },
+  { id:'erica', name:'Erica Jankovich', scope:'eatfitsa', email:'erica@eatfitsa.com' },
+  { id:'jonty', name:'Jonty Jankovich-Besan', scope:'jankovich', email:'jonty@seaharvestgroup.co.za' },
+  { id:'paul', name:'Paul Presbury', scope:'full', email:'presburypaul@gmail.com' },
+];
 
 (function() {
   var scope = window.__userScope;
 
-  // Admin: show access badges on each group
+  // Admin: show interactive access panels
   if (scope === 'full') {
     document.querySelectorAll('.group[data-scope]').forEach(function(group) {
-      var scopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
-      var users = [];
-      scopes.forEach(function(s) {
-        (USER_DIR[s] || []).forEach(function(u) {
-          if (users.indexOf(u) === -1) users.push(u);
-        });
-      });
-      // Add full-access users for non-platform groups
-      if (scopes.indexOf('platform') === -1 && scopes.indexOf('admin') === -1) {
-        FULL_USERS.forEach(function(u) {
-          if (users.indexOf(u) === -1) users.push(u);
-        });
+      var groupScopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
+      if (groupScopes.indexOf('platform') >= 0 || groupScopes.indexOf('admin') >= 0) {
+        // Platform/admin — just show a simple label
+        var simple = document.createElement('div');
+        simple.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;color:#a1a1aa;margin-top:4px';
+        simple.innerHTML = '&#128101; ' + (groupScopes.indexOf('admin') >= 0 ? 'Admins only' : 'All authenticated members');
+        var label = group.querySelector('.group-label');
+        if (label) label.after(simple);
+        return;
       }
-      if (users.length === 0) return;
 
-      var badge = document.createElement('div');
-      badge.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;color:#a1a1aa;margin-top:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap';
-      badge.innerHTML = '<span style="color:#71717a">&#128101;</span> ' +
-        users.map(function(u) {
-          var isFullAccess = FULL_USERS.indexOf(u) >= 0;
-          var color = isFullAccess ? '#7c3aed' : '#06b6d4';
-          return '<span style="padding:1px 6px;border-radius:3px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);font-size:8px;color:' + color + '">' + u + '</span>';
-        }).join(' ');
+      var panel = document.createElement('div');
+      panel.className = 'access-panel';
+
+      // Build user list for this group
+      var html = '<div class="access-header"><span class="access-count" id="count-' + groupScopes[0] + '"></span></div>';
+
+      ALL_USERS.forEach(function(u) {
+        var userScopes = u.scope.split(',').map(function(s){return s.trim()});
+        var isFull = u.scope === 'full';
+        var hasAccess = isFull || groupScopes.some(function(gs) { return userScopes.indexOf(gs) >= 0; });
+
+        html += '<div class="access-row">' +
+          '<input type="checkbox" class="access-check" ' + (hasAccess ? 'checked' : '') +
+            (isFull ? ' disabled title="Full access — cannot remove"' : '') +
+            ' onchange="toggleAccess(\'' + u.id + '\',\'' + groupScopes[0] + '\',this.checked)">' +
+          '<span class="access-name ' + (isFull ? 'full' : hasAccess ? 'scoped' : 'off') + '">' +
+            u.name + '</span>' +
+          '<span style="font-size:8px;color:#a1a1aa">' + u.email.split('@')[1] + '</span>' +
+        '</div>';
+      });
+
+      panel.innerHTML = html;
 
       var label = group.querySelector('.group-label');
-      if (label) label.after(badge);
+      if (label) label.after(panel);
+
+      // Update count
+      updateCount(groupScopes[0]);
     });
   }
 
@@ -721,6 +745,44 @@ var FULL_USERS = ['Craig Leppan','Guy Hamlin','Barry Hawke','Paul Presbury'];
     });
   }
 })();
+
+function updateCount(groupScope) {
+  var el = document.getElementById('count-' + groupScope);
+  if (!el) return;
+  var panel = el.closest('.access-panel');
+  var checked = panel.querySelectorAll('.access-check:checked').length;
+  var total = panel.querySelectorAll('.access-check').length;
+  el.textContent = checked + '/' + total + ' users have access';
+}
+
+function toggleAccess(userId, groupScope, granted) {
+  // Find the user
+  var user = ALL_USERS.find(function(u) { return u.id === userId; });
+  if (!user || user.scope === 'full') return;
+
+  var scopes = user.scope.split(',').map(function(s){return s.trim()}).filter(function(s){return s});
+
+  if (granted) {
+    // Add scope
+    if (scopes.indexOf(groupScope) < 0) scopes.push(groupScope);
+  } else {
+    // Remove scope
+    scopes = scopes.filter(function(s) { return s !== groupScope; });
+  }
+
+  user.scope = scopes.join(',') || 'none';
+
+  // Update visual state
+  var row = event.target.closest('.access-row');
+  var nameEl = row.querySelector('.access-name');
+  nameEl.className = 'access-name ' + (granted ? 'scoped' : 'off');
+
+  updateCount(groupScope);
+
+  // Note: In production this would call an API to persist the scope change.
+  // For now it's client-side only and shows an alert.
+  console.log('Access ' + (granted ? 'granted' : 'revoked') + ': ' + user.name + ' → ' + groupScope + ' (new scope: ' + user.scope + ')');
+}
 </script>
 </body>
 </html>
