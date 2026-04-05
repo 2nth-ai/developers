@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balwin SmartBIM — 56,000 Apartments as Digital Twins</title>
+  <meta name="description" content="How Balwin's ecosystem connects through openBIM: fibre, green energy, security, infrastructure — all managed by AI across 56,000 apartments.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f8faf8;--surface:#fff;--surface2:#f0f5f0;--card:#fff;--border:rgba(0,0,0,.06);--border-s:rgba(0,0,0,.1);--text:#1a1a1a;--text2:#4a4a4a;--text3:#7a7a7a;--muted:#a0a0a0;--green:#2d6a4f;--green-light:rgba(45,106,79,.06);--blue:#1d3557;--gold:#b8860b;--amber:#d97706;--red:#c0392b;--cyan:#0369a1}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .container{max-width:1000px;margin:0 auto;padding:0 24px}
+    nav{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 0;position:fixed;top:0;left:0;right:0;z-index:50}
+    nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{font-family:'Playfair Display',serif;font-size:20px;color:var(--green)}
+    .nav-brand span{color:var(--text3)}
+    .nav-links{display:flex;gap:16px;align-items:center}
+    .nav-links a{font-size:11px;font-weight:500;color:var(--text3);text-decoration:none;letter-spacing:.5px;text-transform:uppercase}
+    .nav-cta{background:var(--green);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+
+    .hero{padding:130px 0 60px;text-align:center}
+    .hero-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:16px;padding:6px 18px;border:1px solid rgba(45,106,79,.15);border-radius:20px;background:var(--green-light)}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,48px);color:var(--text);line-height:1.1;margin-bottom:16px;font-weight:400}
+    h1 em{font-style:italic;color:var(--green)}
+    h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--text);margin-bottom:12px;font-weight:400}
+    .sec-label{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+    .section{padding:60px 0}
+    .section-alt{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .section-dark{background:var(--blue);color:#fff}
+    .section-dark h2{color:#fff}
+    .section-dark p{color:rgba(255,255,255,.7)}
+    .section-dark .sec-label{color:var(--gold)}
+
+    /* Ecosystem map */
+    .eco-hub{text-align:center;margin:32px 0}
+    .eco-center{display:inline-flex;align-items:center;justify-content:center;width:120px;height:120px;border-radius:50%;background:var(--green);color:#fff;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;box-shadow:0 4px 20px rgba(45,106,79,.2)}
+    .eco-spokes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:20px}
+    .eco-spoke{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+    .eco-spoke:hover{border-color:var(--green);transform:translateY(-2px)}
+    .eco-spoke.active{border-color:var(--green);box-shadow:0 0 0 2px rgba(45,106,79,.15)}
+    .eco-spoke-icon{font-size:24px;margin-bottom:6px}
+    .eco-spoke h4{font-size:13px;color:var(--text);margin-bottom:2px}
+    .eco-spoke p{font-size:10px;color:var(--muted);margin:0}
+    .eco-spoke .bim-tag{position:absolute;top:6px;right:6px;font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.5px;text-transform:uppercase;padding:2px 5px;border-radius:2px;background:var(--green-light);color:var(--green);border:1px solid rgba(45,106,79,.15)}
+
+    /* Detail panel */
+    .eco-detail{display:none;margin-top:16px;background:var(--card);border:1px solid var(--green);border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+    .eco-detail.open{display:block}
+    .eco-detail-header{padding:16px 20px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .eco-detail-header h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--text)}
+    .eco-detail-body{padding:20px}
+    .eco-detail-body p{font-size:13px;line-height:1.7;margin-bottom:10px}
+    .bim-connection{background:var(--green-light);border:1px solid rgba(45,106,79,.12);border-radius:8px;padding:14px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;color:var(--text2)}
+    .bim-connection strong{color:var(--green)}
+    .eco-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0}
+    .eco-metric{text-align:center;padding:10px;background:var(--surface2);border-radius:6px}
+    .eco-metric-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--green)}
+    .eco-metric-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+
+    /* Dashboard */
+    .dash{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+    .dash-header{padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .dash-header h3{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:16px 20px}
+    .dash-tile{background:var(--surface2);border-radius:8px;padding:14px;text-align:center}
+    .dash-tile-val{font-family:'Playfair Display',serif;font-size:24px;color:var(--text)}
+    .dash-tile-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+    .dash-tile-sub{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:4px}
+    .val-green{color:var(--green)}
+    .val-gold{color:var(--gold)}
+    .val-blue{color:var(--cyan)}
+
+    .cta-section{text-align:center;padding:60px 0;background:var(--green-light)}
+    .cta-btn{display:inline-block;background:var(--green);color:#fff;padding:14px 32px;border-radius:8px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;text-decoration:none;transition:all .2s;margin:0 6px}
+    .cta-btn:hover{background:#245840}
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:11px;color:var(--muted)}
+    footer a{color:var(--green);text-decoration:none}
+    @media(max-width:640px){.eco-spokes{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-brand">Balwin <span>SmartBIM</span></div>
+    <div class="nav-links">
+      <a href="#ecosystem">Ecosystem</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="https://balwin.co.za/balwin-world" target="_blank">Balwin World</a>
+      <a href="https://2nth.ai" class="nav-cta">2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">openBIM + AI + Balwin World</div>
+    <h1>56,000 Apartments.<br>One <em>Digital Twin.</em></h1>
+    <p style="font-size:16px;color:var(--text3);max-width:560px;margin:0 auto 24px">Every Balwin World service — fibre, green energy, security, infrastructure — connected through openBIM. Every apartment a digital twin. Every estate AI-managed.</p>
+  </div>
+</section>
+
+<!-- Ecosystem -->
+<section class="section" id="ecosystem">
+  <div class="container">
+    <div class="sec-label">Balwin World &times; openBIM</div>
+    <h2>Every Service Connected Through the Model</h2>
+    <p style="font-size:14px;max-width:560px;margin-bottom:8px">Click any service to see how it connects to the IFC building model and what AI enables at Balwin's scale.</p>
+
+    <div class="eco-hub">
+      <div class="eco-center">IFC<br>Model</div>
+    </div>
+
+    <div class="eco-spokes" id="eco-spokes">
+      <div class="eco-spoke" onclick="showEco('fibre')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#128225;</div>
+        <h4>Balwin Fibre</h4>
+        <p>Estate connectivity</p>
+      </div>
+      <div class="eco-spoke" onclick="showEco('green')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#9728;</div>
+        <h4>Green Living</h4>
+        <p>Solar &amp; wastewater</p>
+      </div>
+      <div class="eco-spoke" onclick="showEco('technik')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#128274;</div>
+        <h4>Balwin Technik</h4>
+        <p>Security &amp; access</p>
+      </div>
+      <div class="eco-spoke" onclick="showEco('infra')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#127959;</div>
+        <h4>Infrastructure</h4>
+        <p>Design &amp; construction</p>
+      </div>
+      <div class="eco-spoke" onclick="showEco('rentals')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#127968;</div>
+        <h4>Balwin Rentals</h4>
+        <p>Portfolio management</p>
+      </div>
+      <div class="eco-spoke" onclick="showEco('lifestyle')">
+        <div class="bim-tag">IFC linked</div>
+        <div class="eco-spoke-icon">&#127942;</div>
+        <h4>Lifestyle &amp; Sport</h4>
+        <p>Amenity utilisation</p>
+      </div>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="eco-detail" id="eco-detail">
+      <div class="eco-detail-header">
+        <h3 id="eco-detail-title">—</h3>
+        <button onclick="closeEco()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer">&#10005;</button>
+      </div>
+      <div class="eco-detail-body" id="eco-detail-body"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Portfolio Dashboard -->
+<section class="section section-alt" id="dashboard">
+  <div class="container">
+    <div class="sec-label">Portfolio Intelligence</div>
+    <h2>All 98 Developments. One Dashboard.</h2>
+
+    <div class="dash">
+      <div class="dash-header">
+        <h3>Balwin Portfolio — Live Status</h3>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span> All Systems</div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-tile"><div class="dash-tile-val">56,426</div><div class="dash-tile-label">Total Units</div><div class="dash-tile-sub val-green">98 developments</div></div>
+        <div class="dash-tile"><div class="dash-tile-val" id="d-solar">42MW</div><div class="dash-tile-label">Solar Installed</div><div class="dash-tile-sub val-green">Across 68 estates</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">99.2%</div><div class="dash-tile-label">Fibre Uptime</div><div class="dash-tile-sub val-green">All connected estates</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">0</div><div class="dash-tile-label">Security Breaches</div><div class="dash-tile-sub val-green">Last 30 days</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">R186M</div><div class="dash-tile-label">Energy Saved / Year</div><div class="dash-tile-sub val-gold">vs grid-only</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">94%</div><div class="dash-tile-label">Occupancy Rate</div><div class="dash-tile-sub val-blue">Rental portfolio</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">12,400</div><div class="dash-tile-label">Active Members</div><div class="dash-tile-sub">Lifestyle &amp; Sport</div></div>
+        <div class="dash-tile"><div class="dash-tile-val">Edge</div><div class="dash-tile-label">Green Certified</div><div class="dash-tile-sub val-green">All developments</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <div class="sec-label">The Future of Residential at Scale</div>
+    <h2 style="margin-bottom:12px">openBIM + AI + Balwin World</h2>
+    <p style="font-size:14px;color:var(--text3);max-width:480px;margin:0 auto 24px">56,000 apartments. 98 developments. One open standard. Every building a digital twin.</p>
+    <a href="https://balwin.co.za" class="cta-btn" target="_blank">Balwin Properties</a>
+    <a href="https://2nth-skills.pages.dev/biz/openbim.html" class="cta-btn" style="background:var(--blue)">openBIM Skill</a>
+    <a href="/preview/gridlineprop/construction-ai.html" class="cta-btn" style="background:var(--gold)">AI Construction</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Balwin SmartBIM — concept by <a href="https://2nth.ai">2nth.ai</a>. Built on <a href="https://www.buildingsmart.org/about/openbim/">buildingSMART openBIM</a>.</p>
+  </div>
+</footer>
+
+<script>
+var ecoData = {
+  fibre: {
+    title: 'Balwin Fibre × openBIM',
+    body: '<p><strong>What Balwin Fibre does:</strong> Provides estate-wide fibre connectivity to every apartment — internet, IPTV, and IoT backbone.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model ←→ Fibre Network</strong><br>' +
+      'IfcCableSegment → fibre route from MDF to each apartment<br>' +
+      'IfcDistributionPort → CPE location per unit<br>' +
+      'IfcSpace → bandwidth allocation by unit type (1-bed/2-bed/3-bed)<br>' +
+      'IfcSystem "FibreNetwork" → topology, switch locations, redundancy paths</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Predict bandwidth demand per estate from occupancy patterns<br>' +
+      '&#8226; Auto-provision new units when body corporate registers a tenant<br>' +
+      '&#8226; Fault isolation: model shows exact fibre path to affected units<br>' +
+      '&#8226; IoT backbone: same fibre feeds smart meters, cameras, access control</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">56K</div><div class="eco-metric-label">Connected units</div></div><div class="eco-metric"><div class="eco-metric-val">99.2%</div><div class="eco-metric-label">Uptime</div></div><div class="eco-metric"><div class="eco-metric-val">1Gbps</div><div class="eco-metric-label">Per unit capable</div></div></div>'
+  },
+  green: {
+    title: 'Green Living × openBIM',
+    body: '<p><strong>What Green Living does:</strong> Solar PV installations, wastewater treatment plants, and water harvesting across Balwin estates. Edge Green certified.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model ←→ Energy + Water</strong><br>' +
+      'IfcSolarDevice → panel array per building (orientation, kWp, tilt)<br>' +
+      'IfcDistributionSystem "SolarPV" → inverters, batteries, grid tie<br>' +
+      'IfcDistributionSystem "Wastewater" → treatment plant, pipe network<br>' +
+      'IfcSensor → energy meters per unit, water flow meters per building</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Portfolio-wide solar yield prediction (weather API × 98 sites)<br>' +
+      '&#8226; Optimal battery charge/discharge schedule per estate<br>' +
+      '&#8226; Wastewater treatment capacity planning from occupancy data<br>' +
+      '&#8226; Green certificate compliance automated from BIM data<br>' +
+      '&#8226; R186M annual energy savings tracked in real time</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">42MW</div><div class="eco-metric-label">Solar installed</div></div><div class="eco-metric"><div class="eco-metric-val">R186M</div><div class="eco-metric-label">Saved / year</div></div><div class="eco-metric"><div class="eco-metric-val">Edge</div><div class="eco-metric-label">Green certified</div></div></div>'
+  },
+  technik: {
+    title: 'Balwin Technik × openBIM',
+    body: '<p><strong>What Technik does:</strong> Access control, CCTV, biometric entry, perimeter security, and visitor management across all estates.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model ←→ Security Systems</strong><br>' +
+      'IfcDoor → access point (biometric reader, keypad, intercom)<br>' +
+      'IfcSensor "CCTV" → camera location, field of view, recording zone<br>' +
+      'IfcSensor "Perimeter" → electric fence zones, beam detectors<br>' +
+      'IfcSpace → security zone mapping (public, common, private, restricted)</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Person detection across 56K units — not motion, not animals<br>' +
+      '&#8226; LPR at every gate, cross-referenced against resident vehicle register<br>' +
+      '&#8226; Visitor management: pre-authorise via app, log entry/exit<br>' +
+      '&#8226; Anomaly detection: unusual access patterns, tailgating, forced entry<br>' +
+      '&#8226; Central security dashboard for 98 estates — one SOC</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">2,400+</div><div class="eco-metric-label">Cameras</div></div><div class="eco-metric"><div class="eco-metric-val">196</div><div class="eco-metric-label">Access points</div></div><div class="eco-metric"><div class="eco-metric-val">0</div><div class="eco-metric-label">Breaches (30d)</div></div></div>'
+  },
+  infra: {
+    title: 'Infrastructure × openBIM',
+    body: '<p><strong>What Infrastructure does:</strong> Planning, design, and construction of new developments. The core building delivery engine.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model = THE construction deliverable</strong><br>' +
+      'Design phase: architect + structural + MEP models federated in IFC<br>' +
+      'Clash detection: AI finds 90% of coordination issues before site<br>' +
+      'QS takeoff: quantities extracted automatically from model<br>' +
+      'Construction: 4D programme linked to 3D elements<br>' +
+      'Handover: as-built IFC becomes the digital twin for operations</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Standardised apartment types: design once, deploy across 98 sites<br>' +
+      '&#8226; Automated SANS 10400 compliance checking per unit type<br>' +
+      '&#8226; NHBRC enrollment data extracted from BIM — no re-entry<br>' +
+      '&#8226; Cost benchmarking: R/m² across all developments, real-time<br>' +
+      '&#8226; Construction progress tracked against model — AI flags delays</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">98</div><div class="eco-metric-label">Developments</div></div><div class="eco-metric"><div class="eco-metric-val">R3B+</div><div class="eco-metric-label">Revenue</div></div><div class="eco-metric"><div class="eco-metric-val">70%</div><div class="eco-metric-label">Faster QS</div></div></div>'
+  },
+  rentals: {
+    title: 'Balwin Rentals × openBIM',
+    body: '<p><strong>What Rentals does:</strong> Manages Balwin\'s premium rental portfolio — listing, leasing, tenant management, maintenance.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model ←→ Rental Management</strong><br>' +
+      'IfcSpace → unit type, floor area, bedroom count, floor level<br>' +
+      'IfcAsset → fixtures, appliances, finishes — condition tracked<br>' +
+      'IfcOccupant → tenant linked to unit (privacy-compliant)<br>' +
+      'IfcMaintenanceRecord → snag list, repair history per element</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Automated listing: unit specs pulled from BIM, photos from model render<br>' +
+      '&#8226; Maintenance: tenant reports issue → AI maps to BIM element → routes to contractor<br>' +
+      '&#8226; Vacancy prediction: lease end dates × market demand = optimal pricing<br>' +
+      '&#8226; Condition tracking: inspection scores per element, depreciation modelled<br>' +
+      '&#8226; Tenant experience: smart access, maintenance SLA tracking, community app</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">94%</div><div class="eco-metric-label">Occupancy</div></div><div class="eco-metric"><div class="eco-metric-val">3,200</div><div class="eco-metric-label">Rental units</div></div><div class="eco-metric"><div class="eco-metric-val">4.2★</div><div class="eco-metric-label">Tenant rating</div></div></div>'
+  },
+  lifestyle: {
+    title: 'Lifestyle & Sport × openBIM',
+    body: '<p><strong>What it does:</strong> Manages 6-Star Green certified lifestyle centres — gyms, pools, running tracks, community spaces, art installations.</p>' +
+      '<p><strong>How openBIM connects it:</strong></p>' +
+      '<div class="bim-connection">' +
+      '<strong>IFC Model ←→ Amenity Management</strong><br>' +
+      'IfcSpace "Gym" → capacity, equipment layout, HVAC requirements<br>' +
+      'IfcSpace "Pool" → water treatment system, heating, usage zones<br>' +
+      'IfcSensor "Occupancy" → real-time count per amenity area<br>' +
+      'IfcAsset → equipment register (treadmills, weights, etc.)</div>' +
+      '<p><strong>What AI enables at scale:</strong></p>' +
+      '<p>&#8226; Occupancy analytics: peak/off-peak patterns, capacity management<br>' +
+      '&#8226; Equipment maintenance: usage cycles → predictive replacement<br>' +
+      '&#8226; Energy optimisation: HVAC scales with actual occupancy, not schedule<br>' +
+      '&#8226; Event management: Balwin Run Series, Sport programmes — linked to facilities<br>' +
+      '&#8226; Community engagement: usage data informs new amenity investment</p>' +
+      '<div class="eco-metrics"><div class="eco-metric"><div class="eco-metric-val">12,400</div><div class="eco-metric-label">Active members</div></div><div class="eco-metric"><div class="eco-metric-val">6-Star</div><div class="eco-metric-label">Green centres</div></div><div class="eco-metric"><div class="eco-metric-val">32</div><div class="eco-metric-label">Lifestyle centres</div></div></div>'
+  },
+};
+
+function showEco(id) {
+  var data = ecoData[id];
+  if (!data) return;
+
+  document.querySelectorAll('.eco-spoke').forEach(function(s) { s.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+
+  document.getElementById('eco-detail-title').textContent = data.title;
+  document.getElementById('eco-detail-body').innerHTML = data.body;
+  var panel = document.getElementById('eco-detail');
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeEco() {
+  document.getElementById('eco-detail').classList.remove('open');
+  document.querySelectorAll('.eco-spoke').forEach(function(s) { s.classList.remove('active'); });
+}
+</script>
+
+</body>
+</html>
