@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--card:#21262d;--border:rgba(255,255,255,.08);--text:#f0f6fc;--text2:#8b949e;--text3:#484f58;--blue:#58a6ff;--blue-dim:rgba(88,166,255,.08);--green:#3fb950;--green-dim:rgba(63,185,80,.08);--red:#f85149;--red-dim:rgba(248,81,73,.08);--amber:#d29922;--purple:#bc8cff;--snow:#e6edf3}
+    .snow-mode{--bg:#e8edf3;--surface:#f0f4f8;--surface2:#f8fafb;--card:#ffffff;--border:rgba(0,0,0,.06);--text:#1a2332;--text2:#5a6578;--text3:#8b95a5;--blue:#2563eb;--blue-dim:rgba(37,99,235,.06);--green:#16a34a;--green-dim:rgba(22,163,74,.06);--red:#dc2626;--red-dim:rgba(220,38,38,.06);--amber:#b45309;--purple:#7c3aed;--snow:#ffffff}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow:hidden;-webkit-user-select:none;user-select:none}
 
@@ -143,6 +144,7 @@
       <div class="topnav-brand"><span>Ski</span>Spot</div>
       <div class="topnav-right">
         <div class="battery-pill">2 devices paired</div>
+        <div onclick="toggleSnow()" style="width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" title="Toggle snow mode">&#9728;</div>
       </div>
     </div>
 
@@ -250,234 +252,275 @@
 </div>
 
 <script>
-var state = {
-  scanning: false,
-  found: false,
-  screen: 'home',
-  side: 'right',
-  targetBearing: 137,
-  scanData: [],
-  rssiHistory: [],
-  scanStart: 0,
-  currentAngle: 0,
-  animFrame: null,
-};
+(function() {
+  'use strict';
 
-var arrow = document.getElementById('arrow');
-var progressArc = document.getElementById('progress-arc');
-var rssiCanvas = document.getElementById('rssi-chart');
-var rssiCtx = null;
+  var S = {
+    scanning: false,
+    found: false,
+    screen: 'home',
+    side: 'right',
+    targetBearing: 137,
+    scanData: [],
+    rssiHistory: [],
+    scanStart: 0,
+    currentAngle: 0,
+    ambientInterval: null,
+  };
 
-function initCanvas() {
-  if (!rssiCanvas) return;
-  var rect = rssiCanvas.parentElement.getBoundingClientRect();
-  rssiCanvas.width = rect.width;
-  rssiCanvas.height = rect.height;
-  rssiCtx = rssiCanvas.getContext('2d');
-}
+  var arrow, progressArc, rssiCanvas, rssiCtx;
 
-function goHome() {
-  stopScan();
-  state.screen = 'home';
-  document.getElementById('screen-find').classList.remove('active');
-  document.getElementById('screen-home').classList.add('active', 'screen-fade');
-}
+  function getEls() {
+    arrow = document.getElementById('arrow');
+    progressArc = document.getElementById('progress-arc');
+    rssiCanvas = document.getElementById('rssi-chart');
+  }
 
-function startFind(side) {
-  state.side = side;
-  state.targetBearing = side === 'right' ? 137 : 253;
-  state.found = false;
-  state.scanning = false;
-  state.scanData = [];
-  state.rssiHistory = [];
-  state.currentAngle = 0;
+  function initCanvas() {
+    if (!rssiCanvas) { getEls(); }
+    if (!rssiCanvas) return;
+    var wrap = rssiCanvas.parentElement;
+    if (!wrap) return;
+    var rect = wrap.getBoundingClientRect();
+    if (rect.width < 10) return; // not visible yet
+    rssiCanvas.width = rect.width;
+    rssiCanvas.height = rect.height;
+    rssiCtx = rssiCanvas.getContext('2d');
+  }
 
-  document.getElementById('find-title').textContent = (side === 'right' ? 'Right' : 'Left') + ' Ski';
-  arrow.classList.remove('arrow-found');
-  arrow.style.transform = 'translate(-50%,-50%) rotate(0deg)';
-  progressArc.style.strokeDashoffset = '879.6';
-  document.getElementById('distance-display').style.display = 'none';
+  window.goHome = function() {
+    S.scanning = false;
+    S.found = false;
+    S.screen = 'home';
+    if (S.ambientInterval) { clearInterval(S.ambientInterval); S.ambientInterval = null; }
+    document.getElementById('screen-find').classList.remove('active');
+    document.getElementById('screen-home').classList.add('active', 'screen-fade');
+  };
 
-  resetSteps();
-  document.getElementById('start-btn').textContent = 'Start Scan';
-  document.getElementById('start-btn').className = 'action-btn btn-start';
-  document.getElementById('start-btn').onclick = startScan;
+  window.startFind = function(side) {
+    getEls();
+    S.side = side;
+    S.targetBearing = side === 'right' ? 137 : 253;
+    S.found = false;
+    S.scanning = false;
+    S.scanData = [];
+    S.rssiHistory = [];
+    S.currentAngle = 0;
+    S.screen = 'find';
 
-  document.getElementById('screen-home').classList.remove('active');
-  document.getElementById('screen-find').classList.add('active', 'screen-fade');
+    document.getElementById('find-title').textContent = (side === 'right' ? 'Right' : 'Left') + ' Ski';
+    if (arrow) {
+      arrow.classList.remove('arrow-found');
+      arrow.style.transform = 'translate(-50%,-50%) rotate(0deg)';
+    }
+    if (progressArc) progressArc.style.strokeDashoffset = '879.6';
+    document.getElementById('distance-display').style.display = 'none';
 
-  setTimeout(initCanvas, 100);
+    resetSteps();
+    var btn = document.getElementById('start-btn');
+    btn.textContent = 'Start Scan';
+    btn.className = 'action-btn btn-start';
+    btn.onclick = window.startScan;
 
-  // Start ambient RSSI
-  if (!state.ambientInterval) {
-    state.ambientInterval = setInterval(function() {
-      if (state.screen !== 'find' || state.scanning) return;
+    document.getElementById('find-status').textContent = 'Connected';
+    document.getElementById('find-status').style.background = 'var(--green-dim)';
+    document.getElementById('find-status').style.color = 'var(--green)';
+
+    document.getElementById('screen-home').classList.remove('active');
+    document.getElementById('screen-find').classList.add('active', 'screen-fade');
+
+    // Init canvas after screen is visible
+    setTimeout(initCanvas, 200);
+    setTimeout(initCanvas, 500);
+
+    // Start ambient RSSI
+    if (S.ambientInterval) clearInterval(S.ambientInterval);
+    S.ambientInterval = setInterval(function() {
+      if (S.screen !== 'find' || S.scanning || S.found) return;
       var rssi = -55 + (Math.random() - 0.5) * 12;
       pushRssi(Math.round(rssi));
     }, 800);
+  };
+
+  window.startScan = function() {
+    getEls();
+    initCanvas();
+    S.scanning = true;
+    S.found = false;
+    S.scanData = [];
+    S.scanStart = Date.now();
+    S.currentAngle = 0;
+
+    var btn = document.getElementById('start-btn');
+    btn.textContent = 'Stop';
+    btn.className = 'action-btn btn-stop';
+    btn.onclick = window.stopScan;
+
+    document.getElementById('find-status').textContent = 'Scanning';
+    document.getElementById('find-status').style.background = 'var(--blue-dim)';
+    document.getElementById('find-status').style.color = 'var(--blue)';
+
+    markStep(1, 'done');
+    markStep(2, 'active');
+    if (arrow) arrow.classList.remove('arrow-found');
+
+    animateScan();
+  };
+
+  window.stopScan = function() {
+    if (!S.scanning) return;
+    S.scanning = false;
+
+    if (S.scanData.length < 5) {
+      var btn = document.getElementById('start-btn');
+      btn.textContent = 'Start Scan';
+      btn.className = 'action-btn btn-start';
+      btn.onclick = window.startScan;
+      resetSteps();
+      return;
+    }
+
+    // Find weakest RSSI angle (ski is behind you there)
+    var minRssi = Infinity, minAngle = 0;
+    var windowSize = Math.min(5, Math.floor(S.scanData.length / 4));
+    for (var i = windowSize; i < S.scanData.length - windowSize; i++) {
+      var sum = 0;
+      for (var j = i - windowSize; j <= i + windowSize; j++) sum += S.scanData[j].rssi;
+      var avg = sum / (windowSize * 2 + 1);
+      if (avg < minRssi) { minRssi = avg; minAngle = S.scanData[i].angle; }
+    }
+
+    var resultAngle = (minAngle + 180) % 360;
+    S.found = true;
+
+    if (arrow) {
+      arrow.style.transform = 'translate(-50%,-50%) rotate(' + resultAngle + 'deg)';
+      arrow.classList.add('arrow-found');
+    }
+
+    document.getElementById('find-status').textContent = 'Found!';
+    document.getElementById('find-status').style.background = 'var(--green-dim)';
+    document.getElementById('find-status').style.color = 'var(--green)';
+
+    var dist = Math.abs((-0.64 * minRssi) - 32).toFixed(0);
+    document.getElementById('distance-display').style.display = '';
+    document.getElementById('distance-val').textContent = dist;
+    document.getElementById('distance-label').textContent = 'walk this way';
+
+    markStep(2, 'done');
+    markStep(3, 'done');
+    markStep(4, 'active');
+
+    var btn = document.getElementById('start-btn');
+    btn.textContent = 'Scan Again';
+    btn.className = 'action-btn btn-start';
+    btn.onclick = window.startScan;
+
+    animateApproach();
+  };
+
+  function animateScan() {
+    if (!S.scanning) return;
+
+    var elapsed = Date.now() - S.scanStart;
+    var duration = 7000;
+    var progress = Math.min(elapsed / duration, 1);
+    S.currentAngle = progress * 360;
+
+    if (arrow) arrow.style.transform = 'translate(-50%,-50%) rotate(' + S.currentAngle + 'deg)';
+    if (progressArc) progressArc.style.strokeDashoffset = String(879.6 * (1 - progress));
+
+    var diff = Math.abs(S.currentAngle - S.targetBearing);
+    if (diff > 180) diff = 360 - diff;
+    var blockingFactor = 1 - (diff / 180);
+    var rssi = Math.round(-45 - blockingFactor * 35 + (Math.random() - 0.5) * 8);
+    S.scanData.push({ angle: S.currentAngle, rssi: rssi });
+    pushRssi(rssi);
+
+    if (progress >= 1) {
+      window.stopScan();
+      return;
+    }
+
+    requestAnimationFrame(animateScan);
   }
-}
 
-function startScan() {
-  state.scanning = true;
-  state.found = false;
-  state.scanData = [];
-  state.scanStart = Date.now();
-  state.currentAngle = 0;
+  function animateApproach() {
+    if (S.scanning || !S.found) return;
+    var last = S.rssiHistory.length > 0 ? S.rssiHistory[S.rssiHistory.length - 1] : -55;
+    var rssi = last + 0.08 + (Math.random() - 0.5) * 4;
+    rssi = Math.min(rssi, -28);
+    pushRssi(Math.round(rssi));
 
-  document.getElementById('start-btn').textContent = 'Stop';
-  document.getElementById('start-btn').className = 'action-btn btn-stop';
-  document.getElementById('start-btn').onclick = stopScan;
+    var dist = Math.abs((-0.64 * rssi) - 32).toFixed(0);
+    document.getElementById('distance-val').textContent = dist;
 
-  document.getElementById('find-status').textContent = 'Scanning';
-  document.getElementById('find-status').style.background = 'var(--blue-dim)';
-  document.getElementById('find-status').style.color = 'var(--blue)';
-
-  setStep(1, 'done');
-  setStep(2, 'active');
-  arrow.classList.remove('arrow-found');
-
-  animateScan();
-}
-
-function stopScan() {
-  if (!state.scanning) return;
-  state.scanning = false;
-
-  if (state.scanData.length < 5) {
-    document.getElementById('start-btn').textContent = 'Start Scan';
-    document.getElementById('start-btn').className = 'action-btn btn-start';
-    document.getElementById('start-btn').onclick = startScan;
-    resetSteps();
-    return;
+    requestAnimationFrame(animateApproach);
   }
 
-  // Find weakest RSSI angle (ski behind you)
-  var minRssi = Infinity, minAngle = 0;
-  for (var i = 5; i < state.scanData.length - 5; i++) {
-    var sum = 0;
-    for (var j = i - 5; j <= i + 5; j++) sum += state.scanData[j].rssi;
-    var avg = sum / 11;
-    if (avg < minRssi) { minRssi = avg; minAngle = state.scanData[i].angle; }
+  function pushRssi(rssi) {
+    S.rssiHistory.push(rssi);
+    if (S.rssiHistory.length > 100) S.rssiHistory.shift();
+
+    var color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--amber)' : 'var(--red)';
+    document.getElementById('live-rssi').textContent = rssi + ' dBm';
+    document.getElementById('live-rssi').style.color = color;
+    drawRssi();
   }
 
-  var resultAngle = (minAngle + 180) % 360;
-  state.found = true;
+  function drawRssi() {
+    if (!rssiCtx || !rssiCanvas || rssiCanvas.width < 10) { initCanvas(); if (!rssiCtx) return; }
+    var w = rssiCanvas.width, h = rssiCanvas.height;
+    rssiCtx.clearRect(0, 0, w, h);
 
-  arrow.style.transform = 'translate(-50%,-50%) rotate(' + resultAngle + 'deg)';
-  arrow.classList.add('arrow-found');
+    var data = S.rssiHistory;
+    if (data.length < 2) return;
 
-  document.getElementById('find-status').textContent = 'Found!';
-  document.getElementById('find-status').style.background = 'var(--green-dim)';
-  document.getElementById('find-status').style.color = 'var(--green)';
+    var minR = -95, maxR = -25;
+    rssiCtx.beginPath();
+    rssiCtx.strokeStyle = S.found ? '#3fb950' : '#58a6ff';
+    rssiCtx.lineWidth = 2;
+    rssiCtx.lineJoin = 'round';
 
-  // Show distance estimate
-  var dist = Math.abs((-0.64 * minRssi) - 32).toFixed(0);
-  document.getElementById('distance-display').style.display = '';
-  document.getElementById('distance-val').textContent = dist;
-  document.getElementById('distance-label').textContent = 'walk this way';
+    for (var i = 0; i < data.length; i++) {
+      var x = (i / (100 - 1)) * w;
+      var y = h - ((data[i] - minR) / (maxR - minR)) * (h - 6) - 3;
+      if (i === 0) rssiCtx.moveTo(x, y); else rssiCtx.lineTo(x, y);
+    }
+    rssiCtx.stroke();
 
-  setStep(2, 'done');
-  setStep(3, 'done');
-  setStep(4, 'active');
-
-  document.getElementById('start-btn').textContent = 'Scan Again';
-  document.getElementById('start-btn').className = 'action-btn btn-start';
-  document.getElementById('start-btn').onclick = startScan;
-
-  // Continue showing RSSI (getting closer simulation)
-  animateApproach();
-}
-
-function animateScan() {
-  if (!state.scanning) return;
-
-  var elapsed = Date.now() - state.scanStart;
-  var duration = 7000;
-  var progress = Math.min(elapsed / duration, 1);
-  state.currentAngle = progress * 360;
-
-  arrow.style.transform = 'translate(-50%,-50%) rotate(' + state.currentAngle + 'deg)';
-  progressArc.style.strokeDashoffset = String(879.6 * (1 - progress));
-
-  var diff = Math.abs(state.currentAngle - state.targetBearing);
-  if (diff > 180) diff = 360 - diff;
-  var blockingFactor = 1 - (diff / 180);
-  var rssi = Math.round(-45 - blockingFactor * 35 + (Math.random() - 0.5) * 8);
-  state.scanData.push({ angle: state.currentAngle, rssi: rssi });
-  pushRssi(rssi);
-
-  if (progress >= 1) {
-    stopScan();
-    return;
+    rssiCtx.lineTo((data.length - 1) / (100 - 1) * w, h);
+    rssiCtx.lineTo(0, h);
+    rssiCtx.closePath();
+    rssiCtx.fillStyle = S.found ? 'rgba(63,185,80,.06)' : 'rgba(88,166,255,.06)';
+    rssiCtx.fill();
   }
 
-  state.animFrame = requestAnimationFrame(animateScan);
-}
-
-function animateApproach() {
-  if (state.scanning || !state.found) return;
-  var rssi = (state.rssiHistory.length > 0 ? state.rssiHistory[state.rssiHistory.length - 1] : -55) + 0.08 + (Math.random() - 0.5) * 4;
-  rssi = Math.min(rssi, -28);
-  pushRssi(Math.round(rssi));
-
-  var dist = Math.abs((-0.64 * rssi) - 32).toFixed(0);
-  document.getElementById('distance-val').textContent = dist;
-
-  requestAnimationFrame(animateApproach);
-}
-
-function pushRssi(rssi) {
-  state.rssiHistory.push(rssi);
-  if (state.rssiHistory.length > 100) state.rssiHistory.shift();
-
-  var color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--amber)' : 'var(--red)';
-  document.getElementById('live-rssi').textContent = rssi + ' dBm';
-  document.getElementById('live-rssi').style.color = color;
-  drawRssi();
-}
-
-function drawRssi() {
-  if (!rssiCtx || !rssiCanvas.width) { initCanvas(); if (!rssiCtx) return; }
-  var w = rssiCanvas.width, h = rssiCanvas.height;
-  rssiCtx.clearRect(0, 0, w, h);
-
-  var data = state.rssiHistory;
-  if (data.length < 2) return;
-
-  var minR = -95, maxR = -25;
-  rssiCtx.beginPath();
-  rssiCtx.strokeStyle = state.found ? '#3fb950' : '#58a6ff';
-  rssiCtx.lineWidth = 2;
-  rssiCtx.lineJoin = 'round';
-
-  for (var i = 0; i < data.length; i++) {
-    var x = (i / (100 - 1)) * w;
-    var y = h - ((data[i] - minR) / (maxR - minR)) * (h - 6) - 3;
-    if (i === 0) rssiCtx.moveTo(x, y); else rssiCtx.lineTo(x, y);
+  function markStep(num, cls) {
+    var el = document.getElementById('step-' + num);
+    if (!el) return;
+    el.className = 'step-num ' + cls;
+    if (cls === 'done') el.textContent = '✓';
   }
-  rssiCtx.stroke();
 
-  rssiCtx.lineTo((data.length - 1) / (100 - 1) * w, h);
-  rssiCtx.lineTo(0, h);
-  rssiCtx.closePath();
-  rssiCtx.fillStyle = state.found ? 'rgba(63,185,80,.06)' : 'rgba(88,166,255,.06)';
-  rssiCtx.fill();
-}
-
-function setStep(num, state) {
-  var el = document.getElementById('step-' + num);
-  el.className = 'step-num ' + state;
-  if (state === 'done') el.textContent = '✓';
-}
-
-function resetSteps() {
-  for (var i = 1; i <= 4; i++) {
-    var el = document.getElementById('step-' + i);
-    el.className = 'step-num' + (i === 1 ? ' active' : '');
-    el.textContent = i;
+  function resetSteps() {
+    for (var i = 1; i <= 4; i++) {
+      var el = document.getElementById('step-' + i);
+      if (!el) continue;
+      el.className = 'step-num' + (i === 1 ? ' active' : '');
+      el.textContent = String(i);
+    }
   }
+
+})();
+
+function toggleSnow() {
+  document.body.classList.toggle('snow-mode');
+  localStorage.setItem('skispot-snow', document.body.classList.contains('snow-mode') ? '1' : '');
 }
+(function() {
+  if (localStorage.getItem('skispot-snow') === '1') document.body.classList.add('snow-mode');
+})();
 </script>
 
 </body>
