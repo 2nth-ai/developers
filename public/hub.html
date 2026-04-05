@@ -48,10 +48,24 @@
   <h1>PARTNER HUB</h1>
   <div class="sub">All partner pages, demos, and previews in one place.</div>
 
+  <!-- Signed-in user bar (always visible when authenticated) -->
+  <div id="user-info-bar" style="display:none;background:#f0fdf4;border:1px solid rgba(16,185,129,.15);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:11px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div>
+      <span style="color:#18181b;font-weight:600" id="user-display-name">—</span>
+      <span style="color:#a1a1aa">|</span>
+      <span style="color:#71717a" id="user-display-scope">—</span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <a href="/access.html" style="font-size:9px;color:#71717a;text-decoration:none;border:1px solid #e4e4e7;padding:2px 8px;border-radius:3px">Switch User</a>
+        <a href="/api/access-logout" style="font-size:9px;color:#71717a;text-decoration:none;border:1px solid #e4e4e7;padding:2px 8px;border-radius:3px">Sign Out</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Admin: View As bar -->
   <div id="view-as-bar" style="display:none;background:#f5f3ff;border:1px solid rgba(124,58,237,.15);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <span style="color:#71717a">Viewing as:</span>
+      <span style="color:#71717a">View as:</span>
       <select id="view-as-select" onchange="viewAs(this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(124,58,237,.2);background:#fff;font-family:inherit;font-size:11px;color:#18181b">
         <option value="full">Admin (full access)</option>
       </select>
@@ -798,6 +812,25 @@ function toggleAccess(userId, groupScope, granted) {
   // For now it's client-side only and shows an alert.
   console.log('Access ' + (granted ? 'granted' : 'revoked') + ': ' + user.name + ' → ' + groupScope + ' (new scope: ' + user.scope + ')');
 }
+
+// Show signed-in user info
+(function() {
+  var scope = window.__userScope;
+  if (!scope) return;
+
+  // Find current user from scope
+  var currentUser = null;
+  if (scope === 'full') {
+    currentUser = ALL_USERS.find(function(u) { return u.scope === 'full' && u.id === 'craig'; }) || { name: 'Admin', scope: 'full' };
+  } else {
+    currentUser = ALL_USERS.find(function(u) { return u.scope === scope; }) || { name: 'Member', scope: scope };
+  }
+
+  var bar = document.getElementById('user-info-bar');
+  bar.style.display = '';
+  document.getElementById('user-display-name').textContent = currentUser.name;
+  document.getElementById('user-display-scope').textContent = scope === 'full' ? 'Admin — full access' : 'Scope: ' + scope;
+})();
 
 // View As — admin impersonation
 if (window.__userScope === 'full') {
