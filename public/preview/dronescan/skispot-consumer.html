@@ -194,6 +194,17 @@
       <div class="find-status" id="find-status" style="background:var(--green-dim);color:var(--green)">Connected</div>
     </div>
 
+    <!-- Sensor bar -->
+    <div style="display:flex;gap:8px;padding:0 20px 8px;flex-wrap:wrap">
+      <div id="sensor-badge" style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:6px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(88,166,255,.15)">Simulation</div>
+      <div style="font-size:9px;font-weight:600;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;gap:4px">
+        &#129517; <span id="compass-heading">—°</span>
+      </div>
+      <div style="font-size:9px;font-weight:600;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;gap:4px">
+        &#128205; <span id="gps-status">No GPS</span>
+      </div>
+    </div>
+
     <div class="find-compass">
       <div class="compass-outer">
         <div class="compass-ring"></div>
@@ -266,6 +277,17 @@
     scanStart: 0,
     currentAngle: 0,
     ambientInterval: null,
+    // Sensor state
+    hasCompass: false,
+    hasGPS: false,
+    compassHeading: 0,        // current device heading (0-360)
+    startHeading: null,       // heading when scan started
+    rotationDeg: 0,           // how far rotated since start
+    gpsLat: null,
+    gpsLng: null,
+    gpsAccuracy: null,
+    gpsWatchId: null,
+    sensorMode: 'sim',        // 'real' or 'sim'
   };
 
   var arrow, progressArc, rssiCanvas, rssiCtx;
@@ -287,6 +309,106 @@
     rssiCanvas.height = rect.height;
     rssiCtx = rssiCanvas.getContext('2d');
   }
+
+  // ═══ SENSOR APIs ═══
+
+  function initSensors() {
+    // Compass: DeviceOrientationEvent
+    if (typeof DeviceOrientationEvent !== 'undefined') {
+      // iOS 13+ requires permission
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then(function(response) {
+          if (response === 'granted') enableCompass();
+        }).catch(function() {});
+      } else {
+        // Android / other — just listen
+        enableCompass();
+      }
+    }
+
+    // GPS: Geolocation
+    if (navigator.geolocation) {
+      S.gpsWatchId = navigator.geolocation.watchPosition(
+        function(pos) {
+          S.hasGPS = true;
+          S.gpsLat = pos.coords.latitude;
+          S.gpsLng = pos.coords.longitude;
+          S.gpsAccuracy = pos.coords.accuracy;
+          updateSensorDisplay();
+        },
+        function() {},
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
+      );
+    }
+  }
+
+  function enableCompass() {
+    window.addEventListener('deviceorientation', function(e) {
+      // webkitCompassHeading for iOS, alpha for Android
+      var heading = e.webkitCompassHeading || (e.alpha !== null ? (360 - e.alpha) : null);
+      if (heading === null) return;
+
+      S.hasCompass = true;
+      S.compassHeading = Math.round(heading);
+
+      // During scan: track rotation from start heading
+      if (S.scanning && S.startHeading !== null) {
+        var delta = heading - S.startHeading;
+        if (delta < 0) delta += 360;
+        S.rotationDeg = delta;
+      }
+
+      updateSensorDisplay();
+    }, true);
+
+    // Also try the newer AbsoluteOrientationSensor
+    if (window.AbsoluteOrientationSensor) {
+      try {
+        var sensor = new AbsoluteOrientationSensor({ frequency: 30, referenceFrame: 'device' });
+        sensor.addEventListener('reading', function() {
+          var q = sensor.quaternion;
+          // Convert quaternion to heading
+          var heading = Math.atan2(2 * (q[0]*q[1] + q[2]*q[3]), 1 - 2*(q[1]*q[1] + q[2]*q[2]));
+          heading = ((heading * 180 / Math.PI) + 360) % 360;
+          S.compassHeading = Math.round(heading);
+          S.hasCompass = true;
+        });
+        sensor.start();
+      } catch(e) {}
+    }
+  }
+
+  function updateSensorDisplay() {
+    // Update compass heading display
+    var headingEl = document.getElementById('compass-heading');
+    if (headingEl) {
+      headingEl.textContent = S.compassHeading + '°';
+    }
+
+    // Update GPS display
+    var gpsEl = document.getElementById('gps-status');
+    if (gpsEl && S.hasGPS) {
+      gpsEl.textContent = '±' + Math.round(S.gpsAccuracy) + 'm';
+      gpsEl.style.color = S.gpsAccuracy < 10 ? 'var(--green)' : S.gpsAccuracy < 30 ? 'var(--amber)' : 'var(--red)';
+    }
+
+    // If we have real compass during scan, update arrow
+    if (S.scanning && S.hasCompass && S.sensorMode === 'real') {
+      if (arrow) arrow.style.transform = 'translate(-50%,-50%) rotate(' + S.compassHeading + 'deg)';
+    }
+  }
+
+  // Detect if sensors are available and switch to real mode
+  function checkSensorMode() {
+    if (S.hasCompass) {
+      S.sensorMode = 'real';
+      var badge = document.getElementById('sensor-badge');
+      if (badge) { badge.textContent = 'Live Sensors'; badge.style.color = 'var(--green)'; badge.style.borderColor = 'rgba(63,185,80,.3)'; badge.style.background = 'var(--green-dim)'; }
+    }
+  }
+
+  // Call sensor check periodically
+  setInterval(checkSensorMode, 2000);
 
   window.goHome = function() {
     S.scanning = false;
@@ -345,18 +467,21 @@
   window.startScan = function() {
     getEls();
     initCanvas();
+    initSensors(); // Request sensor permissions on user gesture
     S.scanning = true;
     S.found = false;
     S.scanData = [];
     S.scanStart = Date.now();
     S.currentAngle = 0;
+    S.startHeading = S.hasCompass ? S.compassHeading : null;
+    S.rotationDeg = 0;
 
     var btn = document.getElementById('start-btn');
     btn.textContent = 'Stop';
     btn.className = 'action-btn btn-stop';
     btn.onclick = window.stopScan;
 
-    document.getElementById('find-status').textContent = 'Scanning';
+    document.getElementById('find-status').textContent = S.hasCompass ? 'Live Compass' : 'Scanning';
     document.getElementById('find-status').style.background = 'var(--blue-dim)';
     document.getElementById('find-status').style.color = 'var(--blue)';
 
@@ -364,7 +489,11 @@
     markStep(2, 'active');
     if (arrow) arrow.classList.remove('arrow-found');
 
-    animateScan();
+    if (S.sensorMode === 'real' && S.hasCompass) {
+      animateScanReal();
+    } else {
+      animateScan();
+    }
   };
 
   window.stopScan = function() {
@@ -392,15 +521,21 @@
 
     var resultAngle = (minAngle + 180) % 360;
     S.found = true;
+    S.foundBearing = resultAngle;
 
     if (arrow) {
       arrow.style.transform = 'translate(-50%,-50%) rotate(' + resultAngle + 'deg)';
       arrow.classList.add('arrow-found');
     }
 
-    document.getElementById('find-status').textContent = 'Found!';
+    var modeLabel = S.sensorMode === 'real' ? 'Found! (compass)' : 'Found!';
+    document.getElementById('find-status').textContent = modeLabel;
     document.getElementById('find-status').style.background = 'var(--green-dim)';
     document.getElementById('find-status').style.color = 'var(--green)';
+
+    // Update compass heading to show bearing
+    var headingEl = document.getElementById('compass-heading');
+    if (headingEl) headingEl.textContent = Math.round(resultAngle) + '° bearing';
 
     var dist = Math.abs((-0.64 * minRssi) - 32).toFixed(0);
     document.getElementById('distance-display').style.display = '';
@@ -419,6 +554,36 @@
     animateApproach();
   };
 
+  // Real compass scan — uses device orientation
+  function animateScanReal() {
+    if (!S.scanning) return;
+
+    var heading = S.compassHeading;
+    var rotation = S.rotationDeg;
+    var progress = Math.min(rotation / 360, 1);
+
+    // Arrow follows real compass
+    if (arrow) arrow.style.transform = 'translate(-50%,-50%) rotate(' + heading + 'deg)';
+    if (progressArc) progressArc.style.strokeDashoffset = String(879.6 * (1 - progress));
+
+    // Simulate RSSI based on real heading vs target
+    var diff = Math.abs(heading - S.targetBearing);
+    if (diff > 180) diff = 360 - diff;
+    var blockingFactor = 1 - (diff / 180);
+    var rssi = Math.round(-45 - blockingFactor * 35 + (Math.random() - 0.5) * 8);
+    S.scanData.push({ angle: heading, rssi: rssi });
+    pushRssi(rssi);
+
+    // Auto-stop after full rotation
+    if (progress >= 1) {
+      window.stopScan();
+      return;
+    }
+
+    requestAnimationFrame(animateScanReal);
+  }
+
+  // Simulated scan — auto-rotates
   function animateScan() {
     if (!S.scanning) return;
 
@@ -454,6 +619,14 @@
 
     var dist = Math.abs((-0.64 * rssi) - 32).toFixed(0);
     document.getElementById('distance-val').textContent = dist;
+
+    // In real compass mode, rotate arrow relative to current heading
+    // so it always points toward the found bearing in the real world
+    if (S.hasCompass && S.foundBearing !== undefined) {
+      var relativeAngle = S.foundBearing - S.compassHeading;
+      if (relativeAngle < 0) relativeAngle += 360;
+      if (arrow) arrow.style.transform = 'translate(-50%,-50%) rotate(' + relativeAngle + 'deg)';
+    }
 
     requestAnimationFrame(animateApproach);
   }
