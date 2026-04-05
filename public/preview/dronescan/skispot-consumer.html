@@ -398,7 +398,16 @@
 
   // ═══ SENSOR APIs ═══
 
+  var sensorsInitialised = false;
+
   function initSensors() {
+    if (sensorsInitialised) return;
+    sensorsInitialised = true;
+
+    // Load saved offset
+    var saved = localStorage.getItem('skispot-compass-offset');
+    if (saved) S.compassOffset = parseInt(saved) || 0;
+
     if (typeof DeviceOrientationEvent !== 'undefined') {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission().then(function(response) {
@@ -408,9 +417,6 @@
         enableCompass();
       }
     }
-    // Load saved offset
-    var saved = localStorage.getItem('skispot-compass-offset');
-    if (saved) S.compassOffset = parseInt(saved) || 0;
   }
 
   function enableCompass() {
@@ -552,17 +558,26 @@
   // Call sensor check periodically
   setInterval(checkSensorMode, 2000);
 
+  function showScreen(name) {
+    S.screen = name;
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen-' + name).classList.add('active', 'screen-fade');
+  }
+
   window.goHome = function() {
     S.scanning = false;
     S.found = false;
-    S.screen = 'home';
     if (S.ambientInterval) { clearInterval(S.ambientInterval); S.ambientInterval = null; }
-    document.getElementById('screen-find').classList.remove('active');
-    document.getElementById('screen-home').classList.add('active', 'screen-fade');
+    if (S._settingsRAF) { cancelAnimationFrame(S._settingsRAF); S._settingsRAF = null; }
+    showScreen('home');
   };
 
   window.startFind = function(side) {
+    // Stop settings animation if running
+    if (S._settingsRAF) { cancelAnimationFrame(S._settingsRAF); S._settingsRAF = null; }
+
     getEls();
+    initSensors(); // idempotent — only runs once
     S.side = side;
     S.targetBearing = side === 'right' ? 137 : 253;
     S.found = false;
@@ -570,7 +585,6 @@
     S.scanData = [];
     S.rssiHistory = [];
     S.currentAngle = 0;
-    S.screen = 'find';
 
     document.getElementById('find-title').textContent = (side === 'right' ? 'Right' : 'Left') + ' Ski';
     if (arrow) {
@@ -580,18 +594,18 @@
     if (progressArc) progressArc.style.strokeDashoffset = '879.6';
     document.getElementById('distance-display').style.display = 'none';
 
+    var statusText = S.hasCompass ? 'Live Compass' : 'Connected';
+    document.getElementById('find-status').textContent = statusText;
+    document.getElementById('find-status').style.background = S.hasCompass ? 'var(--blue-dim)' : 'var(--green-dim)';
+    document.getElementById('find-status').style.color = S.hasCompass ? 'var(--blue)' : 'var(--green)';
+
     resetSteps();
     var btn = document.getElementById('start-btn');
     btn.textContent = 'Start Scan';
     btn.className = 'action-btn btn-start';
     btn.onclick = window.startScan;
 
-    document.getElementById('find-status').textContent = 'Connected';
-    document.getElementById('find-status').style.background = 'var(--green-dim)';
-    document.getElementById('find-status').style.color = 'var(--green)';
-
-    document.getElementById('screen-home').classList.remove('active');
-    document.getElementById('screen-find').classList.add('active', 'screen-fade');
+    showScreen('find');
 
     // Init canvas after screen is visible
     setTimeout(initCanvas, 200);
@@ -829,10 +843,11 @@
 
   // === SETTINGS ===
   window.showSettings = function() {
-    S.screen = 'settings';
-    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-    document.getElementById('screen-settings').classList.add('active', 'screen-fade');
-    initSensors();
+    if (S.ambientInterval) { clearInterval(S.ambientInterval); S.ambientInterval = null; }
+    S.scanning = false;
+    S.found = false;
+    initSensors(); // idempotent
+    showScreen('settings');
     updateSettingsInfo();
     // Start compass animation
     if (!S._settingsRAF) {
@@ -914,13 +929,6 @@
     localStorage.setItem('skispot-compass-offset', '0');
     document.getElementById('offset-val').textContent = '0°';
     updateSettingsInfo();
-  };
-
-  // Override goHome to clean up settings RAF
-  var _origGoHome = window.goHome;
-  window.goHome = function() {
-    if (S._settingsRAF) { cancelAnimationFrame(S._settingsRAF); S._settingsRAF = null; }
-    _origGoHome();
   };
 
   // Settings compass animation interval
