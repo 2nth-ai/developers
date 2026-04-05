@@ -21,6 +21,7 @@ const FALLBACK_USERS = {
   'erica':    { id:'erica', email: 'erica@eatfitsa.com',              name: 'Erica Jankovich', scope: 'eatfitsa',             pin: '2016' },
   'jonty':    { id:'jonty', email: 'jonty@seaharvestgroup.co.za',    name: 'Jonty Jankovich-Besan', scope: 'jankovich',      pin: '1968' },
   'paul':     { id:'paul', email: 'presburypaul@gmail.com',             name: 'Paul Presbury',        scope: 'full',                 pin: '4103' },
+  'grant':    { id:'grant', email: 'grant@gridline.co.za',              name: 'Grant Kneale',         scope: 'gridlineprop',         pin: '5050' },
 };
 
 async function getUser(env, id) {
