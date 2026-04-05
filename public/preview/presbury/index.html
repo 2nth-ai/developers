@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paul Presbury — AI-Powered Business Turnaround</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#f8fafc;color:#475569;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    :root{--cyan:#06b6d4;--cyan-dark:#0891b2;--navy:#0f172a;--text:#0f172a;--text2:#475569;--muted:#94a3b8;--border:#e2e8f0;--bg:#f8fafc;--bg2:#fff;--bg3:#f1f5f9;--amber:#f59e0b;--red:#ef4444;--green:#059669;--purple:#7c3aed}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+    header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(248,250,252,.92);backdrop-filter:blur(12px)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:10px}
+    .logo-mark{width:32px;height:32px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--cyan)}
+    nav a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;margin-left:20px}
+    nav a:hover{color:var(--cyan)}
+    .nav-cta{background:var(--cyan);color:#fff!important;padding:7px 18px;border-radius:6px;font-weight:600}
+
+    .hero{padding:80px 0 48px;position:relative}
+    .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,.05),transparent 70%);pointer-events:none}
+    .hero-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:16px}
+    .hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,6vw,56px);font-weight:700;color:var(--navy);line-height:1.08;margin-bottom:20px;letter-spacing:-.03em}
+    .hero h1 span{color:var(--cyan)}
+    .hero p{font-size:17px;color:var(--text2);max-width:580px;line-height:1.65;margin-bottom:28px}
+
+    .section{padding:64px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:var(--navy);line-height:1.15;margin-bottom:14px}
+
+    /* Turnaround process */
+    .process{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:28px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .step{padding:20px 14px;text-align:center;border-right:1px solid var(--border);transition:background .2s}
+    .step:last-child{border:none}
+    .step:hover{background:rgba(6,182,212,.03)}
+    .step-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--cyan)}
+    .step-name{font-size:12px;font-weight:600;color:var(--text);margin-top:4px}
+    .step-desc{font-size:10px;color:var(--muted);margin-top:2px}
+
+    /* AI demo */
+    .demo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0}
+    .demo-header{background:var(--bg3);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .demo-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .demo-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);font-weight:600}
+    .demo-body{padding:20px;display:flex;flex-direction:column;gap:12px}
+    .msg{padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.5;max-width:88%}
+    .msg-ai{background:var(--bg3);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+    .msg-user{background:var(--cyan);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+    .msg-ai strong{color:var(--cyan)}
+    .msg-data{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.7}
+
+    /* Scorecard */
+    .scorecard{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:20px 0;border-radius:10px;overflow:hidden}
+    .sc-cell{background:var(--bg2);padding:16px;text-align:center}
+    .sc-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
+    .sc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+    .sc-bar{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden}
+    .sc-fill{height:100%;border-radius:2px}
+
+    /* Skills */
+    .skills{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:24px 0}
+    .skill{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s}
+    .skill:hover{border-color:var(--cyan)}
+    .skill h3{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--text);margin-bottom:4px}
+    .skill p{font-size:12px;color:var(--text2);margin:0 0 8px}
+    .skill-ask{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan);font-style:italic;background:rgba(6,182,212,.04);padding:6px 10px;border-radius:6px}
+
+    .cta-section{background:var(--navy);border-radius:16px;padding:56px;text-align:center;margin:40px 0}
+    .cta-section h2{color:#fff;margin-bottom:8px}
+    .cta-section p{color:rgba(255,255,255,.5);margin-bottom:24px;font-size:16px}
+    .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-cyan{background:var(--cyan);color:#fff}.btn-cyan:hover{background:var(--cyan-dark)}
+    .btn-ghost{background:none;border:1px solid rgba(255,255,255,.2);color:#fff;margin-left:12px}.btn-ghost:hover{border-color:var(--cyan)}
+
+    footer{border-top:1px solid var(--border);padding:20px 0}
+    footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--cyan);text-decoration:none}
+
+    @media(max-width:768px){.process{grid-template-columns:1fr}.step{border-right:none;border-bottom:1px solid var(--border)}.skills,.scorecard{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="logo"><div class="logo-mark">PP</div> Paul Presbury</a>
+    <nav>
+      <a href="#process">Process</a>
+      <a href="#demo">AI Demo</a>
+      <a href="#skills">Skills</a>
+      <a href="https://www.linkedin.com/in/paul-presbury-977102a3/" class="nav-cta">LinkedIn</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Specialist Partner &middot; 2nth.ai</div>
+    <h1>Turnaround strategy,<br><span>amplified by AI</span>.</h1>
+    <p>A decade of restructuring distressed assets and driving business transformation — now powered by AI that analyses financials, models scenarios, and produces board-ready recovery plans in hours, not weeks.</p>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="section" id="process">
+  <div class="container">
+    <div class="sec-label">The turnaround process</div>
+    <h2>From diagnosis to recovery</h2>
+    <div class="process">
+      <div class="step"><div class="step-num">1</div><div class="step-name">Diagnose</div><div class="step-desc">AI analyses financials, operations, market, team</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-name">Restructure</div><div class="step-desc">Model scenarios — headcount, costs, departments</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-name">Stabilise</div><div class="step-desc">Cash flow recovery, quick wins, stop the bleeding</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-name">Transform</div><div class="step-desc">New operating model, team formation, governance</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-name">Scale</div><div class="step-desc">Growth strategy, market expansion, sustainable ops</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Demo -->
+<section class="section" id="demo">
+  <div class="container">
+    <div class="sec-label">AI in action</div>
+    <h2>Business turnaround — live diagnostic</h2>
+
+    <div class="demo">
+      <div class="demo-header"><span class="demo-dot"></span><span class="demo-title">Paul Presbury AI — Turnaround Assessment</span></div>
+      <div class="demo-body">
+        <div class="msg msg-user">Run a turnaround diagnostic on a mid-size FMCG distributor in Durban. R85M revenue, 120 staff, operating at a loss for 3 quarters. Cash runway is 4 months.</div>
+        <div class="msg msg-ai">
+          <strong>Running turnaround diagnostic.</strong> Analysing across 6 dimensions:
+        </div>
+      </div>
+    </div>
+
+    <div class="scorecard">
+      <div class="sc-cell"><div class="sc-val" style="color:var(--red)">28%</div><div class="sc-label">Financial health</div><div class="sc-bar"><div class="sc-fill" style="width:28%;background:var(--red)"></div></div></div>
+      <div class="sc-cell"><div class="sc-val" style="color:var(--amber)">45%</div><div class="sc-label">Operational efficiency</div><div class="sc-bar"><div class="sc-fill" style="width:45%;background:var(--amber)"></div></div></div>
+      <div class="sc-cell"><div class="sc-val" style="color:var(--green)">62%</div><div class="sc-label">Market position</div><div class="sc-bar"><div class="sc-fill" style="width:62%;background:var(--green)"></div></div></div>
+      <div class="sc-cell"><div class="sc-val" style="color:var(--amber)">40%</div><div class="sc-label">Team capability</div><div class="sc-bar"><div class="sc-fill" style="width:40%;background:var(--amber)"></div></div></div>
+      <div class="sc-cell"><div class="sc-val" style="color:var(--red)">22%</div><div class="sc-label">Cash management</div><div class="sc-bar"><div class="sc-fill" style="width:22%;background:var(--red)"></div></div></div>
+      <div class="sc-cell"><div class="sc-val" style="color:var(--amber)">55%</div><div class="sc-label">Governance</div><div class="sc-bar"><div class="sc-fill" style="width:55%;background:var(--amber)"></div></div></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-body">
+        <div class="msg msg-ai">
+          <strong>Overall turnaround score: 42/100 — Critical intervention required.</strong>
+          <div class="msg-data">
+CRITICAL FINDINGS:
+
+&#9888; CASH: 4-month runway at current burn rate (R2.1M/month loss)
+  → Cash management score: 22% — worst dimension
+  → Debtors days: 68 (industry avg: 42)
+  → R12.4M in overdue receivables (>60 days)
+
+&#9888; FINANCIAL: Operating at -8.2% margin (3 consecutive quarters)
+  → Revenue declining 6% YoY despite market growing 3%
+  → Cost of sales: 74% of revenue (industry: 68%)
+  → Overhead ratio: 34% (should be <28%)
+
+&#9989; MARKET: Brand still has value — 62% score
+  → Strong in KZN (42% market share in category)
+  → Weak in Gauteng (8% — underleveraged)
+  → Product range is competitive — pricing is the issue
+
+&#9888; TEAM: Key gaps identified
+  → No CFO (financial controller acting up)
+  → Sales team: 14 reps, only 6 meeting target
+  → Warehouse: 28% labour cost as % of revenue (target: 18%)
+          </div>
+        </div>
+        <div class="msg msg-user">What's the 90-day recovery plan?</div>
+        <div class="msg msg-ai">
+          Running <code>biz/turnaround-assessment</code> + <code>fin/modelling</code>...
+          <div class="msg-data">
+90-DAY RECOVERY PLAN
+
+PHASE 1 — STOP THE BLEEDING (Days 1-30)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. Collect R12.4M overdue receivables
+     → Dedicated collections task force (2 people)
+     → Legal letters on accounts >90 days (R4.2M)
+     → Expected recovery: R7-9M in 30 days
+     → Impact: Extends runway to 7+ months
+
+  2. Cut non-essential overhead immediately
+     → Freeze all non-revenue hiring
+     → Renegotiate top 5 supplier contracts (est. -R1.2M/yr)
+     → Cancel unused software/services (audit shows R380K/yr waste)
+
+  3. Appoint interim CFO (via DurPro — 2nth.ai partner)
+     → Financial rigour from day 1
+     → Weekly cash flow reporting to board
+
+PHASE 2 — RESTRUCTURE (Days 31-60)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4. Sales team restructure
+     → Exit 4 underperforming reps (consultation via LRA s189)
+     → Promote 2 top performers to team leads
+     → New commission structure: 60/40 base/variable
+     → Target: R2.8M/month → R3.4M/month
+
+  5. Warehouse labour optimisation
+     → Reduce from 34 to 24 staff (s189 process)
+     → Introduce ScanMan AI pick-path (2nth.ai partner)
+     → Target: 28% → 20% labour cost ratio
+     → Annual saving: R3.6M
+
+  6. Pricing review
+     → AI analysis of 1,247 SKUs
+     → Raise prices on 180 underpriced items (avg +8%)
+     → Delist 90 low-margin SKUs
+     → Revenue impact: +R4.2M/yr at stable volume
+
+PHASE 3 — STABILISE & GROW (Days 61-90)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  7. Gauteng expansion plan
+     → Currently 8% share in a R280M market
+     → Hire 3 reps (experienced, via DurPro)
+     → Target: 15% share in 12 months = +R12.6M revenue
+
+  8. Governance upgrade
+     → Monthly board pack (AI-generated from ERP data)
+     → King IV compliance review (leg/corporate/king-iv skill)
+     → Quarterly strategic reviews with AI scenario modelling
+
+PROJECTED OUTCOME:
+  Current: -R2.1M/month loss
+  Month 3: Breakeven
+  Month 6: +R800K/month profit
+  Month 12: +R1.8M/month, 6.2% margin
+
+  Restructuring cost: R2.4M (once-off)
+  ROI: 8.6x in year 1
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="container">
+    <div class="sec-label">AI Skills</div>
+    <h2>Paul's toolkit, amplified</h2>
+    <div class="skills">
+      <div class="skill">
+        <h3>Business Turnaround Assessment</h3>
+        <p>6-dimension diagnostic for distressed businesses. Produces scored report with prioritised 90-day recovery plan.</p>
+        <div class="skill-ask">"Diagnose this FMCG distributor — R85M revenue, 3 quarters of losses"</div>
+      </div>
+      <div class="skill">
+        <h3>Organisational Restructuring</h3>
+        <p>Models headcount changes, departmental merges, and cost reduction. Board-ready proposals with impact analysis.</p>
+        <div class="skill-ask">"Model a 20% headcount reduction with s189 compliance"</div>
+      </div>
+      <div class="skill">
+        <h3>FMCG Market Intelligence</h3>
+        <p>Category performance, competitor positioning, distribution strategy, pricing intelligence for SA retail.</p>
+        <div class="skill-ask">"Compare our KZN market share to competitors in beverages"</div>
+      </div>
+      <div class="skill">
+        <h3>King IV Governance Compliance</h3>
+        <p>Screens corporate governance against King IV and Companies Act. Identifies gaps, recommends board actions.</p>
+        <div class="skill-ask">"Run a King IV compliance check on our board structure"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h2>Business in trouble? There's a plan.</h2>
+    <p>Start with a diagnostic. Know where you stand before you restructure.</p>
+    <a href="https://www.linkedin.com/in/paul-presbury-977102a3/" class="btn btn-cyan">Connect with Paul</a>
+    <a href="/partners/presbury.html" class="btn btn-ghost">View partnership</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Paul Presbury &mdash; Specialist Partner of <a href="https://2nth.ai">2nth.ai</a></p>
+    <p>Strategic Leadership &amp; Business Restructuring &middot; South Africa</p>
+  </div>
+</footer>
+
+</body>
+</html>
