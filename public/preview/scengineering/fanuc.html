@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FANUC Mobile Factory — SC Engineering</title>
+  <meta name="description" content="Containerised FANUC M-20iB/35S robot cell in a 20ft shipping container. Drill, cut, deburr, and inspect on site. AI-managed operations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--card:#1e1e28;--border:rgba(255,255,255,.06);--border-s:rgba(255,255,255,.1);--text:#e8eaf0;--text2:#94a3b8;--text3:#64748b;--accent:#f59e0b;--accent-dim:#d97706;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--cyan:#06b6d4;--purple:#8b5cf6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased}
+    .container{max-width:1000px;margin:0 auto;padding:0 24px}
+
+    /* Nav */
+    nav{background:rgba(10,10,15,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 0;position:fixed;top:0;left:0;right:0;z-index:50}
+    nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:var(--accent)}
+    .nav-brand span{color:var(--text3)}
+    .nav-links{display:flex;gap:16px;align-items:center}
+    .nav-links a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);text-decoration:none}
+    .nav-links a:hover{color:var(--text)}
+
+    /* Hero */
+    .hero{padding:120px 0 60px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(245,158,11,.04) 0%,transparent 60%)}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+    .hero-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,56px);letter-spacing:.04em;line-height:.95;color:var(--text);margin-bottom:16px}
+    h1 span{color:var(--accent)}
+    h2{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.03em;color:var(--text);margin-bottom:12px}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:10px}
+
+    /* Container diagram */
+    .container-diagram{background:var(--surface);border:1px solid var(--border-s);border-radius:12px;padding:24px;margin:32px 0;position:relative;overflow:hidden}
+    .container-diagram::before{content:'20ft SHIPPING CONTAINER';position:absolute;top:12px;right:16px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text3)}
+    .cd-grid{display:grid;grid-template-columns:1fr 2fr 1fr;gap:12px;margin-top:8px}
+    .cd-zone{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+    .cd-zone-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+    .cd-zone-icon{font-size:32px;margin-bottom:8px}
+    .cd-zone-name{font-size:14px;font-weight:700;color:var(--text)}
+    .cd-zone-detail{font-size:11px;color:var(--text3);margin-top:4px}
+
+    /* Stats */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text)}
+    .stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-top:2px}
+
+    /* Cards */
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:20px 0}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;transition:all .2s}
+    .card:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .card h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+    .card p{font-size:13px;color:var(--text3);line-height:1.6}
+    .card-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-top:10px;border:1px solid var(--border-s);color:var(--text3)}
+
+    /* Live dashboard */
+    .dashboard{background:var(--surface);border:1px solid var(--border-s);border-radius:12px;overflow:hidden;margin:24px 0}
+    .dash-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+    .dash-header h3{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .dash-live{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green)}
+    .dash-body{padding:18px}
+    .dash-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .dash-row:last-child{border:none}
+    .dash-metric{font-size:13px;color:var(--text)}
+    .dash-value{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+    .val-green{color:var(--green)}
+    .val-amber{color:var(--accent)}
+    .val-red{color:var(--red)}
+    .val-blue{color:var(--blue)}
+
+    /* Process flow */
+    .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:16px 0}
+    .flow-step{padding:10px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--text);text-align:center}
+    .flow-step.active{border-color:var(--accent);background:rgba(245,158,11,.06);color:var(--accent)}
+    .flow-arrow{color:var(--text3);font-size:14px}
+
+    .section{padding:60px 0}
+    .section-alt{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+    footer a{color:var(--accent);text-decoration:none}
+
+    @media(max-width:640px){.cd-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-brand">FANUC MOBILE FACTORY <span>by SC Engineering</span></div>
+    <div class="nav-links">
+      <a href="/preview/scengineering/">SC Engineering</a>
+      <a href="/partners/scengineering.html">Partner Profile</a>
+      <a href="https://2nth.ai">2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag"><span class="dot"></span> Concept Demo</div>
+    <h1>THE FACTORY<br>IN A <span>CONTAINER</span></h1>
+    <p style="font-size:17px;color:var(--text2);max-width:540px;margin-bottom:24px;line-height:1.6">A FANUC M-20iB/35S robot cell inside a 20ft shipping container. Drill, cut, deburr, and inspect precision parts on site — from mine to shipyard. AI-managed operations via 2nth.ai.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="#dashboard" style="padding:12px 24px;background:var(--accent);color:#000;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none">Live Dashboard</a>
+      <a href="#specs" style="padding:12px 24px;border:1px solid var(--border-s);color:var(--text2);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none">Specifications</a>
+    </div>
+  </div>
+</section>
+
+<!-- Container layout -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">Container Layout</div>
+    <h2>WHAT'S INSIDE THE 20FT BOX</h2>
+
+    <div class="container-diagram">
+      <div class="cd-grid">
+        <div class="cd-zone" style="border-color:rgba(59,130,246,.2)">
+          <div class="cd-zone-label" style="color:var(--blue)">Zone A — Load</div>
+          <div class="cd-zone-icon">&#128230;</div>
+          <div class="cd-zone-name">Part Loading</div>
+          <div class="cd-zone-detail">Raw material in, fixtures, pneumatic clamping</div>
+        </div>
+        <div class="cd-zone" style="border-color:rgba(245,158,11,.2)">
+          <div class="cd-zone-label" style="color:var(--accent)">Zone B — Robot Cell</div>
+          <div class="cd-zone-icon">&#129302;</div>
+          <div class="cd-zone-name">FANUC M-20iB/35S</div>
+          <div class="cd-zone-detail">35kg payload, 1831mm reach, 6-axis. Drill, cut, deburr, weld</div>
+        </div>
+        <div class="cd-zone" style="border-color:rgba(34,197,94,.2)">
+          <div class="cd-zone-label" style="color:var(--green)">Zone C — Inspect</div>
+          <div class="cd-zone-icon">&#128269;</div>
+          <div class="cd-zone-name">QC Station</div>
+          <div class="cd-zone-detail">Vision inspection, dimensional check, pass/fail, output</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:12px;padding:0 4px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">&#9664; DOOR END</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">6058mm (20ft) &#9654;</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-val">35kg</div><div class="stat-label">Robot Payload</div></div>
+      <div class="stat"><div class="stat-val">1831mm</div><div class="stat-label">Reach</div></div>
+      <div class="stat"><div class="stat-val">6</div><div class="stat-label">Axes</div></div>
+      <div class="stat"><div class="stat-val">20ft</div><div class="stat-label">Container</div></div>
+      <div class="stat"><div class="stat-val">4hr</div><div class="stat-label">Setup Time</div></div>
+      <div class="stat"><div class="stat-val">AI</div><div class="stat-label">Managed by 2nth.ai</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Process flow -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="sec-label">Production Flow</div>
+    <h2>FROM RAW MATERIAL TO INSPECTED PART</h2>
+
+    <div class="flow">
+      <div class="flow-step">Raw Stock</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">Fixture &amp; Clamp</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step active">Robot Drill</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step active">Robot Cut</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step active">Robot Deburr</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">Vision Inspect</div><span class="flow-arrow">&#8594;</span>
+      <div class="flow-step">Finished Part</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Drilling</h3>
+        <p>Multi-spindle drilling with automatic tool change. Hole patterns from CAD, positional accuracy ±0.05mm. Aluminium, steel, stainless — the robot adjusts feed and speed per material.</p>
+        <div class="card-tag">FANUC M-20iB/35S</div>
+      </div>
+      <div class="card">
+        <h3>Cutting</h3>
+        <p>Profile cutting with carbide end mills. Contour following from DXF/STEP files. Coolant-through tooling for heat management. Cuts up to 12mm mild steel.</p>
+        <div class="card-tag">CNC-grade precision</div>
+      </div>
+      <div class="card">
+        <h3>Deburring</h3>
+        <p>Force-controlled deburring with compliant tooling. The robot maintains constant contact pressure regardless of part variation — consistent edge quality every time.</p>
+        <div class="card-tag">Force control</div>
+      </div>
+      <div class="card">
+        <h3>Inspection</h3>
+        <p>Vision-guided dimensional verification. Camera checks hole positions, edge quality, surface finish. AI classifies defects and generates pass/fail report per part.</p>
+        <div class="card-tag">AI vision</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Dashboard -->
+<section class="section" id="dashboard">
+  <div class="container">
+    <div class="sec-label">Operations Dashboard</div>
+    <h2>LIVE CELL STATUS</h2>
+
+    <div class="dashboard">
+      <div class="dash-header">
+        <h3>FANUC Mobile Factory — Unit 01</h3>
+        <div class="dash-live"><span class="dot" style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span> Operational</div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-row"><span class="dash-metric">Robot Status</span><span class="dash-value val-green" id="d-status">Running — Cycle 47</span></div>
+        <div class="dash-row"><span class="dash-metric">Current Operation</span><span class="dash-value" id="d-op">Drilling — Pattern H12</span></div>
+        <div class="dash-row"><span class="dash-metric">Parts Completed (shift)</span><span class="dash-value val-blue" id="d-parts">47</span></div>
+        <div class="dash-row"><span class="dash-metric">Cycle Time</span><span class="dash-value" id="d-cycle">3m 24s</span></div>
+        <div class="dash-row"><span class="dash-metric">OEE</span><span class="dash-value val-green" id="d-oee">87.3%</span></div>
+        <div class="dash-row"><span class="dash-metric">Quality Rate</span><span class="dash-value val-green" id="d-quality">99.1%</span></div>
+        <div class="dash-row"><span class="dash-metric">Tool Wear</span><span class="dash-value val-amber" id="d-tool">72% — 28 parts to change</span></div>
+        <div class="dash-row"><span class="dash-metric">Coolant Level</span><span class="dash-value val-green" id="d-coolant">84%</span></div>
+        <div class="dash-row"><span class="dash-metric">Container Temp</span><span class="dash-value" id="d-temp">22.4°C</span></div>
+        <div class="dash-row"><span class="dash-metric">Power Draw</span><span class="dash-value" id="d-power">8.2 kW</span></div>
+        <div class="dash-row"><span class="dash-metric">Next Maintenance</span><span class="dash-value val-blue" id="d-maint">In 412 cycles</span></div>
+        <div class="dash-row"><span class="dash-metric">AI Alerts</span><span class="dash-value val-amber" id="d-alerts">1 — Tool change recommended at cycle 75</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Use cases -->
+<section class="section section-alt" id="specs">
+  <div class="container">
+    <div class="sec-label">Deployment Scenarios</div>
+    <h2>WHERE THE MOBILE FACTORY GOES</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Mining Sites</h3>
+        <p>Drill and fabricate mounting brackets, repair plates, and structural components on site. No more shipping parts 500km from the nearest workshop. Container arrives on a flatbed, operational in 4 hours.</p>
+        <div class="card-tag">Remote operations</div>
+      </div>
+      <div class="card">
+        <h3>Shipyards</h3>
+        <p>Cut, drill, and deburr hull plates and structural members dockside. The robot handles repetitive high-accuracy work while skilled welders focus on critical joints.</p>
+        <div class="card-tag">Marine fabrication</div>
+      </div>
+      <div class="card">
+        <h3>Construction Sites</h3>
+        <p>Prefabricate steel connections, base plates, and brackets at the point of use. Reduce transport costs and lead times for structural steel work.</p>
+        <div class="card-tag">On-site fabrication</div>
+      </div>
+      <div class="card">
+        <h3>Defence &amp; Field Ops</h3>
+        <p>Deployable manufacturing for military field maintenance. Produce replacement parts from CAD files anywhere a container can be delivered. Self-contained power optional.</p>
+        <div class="card-tag">Deployable manufacturing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI integration -->
+<section class="section">
+  <div class="container">
+    <div class="sec-label">AI Operations</div>
+    <h2>MANAGED BY 2NTH.AI</h2>
+    <p style="font-size:15px;color:var(--text2);max-width:560px;margin-bottom:20px">The robot runs. The AI manages. Every cycle is monitored, every anomaly flagged, every maintenance predicted — without a controls engineer on site.</p>
+
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#128200;</div>
+        <h3>OEE Tracking</h3>
+        <p>Real-time availability, performance, and quality. Targets per shift.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#128295;</div>
+        <h3>Predictive Maintenance</h3>
+        <p>Tool wear, motor current, vibration. Change before failure.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#128269;</div>
+        <h3>Vision QC</h3>
+        <p>Every part inspected. Defects classified. Reports generated.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#128225;</div>
+        <h3>Remote Monitoring</h3>
+        <p>Dashboard accessible from anywhere. Alerts via email/SMS.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#9881;</div>
+        <h3>Program Management</h3>
+        <p>Upload new part programs remotely. No teach pendant needed.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div style="font-size:28px;margin-bottom:10px">&#128202;</div>
+        <h3>Shift Reports</h3>
+        <p>Auto-generated PDF: parts, quality, downtime, recommendations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>FANUC Mobile Factory — by <a href="https://scengineering.co.za">SC Engineering</a> &amp; <a href="https://2nth.ai">2nth.ai</a></p>
+    <p style="margin-top:4px">Murray Paton &middot; <a href="/partners/scengineering.html">Partner Profile</a></p>
+  </div>
+</footer>
+
+<script>
+// Simulate live dashboard updates
+setInterval(function() {
+  var parts = parseInt(document.getElementById('d-parts').textContent);
+  if (Math.random() > 0.7) {
+    parts++;
+    document.getElementById('d-parts').textContent = parts;
+    document.getElementById('d-status').textContent = 'Running — Cycle ' + parts;
+  }
+
+  // Cycle time variation
+  var baseMin = 3, baseSec = Math.floor(Math.random() * 30) + 10;
+  document.getElementById('d-cycle').textContent = baseMin + 'm ' + baseSec + 's';
+
+  // OEE drift
+  var oee = (85 + Math.random() * 5).toFixed(1);
+  document.getElementById('d-oee').textContent = oee + '%';
+  document.getElementById('d-oee').className = 'dash-value ' + (oee > 85 ? 'val-green' : 'val-amber');
+
+  // Temp
+  var temp = (21 + Math.random() * 3).toFixed(1);
+  document.getElementById('d-temp').textContent = temp + '°C';
+
+  // Power
+  var power = (7.5 + Math.random() * 2).toFixed(1);
+  document.getElementById('d-power').textContent = power + ' kW';
+
+  // Tool wear
+  var toolPct = Math.min(100, 72 + Math.floor(parts * 0.3));
+  var remaining = Math.max(0, 100 - toolPct);
+  document.getElementById('d-tool').textContent = toolPct + '% — ' + remaining + ' parts to change';
+  document.getElementById('d-tool').className = 'dash-value ' + (toolPct > 90 ? 'val-red' : toolPct > 75 ? 'val-amber' : 'val-green');
+
+  // Operations rotation
+  var ops = ['Drilling — Pattern H12', 'Cutting — Profile P7', 'Deburring — Edge D3', 'Inspection — Vision Check'];
+  document.getElementById('d-op').textContent = ops[parts % ops.length];
+}, 4000);
+</script>
+
+</body>
+</html>
