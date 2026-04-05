@@ -284,6 +284,28 @@
     </button>
   </div>
 
+  <!-- 06 Device Live (hidden until flashed) -->
+  <div class="section" id="s-live" style="display:none">
+    <div class="sec-label">06 &mdash; Device Live</div>
+    <div class="sec-title" id="live-title">DEVICE ONLINE</div>
+    <div class="sec-desc">Your device is running. Connect to these endpoints to interact with it.</div>
+
+    <!-- Endpoint cards -->
+    <div id="endpoint-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:24px"></div>
+
+    <!-- Live serial monitor -->
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600);display:flex;align-items:center;gap:8px">
+          <span id="live-dot" style="width:6px;height:6px;border-radius:50%;background:var(--c-green);animation:blink 2s ease-in-out infinite"></span>
+          SERIAL MONITOR
+        </div>
+        <button onclick="clearLiveLog()" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--c-steel-600);background:none;border:1px solid var(--c-border);padding:4px 10px;border-radius:3px;cursor:pointer">CLEAR</button>
+      </div>
+      <div id="live-terminal" style="background:#000;border:1px solid var(--c-border);border-radius:8px;padding:16px;max-height:320px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#22c55e"></div>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -988,7 +1010,227 @@ async function flashDemo() {
 
   btn.textContent = 'FLASH COMPLETE \u2714';
   setTimeout(() => { btn.disabled = false; btn.textContent = 'REFLASH'; }, 3000);
+
+  // Show live device section
+  showDeviceLive(demo, chip);
   log('Monitor serial output above for demo telemetry', 't-info');
+}
+
+// ─── Device Live Dashboard ────────────────────────────────────
+let liveInterval = null;
+
+function liveLog(msg, cls='') {
+  const t = document.getElementById('live-terminal');
+  const ts = new Date().toLocaleTimeString();
+  t.innerHTML += `<span style="color:#334155">[${ts}]</span> <span class="${cls}">${msg}</span>\n`;
+  t.scrollTop = t.scrollHeight;
+}
+
+function clearLiveLog() {
+  document.getElementById('live-terminal').innerHTML = '';
+}
+
+function showDeviceLive(demo, chipName) {
+  const hostname = document.getElementById('wifi-hostname').value.trim() || 'esp32-device';
+  const ssid = document.getElementById('wifi-ssid').value.trim() || 'network';
+  const mqttBroker = document.getElementById('wifi-mqtt').value.trim() || 'mqtt.2nth.io';
+  const ip = '192.168.' + Math.floor(Math.random()*3) + '.' + (Math.floor(Math.random()*200)+10);
+  const mac = 'A4:CF:12:' + Math.random().toString(16).substr(2,2).toUpperCase() + ':' +
+              Math.random().toString(16).substr(2,2).toUpperCase() + ':' +
+              Math.random().toString(16).substr(2,2).toUpperCase();
+
+  document.getElementById('s-live').style.display = '';
+  document.getElementById('live-title').textContent = chipName + ' — RUNNING ' + demo.name.toUpperCase();
+
+  // Build endpoint cards based on demo type
+  const endpoints = [];
+
+  // Common endpoints
+  endpoints.push({
+    label: 'DEVICE IP',
+    title: ip,
+    desc: 'Local network address on ' + ssid,
+    link: 'http://' + ip,
+    linkLabel: 'Open in browser',
+    icon: '\u{1F310}',
+  });
+  endpoints.push({
+    label: 'mDNS',
+    title: hostname + '.local',
+    desc: 'Zero-conf discovery name',
+    link: 'http://' + hostname + '.local',
+    linkLabel: 'Open .local',
+    icon: '\u{1F4E1}',
+  });
+  endpoints.push({
+    label: 'SERIAL',
+    title: 'USB @ 115200',
+    desc: 'Live serial monitor below',
+    link: null,
+    linkLabel: 'Connected',
+    icon: '\u{1F50C}',
+  });
+
+  // Demo-specific endpoints
+  if (selectedDemo === 'mqtt-pub' || selectedDemo === 'wifi-scan') {
+    endpoints.push({
+      label: 'MQTT BROKER',
+      title: mqttBroker + ':8883',
+      desc: 'TLS encrypted. Subscribe to ' + hostname + '/telemetry',
+      link: null,
+      linkLabel: 'mqtts://' + mqttBroker,
+      icon: '\u{1F4E8}',
+    });
+    endpoints.push({
+      label: 'MQTT TELEMETRY',
+      title: hostname + '/telemetry',
+      desc: 'Device publishes JSON every 5s',
+      link: null,
+      linkLabel: 'mosquitto_sub -t ' + hostname + '/telemetry',
+      icon: '\u{1F4CA}',
+    });
+    endpoints.push({
+      label: 'MQTT COMMAND',
+      title: hostname + '/cmd',
+      desc: 'Send commands to device',
+      link: null,
+      linkLabel: 'mosquitto_pub -t ' + hostname + '/cmd -m ...',
+      icon: '\u{1F3AF}',
+    });
+  }
+
+  if (selectedDemo === 'camera-stream') {
+    endpoints.push({
+      label: 'MJPEG STREAM',
+      title: ip + ':81/stream',
+      desc: 'Live camera feed (OV2640)',
+      link: 'http://' + ip + ':81/stream',
+      linkLabel: 'Open stream',
+      icon: '\u{1F4F7}',
+    });
+  }
+
+  if (selectedDemo === 'ble-beacon') {
+    endpoints.push({
+      label: 'BLE BEACON',
+      title: 'iBeacon advertising',
+      desc: 'Scan with nRF Connect or LightBlue app',
+      link: null,
+      linkLabel: 'BLE scanner required',
+      icon: '\u{1F4F6}',
+    });
+  }
+
+  if (selectedDemo === 'matter-light') {
+    endpoints.push({
+      label: 'MATTER',
+      title: 'Commission via QR',
+      desc: 'Add to Apple Home, Google Home, or Alexa',
+      link: null,
+      linkLabel: 'Scan QR on device label',
+      icon: '\u{1F3E0}',
+    });
+  }
+
+  // Device info
+  endpoints.push({
+    label: 'FIRMWARE',
+    title: '2nth-fw-' + selectedDemo + '-v1.0.0',
+    desc: 'OTA endpoint: https://cdn.2nth.ai/fw/' + chipName.toLowerCase().replace(/-/g,'') + '/' + selectedDemo,
+    link: null,
+    linkLabel: 'OTA available',
+    icon: '\u{1F4BE}',
+  });
+  endpoints.push({
+    label: 'MAC ADDRESS',
+    title: mac,
+    desc: chipName + ' unique hardware identifier',
+    link: null,
+    linkLabel: 'Read from eFuse',
+    icon: '\u{1F4CB}',
+  });
+
+  // Render endpoint cards
+  document.getElementById('endpoint-grid').innerHTML = endpoints.map(ep =>
+    '<div style="background:var(--c-graphite);border:1px solid var(--c-border);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between">' +
+        '<span style="font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--c-steel-600)">' + ep.label + '</span>' +
+        '<span style="font-size:16px">' + ep.icon + '</span>' +
+      '</div>' +
+      '<div style="font-family:JetBrains Mono,monospace;font-size:14px;font-weight:700;color:var(--c-titanium);word-break:break-all">' + ep.title + '</div>' +
+      '<div style="font-size:12px;color:var(--c-steel-500)">' + ep.desc + '</div>' +
+      (ep.link
+        ? '<a href="' + ep.link + '" target="_blank" style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--c-brand);margin-top:4px;text-decoration:none">' + ep.linkLabel + ' \u2192</a>'
+        : '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--c-steel-600);margin-top:4px">' + ep.linkLabel + '</span>'
+      ) +
+    '</div>'
+  ).join('');
+
+  // Start live serial monitor
+  if (liveInterval) clearInterval(liveInterval);
+  startLiveMonitor(demo, hostname, ip, mqttBroker, chipName);
+
+  // Scroll to live section
+  document.getElementById('s-live').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function startLiveMonitor(demo, hostname, ip, mqttBroker, chipName) {
+  const lt = document.getElementById('live-terminal');
+  lt.innerHTML = '';
+  let uptime = 0;
+
+  liveLog('Device booted — ' + chipName + ' running ' + demo.name, 't-info');
+  liveLog('IP: ' + ip + '  Hostname: ' + hostname + '.local', 't-info');
+  liveLog('', '');
+
+  liveInterval = setInterval(() => {
+    uptime += 5;
+    const heap = Math.floor(200000 + Math.random() * 80000);
+    const rssi = -(Math.floor(Math.random() * 30) + 30);
+
+    if (selectedDemo === 'mqtt-pub') {
+      const temp = (22 + Math.random() * 8).toFixed(1);
+      const hum = (40 + Math.random() * 30).toFixed(1);
+      liveLog('I (' + (uptime*1000) + ') mqtt: PUB "' + hostname + '/telemetry" {"temp":' + temp + ',"humidity":' + hum + ',"heap":' + heap + ',"rssi":' + rssi + ',"uptime":' + uptime + '}', '');
+      if (uptime % 30 === 0) {
+        liveLog('I (' + (uptime*1000) + ') wifi: RSSI=' + rssi + 'dBm  IP=' + ip + '  heap=' + heap, 't-info');
+      }
+    } else if (selectedDemo === 'wifi-scan') {
+      if (uptime % 10 === 0) {
+        const nets = Math.floor(Math.random() * 6) + 3;
+        liveLog('I (' + (uptime*1000) + ') wifi_scan: Scan complete — ' + nets + ' networks found', 't-info');
+        for (let i = 0; i < Math.min(nets, 4); i++) {
+          const ch = Math.floor(Math.random() * 13) + 1;
+          const r = -(Math.floor(Math.random() * 50) + 25);
+          liveLog('  CH' + String(ch).padStart(2) + '  ' + r + 'dBm  WPA2  "Network-' + Math.random().toString(36).substr(2,4) + '"', '');
+        }
+      }
+    } else if (selectedDemo === 'temp-adc') {
+      const temp = (25 + Math.random() * 10).toFixed(1);
+      const raw = Math.floor(1800 + Math.random() * 400);
+      liveLog('I (' + (uptime*1000) + ') temp: ' + temp + ' \u00B0C  (raw: ' + raw + ')  heap: ' + heap, '');
+    } else if (selectedDemo === 'blink-gpio') {
+      liveLog('I (' + (uptime*1000) + ') blink: LED ' + (uptime % 2 === 0 ? 'ON' : 'OFF') + '  (GPIO2 = ' + (uptime % 2 === 0 ? 'HIGH' : 'LOW') + ')', '');
+    } else if (selectedDemo === 'ble-beacon') {
+      if (uptime % 10 === 0) {
+        liveLog('I (' + (uptime*1000) + ') beacon: TX count=' + (uptime * 10) + '  interval=100ms  heap=' + heap, '');
+      }
+    } else if (selectedDemo === 'espnow-remote') {
+      if (uptime % 10 === 0) {
+        liveLog('I (' + (uptime*1000) + ') espnow: Peer count=0  TX=' + (uptime * 2) + '  RX=0  heap=' + heap, '');
+      }
+    } else {
+      liveLog('I (' + (uptime*1000) + ') ' + selectedDemo + ': running  uptime=' + uptime + 's  heap=' + heap + '  rssi=' + rssi, '');
+    }
+
+    // Occasional system messages
+    if (uptime % 60 === 0) {
+      liveLog('I (' + (uptime*1000) + ') system: Free heap: ' + heap + ' bytes  Min heap: ' + Math.floor(heap * 0.7) + ' bytes', 't-info');
+    }
+    if (uptime % 120 === 0) {
+      liveLog('I (' + (uptime*1000) + ') wifi: Connected to "' + (document.getElementById('wifi-ssid').value || 'network') + '"  RSSI=' + rssi + 'dBm  uptime=' + uptime + 's', 't-info');
+    }
+  }, 5000);
 }
 
 // ─── Init ─────────────────────────────────────────────────────
