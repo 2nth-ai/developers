@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SkiSpot — Find Your Ski</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--card:#21262d;--border:rgba(255,255,255,.08);--text:#f0f6fc;--text2:#8b949e;--text3:#484f58;--blue:#58a6ff;--blue-dim:rgba(88,166,255,.08);--green:#3fb950;--green-dim:rgba(63,185,80,.08);--red:#f85149;--red-dim:rgba(248,81,73,.08);--amber:#d29922;--purple:#bc8cff;--snow:#e6edf3}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow:hidden;-webkit-user-select:none;user-select:none}
+
+    .phone{width:100%;max-width:430px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+
+    /* Status bar */
+    .statusbar{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 4px;font-size:12px;font-weight:600;color:var(--text2)}
+
+    /* Nav */
+    .topnav{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px}
+    .topnav-brand{font-size:22px;font-weight:800;letter-spacing:-0.5px;font-style:italic}
+    .topnav-brand span{color:var(--blue)}
+    .topnav-right{display:flex;align-items:center;gap:12px}
+    .battery-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;background:var(--green-dim);color:var(--green);border:1px solid rgba(63,185,80,.15)}
+
+    /* Screens */
+    .screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+    .screen.active{display:flex}
+    .screen-fade{animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+
+    /* === HOME SCREEN === */
+    .home-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;position:relative}
+    .home-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(88,166,255,.04) 0%,transparent 70%)}
+    .home-mountain{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(180deg,transparent,rgba(230,237,243,.03));clip-path:polygon(0 60%,15% 40%,30% 55%,50% 20%,70% 45%,85% 30%,100% 50%,100% 100%,0 100%)}
+    .home-icon{font-size:64px;margin-bottom:16px;position:relative;z-index:1}
+    .home-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;position:relative;z-index:1}
+    .home-title span{color:var(--blue)}
+    .home-sub{font-size:14px;color:var(--text2);max-width:280px;line-height:1.5;position:relative;z-index:1}
+
+    .home-devices{padding:0 20px 16px}
+    .device-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;transition:all .2s}
+    .device-card:active{transform:scale(.98)}
+    .device-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .dot-connected{background:var(--green);box-shadow:0 0 8px rgba(63,185,80,.4)}
+    .dot-searching{background:var(--amber);animation:blink 1.5s infinite}
+    .dot-lost{background:var(--red);animation:blink 2s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .device-info{flex:1}
+    .device-name{font-size:14px;font-weight:600}
+    .device-status{font-size:11px;color:var(--text2);margin-top:1px}
+    .device-rssi{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+    .rssi-strong{color:var(--green)}
+    .rssi-medium{color:var(--amber)}
+    .rssi-weak{color:var(--red)}
+    .device-action{font-size:12px;font-weight:600;color:var(--blue);padding:6px 14px;border-radius:8px;background:var(--blue-dim);border:none;cursor:pointer}
+
+    .home-btn{margin:0 20px 20px;padding:16px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-find{background:var(--blue);color:#fff}
+    .btn-find:active{transform:scale(.97)}
+
+    /* === FIND SCREEN === */
+    .find-top{padding:16px 20px;display:flex;align-items:center;gap:12px}
+    .find-back{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text2)}
+    .find-title{font-size:18px;font-weight:700;flex:1}
+    .find-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px}
+
+    .find-compass{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+    .compass-outer{width:280px;height:280px;position:relative}
+    .compass-ring{position:absolute;inset:0;border:2px solid rgba(255,255,255,.06);border-radius:50%}
+    .compass-ring-2{position:absolute;inset:20px;border:1px solid rgba(255,255,255,.04);border-radius:50%}
+    .compass-ring-3{position:absolute;inset:40px;border:1px solid rgba(255,255,255,.03);border-radius:50%}
+    .compass-dir{position:absolute;font-size:12px;font-weight:700;color:var(--text3);width:20px;text-align:center}
+    .dir-n{top:-8px;left:50%;transform:translateX(-50%);color:var(--red)}
+    .dir-e{right:-8px;top:50%;transform:translateY(-50%)}
+    .dir-s{bottom:-8px;left:50%;transform:translateX(-50%)}
+    .dir-w{left:-8px;top:50%;transform:translateY(-50%)}
+
+    .compass-arrow{position:absolute;top:50%;left:50%;width:50px;height:140px;transform-origin:center center;transform:translate(-50%,-50%) rotate(0deg);transition:transform .4s cubic-bezier(.22,1,.36,1)}
+    .arrow-svg{width:100%;height:100%}
+    .arrow-fill{fill:var(--text3);transition:fill .5s}
+    .arrow-found .arrow-fill{fill:var(--blue)}
+    .compass-center{position:absolute;top:50%;left:50%;width:16px;height:16px;background:var(--text);border-radius:50%;transform:translate(-50%,-50%);z-index:2;border:3px solid var(--bg)}
+
+    /* Distance ring */
+    .distance-display{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:3;pointer-events:none}
+    .distance-val{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text)}
+    .distance-unit{font-size:12px;color:var(--text2);font-weight:600}
+    .distance-label{font-size:10px;color:var(--text3);margin-top:2px}
+
+    /* Progress ring */
+    .progress-ring{position:absolute;inset:-2px}
+    .progress-ring circle{fill:none;stroke-width:3;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center}
+
+    /* Bottom panel */
+    .find-bottom{padding:16px 20px 24px}
+    .rssi-bar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+    .rssi-bar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .rssi-bar-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+    .rssi-bar-value{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+    .rssi-canvas-wrap{height:50px;border-radius:6px;overflow:hidden;background:var(--surface)}
+    .rssi-canvas{width:100%;height:100%}
+
+    .find-instructions{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+    .instruction-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);padding:4px 0}
+    .step-num{width:24px;height:24px;border-radius:50%;background:var(--blue-dim);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .step-num.done{background:var(--green-dim);color:var(--green)}
+    .step-num.active{background:var(--blue);color:#fff;animation:pulse 1.5s infinite}
+
+    .find-action{display:flex;gap:10px;margin-top:12px}
+    .action-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
+    .btn-start{background:var(--green);color:#000}
+    .btn-start:active{transform:scale(.97)}
+    .btn-stop{background:var(--red);color:#fff}
+    .btn-stop:active{transform:scale(.97)}
+
+    /* Tab bar */
+    .tabbar{display:flex;padding:8px 20px 20px;gap:4px;background:var(--bg);border-top:1px solid var(--border)}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;border-radius:10px;cursor:pointer;transition:all .15s}
+    .tab.active{background:var(--blue-dim)}
+    .tab-icon{font-size:18px}
+    .tab-label{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+    .tab.active .tab-label{color:var(--blue)}
+  </style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="statusbar">
+    <span>9:41</span>
+    <span style="display:flex;gap:6px;align-items:center">
+      <svg width="16" height="12" fill="var(--text2)"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4" y="1" width="3" height="11" rx="1"/><rect x="8" y="4" width="3" height="8" rx="1"/><rect x="12" y="6" width="3" height="6" rx="1"/></svg>
+      <svg width="18" height="12" fill="none" stroke="var(--text2)" stroke-width="1.5"><rect x="1" y="2" width="14" height="8" rx="2"/><rect x="15.5" y="4" width="1.5" height="4" rx=".5"/><rect x="2.5" y="3.5" width="8" height="5" rx="1" fill="var(--green)" stroke="none"/></svg>
+    </span>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div class="screen active screen-fade" id="screen-home">
+
+    <div class="topnav">
+      <div class="topnav-brand"><span>Ski</span>Spot</div>
+      <div class="topnav-right">
+        <div class="battery-pill">2 devices paired</div>
+      </div>
+    </div>
+
+    <div class="home-hero">
+      <div class="home-mountain"></div>
+      <div class="home-icon">&#9975;</div>
+      <div class="home-title">Find Your <span>Ski</span></div>
+      <div class="home-sub">Your SkiSpot devices are broadcasting. Tap a device below to start tracking.</div>
+    </div>
+
+    <div class="home-devices">
+      <div class="device-card" onclick="startFind('right')">
+        <div class="device-dot dot-connected"></div>
+        <div class="device-info">
+          <div class="device-name">SkiSpot — Right Ski</div>
+          <div class="device-status">Connected &middot; VC42kV...sWzb</div>
+        </div>
+        <div class="device-rssi rssi-strong" id="home-rssi-r">-52 dBm</div>
+        <button class="device-action">Find</button>
+      </div>
+      <div class="device-card" onclick="startFind('left')">
+        <div class="device-dot dot-searching"></div>
+        <div class="device-info">
+          <div class="device-name">SkiSpot — Left Ski</div>
+          <div class="device-status">Searching...</div>
+        </div>
+        <div class="device-rssi rssi-weak" id="home-rssi-l">-78 dBm</div>
+        <button class="device-action">Find</button>
+      </div>
+    </div>
+
+    <button class="home-btn btn-find" onclick="startFind('right')">Find Right Ski</button>
+
+    <div class="tabbar">
+      <div class="tab active"><div class="tab-icon">&#127968;</div><div class="tab-label">Home</div></div>
+      <div class="tab" onclick="startFind('right')"><div class="tab-icon">&#128269;</div><div class="tab-label">Find</div></div>
+      <div class="tab"><div class="tab-icon">&#9881;</div><div class="tab-label">Settings</div></div>
+    </div>
+  </div>
+
+  <!-- FIND SCREEN -->
+  <div class="screen" id="screen-find">
+
+    <div class="find-top">
+      <div class="find-back" onclick="goHome()">&#8592;</div>
+      <div class="find-title" id="find-title">Right Ski</div>
+      <div class="find-status" id="find-status" style="background:var(--green-dim);color:var(--green)">Connected</div>
+    </div>
+
+    <div class="find-compass">
+      <div class="compass-outer">
+        <div class="compass-ring"></div>
+        <div class="compass-ring-2"></div>
+        <div class="compass-ring-3"></div>
+        <div class="compass-dir dir-n">N</div>
+        <div class="compass-dir dir-e">E</div>
+        <div class="compass-dir dir-s">S</div>
+        <div class="compass-dir dir-w">W</div>
+
+        <svg class="progress-ring" viewBox="0 0 284 284" id="progress-ring">
+          <circle cx="142" cy="142" r="140" stroke="rgba(255,255,255,.04)" stroke-width="3"/>
+          <circle cx="142" cy="142" r="140" stroke="var(--blue)" stroke-width="3"
+            stroke-dasharray="879.6" stroke-dashoffset="879.6" id="progress-arc"/>
+        </svg>
+
+        <svg class="compass-arrow" id="arrow" viewBox="0 0 50 140">
+          <polygon class="arrow-fill" points="25,5 42,55 32,48 32,135 18,135 18,48 8,55"/>
+        </svg>
+
+        <div class="compass-center"></div>
+
+        <div class="distance-display" id="distance-display" style="display:none">
+          <div class="distance-val" id="distance-val">—</div>
+          <div class="distance-unit">metres</div>
+          <div class="distance-label" id="distance-label">estimated</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="find-bottom">
+      <div class="rssi-bar">
+        <div class="rssi-bar-header">
+          <span class="rssi-bar-label">Signal Strength</span>
+          <span class="rssi-bar-value" id="live-rssi">— dBm</span>
+        </div>
+        <div class="rssi-canvas-wrap">
+          <canvas class="rssi-canvas" id="rssi-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="find-instructions" id="instructions-panel">
+        <div class="instruction-step"><div class="step-num active" id="step-1">1</div> Hold phone to chest, press Start</div>
+        <div class="instruction-step"><div class="step-num" id="step-2">2</div> Rotate slowly through 360&deg;</div>
+        <div class="instruction-step"><div class="step-num" id="step-3">3</div> Press Stop — arrow shows direction</div>
+        <div class="instruction-step"><div class="step-num" id="step-4">4</div> Walk toward your ski</div>
+      </div>
+
+      <div class="find-action">
+        <button class="action-btn btn-start" id="start-btn" onclick="startScan()">Start Scan</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+var state = {
+  scanning: false,
+  found: false,
+  screen: 'home',
+  side: 'right',
+  targetBearing: 137,
+  scanData: [],
+  rssiHistory: [],
+  scanStart: 0,
+  currentAngle: 0,
+  animFrame: null,
+};
+
+var arrow = document.getElementById('arrow');
+var progressArc = document.getElementById('progress-arc');
+var rssiCanvas = document.getElementById('rssi-chart');
+var rssiCtx = null;
+
+function initCanvas() {
+  if (!rssiCanvas) return;
+  var rect = rssiCanvas.parentElement.getBoundingClientRect();
+  rssiCanvas.width = rect.width;
+  rssiCanvas.height = rect.height;
+  rssiCtx = rssiCanvas.getContext('2d');
+}
+
+function goHome() {
+  stopScan();
+  state.screen = 'home';
+  document.getElementById('screen-find').classList.remove('active');
+  document.getElementById('screen-home').classList.add('active', 'screen-fade');
+}
+
+function startFind(side) {
+  state.side = side;
+  state.targetBearing = side === 'right' ? 137 : 253;
+  state.found = false;
+  state.scanning = false;
+  state.scanData = [];
+  state.rssiHistory = [];
+  state.currentAngle = 0;
+
+  document.getElementById('find-title').textContent = (side === 'right' ? 'Right' : 'Left') + ' Ski';
+  arrow.classList.remove('arrow-found');
+  arrow.style.transform = 'translate(-50%,-50%) rotate(0deg)';
+  progressArc.style.strokeDashoffset = '879.6';
+  document.getElementById('distance-display').style.display = 'none';
+
+  resetSteps();
+  document.getElementById('start-btn').textContent = 'Start Scan';
+  document.getElementById('start-btn').className = 'action-btn btn-start';
+  document.getElementById('start-btn').onclick = startScan;
+
+  document.getElementById('screen-home').classList.remove('active');
+  document.getElementById('screen-find').classList.add('active', 'screen-fade');
+
+  setTimeout(initCanvas, 100);
+
+  // Start ambient RSSI
+  if (!state.ambientInterval) {
+    state.ambientInterval = setInterval(function() {
+      if (state.screen !== 'find' || state.scanning) return;
+      var rssi = -55 + (Math.random() - 0.5) * 12;
+      pushRssi(Math.round(rssi));
+    }, 800);
+  }
+}
+
+function startScan() {
+  state.scanning = true;
+  state.found = false;
+  state.scanData = [];
+  state.scanStart = Date.now();
+  state.currentAngle = 0;
+
+  document.getElementById('start-btn').textContent = 'Stop';
+  document.getElementById('start-btn').className = 'action-btn btn-stop';
+  document.getElementById('start-btn').onclick = stopScan;
+
+  document.getElementById('find-status').textContent = 'Scanning';
+  document.getElementById('find-status').style.background = 'var(--blue-dim)';
+  document.getElementById('find-status').style.color = 'var(--blue)';
+
+  setStep(1, 'done');
+  setStep(2, 'active');
+  arrow.classList.remove('arrow-found');
+
+  animateScan();
+}
+
+function stopScan() {
+  if (!state.scanning) return;
+  state.scanning = false;
+
+  if (state.scanData.length < 5) {
+    document.getElementById('start-btn').textContent = 'Start Scan';
+    document.getElementById('start-btn').className = 'action-btn btn-start';
+    document.getElementById('start-btn').onclick = startScan;
+    resetSteps();
+    return;
+  }
+
+  // Find weakest RSSI angle (ski behind you)
+  var minRssi = Infinity, minAngle = 0;
+  for (var i = 5; i < state.scanData.length - 5; i++) {
+    var sum = 0;
+    for (var j = i - 5; j <= i + 5; j++) sum += state.scanData[j].rssi;
+    var avg = sum / 11;
+    if (avg < minRssi) { minRssi = avg; minAngle = state.scanData[i].angle; }
+  }
+
+  var resultAngle = (minAngle + 180) % 360;
+  state.found = true;
+
+  arrow.style.transform = 'translate(-50%,-50%) rotate(' + resultAngle + 'deg)';
+  arrow.classList.add('arrow-found');
+
+  document.getElementById('find-status').textContent = 'Found!';
+  document.getElementById('find-status').style.background = 'var(--green-dim)';
+  document.getElementById('find-status').style.color = 'var(--green)';
+
+  // Show distance estimate
+  var dist = Math.abs((-0.64 * minRssi) - 32).toFixed(0);
+  document.getElementById('distance-display').style.display = '';
+  document.getElementById('distance-val').textContent = dist;
+  document.getElementById('distance-label').textContent = 'walk this way';
+
+  setStep(2, 'done');
+  setStep(3, 'done');
+  setStep(4, 'active');
+
+  document.getElementById('start-btn').textContent = 'Scan Again';
+  document.getElementById('start-btn').className = 'action-btn btn-start';
+  document.getElementById('start-btn').onclick = startScan;
+
+  // Continue showing RSSI (getting closer simulation)
+  animateApproach();
+}
+
+function animateScan() {
+  if (!state.scanning) return;
+
+  var elapsed = Date.now() - state.scanStart;
+  var duration = 7000;
+  var progress = Math.min(elapsed / duration, 1);
+  state.currentAngle = progress * 360;
+
+  arrow.style.transform = 'translate(-50%,-50%) rotate(' + state.currentAngle + 'deg)';
+  progressArc.style.strokeDashoffset = String(879.6 * (1 - progress));
+
+  var diff = Math.abs(state.currentAngle - state.targetBearing);
+  if (diff > 180) diff = 360 - diff;
+  var blockingFactor = 1 - (diff / 180);
+  var rssi = Math.round(-45 - blockingFactor * 35 + (Math.random() - 0.5) * 8);
+  state.scanData.push({ angle: state.currentAngle, rssi: rssi });
+  pushRssi(rssi);
+
+  if (progress >= 1) {
+    stopScan();
+    return;
+  }
+
+  state.animFrame = requestAnimationFrame(animateScan);
+}
+
+function animateApproach() {
+  if (state.scanning || !state.found) return;
+  var rssi = (state.rssiHistory.length > 0 ? state.rssiHistory[state.rssiHistory.length - 1] : -55) + 0.08 + (Math.random() - 0.5) * 4;
+  rssi = Math.min(rssi, -28);
+  pushRssi(Math.round(rssi));
+
+  var dist = Math.abs((-0.64 * rssi) - 32).toFixed(0);
+  document.getElementById('distance-val').textContent = dist;
+
+  requestAnimationFrame(animateApproach);
+}
+
+function pushRssi(rssi) {
+  state.rssiHistory.push(rssi);
+  if (state.rssiHistory.length > 100) state.rssiHistory.shift();
+
+  var color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--amber)' : 'var(--red)';
+  document.getElementById('live-rssi').textContent = rssi + ' dBm';
+  document.getElementById('live-rssi').style.color = color;
+  drawRssi();
+}
+
+function drawRssi() {
+  if (!rssiCtx || !rssiCanvas.width) { initCanvas(); if (!rssiCtx) return; }
+  var w = rssiCanvas.width, h = rssiCanvas.height;
+  rssiCtx.clearRect(0, 0, w, h);
+
+  var data = state.rssiHistory;
+  if (data.length < 2) return;
+
+  var minR = -95, maxR = -25;
+  rssiCtx.beginPath();
+  rssiCtx.strokeStyle = state.found ? '#3fb950' : '#58a6ff';
+  rssiCtx.lineWidth = 2;
+  rssiCtx.lineJoin = 'round';
+
+  for (var i = 0; i < data.length; i++) {
+    var x = (i / (100 - 1)) * w;
+    var y = h - ((data[i] - minR) / (maxR - minR)) * (h - 6) - 3;
+    if (i === 0) rssiCtx.moveTo(x, y); else rssiCtx.lineTo(x, y);
+  }
+  rssiCtx.stroke();
+
+  rssiCtx.lineTo((data.length - 1) / (100 - 1) * w, h);
+  rssiCtx.lineTo(0, h);
+  rssiCtx.closePath();
+  rssiCtx.fillStyle = state.found ? 'rgba(63,185,80,.06)' : 'rgba(88,166,255,.06)';
+  rssiCtx.fill();
+}
+
+function setStep(num, state) {
+  var el = document.getElementById('step-' + num);
+  el.className = 'step-num ' + state;
+  if (state === 'done') el.textContent = '✓';
+}
+
+function resetSteps() {
+  for (var i = 1; i <= 4; i++) {
+    var el = document.getElementById('step-' + i);
+    el.className = 'step-num' + (i === 1 ? ' active' : '');
+    el.textContent = i;
+  }
+}
+</script>
+
+</body>
+</html>
