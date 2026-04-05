@@ -172,84 +172,88 @@
     </table>
 
     <div class="card-grid">
-
-      <!-- AI Takeoff Engine -->
-      <div class="card" onclick="toggleSim('takeoff')" style="cursor:pointer">
+      <div class="card" onclick="openSim('takeoff')" style="cursor:pointer" id="card-takeoff">
         <div class="card-icon">&#128200;</div>
-        <h3>AI Takeoff Engine <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <h3>AI Takeoff Engine</h3>
         <p>Reads IFC model elements. Extracts quantities by trade. Grouped by location, storey, and building.</p>
-        <div class="card-tag">Automated measurement</div>
-        <div id="sim-takeoff" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <span style="font-size:12px;font-weight:600;color:var(--text)">Silvercroft Unit 1 — AI Takeoff</span>
-            <button onclick="event.stopPropagation();runTakeoff()" style="font-size:10px;padding:4px 12px;background:var(--green);color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600" id="takeoff-btn">Run Takeoff</button>
-          </div>
-          <div id="takeoff-results" style="font-family:'JetBrains Mono',monospace;font-size:11px">
-            <div style="color:var(--muted);text-align:center;padding:12px">Click "Run Takeoff" to simulate IFC extraction</div>
-          </div>
-        </div>
+        <div class="card-tag">Click to simulate</div>
       </div>
-
-      <!-- Rate Intelligence -->
-      <div class="card" onclick="toggleSim('rates')" style="cursor:pointer">
+      <div class="card" onclick="openSim('rates')" style="cursor:pointer" id="card-rates">
         <div class="card-icon">&#128176;</div>
-        <h3>Rate Intelligence <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <h3>Rate Intelligence</h3>
         <p>Living rate database. AI adjusts for region, project size, current material costs, and labour rates.</p>
-        <div class="card-tag">Live pricing</div>
-        <div id="sim-rates" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-          <div style="margin-bottom:10px">
-            <span style="font-size:12px;font-weight:600;color:var(--text)">Rate Comparison — Cape Town Q2 2026</span>
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-            <select id="rate-region" onchange="event.stopPropagation();updateRates()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border-s);border-radius:4px">
-              <option value="cpt">Cape Town</option>
-              <option value="jhb">Johannesburg</option>
-              <option value="dbn">Durban</option>
-              <option value="pe">Port Elizabeth</option>
-            </select>
-            <select id="rate-size" onchange="event.stopPropagation();updateRates()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border-s);border-radius:4px">
-              <option value="small">Small (&lt;R10M)</option>
-              <option value="medium" selected>Medium (R10-50M)</option>
-              <option value="large">Large (R50M+)</option>
-            </select>
-          </div>
-          <table style="font-size:11px" id="rate-table">
-            <tr><th>Item</th><th>Unit</th><th>Rate</th><th>AECOM Ref</th><th>Diff</th></tr>
-          </table>
-          <div style="font-size:10px;color:var(--muted);margin-top:8px" id="rate-note"></div>
-        </div>
+        <div class="card-tag">Click to simulate</div>
       </div>
-
-      <!-- Tender Analysis -->
-      <div class="card" onclick="toggleSim('tender')" style="cursor:pointer">
+      <div class="card" onclick="openSim('tender')" style="cursor:pointer" id="card-tender">
         <div class="card-icon">&#128203;</div>
-        <h3>Tender Analysis <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <h3>Tender Analysis</h3>
         <p>Compares contractor submissions. AI flags pricing anomalies and recommends with reasoning.</p>
-        <div class="card-tag">Procurement</div>
-        <div id="sim-tender" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-          <div style="margin-bottom:10px">
-            <span style="font-size:12px;font-weight:600;color:var(--text)">Tender Comparison — Silvercroft 3-Unit Development</span>
-          </div>
-          <table style="font-size:11px" id="tender-table">
-            <tr><th>Trade</th><th>Contractor A</th><th>Contractor B</th><th>Contractor C</th><th>AI Flag</th></tr>
-          </table>
-          <div id="tender-summary" style="margin-top:12px;padding:12px;background:var(--green-light);border:1px solid rgba(45,106,79,.15);border-radius:8px;font-size:12px;color:var(--text2)"></div>
-        </div>
+        <div class="card-tag">Click to simulate</div>
       </div>
+    </div>
 
+    <!-- Full-width simulation panel (renders below cards) -->
+    <div id="sim-panel" style="display:none;margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.04)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--surface2);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="sim-icon" style="font-size:20px"></span>
+          <span id="sim-title" style="font-size:14px;font-weight:700;color:var(--text)"></span>
+        </div>
+        <button onclick="closeSim()" style="font-size:18px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 8px">&#10005;</button>
+      </div>
+      <div style="padding:24px" id="sim-body"></div>
     </div>
 
     <script>
-    function toggleSim(id) {
-      var el = document.getElementById('sim-' + id);
-      if (!el) return;
-      var open = el.style.display !== 'none';
-      document.querySelectorAll('[id^="sim-"]').forEach(function(s) { s.style.display = 'none'; });
-      if (!open) {
-        el.style.display = '';
-        if (id === 'rates') updateRates();
-        if (id === 'tender') updateTender();
+    var activeSim = null;
+
+    function openSim(id) {
+      var panel = document.getElementById('sim-panel');
+      var body = document.getElementById('sim-body');
+
+      // Highlight active card
+      document.querySelectorAll('[id^="card-"]').forEach(function(c) { c.style.borderColor = ''; });
+      document.getElementById('card-' + id).style.borderColor = 'var(--green)';
+
+      var titles = { takeoff: 'AI Takeoff Engine', rates: 'Rate Intelligence', tender: 'Tender Analysis' };
+      var icons = { takeoff: '&#128200;', rates: '&#128176;', tender: '&#128203;' };
+
+      document.getElementById('sim-title').textContent = titles[id];
+      document.getElementById('sim-icon').innerHTML = icons[id];
+
+      if (id === 'takeoff') {
+        body.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+          '<span style="font-size:13px;font-weight:600;color:var(--text)">Silvercroft Unit 1 — IFC Model Extraction</span>' +
+          '<button onclick="event.stopPropagation();runTakeoff()" style="font-size:11px;padding:6px 16px;background:var(--green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600" id="takeoff-btn">Run Takeoff</button></div>' +
+          '<div id="takeoff-results" style="font-family:\'JetBrains Mono\',monospace;font-size:12px;line-height:1.8">' +
+          '<div style="color:var(--muted);text-align:center;padding:20px">Click "Run Takeoff" to simulate extracting quantities from the IFC model</div></div>';
+      } else if (id === 'rates') {
+        body.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">' +
+          '<span style="font-size:13px;font-weight:600;color:var(--text)">Live Rate Comparison — Q2 2026</span>' +
+          '<div style="display:flex;gap:8px">' +
+          '<select id="rate-region" onchange="updateRates()" style="font-size:12px;padding:6px 10px;border:1px solid var(--border-s);border-radius:6px">' +
+          '<option value="cpt">Cape Town</option><option value="jhb">Johannesburg</option><option value="dbn">Durban</option><option value="pe">Port Elizabeth</option></select>' +
+          '<select id="rate-size" onchange="updateRates()" style="font-size:12px;padding:6px 10px;border:1px solid var(--border-s);border-radius:6px">' +
+          '<option value="small">Small (&lt;R10M)</option><option value="medium" selected>Medium (R10-50M)</option><option value="large">Large (R50M+)</option></select></div></div>' +
+          '<table style="font-size:13px;width:100%" id="rate-table"></table>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:10px" id="rate-note"></div>';
+        updateRates();
+      } else if (id === 'tender') {
+        body.innerHTML = '<div style="margin-bottom:14px"><span style="font-size:13px;font-weight:600;color:var(--text)">Tender Comparison — Silvercroft 3-Unit Development</span></div>' +
+          '<div style="overflow-x:auto"><table style="font-size:13px;width:100%;min-width:500px" id="tender-table"></table></div>' +
+          '<div id="tender-summary" style="margin-top:16px;padding:16px;background:var(--green-light);border:1px solid rgba(45,106,79,.15);border-radius:10px;font-size:13px;color:var(--text2);line-height:1.7"></div>';
+        updateTender();
       }
+
+      panel.style.display = '';
+      activeSim = id;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function closeSim() {
+      document.getElementById('sim-panel').style.display = 'none';
+      document.querySelectorAll('[id^="card-"]').forEach(function(c) { c.style.borderColor = ''; });
+      activeSim = null;
     }
 
     // === TAKEOFF SIMULATION ===
