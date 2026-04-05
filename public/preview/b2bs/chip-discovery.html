@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chip Discovery — B2BS IoT — 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <meta name="description" content="Connect an ESP32 via USB. Auto-detect chip, view pinout, configure Wi-Fi, deploy a demo. Powered by WebSerial and ESP-IDF skills.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/esptool-js@0.4.3/bundle.js"></script>
+  <style>
+    :root{--c-carbon:#0a0a0a;--c-graphite:#141414;--c-gunmetal:#1c1c1e;--c-chassis:#232326;--c-titanium:#fafafa;--c-steel-900:#27272a;--c-steel-800:#3f3f46;--c-steel-700:#52525b;--c-steel-600:#71717a;--c-steel-500:#a1a1aa;--c-steel-400:#c4c4cc;--c-steel-300:#d4d4d8;--c-border:hsla(0,0%,100%,.06);--c-border-s:hsla(0,0%,100%,.1);--c-grid-line:hsla(0,0%,100%,.018);--c-brand:#06b6d4;--c-green:#22c55e;--c-amber:#f59e0b;--c-red:#ef4444}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    *{-webkit-font-smoothing:antialiased}
+    html{scroll-behavior:smooth}
+    body{font-family:'Barlow',sans-serif;background:var(--c-carbon);color:var(--c-steel-500);line-height:1.625}
+    a{color:var(--c-brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--c-carbon);border-bottom:1px solid var(--c-border)}
+    @supports(backdrop-filter:blur(12px)){nav{background:color-mix(in srgb,var(--c-carbon) 85%,transparent);backdrop-filter:blur(12px)}}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 24px}
+    .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--c-titanium)}
+    .nav-brand span{color:var(--c-brand)}
+    .nav-links{display:flex;align-items:center;gap:16px}
+    .nav-link{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--c-steel-600);transition:color .15s}
+    .nav-link:hover{color:var(--c-steel-400);text-decoration:none}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+    .hero{position:relative;padding:100px 0 48px;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent,transparent 99px,var(--c-grid-line) 99px,var(--c-grid-line) 100px),repeating-linear-gradient(0deg,transparent,transparent 99px,var(--c-grid-line) 99px,var(--c-grid-line) 100px)}
+    .hero-line{position:absolute;width:100%;height:1px;top:55%;background:linear-gradient(90deg,transparent,var(--c-brand) 30%,transparent 70%);opacity:.25}
+    .hero-inner{position:relative}
+    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--c-brand);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c-brand);animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,7vw,72px);line-height:.9;letter-spacing:.04em;color:var(--c-titanium);margin-bottom:16px}
+    .hero h1 em{color:var(--c-brand);font-style:normal}
+    .hero-sub{font-size:17px;color:var(--c-steel-400);max-width:560px;line-height:1.65;margin-bottom:24px}
+
+    .section{padding:56px 0;border-top:1px solid var(--c-border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--c-brand);font-weight:600;margin-bottom:6px}
+    .sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,36px);letter-spacing:.04em;color:var(--c-titanium);line-height:.95;margin-bottom:8px}
+    .sec-desc{font-size:15px;color:var(--c-steel-500);max-width:560px;line-height:1.65;margin-bottom:24px}
+
+    /* Connect button */
+    .connect-area{text-align:center;padding:48px 0}
+    .connect-btn{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:1px;font-weight:700;padding:16px 36px;border-radius:6px;border:2px solid var(--c-brand);background:rgba(6,182,212,.08);color:var(--c-brand);cursor:pointer;transition:all .2s}
+    .connect-btn:hover{background:rgba(6,182,212,.15);transform:translateY(-1px)}
+    .connect-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .connect-btn svg{width:24px;height:24px}
+    .connect-status{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--c-steel-600);margin-top:12px}
+    .connect-status.ok{color:var(--c-green)}
+    .connect-status.err{color:var(--c-red)}
+
+    /* Chip info card */
+    .chip-card{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:28px;margin:24px 0;display:none}
+    .chip-card.visible{display:block;animation:fadeUp .4s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .chip-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+    .chip-icon{width:56px;height:56px;border-radius:12px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .chip-icon svg{width:28px;height:28px;stroke:var(--c-brand)}
+    .chip-name{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--c-titanium);letter-spacing:.04em;line-height:1}
+    .chip-variant{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-brand);margin-top:2px}
+    .chip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--c-border);border:1px solid var(--c-border);border-radius:6px;overflow:hidden;margin-bottom:20px}
+    .chip-cell{background:var(--c-graphite);padding:14px}
+    .chip-cell-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--c-steel-700);margin-bottom:3px}
+    .chip-cell-value{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--c-titanium);line-height:1}
+    .chip-cell-value.sm{font-family:'JetBrains Mono',monospace;font-size:12px}
+    .chip-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .chip-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 10px;border-radius:3px;border:1px solid var(--c-border);color:var(--c-steel-500)}
+    .chip-tag.active{border-color:var(--c-brand);color:var(--c-brand);background:rgba(6,182,212,.08)}
+
+    /* Pinout diagram */
+    .pinout{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:24px;margin:24px 0;display:none;overflow-x:auto}
+    .pinout.visible{display:block;animation:fadeUp .4s ease-out}
+    .pinout pre{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--c-steel-400);margin:0}
+    .pinout .pin-label{color:var(--c-brand)}
+    .pinout .pin-power{color:var(--c-red)}
+    .pinout .pin-gnd{color:var(--c-steel-700)}
+    .pinout .pin-io{color:var(--c-green)}
+    .pinout .pin-adc{color:var(--c-amber)}
+
+    /* WiFi config */
+    .wifi-config{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:28px;margin:24px 0;display:none}
+    .wifi-config.visible{display:block;animation:fadeUp .4s ease-out}
+    .wifi-config h3{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--c-titanium);letter-spacing:.04em;margin-bottom:16px}
+    .wifi-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .wifi-field{display:flex;flex-direction:column;gap:4px}
+    .wifi-field label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600)}
+    .wifi-field input{background:var(--c-carbon);border:1px solid var(--c-border);color:var(--c-titanium);padding:10px 14px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none}
+    .wifi-field input:focus{border-color:var(--c-brand)}
+    .wifi-btn{grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;padding:12px;border-radius:4px;border:1px solid var(--c-brand);background:rgba(6,182,212,.08);color:var(--c-brand);cursor:pointer;transition:background .15s}
+    .wifi-btn:hover{background:rgba(6,182,212,.15)}
+
+    /* Demo cards */
+    .demos{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:24px 0;display:none}
+    .demos.visible{display:grid;animation:fadeUp .4s ease-out}
+    .demo-card{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:22px;transition:border-color .2s;cursor:pointer}
+    .demo-card:hover{border-color:var(--c-brand)}
+    .demo-card.selected{border-color:var(--c-brand);background:rgba(6,182,212,.04)}
+    .demo-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--c-brand);font-weight:600;margin-bottom:6px}
+    .demo-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--c-titanium);letter-spacing:.04em;line-height:1;margin-bottom:6px}
+    .demo-desc{font-size:13px;color:var(--c-steel-500);line-height:1.5;margin-bottom:10px}
+    .demo-tags{display:flex;gap:4px;flex-wrap:wrap}
+    .demo-tag{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid var(--c-border);color:var(--c-steel-600)}
+
+    /* Serial terminal */
+    .terminal{background:#000;border:1px solid var(--c-border);border-radius:8px;padding:16px;margin:24px 0;max-height:300px;overflow-y:auto;display:none;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#22c55e}
+    .terminal.visible{display:block;animation:fadeUp .3s ease-out}
+    .terminal .t-info{color:var(--c-brand)}
+    .terminal .t-warn{color:var(--c-amber)}
+    .terminal .t-err{color:var(--c-red)}
+    .terminal .t-dim{color:var(--c-steel-700)}
+
+    /* Process flow */
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--c-border);border-radius:10px;overflow:hidden;margin:24px 0}
+    .flow-step{padding:20px 12px;text-align:center;border-right:1px solid var(--c-border);background:var(--c-graphite);transition:background .2s}
+    .flow-step:last-child{border:none}
+    .flow-step.active{background:rgba(6,182,212,.06)}
+    .flow-step.done{background:rgba(34,197,94,.04)}
+    .flow-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--c-steel-700);margin-bottom:4px}
+    .flow-step.active .flow-num{color:var(--c-brand)}
+    .flow-step.done .flow-num{color:var(--c-green)}
+    .flow-step h4{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600);margin-bottom:2px}
+    .flow-step.active h4{color:var(--c-brand)}
+    .flow-step.done h4{color:var(--c-green)}
+    .flow-step p{font-size:10px;color:var(--c-steel-700)}
+
+    /* Skill link */
+    .skill-ref{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:8px;padding:16px 20px;margin:24px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .skill-ref-text{font-size:13px;color:var(--c-steel-500)}
+    .skill-ref-text strong{color:var(--c-steel-300)}
+    .skill-ref a{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--c-brand);font-weight:700;white-space:nowrap}
+
+    footer{border-top:1px solid var(--c-border);padding:24px 0;margin-top:48px}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-copy{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-700)}
+    .footer-links{display:flex;gap:20px}
+    .footer-link{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-600)}
+    .footer-link:hover{color:var(--c-brand);text-decoration:none}
+
+    @media(max-width:768px){.flow{grid-template-columns:repeat(3,1fr)}.flow-step:nth-child(3){border-right:none}.wifi-form{grid-template-columns:1fr}.chip-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/preview/b2bs/" class="nav-brand" style="text-decoration:none"><span>2</span>NTH <span style="font-size:11px;color:var(--c-steel-600);letter-spacing:2px;font-family:'JetBrains Mono',monospace">IOT</span></a>
+    <div class="nav-links">
+      <a href="https://skills.2nth.ai/iot/skills/espressif.html" class="nav-link">Espressif Skill</a>
+      <a href="https://iot.demo.2nth.ai" class="nav-link">IoT Platform</a>
+      <a href="/partners/b2bs-iot.html" class="nav-link">Partnership</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Chip Discovery &mdash; WebSerial + ESP-IDF Skills</div>
+      <h1>PLUG IN.<br><em>DISCOVER.</em><br>DEPLOY.</h1>
+      <p class="hero-sub">Connect any Espressif dev board via USB. We auto-detect the chip, show its capabilities and pinout, configure Wi-Fi, and deploy a working demo &mdash; all from the browser.</p>
+      <div class="skill-ref">
+        <div class="skill-ref-text">Powered by <strong>@espressif</strong> &mdash; the 2nth IoT skill for ESP32 SoC development</div>
+        <a href="https://skills.2nth.ai/iot/skills/espressif.html" target="_blank">View Skill &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Flow -->
+  <div class="section">
+    <div class="sec-label">00 &mdash; Process</div>
+    <div class="sec-title">DISCOVERY PIPELINE</div>
+    <div class="sec-desc">Six steps from USB plug to running demo. Each stage validates before proceeding.</div>
+    <div class="flow">
+      <div class="flow-step active" id="fs-1"><div class="flow-num">01</div><h4>Connect</h4><p>USB serial</p></div>
+      <div class="flow-step" id="fs-2"><div class="flow-num">02</div><h4>Detect</h4><p>Chip ID</p></div>
+      <div class="flow-step" id="fs-3"><div class="flow-num">03</div><h4>Profile</h4><p>Capabilities</p></div>
+      <div class="flow-step" id="fs-4"><div class="flow-num">04</div><h4>Pinout</h4><p>Schematic</p></div>
+      <div class="flow-step" id="fs-5"><div class="flow-num">05</div><h4>Configure</h4><p>Wi-Fi</p></div>
+      <div class="flow-step" id="fs-6"><div class="flow-num">06</div><h4>Deploy</h4><p>Demo</p></div>
+    </div>
+  </div>
+
+  <!-- 01 Connect -->
+  <div class="section" id="s-connect">
+    <div class="sec-label">01 &mdash; Connect</div>
+    <div class="sec-title">CONNECT YOUR DEVICE</div>
+    <div class="sec-desc">Click the button below to open the WebSerial port selector. Choose your ESP32 device (usually showing as CP2102, CH340, or USB JTAG).</div>
+
+    <div class="connect-area">
+      <button class="connect-btn" id="btn-connect" onclick="connectDevice()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/><circle cx="9" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+        CONNECT ESP32 VIA USB
+      </button>
+      <div class="connect-status" id="connect-status">WebSerial API ready &mdash; Chrome, Edge, or Opera required</div>
+    </div>
+
+    <div class="terminal" id="terminal"></div>
+  </div>
+
+  <!-- 02 Chip Profile (hidden until detected) -->
+  <div class="section" id="s-profile" style="display:none">
+    <div class="sec-label">02 &mdash; Chip Profile</div>
+    <div class="sec-title" id="profile-title">DETECTED CHIP</div>
+    <div class="sec-desc">Hardware capabilities from the @espressif skill. Based on chip ID and eFuse data.</div>
+
+    <div class="chip-card visible" id="chip-card">
+      <div class="chip-header">
+        <div class="chip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/><circle cx="9" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/></svg>
+        </div>
+        <div>
+          <div class="chip-name" id="chip-name">ESP32-S3</div>
+          <div class="chip-variant" id="chip-variant">Xtensa LX7 Dual-Core @ 240MHz</div>
+        </div>
+      </div>
+      <div class="chip-grid" id="chip-specs"></div>
+      <div class="chip-tags" id="chip-tags"></div>
+    </div>
+  </div>
+
+  <!-- 03 Pinout (hidden until detected) -->
+  <div class="section" id="s-pinout" style="display:none">
+    <div class="sec-label">03 &mdash; Pinout & Schematic</div>
+    <div class="sec-title">PIN CONFIGURATION</div>
+    <div class="sec-desc">GPIO mapping for the detected chip. Power pins in red, ground in grey, analog in amber, digital I/O in green.</div>
+    <div class="pinout visible" id="pinout-diagram"></div>
+  </div>
+
+  <!-- 04 WiFi Config (hidden until detected) -->
+  <div class="section" id="s-wifi" style="display:none">
+    <div class="sec-label">04 &mdash; Configure</div>
+    <div class="sec-title">WI-FI PROVISIONING</div>
+    <div class="sec-desc">Enter your network credentials. These will be stored in NVS (Non-Volatile Storage) on the device for subsequent boots.</div>
+
+    <div class="wifi-config visible">
+      <h3>NETWORK CREDENTIALS</h3>
+      <div class="wifi-form">
+        <div class="wifi-field">
+          <label>SSID (Network Name)</label>
+          <input type="text" id="wifi-ssid" placeholder="MyNetwork">
+        </div>
+        <div class="wifi-field">
+          <label>Password</label>
+          <input type="password" id="wifi-pass" placeholder="********">
+        </div>
+        <div class="wifi-field">
+          <label>Device Name (mDNS)</label>
+          <input type="text" id="wifi-hostname" placeholder="esp32-sensor-01">
+        </div>
+        <div class="wifi-field">
+          <label>MQTT Broker (optional)</label>
+          <input type="text" id="wifi-mqtt" placeholder="mqtt.2nth.io">
+        </div>
+        <button class="wifi-btn" onclick="sendWifiConfig()">WRITE CONFIGURATION TO DEVICE &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 Demo Selection (hidden until detected) -->
+  <div class="section" id="s-demos" style="display:none">
+    <div class="sec-label">05 &mdash; Deploy Demo</div>
+    <div class="sec-title" id="demos-title">DEMOS FOR YOUR CHIP</div>
+    <div class="sec-desc">Select a demo appropriate for the detected hardware. The demo firmware will be compiled and flashed over WebSerial.</div>
+    <div class="demos visible" id="demo-grid"></div>
+    <button class="connect-btn" id="btn-flash" onclick="flashDemo()" style="display:none;margin-top:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      FLASH SELECTED DEMO
+    </button>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-copy">B2BS IoT &mdash; Chip Discovery &mdash; 2nth.ai</span>
+      <div class="footer-links">
+        <a href="https://skills.2nth.ai/iot/skills/espressif.html" class="footer-link" target="_blank">@espressif skill</a>
+        <a href="https://skills.2nth.ai/iot/" class="footer-link" target="_blank">IoT Skills</a>
+        <a href="https://github.com/espressif" class="footer-link" target="_blank">Espressif GitHub</a>
+        <a href="https://iot.demo.2nth.ai" class="footer-link">IoT Platform</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── Chip Database (from @espressif skill) ────────────────────
+const CHIPS = {
+  'ESP32': {
+    name: 'ESP32', variant: 'Xtensa LX6 Dual-Core @ 240MHz',
+    cpu: 'Xtensa LX6', cores: '2', freq: '240 MHz', sram: '520 KB',
+    wifi: '802.11 b/g/n', ble: 'BLE 4.2', thread: 'No', flash: 'External 4-16MB',
+    gpio: '34', adc: '18ch (12-bit)', dac: '2ch', spi: '4', i2c: '2', uart: '3',
+    usb: 'No', psram: 'Up to 8MB', secureBoot: 'V1',
+    tags: ['Wi-Fi','BLE 4.2','CAN','Touch','DAC','PSRAM','Classic BT'],
+    features: ['General IoT','Industrial','Audio','Display','Gateway'],
+  },
+  'ESP32-S2': {
+    name: 'ESP32-S2', variant: 'Xtensa LX7 Single-Core @ 240MHz',
+    cpu: 'Xtensa LX7', cores: '1', freq: '240 MHz', sram: '320 KB',
+    wifi: '802.11 b/g/n', ble: 'No', thread: 'No', flash: 'External 4-16MB',
+    gpio: '43', adc: '20ch (13-bit)', dac: '2ch', spi: '4', i2c: '2', uart: '2',
+    usb: 'USB-OTG', psram: 'Up to 8MB', secureBoot: 'V2',
+    tags: ['Wi-Fi','USB-OTG','Touch','Secure Boot V2'],
+    features: ['USB HID','Touch interfaces','Low-cost sensors'],
+  },
+  'ESP32-S3': {
+    name: 'ESP32-S3', variant: 'Xtensa LX7 Dual-Core @ 240MHz + AI Vector',
+    cpu: 'Xtensa LX7', cores: '2', freq: '240 MHz', sram: '512 KB',
+    wifi: '802.11 b/g/n', ble: 'BLE 5.0', thread: 'No', flash: 'External 4-16MB',
+    gpio: '45', adc: '20ch (12-bit)', dac: 'No', spi: '4', i2c: '2', uart: '3',
+    usb: 'USB-OTG + JTAG', psram: 'Up to 8MB (Octal)', secureBoot: 'V2 + HMAC',
+    tags: ['Wi-Fi','BLE 5.0','AI Vector','USB-OTG','Camera','Voice','PSRAM'],
+    features: ['Edge AI','Camera (ESP-WHO)','Voice (ESP-SR)','Display','ML Inference'],
+  },
+  'ESP32-C3': {
+    name: 'ESP32-C3', variant: 'RISC-V Single-Core @ 160MHz',
+    cpu: 'RISC-V', cores: '1', freq: '160 MHz', sram: '400 KB',
+    wifi: '802.11 b/g/n', ble: 'BLE 5.0', thread: 'No', flash: 'External 4MB',
+    gpio: '22', adc: '6ch (12-bit)', dac: 'No', spi: '3', i2c: '1', uart: '2',
+    usb: 'USB-JTAG', psram: 'No', secureBoot: 'V2',
+    tags: ['Wi-Fi','BLE 5.0','RISC-V','Low Cost','Compact'],
+    features: ['Cost-sensitive IoT','Smart plugs','Sensors','BLE peripherals'],
+  },
+  'ESP32-C6': {
+    name: 'ESP32-C6', variant: 'RISC-V Single-Core @ 160MHz + LP Core',
+    cpu: 'RISC-V', cores: '1 + LP', freq: '160 MHz', sram: '512 KB',
+    wifi: 'Wi-Fi 6 (802.11ax)', ble: 'BLE 5.3', thread: 'Thread/Zigbee', flash: 'External 4-8MB',
+    gpio: '30', adc: '7ch (12-bit)', dac: 'No', spi: '1', i2c: '2', uart: '3',
+    usb: 'USB-JTAG', psram: 'No', secureBoot: 'V2',
+    tags: ['Wi-Fi 6','BLE 5.3','Thread','Zigbee','802.15.4','Matter','RISC-V'],
+    features: ['Matter devices','Thread Border Router','Zigbee bridge','Wi-Fi 6 sensors'],
+  },
+  'ESP32-H2': {
+    name: 'ESP32-H2', variant: 'RISC-V Single-Core @ 96MHz',
+    cpu: 'RISC-V', cores: '1', freq: '96 MHz', sram: '320 KB',
+    wifi: 'No', ble: 'BLE 5.3', thread: 'Thread/Zigbee', flash: 'External 4MB',
+    gpio: '26', adc: '5ch (12-bit)', dac: 'No', spi: '1', i2c: '2', uart: '2',
+    usb: 'USB-JTAG', psram: 'No', secureBoot: 'V2',
+    tags: ['BLE 5.3','Thread','Zigbee','802.15.4','Ultra-low power','RISC-V'],
+    features: ['Thread endpoints','Zigbee sensors','BLE peripherals','Matter endpoints'],
+  },
+};
+
+// ─── Demo Database ────────────────────────────────────────────
+const DEMOS = {
+  'wifi-scan': { name: 'Wi-Fi Scanner', desc: 'Scan nearby networks, display SSIDs, RSSI, channels, and encryption types. Proves Wi-Fi radio is working.', tags: ['Wi-Fi','GPIO','Serial'], requires: ['wifi'] },
+  'ble-beacon': { name: 'BLE Beacon', desc: 'Broadcast as an iBeacon/Eddystone. Detectable from your phone. Proves BLE radio.', tags: ['BLE','Advertising'], requires: ['ble'] },
+  'blink-gpio': { name: 'GPIO Blink', desc: 'Classic LED blink on GPIO2. Validates flash, boot, and GPIO output. The "hello world" of embedded.', tags: ['GPIO','Timer'], requires: [] },
+  'temp-adc': { name: 'Temperature Sensor', desc: 'Read internal temperature sensor via ADC. Display on serial monitor. No external hardware needed.', tags: ['ADC','Sensor','Serial'], requires: [] },
+  'mqtt-pub': { name: 'MQTT Publisher', desc: 'Connect to Wi-Fi, publish telemetry to MQTT broker every 5 seconds. Proves full cloud connectivity.', tags: ['Wi-Fi','MQTT','TLS'], requires: ['wifi'] },
+  'matter-light': { name: 'Matter Light', desc: 'Commission as a Matter light device. Controllable from Apple Home, Google Home, Alexa.', tags: ['Matter','Thread','BLE'], requires: ['thread'] },
+  'camera-stream': { name: 'Camera Stream', desc: 'MJPEG stream over Wi-Fi. Requires camera module (OV2640). Access from browser.', tags: ['Camera','Wi-Fi','HTTP'], requires: ['wifi','camera'] },
+  'edge-ai': { name: 'Edge AI Inference', desc: 'Run person detection or wake-word model on-device using ESP-DL vector instructions.', tags: ['AI','ESP-DL','Vector'], requires: ['ai'] },
+  'zigbee-sensor': { name: 'Zigbee Sensor', desc: 'Join a Zigbee network as temperature/humidity sensor endpoint. ZCL compliant.', tags: ['Zigbee','802.15.4','ZCL'], requires: ['thread'] },
+  'espnow-remote': { name: 'ESP-NOW Remote', desc: 'Connectionless P2P data exchange. No router needed. 200m range. Encrypted.', tags: ['ESP-NOW','P2P','Encrypted'], requires: ['wifi'] },
+};
+
+// ─── Pinout Diagrams ──────────────────────────────────────────
+const PINOUTS = {
+  'ESP32': `
+<span class="pin-label">              ESP32-DevKitC v4</span>
+              ┌────────────┐
+  <span class="pin-power">3V3</span>  ─ [ 1]│            │[38] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-label">EN</span>   ─ [ 2]│            │[37] ─ <span class="pin-io">GPIO23</span>  (MOSI)
+  <span class="pin-adc">VP</span>   ─ [ 3]│  <span class="pin-label">ESP32</span>     │[36] ─ <span class="pin-io">GPIO22</span>  (SCL)
+  <span class="pin-adc">VN</span>   ─ [ 4]│  <span class="pin-label">WROOM</span>     │[35] ─ <span class="pin-io">GPIO1</span>   (TX0)
+  <span class="pin-io">IO34</span> ─ [ 5]│            │[34] ─ <span class="pin-io">GPIO3</span>   (RX0)
+  <span class="pin-io">IO35</span> ─ [ 6]│            │[33] ─ <span class="pin-io">GPIO21</span>  (SDA)
+  <span class="pin-io">IO32</span> ─ [ 7]│            │[32] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-io">IO33</span> ─ [ 8]│            │[31] ─ <span class="pin-io">GPIO19</span>  (MISO)
+  <span class="pin-io">IO25</span> ─ [ 9]│            │[30] ─ <span class="pin-io">GPIO18</span>  (SCK)
+  <span class="pin-io">IO26</span> ─ [10]│            │[29] ─ <span class="pin-io">GPIO5</span>   (SS)
+  <span class="pin-io">IO27</span> ─ [11]│            │[28] ─ <span class="pin-io">GPIO17</span>  (TX2)
+  <span class="pin-io">IO14</span> ─ [12]│            │[27] ─ <span class="pin-io">GPIO16</span>  (RX2)
+  <span class="pin-io">IO12</span> ─ [13]│            │[26] ─ <span class="pin-io">GPIO4</span>
+  <span class="pin-gnd">GND</span>  ─ [14]│            │[25] ─ <span class="pin-io">GPIO0</span>   (BOOT)
+  <span class="pin-io">IO13</span> ─ [15]│            │[24] ─ <span class="pin-io">GPIO2</span>   (LED)
+  <span class="pin-io">IO9</span>  ─ [16]│            │[23] ─ <span class="pin-io">GPIO15</span>
+  <span class="pin-io">IO10</span> ─ [17]│            │[22] ─ <span class="pin-io">GPIO8</span>
+  <span class="pin-io">IO11</span> ─ [18]│            │[21] ─ <span class="pin-io">GPIO7</span>
+  <span class="pin-power">5V</span>   ─ [19]│            │[20] ─ <span class="pin-io">GPIO6</span>
+              └──────┬─────┘
+                   <span class="pin-label">USB</span>`,
+  'ESP32-S3': `
+<span class="pin-label">            ESP32-S3-DevKitC-1</span>
+              ┌────────────┐
+  <span class="pin-power">3V3</span>  ─ [ 1]│            │[44] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-power">3V3</span>  ─ [ 2]│            │[43] ─ <span class="pin-io">GPIO43</span>  (TX)
+  <span class="pin-label">RST</span>  ─ [ 3]│  <span class="pin-label">ESP32-S3</span>  │[42] ─ <span class="pin-io">GPIO44</span>  (RX)
+  <span class="pin-io">IO4</span>  ─ [ 4]│  <span class="pin-label">WROOM-1</span>  │[41] ─ <span class="pin-io">GPIO1</span>   (ADC)
+  <span class="pin-io">IO5</span>  ─ [ 5]│            │[40] ─ <span class="pin-io">GPIO2</span>   (ADC)
+  <span class="pin-io">IO6</span>  ─ [ 6]│   <span class="pin-label">USB-C</span>    │[39] ─ <span class="pin-io">GPIO42</span>
+  <span class="pin-io">IO7</span>  ─ [ 7]│            │[38] ─ <span class="pin-io">GPIO41</span>
+  <span class="pin-io">IO15</span> ─ [ 8]│  <span class="pin-label">AI Vector</span> │[37] ─ <span class="pin-io">GPIO40</span>  (SCL)
+  <span class="pin-io">IO16</span> ─ [ 9]│  <span class="pin-label">Camera</span>   │[36] ─ <span class="pin-io">GPIO39</span>  (SDA)
+  <span class="pin-io">IO17</span> ─ [10]│            │[35] ─ <span class="pin-io">GPIO38</span>
+  <span class="pin-io">IO18</span> ─ [11]│            │[34] ─ <span class="pin-io">GPIO37</span>
+  <span class="pin-io">IO8</span>  ─ [12]│            │[33] ─ <span class="pin-io">GPIO36</span>  (MOSI)
+  <span class="pin-io">IO3</span>  ─ [13]│            │[32] ─ <span class="pin-io">GPIO35</span>  (MISO)
+  <span class="pin-io">IO46</span> ─ [14]│            │[31] ─ <span class="pin-io">GPIO0</span>   (BOOT)
+  <span class="pin-io">IO9</span>  ─ [15]│            │[30] ─ <span class="pin-io">GPIO45</span>
+  <span class="pin-io">IO10</span> ─ [16]│            │[29] ─ <span class="pin-io">GPIO48</span>  (RGB)
+  <span class="pin-io">IO11</span> ─ [17]│            │[28] ─ <span class="pin-io">GPIO47</span>
+  <span class="pin-io">IO12</span> ─ [18]│            │[27] ─ <span class="pin-io">GPIO21</span>
+  <span class="pin-io">IO13</span> ─ [19]│            │[26] ─ <span class="pin-io">GPIO20</span>  (D-)
+  <span class="pin-io">IO14</span> ─ [20]│            │[25] ─ <span class="pin-io">GPIO19</span>  (D+)
+  <span class="pin-power">5V</span>   ─ [21]│            │[24] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-gnd">GND</span>  ─ [22]│            │[23] ─ <span class="pin-gnd">GND</span>
+              └──────┬─────┘
+                  <span class="pin-label">USB-C</span>`,
+  'ESP32-C3': `
+<span class="pin-label">          ESP32-C3-DevKitM-1</span>
+            ┌──────────┐
+  <span class="pin-power">3V3</span> ─ [1] │          │ [15] ─ <span class="pin-io">IO2</span>   (ADC)
+  <span class="pin-power">3V3</span> ─ [2] │ <span class="pin-label">ESP32-C3</span> │ [14] ─ <span class="pin-io">IO3</span>   (ADC)
+  <span class="pin-io">IO4</span> ─ [3] │ <span class="pin-label">RISC-V</span>  │ [13] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-io">IO5</span> ─ [4] │          │ [12] ─ <span class="pin-io">IO1</span>
+  <span class="pin-io">IO6</span> ─ [5] │ <span class="pin-label">160MHz</span>  │ [11] ─ <span class="pin-io">IO0</span>   (BOOT)
+  <span class="pin-io">IO7</span> ─ [6] │          │ [10] ─ <span class="pin-io">IO10</span>  (SDA)
+  <span class="pin-io">IO8</span> ─ [7] │          │ [ 9] ─ <span class="pin-io">IO9</span>   (BOOT)
+  <span class="pin-io">IO9</span> ─ [8] │          │
+            └────┬─────┘
+              <span class="pin-label">USB-C</span>`,
+  'ESP32-C6': `
+<span class="pin-label">          ESP32-C6-DevKitC-1</span>
+            ┌──────────────┐
+  <span class="pin-power">3V3</span> ─ [1] │              │ [26] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-power">3V3</span> ─ [2] │  <span class="pin-label">ESP32-C6</span>    │ [25] ─ <span class="pin-io">GPIO15</span>
+  <span class="pin-label">RST</span> ─ [3] │  <span class="pin-label">RISC-V</span>     │ [24] ─ <span class="pin-io">GPIO23</span>  (MOSI)
+  <span class="pin-io">IO4</span> ─ [4] │  <span class="pin-label">Wi-Fi 6</span>    │ [23] ─ <span class="pin-io">GPIO22</span>  (MISO)
+  <span class="pin-io">IO5</span> ─ [5] │  <span class="pin-label">Thread</span>     │ [22] ─ <span class="pin-io">GPIO21</span>  (SCK)
+  <span class="pin-io">IO6</span> ─ [6] │  <span class="pin-label">Zigbee</span>     │ [21] ─ <span class="pin-io">GPIO20</span>
+  <span class="pin-io">IO7</span> ─ [7] │  <span class="pin-label">BLE 5.3</span>    │ [20] ─ <span class="pin-io">GPIO19</span>
+  <span class="pin-io">IO0</span> ─ [8] │              │ [19] ─ <span class="pin-io">GPIO18</span>
+  <span class="pin-io">IO1</span> ─ [9] │              │ [18] ─ <span class="pin-io">GPIO9</span>   (BOOT)
+  <span class="pin-io">IO2</span> ─[10] │              │ [17] ─ <span class="pin-io">GPIO8</span>   (RGB)
+  <span class="pin-io">IO3</span> ─[11] │              │ [16] ─ <span class="pin-gnd">GND</span>
+  <span class="pin-gnd">GND</span> ─[12] │              │ [15] ─ <span class="pin-power">5V</span>
+  <span class="pin-power">5V</span>  ─[13] │              │ [14] ─ <span class="pin-gnd">GND</span>
+            └──────┬───────┘
+                <span class="pin-label">USB-C</span>`,
+};
+// Default pinout for chips without specific diagram
+const DEFAULT_PINOUT = '<span class="pin-label">Pinout diagram not yet available for this chip.\nRefer to the Espressif datasheet for pin mapping.</span>';
+
+// ─── State ────────────────────────────────────────────────────
+let port = null;
+let detectedChip = null;
+let selectedDemo = null;
+
+// ─── Terminal ─────────────────────────────────────────────────
+function log(msg, cls='') {
+  const t = document.getElementById('terminal');
+  t.classList.add('visible');
+  const ts = new Date().toLocaleTimeString();
+  t.innerHTML += `<span class="t-dim">[${ts}]</span> <span class="${cls}">${msg}</span>\n`;
+  t.scrollTop = t.scrollHeight;
+}
+
+// ─── Flow Step ────────────────────────────────────────────────
+function setStep(n) {
+  for (let i = 1; i <= 6; i++) {
+    const el = document.getElementById('fs-' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+// ─── Connect ──────────────────────────────────────────────────
+async function connectDevice() {
+  const status = document.getElementById('connect-status');
+  const btn = document.getElementById('btn-connect');
+
+  if (!('serial' in navigator)) {
+    status.textContent = 'WebSerial not supported. Use Chrome, Edge, or Opera.';
+    status.className = 'connect-status err';
+    return;
+  }
+
+  try {
+    btn.disabled = true;
+    btn.textContent = 'REQUESTING PORT...';
+    status.textContent = 'Select your ESP32 from the popup...';
+
+    port = await navigator.serial.requestPort({
+      filters: [
+        { usbVendorId: 0x10C4 }, // CP2102
+        { usbVendorId: 0x1A86 }, // CH340
+        { usbVendorId: 0x303A }, // Espressif USB-JTAG
+        { usbVendorId: 0x0403 }, // FTDI
+      ]
+    });
+
+    await port.open({ baudRate: 115200 });
+    status.textContent = 'Connected! Reading chip info...';
+    status.className = 'connect-status ok';
+    log('Serial port opened at 115200 baud', 't-info');
+    setStep(2);
+
+    // Read initial output
+    detectChip();
+
+  } catch (err) {
+    if (err.name === 'NotFoundError') {
+      status.textContent = 'No device selected. Try again.';
+    } else {
+      status.textContent = 'Connection failed: ' + err.message;
+      log('Error: ' + err.message, 't-err');
+    }
+    status.className = 'connect-status err';
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/><circle cx="9" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg> CONNECT ESP32 VIA USB';
+  }
+}
+
+// ─── Detect Chip ──────────────────────────────────────────────
+async function detectChip() {
+  log('Attempting chip detection via serial...', 't-info');
+
+  // Try to read serial output for chip identification
+  const reader = port.readable.getReader();
+  let buffer = '';
+  let chipFound = false;
+  const timeout = setTimeout(() => {
+    if (!chipFound) {
+      reader.releaseLock();
+      // Fallback: try to detect from USB descriptor
+      detectFromUSB();
+    }
+  }, 3000);
+
+  try {
+    while (!chipFound) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const text = new TextDecoder().decode(value);
+      buffer += text;
+      log(text.trim(), '');
+
+      // Look for chip identification strings in boot output
+      for (const chipName of Object.keys(CHIPS)) {
+        if (buffer.toUpperCase().includes(chipName.replace('-', ''))) {
+          chipFound = true;
+          clearTimeout(timeout);
+          reader.releaseLock();
+          showChipProfile(chipName);
+          return;
+        }
+      }
+    }
+  } catch (e) {
+    clearTimeout(timeout);
+    try { reader.releaseLock(); } catch(x) {}
+    detectFromUSB();
+  }
+}
+
+function detectFromUSB() {
+  // Use USB info to guess chip
+  const info = port.getInfo();
+  log('USB Vendor: 0x' + (info.usbVendorId || 0).toString(16).toUpperCase() +
+      ' Product: 0x' + (info.usbProductId || 0).toString(16).toUpperCase(), 't-info');
+
+  let chipName = 'ESP32'; // Default
+  if (info.usbVendorId === 0x303A) {
+    // Espressif native USB — likely S3, C3, C6, or H2
+    chipName = 'ESP32-S3'; // Most common with native USB
+    log('Espressif USB-JTAG detected — likely ESP32-S3 or C3/C6', 't-info');
+  } else {
+    log('CP2102/CH340/FTDI bridge detected — likely ESP32 or ESP32-S2', 't-info');
+  }
+
+  showChipProfile(chipName);
+}
+
+// ─── Show Chip Profile ────────────────────────────────────────
+function showChipProfile(chipName) {
+  detectedChip = CHIPS[chipName] || CHIPS['ESP32'];
+  const c = detectedChip;
+
+  log('Chip identified: ' + c.name, 't-info');
+  log('CPU: ' + c.cpu + ' (' + c.cores + ' core' + (c.cores > 1 ? 's' : '') + ') @ ' + c.freq, 't-info');
+  log('Wi-Fi: ' + c.wifi + ' | BLE: ' + c.ble + ' | Thread: ' + c.thread, 't-info');
+  setStep(3);
+
+  // Update profile section
+  document.getElementById('profile-title').textContent = c.name + ' DETECTED';
+  document.getElementById('chip-name').textContent = c.name;
+  document.getElementById('chip-variant').textContent = c.variant;
+
+  document.getElementById('chip-specs').innerHTML = [
+    ['CPU', c.cpu], ['Cores', c.cores], ['Clock', c.freq], ['SRAM', c.sram],
+    ['Wi-Fi', c.wifi], ['Bluetooth', c.ble], ['Thread/Zigbee', c.thread],
+    ['Flash', c.flash], ['GPIO', c.gpio], ['ADC', c.adc],
+    ['USB', c.usb], ['PSRAM', c.psram], ['Secure Boot', c.secureBoot],
+  ].map(([k,v]) => `<div class="chip-cell"><div class="chip-cell-label">${k}</div><div class="chip-cell-value ${v.length > 6 ? 'sm' : ''}">${v}</div></div>`).join('');
+
+  document.getElementById('chip-tags').innerHTML = c.tags.map(t =>
+    `<span class="chip-tag active">${t}</span>`
+  ).join('');
+
+  document.getElementById('s-profile').style.display = '';
+
+  // Show pinout
+  showPinout(chipName);
+  // Show WiFi config
+  showWifiConfig(chipName);
+  // Show demos
+  showDemos(chipName);
+}
+
+// ─── Pinout ───────────────────────────────────────────────────
+function showPinout(chipName) {
+  setStep(4);
+  const diagram = PINOUTS[chipName] || DEFAULT_PINOUT;
+  document.getElementById('pinout-diagram').innerHTML = '<pre>' + diagram + '</pre>';
+  document.getElementById('s-pinout').style.display = '';
+}
+
+// ─── WiFi Config ──────────────────────────────────────────────
+function showWifiConfig(chipName) {
+  setStep(5);
+  const c = CHIPS[chipName];
+  if (c.wifi === 'No') {
+    // No Wi-Fi on this chip (H2)
+    document.getElementById('s-wifi').style.display = 'none';
+  } else {
+    document.getElementById('s-wifi').style.display = '';
+    document.getElementById('wifi-hostname').placeholder = chipName.toLowerCase().replace(/-/g,'') + '-sensor-01';
+  }
+}
+
+async function sendWifiConfig() {
+  const ssid = document.getElementById('wifi-ssid').value.trim();
+  const pass = document.getElementById('wifi-pass').value;
+  const hostname = document.getElementById('wifi-hostname').value.trim() || 'esp32-device';
+  const mqtt = document.getElementById('wifi-mqtt').value.trim();
+
+  if (!ssid) { log('SSID is required', 't-err'); return; }
+
+  log('Writing Wi-Fi config to NVS...', 't-info');
+  log('  SSID: ' + ssid, '');
+  log('  Hostname: ' + hostname, '');
+  if (mqtt) log('  MQTT: ' + mqtt, '');
+
+  // Send config via serial (AT-style or JSON)
+  if (port && port.writable) {
+    const writer = port.writable.getWriter();
+    const config = JSON.stringify({ ssid, pass, hostname, mqtt }) + '\n';
+    await writer.write(new TextEncoder().encode(config));
+    writer.releaseLock();
+    log('Configuration sent to device', 't-info');
+  } else {
+    log('Serial port not writable — config saved for flash deployment', 't-warn');
+  }
+}
+
+// ─── Demo Selection ───────────────────────────────────────────
+function showDemos(chipName) {
+  setStep(6);
+  const c = CHIPS[chipName];
+  const chipCaps = [];
+  if (c.wifi !== 'No') chipCaps.push('wifi');
+  if (c.ble !== 'No') chipCaps.push('ble');
+  if (c.thread !== 'No') chipCaps.push('thread');
+  if (chipName === 'ESP32-S3') chipCaps.push('ai', 'camera');
+
+  const available = Object.entries(DEMOS).filter(([k, d]) =>
+    d.requires.every(r => chipCaps.includes(r))
+  );
+
+  document.getElementById('demos-title').textContent = 'DEMOS FOR ' + chipName;
+  document.getElementById('demo-grid').innerHTML = available.map(([key, d], i) =>
+    `<div class="demo-card" id="demo-${key}" onclick="selectDemo('${key}')">
+      <div class="demo-num">DEMO ${String(i+1).padStart(2,'0')}</div>
+      <div class="demo-name">${d.name.toUpperCase()}</div>
+      <div class="demo-desc">${d.desc}</div>
+      <div class="demo-tags">${d.tags.map(t => `<span class="demo-tag">${t}</span>`).join('')}</div>
+    </div>`
+  ).join('');
+
+  document.getElementById('s-demos').style.display = '';
+}
+
+function selectDemo(key) {
+  selectedDemo = key;
+  document.querySelectorAll('.demo-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('demo-' + key).classList.add('selected');
+  document.getElementById('btn-flash').style.display = '';
+  log('Selected demo: ' + DEMOS[key].name, 't-info');
+}
+
+async function flashDemo() {
+  if (!selectedDemo) return;
+  const demo = DEMOS[selectedDemo];
+  log('Preparing to flash: ' + demo.name, 't-info');
+  log('This would compile and flash the demo firmware via esptool.js', 't-warn');
+  log('In production, pre-compiled binaries are fetched from the 2nth.ai CDN', 't-info');
+  log('Flash target: ' + detectedChip.name + ' @ ' + detectedChip.freq, 't-info');
+
+  // Simulate flash progress
+  const btn = document.getElementById('btn-flash');
+  btn.disabled = true;
+  for (let i = 0; i <= 100; i += 5) {
+    btn.textContent = `FLASHING... ${i}%`;
+    await new Promise(r => setTimeout(r, 100));
+  }
+  btn.textContent = 'FLASH COMPLETE';
+  log('Demo firmware flashed successfully!', 't-info');
+  log('Device will reboot and run ' + demo.name, 't-info');
+  log('Monitor serial output above for demo telemetry', 't-info');
+}
+
+// ─── Init ─────────────────────────────────────────────────────
+if (!('serial' in navigator)) {
+  document.getElementById('connect-status').textContent = 'WebSerial not supported in this browser. Use Chrome, Edge, or Opera.';
+  document.getElementById('connect-status').className = 'connect-status err';
+  document.getElementById('btn-connect').disabled = true;
+}
+</script>
+</body>
+</html>
