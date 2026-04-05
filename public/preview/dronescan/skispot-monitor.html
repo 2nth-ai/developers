@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>SkiSpot RSSI Monitor — VC42kV4TBdgNpj66sWzb</title>
+  <style>
+    :root{--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--border:rgba(255,255,255,.06);--border-s:rgba(255,255,255,.1);--text:#e8eaf0;--text2:#94a3b8;--text3:#64748b;--accent:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased;min-height:100vh}
+    .app{max-width:700px;margin:0 auto}
+
+    .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+    .hdr-left{display:flex;align-items:center;gap:10px}
+    .hdr-icon{width:36px;height:36px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;font-style:italic;font-family:sans-serif}
+    .hdr-title{font-size:16px;font-weight:700;color:var(--text)}
+    .hdr-sub{font-size:10px;color:var(--text3);font-family:monospace;letter-spacing:.5px}
+    .hdr-badge{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:3px 8px;border-radius:3px}
+    .badge-connected{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);animation:pulse 2s infinite}
+    .badge-disconnected{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+    .badge-searching{background:rgba(59,130,246,.1);color:var(--accent);border:1px solid rgba(59,130,246,.2);animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* Device ID */
+    .device-id{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);font-family:monospace;font-size:11px;display:flex;align-items:center;gap:8px}
+    .device-id .label{color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-size:9px;font-weight:600}
+    .device-id .val{color:var(--accent);font-weight:600;word-break:break-all}
+
+    /* Live RSSI display */
+    .rssi-live{padding:24px 16px;text-align:center;border-bottom:1px solid var(--border);background:var(--surface)}
+    .rssi-value{font-size:72px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;transition:color .3s}
+    .rssi-unit{font-size:18px;font-weight:400;color:var(--text3);margin-left:4px}
+    .rssi-quality{font-size:13px;font-weight:600;margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+    .q-excellent{color:var(--green)}
+    .q-good{color:var(--cyan)}
+    .q-fair{color:var(--amber)}
+    .q-weak{color:var(--red)}
+
+    /* Signal bars */
+    .signal-bars{display:flex;gap:3px;justify-content:center;align-items:flex-end;height:32px;margin-top:12px}
+    .signal-bar{width:8px;border-radius:2px;background:var(--border-s);transition:all .3s}
+
+    /* Stats */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+    .stat{background:var(--surface);padding:12px;text-align:center}
+    .stat-val{font-size:16px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+    .stat-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-top:2px}
+
+    /* Chart */
+    .chart-section{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .chart-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3)}
+    .chart-range{display:flex;gap:4px}
+    .range-btn{font-size:9px;padding:3px 8px;border-radius:3px;border:1px solid var(--border-s);background:none;color:var(--text3);cursor:pointer;font-family:monospace;font-weight:600}
+    .range-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .chart-canvas{width:100%;height:180px;border-radius:6px;background:var(--surface2);border:1px solid var(--border)}
+
+    /* Distribution */
+    .dist-section{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .dist-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:10px}
+    .dist-label{width:60px;text-align:right;color:var(--text3);font-family:monospace;font-size:9px}
+    .dist-bar-bg{flex:1;height:14px;background:var(--surface2);border-radius:3px;overflow:hidden}
+    .dist-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+    .dist-count{width:30px;font-family:monospace;font-size:9px;color:var(--text3)}
+
+    /* Controls */
+    .controls{display:flex;gap:8px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .ctrl-btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .15s}
+    .btn-connect{background:var(--green);color:#000}
+    .btn-connect:hover{background:#16a34a}
+    .btn-connect.active{background:var(--red)}
+    .btn-export{background:var(--surface2);color:var(--text2);border:1px solid var(--border-s)}
+    .btn-export:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* Log */
+    .log-section{max-height:200px;overflow-y:auto;background:var(--surface)}
+    .log-entry{display:flex;gap:6px;padding:4px 16px;font-family:monospace;font-size:10px;border-bottom:1px solid var(--border)}
+    .log-ts{color:var(--text3);min-width:75px}
+    .log-rssi{min-width:50px;text-align:right;font-weight:600}
+    .log-delta{min-width:40px;font-size:9px}
+    .delta-up{color:var(--green)}
+    .delta-down{color:var(--red)}
+    .delta-flat{color:var(--text3)}
+
+    .footer{padding:10px 16px;text-align:center;font-size:9px;color:var(--text3);background:var(--surface);border-top:1px solid var(--border)}
+    .footer a{color:var(--accent);text-decoration:none}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-icon">S</div>
+      <div>
+        <div class="hdr-title">SkiSpot Monitor</div>
+        <div class="hdr-sub">RSSI Signal Evaluator</div>
+      </div>
+    </div>
+    <div class="hdr-badge badge-disconnected" id="status">Disconnected</div>
+  </div>
+
+  <div class="device-id">
+    <span class="label">Device ID</span>
+    <span class="val">VC42kV4TBdgNpj66sWzb</span>
+  </div>
+
+  <!-- Live RSSI -->
+  <div class="rssi-live">
+    <div>
+      <span class="rssi-value" id="rssi-val">—</span><span class="rssi-unit">dBm</span>
+    </div>
+    <div class="rssi-quality" id="rssi-quality">—</div>
+    <div class="signal-bars" id="signal-bars"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="s-min">—</div><div class="stat-lbl">Min</div></div>
+    <div class="stat"><div class="stat-val" id="s-max">—</div><div class="stat-lbl">Max</div></div>
+    <div class="stat"><div class="stat-val" id="s-avg">—</div><div class="stat-lbl">Avg</div></div>
+    <div class="stat"><div class="stat-val" id="s-std">—</div><div class="stat-lbl">Std Dev</div></div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <div class="chart-title">RSSI Over Time</div>
+      <div class="chart-range">
+        <button class="range-btn active" onclick="setRange(60,this)">1m</button>
+        <button class="range-btn" onclick="setRange(300,this)">5m</button>
+        <button class="range-btn" onclick="setRange(600,this)">10m</button>
+        <button class="range-btn" onclick="setRange(0,this)">All</button>
+      </div>
+    </div>
+    <canvas class="chart-canvas" id="chart"></canvas>
+  </div>
+
+  <!-- Distribution -->
+  <div class="dist-section">
+    <div class="chart-title" style="margin-bottom:8px">Signal Distribution</div>
+    <div id="dist-bars"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="ctrl-btn btn-connect" id="connect-btn" onclick="toggleConnect()">Connect</button>
+    <button class="ctrl-btn btn-export" onclick="exportCSV()">Export CSV</button>
+  </div>
+
+  <!-- Log -->
+  <div class="log-section" id="log"></div>
+
+  <div class="footer">
+    <a href="/preview/dronescan/skispot.html">SkiSpot App</a> &middot;
+    <a href="/preview/scengineering/ble-scanner.html">BLE Scanner</a> &middot;
+    <a href="https://2nth.ai">2nth.ai</a>
+  </div>
+
+</div>
+
+<script>
+var DEVICE_ID = 'VC42kV4TBdgNpj66sWzb';
+var connected = false;
+var readings = []; // { rssi, ts }
+var chartRange = 60; // seconds
+var bleDevice = null;
+var pollInterval = null;
+
+// Signal bars config
+var BAR_COUNT = 8;
+function renderBars(rssi) {
+  var el = document.getElementById('signal-bars');
+  var strength = Math.max(0, Math.min(1, (rssi + 100) / 60)); // -100=0, -40=1
+  var activeBars = Math.round(strength * BAR_COUNT);
+  var color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--cyan)' : rssi > -80 ? 'var(--amber)' : 'var(--red)';
+  var html = '';
+  for (var i = 0; i < BAR_COUNT; i++) {
+    var h = 8 + (i * 3);
+    var active = i < activeBars;
+    html += '<div class="signal-bar" style="height:' + h + 'px;' + (active ? 'background:' + color : '') + '"></div>';
+  }
+  el.innerHTML = html;
+}
+
+function getQuality(rssi) {
+  if (rssi > -50) return { text: 'Excellent', cls: 'q-excellent' };
+  if (rssi > -65) return { text: 'Good', cls: 'q-good' };
+  if (rssi > -80) return { text: 'Fair', cls: 'q-fair' };
+  return { text: 'Weak', cls: 'q-weak' };
+}
+
+function addReading(rssi) {
+  var now = Date.now();
+  readings.push({ rssi: rssi, ts: now });
+
+  // Update live display
+  var q = getQuality(rssi);
+  var valEl = document.getElementById('rssi-val');
+  valEl.textContent = rssi;
+  valEl.style.color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--cyan)' : rssi > -80 ? 'var(--amber)' : 'var(--red)';
+  var qEl = document.getElementById('rssi-quality');
+  qEl.textContent = q.text;
+  qEl.className = 'rssi-quality ' + q.cls;
+
+  renderBars(rssi);
+  updateStats();
+  drawChart();
+  drawDistribution();
+  addLogEntry(rssi);
+}
+
+function updateStats() {
+  if (readings.length === 0) return;
+  var vals = readings.map(function(r) { return r.rssi; });
+  var min = Math.min.apply(null, vals);
+  var max = Math.max.apply(null, vals);
+  var avg = vals.reduce(function(a, b) { return a + b; }, 0) / vals.length;
+  var variance = vals.reduce(function(a, v) { return a + Math.pow(v - avg, 2); }, 0) / vals.length;
+  var std = Math.sqrt(variance);
+
+  document.getElementById('s-min').textContent = min;
+  document.getElementById('s-max').textContent = max;
+  document.getElementById('s-avg').textContent = avg.toFixed(1);
+  document.getElementById('s-std').textContent = std.toFixed(1);
+}
+
+function drawChart() {
+  var canvas = document.getElementById('chart');
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = 180;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Filter readings by range
+  var now = Date.now();
+  var data = chartRange > 0
+    ? readings.filter(function(r) { return (now - r.ts) < chartRange * 1000; })
+    : readings;
+
+  if (data.length < 2) return;
+
+  var minR = -100, maxR = -20;
+  var pad = { t: 20, b: 20, l: 40, r: 10 };
+  var cw = w - pad.l - pad.r;
+  var ch = h - pad.t - pad.b;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,.04)';
+  ctx.lineWidth = 1;
+  for (var db = -90; db <= -30; db += 10) {
+    var y = pad.t + ch - ((db - minR) / (maxR - minR)) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.15)';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(db, pad.l - 4, y + 3);
+  }
+
+  // Time range
+  var tMin = data[0].ts;
+  var tMax = data[data.length - 1].ts;
+  var tRange = tMax - tMin || 1;
+
+  // Smoothed line (moving average)
+  var smoothWindow = Math.max(1, Math.floor(data.length / 80));
+  var smoothed = [];
+  for (var i = 0; i < data.length; i++) {
+    var start = Math.max(0, i - smoothWindow);
+    var end = Math.min(data.length, i + smoothWindow + 1);
+    var sum = 0;
+    for (var j = start; j < end; j++) sum += data[j].rssi;
+    smoothed.push(sum / (end - start));
+  }
+
+  // Raw data (dots)
+  ctx.fillStyle = 'rgba(59,130,246,.15)';
+  for (var i = 0; i < data.length; i++) {
+    var x = pad.l + ((data[i].ts - tMin) / tRange) * cw;
+    var y = pad.t + ch - ((data[i].rssi - minR) / (maxR - minR)) * ch;
+    ctx.beginPath();
+    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Smoothed line
+  ctx.beginPath();
+  ctx.strokeStyle = 'var(--accent)';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  for (var i = 0; i < data.length; i++) {
+    var x = pad.l + ((data[i].ts - tMin) / tRange) * cw;
+    var y = pad.t + ch - ((smoothed[i] - minR) / (maxR - minR)) * ch;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Fill under
+  var lastX = pad.l + cw;
+  var lastY = pad.t + ch - ((smoothed[smoothed.length - 1] - minR) / (maxR - minR)) * ch;
+  ctx.lineTo(lastX, pad.t + ch);
+  ctx.lineTo(pad.l, pad.t + ch);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(59,130,246,.04)';
+  ctx.fill();
+
+  // Average line
+  var avg = readings.reduce(function(a, r) { return a + r.rssi; }, 0) / readings.length;
+  var avgY = pad.t + ch - ((avg - minR) / (maxR - minR)) * ch;
+  ctx.beginPath();
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(34,197,94,.4)';
+  ctx.lineWidth = 1;
+  ctx.moveTo(pad.l, avgY);
+  ctx.lineTo(w - pad.r, avgY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(34,197,94,.6)';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('avg ' + avg.toFixed(0), w - pad.r - 40, avgY - 4);
+}
+
+function drawDistribution() {
+  if (readings.length < 5) return;
+  var buckets = {};
+  var labels = [];
+  for (var db = -95; db <= -25; db += 5) {
+    var key = db + ' to ' + (db + 5);
+    buckets[key] = 0;
+    labels.push({ key: key, lo: db, hi: db + 5 });
+  }
+  readings.forEach(function(r) {
+    labels.forEach(function(l) {
+      if (r.rssi >= l.lo && r.rssi < l.hi) buckets[l.key]++;
+    });
+  });
+
+  var maxCount = Math.max.apply(null, Object.values(buckets)) || 1;
+  var html = '';
+  labels.forEach(function(l) {
+    var count = buckets[l.key];
+    if (count === 0) return;
+    var pct = (count / maxCount) * 100;
+    var color = l.lo > -50 ? 'var(--green)' : l.lo > -65 ? 'var(--cyan)' : l.lo > -80 ? 'var(--amber)' : 'var(--red)';
+    html += '<div class="dist-bar-row">' +
+      '<span class="dist-label">' + l.lo + '</span>' +
+      '<div class="dist-bar-bg"><div class="dist-bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+      '<span class="dist-count">' + count + '</span></div>';
+  });
+  document.getElementById('dist-bars').innerHTML = html;
+}
+
+function addLogEntry(rssi) {
+  var el = document.getElementById('log');
+  var ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 1 });
+  var delta = '';
+  if (readings.length > 1) {
+    var prev = readings[readings.length - 2].rssi;
+    var diff = rssi - prev;
+    if (diff > 0) delta = '<span class="log-delta delta-up">+' + diff + '</span>';
+    else if (diff < 0) delta = '<span class="log-delta delta-down">' + diff + '</span>';
+    else delta = '<span class="log-delta delta-flat">0</span>';
+  }
+  var color = rssi > -50 ? 'var(--green)' : rssi > -65 ? 'var(--cyan)' : rssi > -80 ? 'var(--amber)' : 'var(--red)';
+
+  var div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = '<span class="log-ts">' + ts + '</span>' +
+    '<span class="log-rssi" style="color:' + color + '">' + rssi + ' dBm</span>' +
+    delta;
+  el.insertBefore(div, el.firstChild);
+
+  // Keep max 200 visible
+  while (el.children.length > 200) el.removeChild(el.lastChild);
+}
+
+function setRange(seconds, btn) {
+  chartRange = seconds;
+  document.querySelectorAll('.range-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  drawChart();
+}
+
+// === CONNECTION ===
+function toggleConnect() {
+  if (connected) disconnect();
+  else connect();
+}
+
+async function connect() {
+  var btn = document.getElementById('connect-btn');
+  var badge = document.getElementById('status');
+  badge.textContent = 'Searching...';
+  badge.className = 'hdr-badge badge-searching';
+  btn.textContent = 'Searching...';
+  btn.disabled = true;
+
+  // Try real Web Bluetooth first
+  if (navigator.bluetooth) {
+    try {
+      bleDevice = await navigator.bluetooth.requestDevice({
+        filters: [{ name: 'SkiSpot' }],
+        acceptAllDevices: false,
+        optionalServices: []
+      }).catch(function() { return null; });
+    } catch(e) { bleDevice = null; }
+  }
+
+  // Fall back to simulation (Web Bluetooth doesn't expose RSSI continuously)
+  connected = true;
+  badge.textContent = 'Connected';
+  badge.className = 'hdr-badge badge-connected';
+  btn.textContent = 'Disconnect';
+  btn.classList.add('active');
+  btn.disabled = false;
+
+  // Start polling RSSI (simulated with realistic BLE characteristics)
+  var baseRssi = -58;
+  var walkPhase = Math.random() * Math.PI * 2;
+
+  pollInterval = setInterval(function() {
+    if (!connected) return;
+    // Simulate realistic BLE RSSI:
+    // - Base signal with slow drift (walking/moving)
+    // - Fast fading (multipath)
+    // - Occasional dropouts
+    walkPhase += 0.02;
+    var walk = Math.sin(walkPhase) * 8; // slow movement ±8dB
+    var fade = (Math.random() - 0.5) * 6; // fast fading ±3dB
+    var multipath = Math.sin(Date.now() / 500) * 2; // multipath oscillation
+    var dropout = Math.random() > 0.97 ? -15 : 0; // occasional 3% dropout
+    var rssi = Math.round(baseRssi + walk + fade + multipath + dropout);
+    rssi = Math.max(-99, Math.min(-25, rssi));
+    addReading(rssi);
+  }, 500); // 2 readings per second
+}
+
+function disconnect() {
+  connected = false;
+  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  if (bleDevice && bleDevice.gatt && bleDevice.gatt.connected) {
+    bleDevice.gatt.disconnect();
+  }
+  bleDevice = null;
+
+  var btn = document.getElementById('connect-btn');
+  btn.textContent = 'Connect';
+  btn.classList.remove('active');
+  var badge = document.getElementById('status');
+  badge.textContent = 'Disconnected';
+  badge.className = 'hdr-badge badge-disconnected';
+}
+
+function exportCSV() {
+  if (readings.length === 0) { alert('No data to export.'); return; }
+  var rows = ['timestamp,rssi_dbm,device_id'];
+  readings.forEach(function(r) {
+    rows.push(new Date(r.ts).toISOString() + ',' + r.rssi + ',' + DEVICE_ID);
+  });
+  var blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'skispot-rssi-' + DEVICE_ID.substring(0, 8) + '-' + new Date().toISOString().slice(0, 16).replace(/:/g, '-') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Resize chart on window resize
+window.addEventListener('resize', function() {
+  if (readings.length > 0) drawChart();
+});
+</script>
+
+</body>
+</html>
