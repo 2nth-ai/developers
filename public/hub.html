@@ -48,6 +48,17 @@
   <h1>PARTNER HUB</h1>
   <div class="sub">All partner pages, demos, and previews in one place.</div>
 
+  <!-- Admin: View As bar -->
+  <div id="view-as-bar" style="display:none;background:#f5f3ff;border:1px solid rgba(124,58,237,.15);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="color:#71717a">Viewing as:</span>
+      <select id="view-as-select" onchange="viewAs(this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(124,58,237,.2);background:#fff;font-family:inherit;font-size:11px;color:#18181b">
+        <option value="full">Admin (full access)</option>
+      </select>
+      <span id="view-as-scope" style="font-size:9px;color:#7c3aed"></span>
+    </div>
+  </div>
+
   <div class="category"><span class="category-label">PLATFORM</span><div class="category-line"></div><span class="category-count">Agents &amp; AI</span></div>
 
   <!-- Agent Team -->
@@ -786,6 +797,66 @@ function toggleAccess(userId, groupScope, granted) {
   // Note: In production this would call an API to persist the scope change.
   // For now it's client-side only and shows an alert.
   console.log('Access ' + (granted ? 'granted' : 'revoked') + ': ' + user.name + ' → ' + groupScope + ' (new scope: ' + user.scope + ')');
+}
+
+// View As — admin impersonation
+if (window.__userScope === 'full') {
+  var bar = document.getElementById('view-as-bar');
+  bar.style.display = '';
+
+  // Populate dropdown with all users
+  var sel = document.getElementById('view-as-select');
+  ALL_USERS.forEach(function(u) {
+    if (u.scope === 'full') return; // skip other admins
+    var opt = document.createElement('option');
+    opt.value = u.scope;
+    opt.textContent = u.name + ' (' + u.scope + ')';
+    sel.appendChild(opt);
+  });
+}
+
+function viewAs(scope) {
+  document.getElementById('view-as-scope').textContent = scope === 'full' ? '' : 'scope: ' + scope;
+
+  // Show/hide groups based on selected scope
+  var userScopes = scope.split(',').map(function(s){return s.trim()});
+
+  document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+    var groupScopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
+
+    if (scope === 'full') {
+      // Admin sees everything
+      group.style.display = '';
+      group.classList.remove('collapsed');
+      // Show access panels
+      var ap = group.querySelector('.access-panel');
+      if (ap) ap.style.display = '';
+    } else {
+      // Filter like the middleware would
+      var visible = groupScopes.some(function(gs) {
+        if (gs === 'platform') return true;
+        if (gs === 'imbila') return true;
+        if (gs === 'admin') return false;
+        return userScopes.some(function(us) { return gs === us; });
+      });
+      group.style.display = visible ? '' : 'none';
+      if (visible) group.classList.remove('collapsed');
+      // Hide access panels in view-as mode
+      var ap = group.querySelector('.access-panel');
+      if (ap) ap.style.display = scope === 'full' ? '' : 'none';
+    }
+  });
+
+  // Hide/show categories based on whether they have visible groups after them
+  document.querySelectorAll('.category').forEach(function(cat) {
+    var next = cat.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('category')) {
+      if (next.classList.contains('group') && next.style.display !== 'none') hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    cat.style.display = hasVisible ? '' : 'none';
+  });
 }
 
 // Collapsible groups — click label to toggle
