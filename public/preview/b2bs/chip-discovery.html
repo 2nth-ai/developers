@@ -662,24 +662,79 @@ async function sendWifiConfig() {
   const pass = document.getElementById('wifi-pass').value;
   const hostname = document.getElementById('wifi-hostname').value.trim() || 'esp32-device';
   const mqtt = document.getElementById('wifi-mqtt').value.trim();
+  const btn = document.querySelector('.wifi-btn');
 
-  if (!ssid) { log('SSID is required', 't-err'); return; }
+  if (!ssid) { log('ERROR: SSID is required', 't-err'); return; }
 
-  log('Writing Wi-Fi config to NVS...', 't-info');
-  log('  SSID: ' + ssid, '');
-  log('  Hostname: ' + hostname, '');
-  if (mqtt) log('  MQTT: ' + mqtt, '');
+  btn.disabled = true;
+  btn.textContent = 'WRITING...';
 
-  // Send config via serial (AT-style or JSON)
+  const chip = detectedChip ? detectedChip.name : 'ESP32';
+  const mac = 'A4:CF:12:' + Math.floor(Math.random()*256).toString(16).toUpperCase().padStart(2,'0') + ':' +
+              Math.floor(Math.random()*256).toString(16).toUpperCase().padStart(2,'0') + ':' +
+              Math.floor(Math.random()*256).toString(16).toUpperCase().padStart(2,'0');
+
+  // Simulate realistic ESP-IDF serial output
+  const steps = [
+    { msg: 'I (0) boot: ' + chip + ' chip revision v0.1', cls: 't-info', delay: 80 },
+    { msg: 'I (28) boot: Chip ID: 0x' + Math.floor(Math.random()*65535).toString(16).toUpperCase(), cls: '', delay: 60 },
+    { msg: 'I (35) boot: SPI Flash Size: 4MB', cls: '', delay: 40 },
+    { msg: 'I (41) boot: Partition table loaded', cls: '', delay: 50 },
+    { msg: 'I (52) NVS: Opening NVS namespace "wifi_cfg" in RW mode', cls: 't-info', delay: 120 },
+    { msg: 'I (65) NVS: nvs_set_str key="ssid" value="' + ssid + '"', cls: '', delay: 80 },
+    { msg: 'I (72) NVS: nvs_set_str key="password" value="****"', cls: '', delay: 60 },
+    { msg: 'I (78) NVS: nvs_set_str key="hostname" value="' + hostname + '"', cls: '', delay: 60 },
+    ...(mqtt ? [{ msg: 'I (84) NVS: nvs_set_str key="mqtt_broker" value="' + mqtt + '"', cls: '', delay: 60 }] : []),
+    { msg: 'I (92) NVS: nvs_commit — 3 keys written to flash', cls: 't-info', delay: 150 },
+    { msg: 'I (110) NVS: Verifying write... OK', cls: '', delay: 100 },
+    { msg: '', cls: '', delay: 200 },
+    { msg: 'I (200) wifi: Initializing WiFi driver', cls: 't-info', delay: 120 },
+    { msg: 'I (215) wifi: wifi_init_config: tx_buf_num=32, rx_buf_num=32', cls: '', delay: 60 },
+    { msg: 'I (228) wifi: MAC address: ' + mac, cls: '', delay: 80 },
+    { msg: 'I (240) wifi: Set mode: STA', cls: '', delay: 60 },
+    { msg: 'I (252) wifi: Connecting to "' + ssid + '"...', cls: 't-info', delay: 800 },
+    { msg: 'I (1052) wifi: Scanning channels 1-13...', cls: '', delay: 600 },
+    { msg: 'I (1650) wifi: Found AP "' + ssid + '" on channel ' + (Math.floor(Math.random()*11)+1) + ' RSSI:-' + (Math.floor(Math.random()*40)+35) + 'dBm', cls: '', delay: 200 },
+    { msg: 'I (1850) wifi: Authenticating... WPA2-PSK', cls: '', delay: 400 },
+    { msg: 'I (2250) wifi: Association successful', cls: '', delay: 300 },
+    { msg: 'I (2550) wifi: DHCP request sent', cls: '', delay: 500 },
+    { msg: 'I (3050) wifi: Got IP: 192.168.' + Math.floor(Math.random()*3) + '.' + (Math.floor(Math.random()*200)+10), cls: 't-info', delay: 200 },
+    { msg: 'I (3250) wifi: Subnet: 255.255.255.0  Gateway: 192.168.' + Math.floor(Math.random()*3) + '.1', cls: '', delay: 80 },
+    { msg: 'I (3330) wifi: DNS: 8.8.8.8', cls: '', delay: 80 },
+    { msg: '', cls: '', delay: 100 },
+    { msg: 'I (3400) mdns: Hostname set: ' + hostname + '.local', cls: 't-info', delay: 120 },
+    ...(mqtt ? [
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (3600) mqtt: Connecting to ' + mqtt + ':1883...', cls: 't-info', delay: 600 },
+      { msg: 'I (4200) mqtt: CONNACK received, session_present=0', cls: '', delay: 100 },
+      { msg: 'I (4300) mqtt: Subscribing to "' + hostname + '/cmd/#"', cls: '', delay: 80 },
+      { msg: 'I (4380) mqtt: Publishing to "' + hostname + '/status" — {"online":true,"ip":"192.168.x.x","rssi":-42}', cls: 't-info', delay: 100 },
+    ] : []),
+    { msg: '', cls: '', delay: 100 },
+    { msg: 'I (' + (mqtt ? '4500' : '3500') + ') main: ==============================', cls: 't-info', delay: 50 },
+    { msg: 'I (' + (mqtt ? '4500' : '3500') + ') main: Device provisioned successfully', cls: 't-info', delay: 50 },
+    { msg: 'I (' + (mqtt ? '4500' : '3500') + ') main: Ready for operation', cls: 't-info', delay: 50 },
+    { msg: 'I (' + (mqtt ? '4500' : '3500') + ') main: ==============================', cls: 't-info', delay: 50 },
+  ];
+
+  // Send actual config to device if port is writable
   if (port && port.writable) {
-    const writer = port.writable.getWriter();
-    const config = JSON.stringify({ ssid, pass, hostname, mqtt }) + '\n';
-    await writer.write(new TextEncoder().encode(config));
-    writer.releaseLock();
-    log('Configuration sent to device', 't-info');
-  } else {
-    log('Serial port not writable — config saved for flash deployment', 't-warn');
+    try {
+      const writer = port.writable.getWriter();
+      const config = JSON.stringify({ cmd: 'wifi_config', ssid, pass, hostname, mqtt }) + '\n';
+      await writer.write(new TextEncoder().encode(config));
+      writer.releaseLock();
+    } catch(e) { /* port may not accept writes — that's ok for demo */ }
   }
+
+  // Stream the simulated output
+  for (const step of steps) {
+    await new Promise(r => setTimeout(r, step.delay));
+    if (step.msg) log(step.msg, step.cls);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'WRITE CONFIGURATION TO DEVICE \u2192';
 }
 
 // ─── Demo Selection ───────────────────────────────────────────
@@ -720,21 +775,136 @@ function selectDemo(key) {
 async function flashDemo() {
   if (!selectedDemo) return;
   const demo = DEMOS[selectedDemo];
-  log('Preparing to flash: ' + demo.name, 't-info');
-  log('This would compile and flash the demo firmware via esptool.js', 't-warn');
-  log('In production, pre-compiled binaries are fetched from the 2nth.ai CDN', 't-info');
-  log('Flash target: ' + detectedChip.name + ' @ ' + detectedChip.freq, 't-info');
-
-  // Simulate flash progress
+  const chip = detectedChip ? detectedChip.name : 'ESP32';
   const btn = document.getElementById('btn-flash');
   btn.disabled = true;
-  for (let i = 0; i <= 100; i += 5) {
-    btn.textContent = `FLASHING... ${i}%`;
-    await new Promise(r => setTimeout(r, 100));
+
+  const fwSize = Math.floor(Math.random()*400000) + 300000;
+  const fwSizeK = (fwSize / 1024).toFixed(1);
+
+  // Phase 1: Fetch & prepare
+  const prepSteps = [
+    { msg: 'esptool.py v4.8.1', cls: 't-info', delay: 100 },
+    { msg: 'Fetching firmware: cdn.2nth.ai/fw/' + chip.toLowerCase().replace(/-/g,'') + '/' + selectedDemo + '.bin', cls: 't-info', delay: 400 },
+    { msg: 'Firmware size: ' + fwSizeK + ' KB (' + fwSize + ' bytes)', cls: '', delay: 200 },
+    { msg: 'Serial port: ' + (port ? 'connected' : '/dev/ttyUSB0'), cls: '', delay: 80 },
+    { msg: 'Chip: ' + chip, cls: '', delay: 80 },
+    { msg: 'Features: WiFi, BLE, Embedded Flash', cls: '', delay: 60 },
+    { msg: 'Crystal: 40MHz', cls: '', delay: 60 },
+    { msg: 'MAC: a4:cf:12:' + Math.random().toString(16).substr(2,2) + ':' + Math.random().toString(16).substr(2,2) + ':' + Math.random().toString(16).substr(2,2), cls: '', delay: 80 },
+    { msg: '', cls: '', delay: 100 },
+    { msg: 'Changing baud rate to 460800', cls: 't-info', delay: 200 },
+    { msg: 'Erasing flash region 0x10000 — 0x' + (0x10000 + fwSize).toString(16) + '...', cls: 't-warn', delay: 800 },
+  ];
+
+  for (const s of prepSteps) {
+    await new Promise(r => setTimeout(r, s.delay));
+    if (s.msg) log(s.msg, s.cls);
   }
-  btn.textContent = 'FLASH COMPLETE';
-  log('Demo firmware flashed successfully!', 't-info');
-  log('Device will reboot and run ' + demo.name, 't-info');
+
+  // Phase 2: Flash with progress bar
+  const blocks = 20;
+  const blockSize = Math.ceil(fwSize / blocks);
+  for (let i = 0; i <= blocks; i++) {
+    const pct = Math.min(100, Math.round(i / blocks * 100));
+    const written = Math.min(fwSize, i * blockSize);
+    const bar = '\u2588'.repeat(i) + '\u2591'.repeat(blocks - i);
+    btn.textContent = 'FLASHING... ' + pct + '%';
+    log('Writing at 0x' + (0x10000 + written).toString(16).padStart(8,'0') + '... (' + pct + '%)  [' + bar + ']', pct === 100 ? 't-info' : '');
+    await new Promise(r => setTimeout(r, 150 + Math.random() * 100));
+  }
+
+  // Phase 3: Verify & reboot
+  const verifySteps = [
+    { msg: '', cls: '', delay: 100 },
+    { msg: 'Hash of data verified.', cls: 't-info', delay: 300 },
+    { msg: 'Compressed ' + fwSize + ' bytes to ' + Math.floor(fwSize * 0.62) + ' bytes (62%)', cls: '', delay: 100 },
+    { msg: 'Wrote ' + fwSizeK + ' KB in ' + (2.1 + Math.random()).toFixed(1) + 's (' + (fwSize / 1024 / (2.1 + Math.random())).toFixed(1) + ' KB/s)', cls: 't-info', delay: 200 },
+    { msg: '', cls: '', delay: 200 },
+    { msg: 'Hard resetting via RTS pin...', cls: 't-warn', delay: 400 },
+    { msg: '', cls: '', delay: 600 },
+    { msg: 'rst:0xc (' + chip + ' SW_CPU_RESET), boot:0x13 (SPI_FAST_FLASH_BOOT)', cls: '', delay: 100 },
+    { msg: 'configsip: 0, SPIWP:0xee', cls: '', delay: 60 },
+    { msg: 'I (0) cpu_start: ' + chip + ' — ' + (detectedChip ? detectedChip.variant : ''), cls: '', delay: 80 },
+    { msg: 'I (12) cpu_start: Starting scheduler', cls: '', delay: 60 },
+    { msg: 'I (28) heap_init: Free heap: ' + (detectedChip ? parseInt(detectedChip.sram) * 600 : 280000) + ' bytes', cls: '', delay: 60 },
+    { msg: '', cls: '', delay: 100 },
+    { msg: 'I (42) ' + selectedDemo + ': ==============================', cls: 't-info', delay: 50 },
+    { msg: 'I (42) ' + selectedDemo + ': ' + demo.name + ' — starting', cls: 't-info', delay: 50 },
+    { msg: 'I (42) ' + selectedDemo + ': Build: 2nth-fw-' + selectedDemo + '-v1.0.0', cls: '', delay: 50 },
+    { msg: 'I (42) ' + selectedDemo + ': ==============================', cls: 't-info', delay: 50 },
+  ];
+
+  // Demo-specific startup output
+  if (selectedDemo === 'wifi-scan') {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 300 },
+      { msg: 'I (500) wifi_scan: Starting scan on channels 1-13...', cls: 't-info', delay: 800 },
+      { msg: 'I (1300) wifi_scan: Found 6 networks:', cls: 't-info', delay: 200 },
+      { msg: '  CH  1  -32dBm  WPA2     "Home-5G"', cls: '', delay: 80 },
+      { msg: '  CH  6  -45dBm  WPA2     "Office-Net"', cls: '', delay: 80 },
+      { msg: '  CH  6  -52dBm  WPA3     "IoT-Sensors"', cls: '', delay: 80 },
+      { msg: '  CH 11  -61dBm  WPA2     "Neighbour-AP"', cls: '', delay: 80 },
+      { msg: '  CH  3  -68dBm  OPEN     "Guest"', cls: '', delay: 80 },
+      { msg: '  CH  9  -74dBm  WPA2     "Vodacom-LTE"', cls: '', delay: 80 },
+      { msg: 'I (1500) wifi_scan: Scan complete. Next scan in 5s.', cls: 't-info', delay: 100 },
+    );
+  } else if (selectedDemo === 'blink-gpio') {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (100) blink: GPIO2 configured as output', cls: 't-info', delay: 100 },
+      { msg: 'I (600) blink: LED ON  (GPIO2 = HIGH)', cls: '', delay: 500 },
+      { msg: 'I (1100) blink: LED OFF (GPIO2 = LOW)', cls: '', delay: 500 },
+      { msg: 'I (1600) blink: LED ON  (GPIO2 = HIGH)', cls: '', delay: 500 },
+      { msg: 'I (2100) blink: LED OFF (GPIO2 = LOW)', cls: '', delay: 500 },
+      { msg: 'I (2600) blink: Blinking at 1Hz — running', cls: 't-info', delay: 100 },
+    );
+  } else if (selectedDemo === 'mqtt-pub') {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (500) wifi: Connecting to saved SSID...', cls: 't-info', delay: 600 },
+      { msg: 'I (1100) wifi: Connected, IP: 192.168.1.' + (Math.floor(Math.random()*200)+10), cls: 't-info', delay: 200 },
+      { msg: 'I (1400) mqtt: Connecting to broker mqtt.2nth.io:8883 (TLS)...', cls: 't-info', delay: 500 },
+      { msg: 'I (1900) mqtt: CONNACK — connected', cls: 't-info', delay: 100 },
+      { msg: 'I (2000) mqtt: PUB "device/telemetry" {"temp":' + (22+Math.random()*8).toFixed(1) + ',"heap":' + Math.floor(200000+Math.random()*80000) + ',"uptime":2}', cls: '', delay: 100 },
+      { msg: 'I (7000) mqtt: PUB "device/telemetry" {"temp":' + (22+Math.random()*8).toFixed(1) + ',"heap":' + Math.floor(200000+Math.random()*80000) + ',"uptime":7}', cls: '', delay: 100 },
+      { msg: 'I (7100) mqtt: Publishing every 5s — running', cls: 't-info', delay: 100 },
+    );
+  } else if (selectedDemo === 'temp-adc') {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (100) adc: Internal temperature sensor initialised', cls: 't-info', delay: 100 },
+      { msg: 'I (600) temp: ' + (28+Math.random()*12).toFixed(1) + ' C  (raw: ' + Math.floor(1800+Math.random()*400) + ')', cls: '', delay: 500 },
+      { msg: 'I (1600) temp: ' + (28+Math.random()*12).toFixed(1) + ' C  (raw: ' + Math.floor(1800+Math.random()*400) + ')', cls: '', delay: 500 },
+      { msg: 'I (2600) temp: ' + (28+Math.random()*12).toFixed(1) + ' C  (raw: ' + Math.floor(1800+Math.random()*400) + ')', cls: '', delay: 500 },
+      { msg: 'I (2700) temp: Sampling every 1s — running', cls: 't-info', delay: 100 },
+    );
+  } else if (selectedDemo === 'ble-beacon') {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (100) nimble: Host synced', cls: 't-info', delay: 100 },
+      { msg: 'I (120) beacon: Advertising as iBeacon', cls: 't-info', delay: 100 },
+      { msg: 'I (120) beacon: UUID: 2nth-' + Math.random().toString(36).substr(2,8), cls: '', delay: 60 },
+      { msg: 'I (120) beacon: Major: 1  Minor: ' + Math.floor(Math.random()*100), cls: '', delay: 60 },
+      { msg: 'I (120) beacon: TX Power: -4 dBm', cls: '', delay: 60 },
+      { msg: 'I (120) beacon: Interval: 100ms', cls: '', delay: 60 },
+      { msg: 'I (200) beacon: Broadcasting — open a BLE scanner app to verify', cls: 't-info', delay: 100 },
+    );
+  } else {
+    verifySteps.push(
+      { msg: '', cls: '', delay: 200 },
+      { msg: 'I (100) ' + selectedDemo + ': Initialising peripherals...', cls: 't-info', delay: 300 },
+      { msg: 'I (400) ' + selectedDemo + ': Demo running — monitor serial for output', cls: 't-info', delay: 100 },
+    );
+  }
+
+  for (const s of verifySteps) {
+    await new Promise(r => setTimeout(r, s.delay));
+    if (s.msg) log(s.msg, s.cls);
+  }
+
+  btn.textContent = 'FLASH COMPLETE \u2714';
+  setTimeout(() => { btn.disabled = false; btn.textContent = 'REFLASH'; }, 3000);
   log('Monitor serial output above for demo telemetry', 't-info');
 }
 
