@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/esptool-js@0.4.3/bundle.js"></script>
   <style>
-    :root{--c-carbon:#0a0a0a;--c-graphite:#141414;--c-gunmetal:#1c1c1e;--c-chassis:#232326;--c-titanium:#fafafa;--c-steel-900:#27272a;--c-steel-800:#3f3f46;--c-steel-700:#52525b;--c-steel-600:#71717a;--c-steel-500:#a1a1aa;--c-steel-400:#c4c4cc;--c-steel-300:#d4d4d8;--c-border:hsla(0,0%,100%,.06);--c-border-s:hsla(0,0%,100%,.1);--c-grid-line:hsla(0,0%,100%,.018);--c-brand:#06b6d4;--c-green:#22c55e;--c-amber:#f59e0b;--c-red:#ef4444}
+    :root{--c-carbon:#ffffff;--c-graphite:#f7f8fa;--c-gunmetal:#f0f1f3;--c-chassis:#e8e9eb;--c-titanium:#0a0a0a;--c-steel-900:#e4e4e7;--c-steel-800:#d4d4d8;--c-steel-700:#a1a1aa;--c-steel-600:#71717a;--c-steel-500:#52525b;--c-steel-400:#3f3f46;--c-steel-300:#27272a;--c-border:rgba(0,0,0,.08);--c-border-s:rgba(0,0,0,.12);--c-grid-line:rgba(0,0,0,.03);--c-brand:#0891b2;--c-green:#059669;--c-amber:#d97706;--c-red:#dc2626}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     *{-webkit-font-smoothing:antialiased}
     html{scroll-behavior:smooth}
@@ -494,16 +494,10 @@ async function connectDevice() {
     btn.textContent = 'REQUESTING PORT...';
     status.textContent = 'Select your ESP32 from the popup...';
 
-    port = await navigator.serial.requestPort({
-      filters: [
-        { usbVendorId: 0x10C4 }, // CP2102
-        { usbVendorId: 0x1A86 }, // CH340
-        { usbVendorId: 0x303A }, // Espressif USB-JTAG
-        { usbVendorId: 0x0403 }, // FTDI
-      ]
-    });
+    // No USB vendor filter — show all serial devices so the user can pick theirs
+    port = await navigator.serial.requestPort();
 
-    await port.open({ baudRate: 115200 });
+    await port.open({ baudRate: 115200, dataBits: 8, stopBits: 1, parity: 'none', flowControl: 'none' });
     status.textContent = 'Connected! Reading chip info...';
     status.className = 'connect-status ok';
     log('Serial port opened at 115200 baud', 't-info');
@@ -527,62 +521,83 @@ async function connectDevice() {
 
 // ─── Detect Chip ──────────────────────────────────────────────
 async function detectChip() {
-  log('Attempting chip detection via serial...', 't-info');
+  log('Attempting chip detection via serial output...', 't-info');
+  log('Tip: press the RST/EN button on your board to trigger boot log', 't-info');
 
-  // Try to read serial output for chip identification
-  const reader = port.readable.getReader();
-  let buffer = '';
+  const info = port.getInfo();
+  const vid = info.usbVendorId || 0;
+  const pid = info.usbProductId || 0;
+  log('USB VID:0x' + vid.toString(16).toUpperCase() + ' PID:0x' + pid.toString(16).toUpperCase(), 't-info');
+
   let chipFound = false;
-  const timeout = setTimeout(() => {
-    if (!chipFound) {
-      reader.releaseLock();
-      // Fallback: try to detect from USB descriptor
-      detectFromUSB();
-    }
-  }, 3000);
+  let reader = null;
 
   try {
+    reader = port.readable.getReader();
+    let buffer = '';
+
+    const timeout = setTimeout(() => {
+      if (!chipFound) {
+        chipFound = true;
+        try { reader.releaseLock(); } catch(x) {}
+        log('No boot output detected — using USB identification', 't-warn');
+        detectFromUSB(vid);
+      }
+    }, 4000);
+
     while (!chipFound) {
       const { value, done } = await reader.read();
       if (done) break;
       const text = new TextDecoder().decode(value);
       buffer += text;
-      log(text.trim(), '');
+      if (text.trim()) log(text.trim(), '');
 
-      // Look for chip identification strings in boot output
+      const upper = buffer.toUpperCase();
       for (const chipName of Object.keys(CHIPS)) {
-        if (buffer.toUpperCase().includes(chipName.replace('-', ''))) {
+        const search = chipName.replace(/-/g, '').toUpperCase();
+        if (upper.includes(search) || upper.includes(chipName.toUpperCase())) {
           chipFound = true;
           clearTimeout(timeout);
-          reader.releaseLock();
+          try { reader.releaseLock(); } catch(x) {}
+          log('Chip identified from boot output: ' + chipName, 't-info');
           showChipProfile(chipName);
           return;
         }
       }
     }
   } catch (e) {
-    clearTimeout(timeout);
-    try { reader.releaseLock(); } catch(x) {}
-    detectFromUSB();
+    if (!chipFound) {
+      chipFound = true;
+      try { if (reader) reader.releaseLock(); } catch(x) {}
+      log('Serial read: ' + e.message + ' — using USB fallback', 't-warn');
+      detectFromUSB(vid);
+    }
   }
 }
 
-function detectFromUSB() {
-  // Use USB info to guess chip
-  const info = port.getInfo();
-  log('USB Vendor: 0x' + (info.usbVendorId || 0).toString(16).toUpperCase() +
-      ' Product: 0x' + (info.usbProductId || 0).toString(16).toUpperCase(), 't-info');
+function detectFromUSB(vid) {
+  let chipName = 'ESP32';
+  if (vid === 0x303A) { chipName = 'ESP32-S3'; log('Espressif native USB — defaulting to ESP32-S3', 't-info'); }
+  else if (vid === 0x10C4) { log('Silicon Labs CP2102 bridge detected', 't-info'); }
+  else if (vid === 0x1A86) { log('WCH CH340 bridge detected', 't-info'); }
+  else if (vid === 0x0403) { log('FTDI bridge detected', 't-info'); }
+  else { log('USB bridge VID:0x' + vid.toString(16).toUpperCase() + ' — defaulting to ESP32', 't-info'); }
 
-  let chipName = 'ESP32'; // Default
-  if (info.usbVendorId === 0x303A) {
-    // Espressif native USB — likely S3, C3, C6, or H2
-    chipName = 'ESP32-S3'; // Most common with native USB
-    log('Espressif USB-JTAG detected — likely ESP32-S3 or C3/C6', 't-info');
-  } else {
-    log('CP2102/CH340/FTDI bridge detected — likely ESP32 or ESP32-S2', 't-info');
-  }
-
+  log('Select your chip below if auto-detection is wrong:', 't-info');
   showChipProfile(chipName);
+
+  // Add manual chip selector buttons
+  const card = document.getElementById('chip-card');
+  if (!document.getElementById('manual-chips')) {
+    const div = document.createElement('div');
+    div.id = 'manual-chips';
+    div.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--c-border)';
+    div.innerHTML = '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--c-steel-600);letter-spacing:1px;text-transform:uppercase;margin-right:8px;align-self:center">CHANGE CHIP:</span>' +
+      Object.keys(CHIPS).map(n =>
+        '<button onclick="showChipProfile(\'' + n + '\')" style="font-family:JetBrains Mono,monospace;font-size:10px;padding:5px 14px;border-radius:4px;border:1px solid var(--c-border);background:var(--c-graphite);color:var(--c-steel-500);cursor:pointer;transition:all .15s">' + n + '</button>'
+      ).join('');
+    card.after(div);
+  }
 }
 
 // ─── Show Chip Profile ────────────────────────────────────────
