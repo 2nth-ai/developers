@@ -445,7 +445,26 @@ function addTask() {
   var tl = document.getElementById('tasks-list');
   var div = document.createElement('div');
   div.className = 'task';
-  div.innerHTML = '<div class="task-pri pri-' + pri + '"></div><div class="task-text"><strong>' + title + '</strong>' + (desc ? ' — ' + desc : '') + '</div><div class="task-due">' + (due || 'No date') + '</div>';
+
+  var priDiv = document.createElement('div');
+  priDiv.className = 'task-pri pri-' + pri;
+  div.appendChild(priDiv);
+
+  var textDiv = document.createElement('div');
+  textDiv.className = 'task-text';
+  var strongEl = document.createElement('strong');
+  strongEl.textContent = title;
+  textDiv.appendChild(strongEl);
+  if (desc) {
+    textDiv.appendChild(document.createTextNode(' — ' + desc));
+  }
+  div.appendChild(textDiv);
+
+  var dueDiv = document.createElement('div');
+  dueDiv.className = 'task-due';
+  dueDiv.textContent = due || 'No date';
+  div.appendChild(dueDiv);
+
   tl.insertBefore(div, tl.firstChild);
   addFeedItem('<strong>Task added:</strong> ' + title + ' (' + pri + ' priority)', 'var(--amber)');
   document.getElementById('tf-title').value = '';
