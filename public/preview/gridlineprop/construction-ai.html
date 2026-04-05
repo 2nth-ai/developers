@@ -172,25 +172,236 @@
     </table>
 
     <div class="card-grid">
-      <div class="card">
+
+      <!-- AI Takeoff Engine -->
+      <div class="card" onclick="toggleSim('takeoff')" style="cursor:pointer">
         <div class="card-icon">&#128200;</div>
-        <h3>AI Takeoff Engine</h3>
-        <p>Reads IFC model elements. Extracts quantities by trade: earthworks (m³), concrete (m³), brickwork (m²), steelwork (kg), joinery (nr), plumbing (m), electrical (pts). Grouped by location, storey, and building.</p>
+        <h3>AI Takeoff Engine <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <p>Reads IFC model elements. Extracts quantities by trade. Grouped by location, storey, and building.</p>
         <div class="card-tag">Automated measurement</div>
+        <div id="sim-takeoff" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Silvercroft Unit 1 — AI Takeoff</span>
+            <button onclick="event.stopPropagation();runTakeoff()" style="font-size:10px;padding:4px 12px;background:var(--green);color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600" id="takeoff-btn">Run Takeoff</button>
+          </div>
+          <div id="takeoff-results" style="font-family:'JetBrains Mono',monospace;font-size:11px">
+            <div style="color:var(--muted);text-align:center;padding:12px">Click "Run Takeoff" to simulate IFC extraction</div>
+          </div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Rate Intelligence -->
+      <div class="card" onclick="toggleSim('rates')" style="cursor:pointer">
         <div class="card-icon">&#128176;</div>
-        <h3>Rate Intelligence</h3>
-        <p>Maintains a living rate database. AI adjusts for region (Cape Town vs Johannesburg), project size, current material costs (steel, cement, timber), and labour rates. Benchmark against AECOM/Langdon rates.</p>
+        <h3>Rate Intelligence <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <p>Living rate database. AI adjusts for region, project size, current material costs, and labour rates.</p>
         <div class="card-tag">Live pricing</div>
+        <div id="sim-rates" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="margin-bottom:10px">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Rate Comparison — Cape Town Q2 2026</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+            <select id="rate-region" onchange="event.stopPropagation();updateRates()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border-s);border-radius:4px">
+              <option value="cpt">Cape Town</option>
+              <option value="jhb">Johannesburg</option>
+              <option value="dbn">Durban</option>
+              <option value="pe">Port Elizabeth</option>
+            </select>
+            <select id="rate-size" onchange="event.stopPropagation();updateRates()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border-s);border-radius:4px">
+              <option value="small">Small (&lt;R10M)</option>
+              <option value="medium" selected>Medium (R10-50M)</option>
+              <option value="large">Large (R50M+)</option>
+            </select>
+          </div>
+          <table style="font-size:11px" id="rate-table">
+            <tr><th>Item</th><th>Unit</th><th>Rate</th><th>AECOM Ref</th><th>Diff</th></tr>
+          </table>
+          <div style="font-size:10px;color:var(--muted);margin-top:8px" id="rate-note"></div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Tender Analysis -->
+      <div class="card" onclick="toggleSim('tender')" style="cursor:pointer">
         <div class="card-icon">&#128203;</div>
-        <h3>Tender Analysis</h3>
-        <p>Compares multiple contractor submissions side by side. AI flags pricing anomalies — rates too low (risk), rates too high (opportunity). Normalises for scope differences. Recommends with reasoning.</p>
+        <h3>Tender Analysis <span style="font-size:11px;color:var(--green);float:right">&#9660; simulate</span></h3>
+        <p>Compares contractor submissions. AI flags pricing anomalies and recommends with reasoning.</p>
         <div class="card-tag">Procurement</div>
+        <div id="sim-tender" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="margin-bottom:10px">
+            <span style="font-size:12px;font-weight:600;color:var(--text)">Tender Comparison — Silvercroft 3-Unit Development</span>
+          </div>
+          <table style="font-size:11px" id="tender-table">
+            <tr><th>Trade</th><th>Contractor A</th><th>Contractor B</th><th>Contractor C</th><th>AI Flag</th></tr>
+          </table>
+          <div id="tender-summary" style="margin-top:12px;padding:12px;background:var(--green-light);border:1px solid rgba(45,106,79,.15);border-radius:8px;font-size:12px;color:var(--text2)"></div>
+        </div>
       </div>
+
     </div>
+
+    <script>
+    function toggleSim(id) {
+      var el = document.getElementById('sim-' + id);
+      if (!el) return;
+      var open = el.style.display !== 'none';
+      document.querySelectorAll('[id^="sim-"]').forEach(function(s) { s.style.display = 'none'; });
+      if (!open) {
+        el.style.display = '';
+        if (id === 'rates') updateRates();
+        if (id === 'tender') updateTender();
+      }
+    }
+
+    // === TAKEOFF SIMULATION ===
+    function runTakeoff() {
+      var btn = document.getElementById('takeoff-btn');
+      var results = document.getElementById('takeoff-results');
+      btn.textContent = 'Processing...';
+      btn.disabled = true;
+
+      var trades = [
+        { trade:'Earthworks', items:[{desc:'Excavation to foundations',qty:'86',unit:'m³',time:400},{desc:'Backfill compacted',qty:'52',unit:'m³',time:600}]},
+        { trade:'Concrete', items:[{desc:'Strip footings 400×200',qty:'38',unit:'m',time:800},{desc:'Raft slab 200mm',qty:'142',unit:'m²',time:1000},{desc:'Suspended slab 1st floor',qty:'128',unit:'m²',time:1200}]},
+        { trade:'Brickwork', items:[{desc:'External walls 230mm face',qty:'286',unit:'m²',time:1500},{desc:'Internal walls 110mm',qty:'194',unit:'m²',time:1800},{desc:'Boundary wall 1.8m',qty:'64',unit:'m²',time:2000}]},
+        { trade:'Roofing', items:[{desc:'Timber trusses',qty:'18',unit:'nr',time:2200},{desc:'Concrete tiles',qty:'165',unit:'m²',time:2400}]},
+        { trade:'Plumbing', items:[{desc:'Hot & cold water points',qty:'24',unit:'nr',time:2600},{desc:'Drainage 110mm uPVC',qty:'48',unit:'m',time:2800}]},
+        { trade:'Electrical', items:[{desc:'Light points',qty:'42',unit:'nr',time:3000},{desc:'Power points',qty:'36',unit:'nr',time:3200},{desc:'DB board 24-way',qty:'1',unit:'nr',time:3300}]},
+        { trade:'Solar PV', items:[{desc:'Canadian Solar 450W panels',qty:'22',unit:'nr',time:3500},{desc:'Tesla Powerwall 2',qty:'1',unit:'nr',time:3600},{desc:'Victron MultiPlus II',qty:'1',unit:'nr',time:3650}]},
+        { trade:'Joinery', items:[{desc:'Aluminium windows',qty:'18',unit:'nr',time:3800},{desc:'Solid core doors',qty:'14',unit:'nr',time:3900},{desc:'Kitchen fitted',qty:'1',unit:'nr',time:4000}]},
+      ];
+
+      results.innerHTML = '<div style="color:var(--green);margin-bottom:8px">&#9881; Parsing IFC model: Silvercroft_Unit1_Rev4.ifc...</div>';
+
+      var allItems = [];
+      trades.forEach(function(t) { t.items.forEach(function(i) { allItems.push({trade:t.trade,desc:i.desc,qty:i.qty,unit:i.unit,time:i.time}); }); });
+
+      var idx = 0;
+      function addNext() {
+        if (idx >= allItems.length) {
+          results.innerHTML += '<div style="margin-top:10px;padding:10px;background:var(--green-light);border:1px solid rgba(45,106,79,.15);border-radius:6px;font-size:11px;color:var(--green)">' +
+            '&#10003; Takeoff complete — ' + allItems.length + ' items extracted across ' + trades.length + ' trades in 4.2 seconds<br>' +
+            '&#10003; Ready for rate matching</div>';
+          btn.textContent = 'Run Again';
+          btn.disabled = false;
+          return;
+        }
+        var item = allItems[idx];
+        var isNewTrade = idx === 0 || allItems[idx-1].trade !== item.trade;
+        if (isNewTrade) {
+          results.innerHTML += '<div style="font-weight:600;color:var(--text);margin-top:8px;margin-bottom:2px;font-size:12px">' + item.trade + '</div>';
+        }
+        results.innerHTML += '<div style="display:flex;justify-content:space-between;padding:2px 0;color:var(--text3)">' +
+          '<span>' + item.desc + '</span>' +
+          '<span style="color:var(--text);font-weight:600">' + item.qty + ' ' + item.unit + '</span></div>';
+        idx++;
+        setTimeout(addNext, 120);
+      }
+
+      setTimeout(function() {
+        results.innerHTML += '<div style="color:var(--muted);margin-bottom:6px">Extracting elements by trade...</div>';
+        addNext();
+      }, 800);
+    }
+
+    // === RATE INTELLIGENCE ===
+    var rateDB = {
+      cpt: { concrete:2850, brickwork:420, roofing:380, plumbing:1200, electrical:850, solar_panel:4200, window:8500, door:6200 },
+      jhb: { concrete:2650, brickwork:380, roofing:350, plumbing:1100, electrical:780, solar_panel:4000, window:7800, door:5800 },
+      dbn: { concrete:2750, brickwork:400, roofing:360, plumbing:1150, electrical:800, solar_panel:4100, window:8000, door:5900 },
+      pe:  { concrete:2500, brickwork:360, roofing:340, plumbing:1050, electrical:750, solar_panel:3900, window:7500, door:5600 },
+    };
+    var aecomRef = { concrete:2900, brickwork:440, roofing:400, plumbing:1250, electrical:880, solar_panel:4500, window:9000, door:6500 };
+    var sizeMultiplier = { small:1.15, medium:1.0, large:0.92 };
+
+    function updateRates() {
+      var region = document.getElementById('rate-region').value;
+      var size = document.getElementById('rate-size').value;
+      var rates = rateDB[region];
+      var mult = sizeMultiplier[size];
+      var items = [
+        { name:'Concrete (25MPa)', unit:'m³', key:'concrete' },
+        { name:'Face brickwork 230mm', unit:'m²', key:'brickwork' },
+        { name:'Concrete roof tiles', unit:'m²', key:'roofing' },
+        { name:'Hot/cold water point', unit:'nr', key:'plumbing' },
+        { name:'Light point complete', unit:'nr', key:'electrical' },
+        { name:'Solar panel 450W', unit:'nr', key:'solar_panel' },
+        { name:'Aluminium window', unit:'nr', key:'window' },
+        { name:'Solid core door hung', unit:'nr', key:'door' },
+      ];
+      var table = document.getElementById('rate-table');
+      table.innerHTML = '<tr><th>Item</th><th>Unit</th><th>Rate</th><th>AECOM</th><th>Diff</th></tr>';
+      items.forEach(function(item) {
+        var rate = Math.round(rates[item.key] * mult);
+        var ref = aecomRef[item.key];
+        var diff = Math.round((rate - ref) / ref * 100);
+        var diffColor = diff < -5 ? 'var(--green)' : diff > 5 ? 'var(--red,#c0392b)' : 'var(--text3)';
+        table.innerHTML += '<tr><td>' + item.name + '</td><td>' + item.unit + '</td>' +
+          '<td style="font-weight:600">R' + rate.toLocaleString() + '</td>' +
+          '<td style="color:var(--muted)">R' + ref.toLocaleString() + '</td>' +
+          '<td style="color:' + diffColor + ';font-weight:600">' + (diff > 0 ? '+' : '') + diff + '%</td></tr>';
+      });
+      var regionNames = { cpt:'Cape Town', jhb:'Johannesburg', dbn:'Durban', pe:'Port Elizabeth' };
+      var sizeNames = { small:'small (<R10M)', medium:'medium (R10-50M)', large:'large (R50M+)' };
+      document.getElementById('rate-note').textContent = 'Rates for ' + regionNames[region] + ', ' + sizeNames[size] + ' project. Size multiplier: ' + mult + 'x. Updated: April 2026.';
+    }
+
+    // === TENDER ANALYSIS ===
+    function updateTender() {
+      var trades = [
+        { trade:'Earthworks', a:245000, b:268000, c:198000 },
+        { trade:'Concrete', a:1820000, b:1750000, c:1680000 },
+        { trade:'Brickwork', a:640000, b:695000, c:720000 },
+        { trade:'Roofing', a:485000, b:510000, c:440000 },
+        { trade:'Plumbing', a:380000, b:420000, c:365000 },
+        { trade:'Electrical', a:520000, b:490000, c:475000 },
+        { trade:'Solar + Battery', a:890000, b:1020000, c:780000 },
+        { trade:'Joinery & Finishes', a:1450000, b:1380000, c:1620000 },
+        { trade:'External Works', a:320000, b:290000, c:340000 },
+      ];
+
+      var table = document.getElementById('tender-table');
+      table.innerHTML = '<tr><th>Trade</th><th>Contractor A</th><th>Contractor B</th><th>Contractor C</th><th>AI Flag</th></tr>';
+
+      var totals = { a:0, b:0, c:0 };
+      trades.forEach(function(t) {
+        totals.a += t.a; totals.b += t.b; totals.c += t.c;
+        var avg = (t.a + t.b + t.c) / 3;
+        var flag = '';
+        var min = Math.min(t.a, t.b, t.c);
+        var max = Math.max(t.a, t.b, t.c);
+        if (min < avg * 0.85) flag = '<span style="color:var(--red,#c0392b)">&#9888; Low risk</span>';
+        else if (max > avg * 1.15) flag = '<span style="color:var(--amber)">&#9888; High</span>';
+        else flag = '<span style="color:var(--green)">&#10003;</span>';
+
+        function fmt(v) {
+          var isMin = v === min;
+          var isMax = v === max;
+          var style = isMin ? 'font-weight:600;color:var(--green)' : isMax ? 'color:var(--muted)' : '';
+          return '<td style="' + style + '">R' + (v/1000).toFixed(0) + 'K</td>';
+        }
+        table.innerHTML += '<tr><td>' + t.trade + '</td>' + fmt(t.a) + fmt(t.b) + fmt(t.c) + '<td>' + flag + '</td></tr>';
+      });
+
+      table.innerHTML += '<tr style="font-weight:700;border-top:2px solid var(--border-s)">' +
+        '<td>TOTAL</td>' +
+        '<td>R' + (totals.a/1000000).toFixed(2) + 'M</td>' +
+        '<td>R' + (totals.b/1000000).toFixed(2) + 'M</td>' +
+        '<td>R' + (totals.c/1000000).toFixed(2) + 'M</td>' +
+        '<td></td></tr>';
+
+      var lowest = Math.min(totals.a, totals.b, totals.c);
+      var winner = lowest === totals.c ? 'C' : lowest === totals.a ? 'A' : 'B';
+      var spread = ((Math.max(totals.a,totals.b,totals.c) - lowest) / lowest * 100).toFixed(1);
+
+      document.getElementById('tender-summary').innerHTML =
+        '<strong style="color:var(--green)">AI Recommendation:</strong> Contractor ' + winner + ' is lowest at R' + (lowest/1000000).toFixed(2) + 'M. ' +
+        'Spread is ' + spread + '% across tenderers.<br><br>' +
+        '<strong>Flags:</strong><br>' +
+        '&#9888; Contractor C\'s Solar + Battery rate (R780K) is 16% below average — verify scope includes Tesla Powerwall and installation. Risk of claim.<br>' +
+        '&#9888; Contractor B\'s Joinery (R1.38M) is lowest but Finishes spec unclear — confirm imported vs local fittings.<br>' +
+        '&#10003; Earthworks, Concrete, and Electrical rates are within normal range across all three.';
+    }
+    </script>
   </div>
 </section>
 
