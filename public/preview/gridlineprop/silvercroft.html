@@ -193,42 +193,227 @@
     <p style="font-size:15px;max-width:560px;margin-bottom:8px">Each home runs on an AI layer that optimises energy, water, security, and maintenance — without you lifting a finger. The house learns your patterns and adapts.</p>
 
     <div class="card-grid">
-      <div class="card">
+
+      <!-- Solar -->
+      <div class="card" onclick="toggleDetail('solar')" style="cursor:pointer">
         <div class="card-icon">&#9728;</div>
-        <h3>Solar Intelligence</h3>
-        <p>AI predicts tomorrow's solar yield from weather data. Automatically shifts heavy loads (geyser, pool pump, EV charging) to peak production hours. Sells excess to the grid when rates are high.</p>
+        <h3>Solar Intelligence <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>AI predicts tomorrow's solar yield from weather data. Automatically shifts heavy loads to peak production hours. Sells excess to the grid when rates are high.</p>
         <div class="card-tag">Energy</div>
+        <div class="detail" id="detail-solar" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Hardware:</strong> 8-10kW solar array (Canadian Solar panels), Tesla Powerwall 2 (13.5kWh), Victron MultiPlus II inverter, CT clamp power monitoring, Envoy gateway<br><br>
+            <strong style="color:#fff">How it works:</strong><br>
+            &#8226; Weather API pulls 48-hour forecast (cloud cover, UV index, temperature)<br>
+            &#8226; AI model predicts solar yield per hour based on panel orientation + historical data<br>
+            &#8226; Load scheduler shifts geyser (2kW), pool pump (1.5kW), EV charger (7kW) to 10am-2pm peak<br>
+            &#8226; Battery charges during solar surplus, discharges 5pm-10pm peak tariff<br>
+            &#8226; Feed-in controller sells excess at best rate (R1.40/kWh vs R0.80 off-peak)<br>
+            &#8226; Load shedding: auto-switches to battery, sheds non-essential loads, extends runtime<br><br>
+            <strong style="color:#fff">Live readings:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:var(--gold)" id="s-prod">5.2 kW</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Producing</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">3.1 kW</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Consuming</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#3b82f6">2.1 kW</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">To Battery</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">Tomorrow forecast: 38.4 kWh yield (partly cloudy). Geyser scheduled 11:00. EV charge 12:30-14:00.</div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Water -->
+      <div class="card" onclick="toggleDetail('water')" style="cursor:pointer">
         <div class="card-icon">&#128167;</div>
-        <h3>Water Management</h3>
-        <p>Well point and rainwater harvesting with AI-managed switching. Monitors tank levels, municipal backup, irrigation scheduling based on soil moisture and 7-day rainfall forecast.</p>
+        <h3>Water Management <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>Well point and rainwater harvesting with AI-managed switching. Monitors tank levels, irrigation scheduling based on soil moisture and 7-day rainfall forecast.</p>
         <div class="card-tag">Water</div>
+        <div class="detail" id="detail-water" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Hardware:</strong> 5,000L JoJo tank (rainwater), 2,500L JoJo (well point), borehole pump (0.75kW), soil moisture probes (x4 zones), float switches, flow meters, pressure sensor<br><br>
+            <strong style="color:#fff">How it works:</strong><br>
+            &#8226; Rainwater: roof → gutters → first-flush diverter → 5,000L tank<br>
+            &#8226; Well point: borehole pump fills 2,500L tank, runs during solar peak (free power)<br>
+            &#8226; AI checks 7-day rain forecast — if rain coming, delays irrigation<br>
+            &#8226; Soil moisture probes per garden zone: only irrigates when soil drops below threshold<br>
+            &#8226; Municipal backup: auto-opens valve if both tanks below 15%<br>
+            &#8226; Usage tracking: daily litres per source (rain, well, municipal), leak detection<br><br>
+            <strong style="color:#fff">Live readings:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#3b82f6">4,120L</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Rain Tank</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">2,180L</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Well Tank</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:var(--gold)">62%</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Soil Moisture</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">Rain forecast: 12mm Thursday. Irrigation suspended for zones 1,3. Well pump scheduled 11:00-12:00 (solar peak).</div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Security -->
+      <div class="card" onclick="toggleDetail('security')" style="cursor:pointer">
         <div class="card-icon">&#128274;</div>
-        <h3>Security AI</h3>
-        <p>Perimeter cameras with AI person detection (not motion — fewer false alarms). Licence plate recognition at gate. Automated alerts to response company. Activity heat maps.</p>
+        <h3>Security AI <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>Perimeter cameras with AI person detection. Licence plate recognition at gate. Automated alerts to response company. Activity heat maps.</p>
         <div class="card-tag">Security</div>
+        <div class="detail" id="detail-security" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Hardware:</strong> 8x Hikvision 4K cameras (IR night vision), 2x LPR cameras (gate), NVR with 4TB, Texecom Premier Elite alarm, electric fence energiser, ESP32 integration nodes<br><br>
+            <strong style="color:#fff">How it works:</strong><br>
+            &#8226; AI person detection: distinguishes people from animals, cars, shadows — 95% fewer false alarms vs motion<br>
+            &#8226; LPR at gate: reads number plates, auto-opens for registered vehicles, logs unknown<br>
+            &#8226; Perimeter breach: electric fence zone → camera auto-points → AI confirms person → alert to ADT in 3 seconds<br>
+            &#8226; Activity heat maps: shows most-used paths and times — detects unusual patterns<br>
+            &#8226; Face detection (optional): recognises family, domestic workers, regular visitors<br>
+            &#8226; Night mode: IR cameras + AI maintain detection accuracy in complete darkness<br><br>
+            <strong style="color:#fff">Live status:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">8/8</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Cameras Online</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">Armed</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Perimeter</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">0</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Alerts Today</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">Last LPR event: CA 482-716 (registered — Grant K.) at 17:42. Last person detection: domestic worker at 08:15.</div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Climate -->
+      <div class="card" onclick="toggleDetail('climate')" style="cursor:pointer">
         <div class="card-icon">&#127777;</div>
-        <h3>Climate Control</h3>
-        <p>Learns your temperature preferences by room and time. Pre-cools before you arrive home. Balances comfort with energy efficiency. Adapts to seasons automatically.</p>
+        <h3>Climate Control <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>Learns your temperature preferences by room and time. Pre-cools before you arrive home. Balances comfort with energy efficiency.</p>
         <div class="card-tag">Comfort</div>
+        <div class="detail" id="detail-climate" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Hardware:</strong> Daikin multi-split inverter AC (x3 indoor units), ESP32 room sensors (temp + humidity per room), motorised blinds, ceiling fans with smart control<br><br>
+            <strong style="color:#fff">How it works:</strong><br>
+            &#8226; Room sensors learn your patterns: bedrooms cool to 19°C by 22:00, living area 22°C daytime<br>
+            &#8226; Phone location: detects when you're 15min from home, pre-cools to target<br>
+            &#8226; Solar-aware: runs AC harder during solar peak (free energy), reduces at night (battery)<br>
+            &#8226; Blinds automation: closes west-facing blinds at 14:00 to reduce heat load by 30%<br>
+            &#8226; Seasonal adaptation: winter heating schedule vs summer cooling, transition periods auto-detected<br>
+            &#8226; Energy budget: if battery below 40%, AI raises setpoint 2°C to extend runtime<br><br>
+            <strong style="color:#fff">Current zones:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:16px;font-weight:700;color:#fff">22.1°</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Living</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:16px;font-weight:700;color:#fff">21.4°</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Master Bed</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:16px;font-weight:700;color:#fff">20.8°</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Kids Room</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:16px;font-weight:700;color:var(--gold)">Off</div>
+              <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Guest</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">West blinds closing at 14:00. Pre-cool scheduled 17:15 (Grant ETA 17:30). Energy mode: Solar surplus.</div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Maintenance -->
+      <div class="card" onclick="toggleDetail('maint')" style="cursor:pointer">
         <div class="card-icon">&#128295;</div>
-        <h3>Predictive Maintenance</h3>
-        <p>Monitors inverter health, battery cycles, pump pressure, geyser element resistance. Alerts you before something breaks — not after. Service scheduling managed by AI.</p>
+        <h3>Predictive Maintenance <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>Monitors inverter health, battery cycles, pump pressure, geyser element resistance. Alerts you before something breaks.</p>
         <div class="card-tag">Maintenance</div>
+        <div class="detail" id="detail-maint" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Monitored systems:</strong><br>
+            &#8226; Inverter: input/output voltage, frequency, temperature, error codes<br>
+            &#8226; Battery: cycle count, state of health, cell voltage balance, charge rate<br>
+            &#8226; Borehole pump: motor current, flow rate, pressure — detects cavitation or blockage<br>
+            &#8226; Geyser: element resistance trend — rising resistance = scale buildup or failing element<br>
+            &#8226; Pool pump: flow rate vs pressure — detects filter blockage before it trips<br>
+            &#8226; Garage door motor: cycle count, travel time trend — slowing = spring fatigue<br><br>
+            <strong style="color:#fff">Current alerts:</strong>
+          </div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:6px;font-size:11px">
+              <span style="color:#22c55e">&#10003;</span><span style="color:rgba(255,255,255,.7)">Inverter — healthy (42°C, 98.2% efficiency)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:6px;font-size:11px">
+              <span style="color:#22c55e">&#10003;</span><span style="color:rgba(255,255,255,.7)">Battery — 94% SoH, 847 cycles (of 6,000)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(245,158,11,.08);border-radius:6px;border:1px solid rgba(245,158,11,.15);font-size:11px">
+              <span style="color:var(--gold)">&#9888;</span><span style="color:rgba(255,255,255,.7)">Pool filter — pressure rising. Clean in ~2 weeks.</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:6px;font-size:11px">
+              <span style="color:#22c55e">&#10003;</span><span style="color:rgba(255,255,255,.7)">Geyser element — 14.2Ω (normal range 12-16Ω)</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">Next scheduled service: Inverter firmware update (auto, 02:00 Tuesday). Pool filter clean recommended by 19 April.</div>
+        </div>
       </div>
-      <div class="card">
+
+      <!-- Dashboard -->
+      <div class="card" onclick="toggleDetail('app')" style="cursor:pointer">
         <div class="card-icon">&#128200;</div>
-        <h3>Owner Dashboard</h3>
-        <p>One app for everything: energy production/consumption, water levels, security cameras, maintenance schedule, utility costs, and monthly savings vs. grid-dependent homes.</p>
+        <h3>Owner Dashboard <span style="font-size:11px;color:var(--gold);float:right">&#9660; details</span></h3>
+        <p>One app for everything: energy, water, security, maintenance, utility costs, and monthly savings vs. grid-dependent homes.</p>
         <div class="card-tag">Dashboard</div>
+        <div class="detail" id="detail-app" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.8">
+            <strong style="color:#fff">Owner app features:</strong><br>
+            &#8226; Real-time solar production, battery, consumption graph<br>
+            &#8226; Water tank levels with forecast depletion date<br>
+            &#8226; Security camera feeds (tap for live, swipe for timeline)<br>
+            &#8226; Room-by-room temperature control<br>
+            &#8226; Maintenance schedule with service provider booking<br>
+            &#8226; Monthly report: energy saved (kWh + Rand), water saved (litres), security events<br>
+            &#8226; Comparison: "Your home vs grid-dependent equivalent"<br>
+            &#8226; Guest access: share limited controls with domestic worker, house sitter<br><br>
+            <strong style="color:#fff">Monthly savings summary:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:var(--gold)">R4,200</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Electricity Saved</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#3b82f6">R1,800</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Water Saved</div>
+            </div>
+            <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:20px;font-weight:700;color:#22c55e">R6,000</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px">Total / Month</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">Annual savings: ~R72,000. System payback: 4.2 years. Lifetime savings (20yr): R1.44M at current tariff escalation.</div>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -371,7 +556,15 @@
 </footer>
 
 <script>
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+function toggleDetail(id) {
+  var el = document.getElementById('detail-' + id);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  // Close all
+  document.querySelectorAll('.detail').forEach(function(d) { d.style.display = 'none'; });
+  // Toggle this one
+  if (!isOpen) el.style.display = '';
+}
 setInterval(function() {
   var solar = (12 + Math.random() * 4).toFixed(1);
   document.getElementById('d-solar').textContent = solar;
