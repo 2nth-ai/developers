@@ -181,7 +181,98 @@
     <div class="tabbar">
       <div class="tab active"><div class="tab-icon">&#127968;</div><div class="tab-label">Home</div></div>
       <div class="tab" onclick="startFind('right')"><div class="tab-icon">&#128269;</div><div class="tab-label">Find</div></div>
-      <div class="tab"><div class="tab-icon">&#9881;</div><div class="tab-label">Settings</div></div>
+      <div class="tab" onclick="showSettings()"><div class="tab-icon">&#9881;</div><div class="tab-label">Settings</div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS SCREEN -->
+  <div class="screen" id="screen-settings">
+
+    <div class="find-top">
+      <div class="find-back" onclick="goHome()">&#8592;</div>
+      <div class="find-title">Settings</div>
+    </div>
+
+    <div style="padding:16px 20px;flex:1;overflow-y:auto">
+
+      <!-- Compass calibration -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">Compass Status</div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)" id="set-compass-status">Not initialised</div>
+            <div style="font-size:11px;color:var(--text3)" id="set-compass-detail">Tap calibrate to start</div>
+          </div>
+          <div id="set-compass-dot" style="width:12px;height:12px;border-radius:50%;background:var(--text3)"></div>
+        </div>
+
+        <!-- Live compass display -->
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="position:relative;width:180px;height:180px;margin:0 auto">
+            <canvas id="settings-compass" width="180" height="180" style="width:100%;height:100%"></canvas>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+              <div id="set-heading-val" style="font-size:32px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums">—°</div>
+              <div id="set-heading-dir" style="font-size:12px;font-weight:600;color:var(--text3)">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calibrate button -->
+        <button onclick="calibrateCompass()" style="width:100%;padding:12px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s" id="calibrate-btn">Calibrate Compass</button>
+        <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px;line-height:1.5" id="calibrate-help">
+          Move your phone in a figure-8 pattern to calibrate the magnetometer. Then point North and tap Verify.
+        </div>
+      </div>
+
+      <!-- Compass offset -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">Manual Offset</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">If the compass reads incorrectly, adjust the offset. Point your phone North and set the offset until the reading shows 0°.</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button onclick="adjustOffset(-5)" style="width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:18px;font-weight:700;cursor:pointer">-5</button>
+          <button onclick="adjustOffset(-1)" style="width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:18px;font-weight:700;cursor:pointer">-1</button>
+          <div style="flex:1;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums" id="offset-val">0°</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Offset</div>
+          </div>
+          <button onclick="adjustOffset(1)" style="width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:18px;font-weight:700;cursor:pointer">+1</button>
+          <button onclick="adjustOffset(5)" style="width:44px;height:44px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:18px;font-weight:700;cursor:pointer">+5</button>
+        </div>
+        <button onclick="resetOffset()" style="width:100%;margin-top:10px;padding:8px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text3);font-size:11px;font-weight:600;cursor:pointer">Reset to 0°</button>
+      </div>
+
+      <!-- Sensor info -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">Sensor Information</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">DeviceOrientation</span><span id="set-orient" style="color:var(--text)">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">AbsoluteOrientation</span><span id="set-abs-orient" style="color:var(--text)">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Accelerometer</span><span id="set-accel" style="color:var(--text)">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Mode</span><span id="set-mode" style="color:var(--blue)">Simulation</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Compass offset</span><span id="set-offset-display" style="color:var(--text)">0°</span></div>
+        </div>
+      </div>
+
+      <!-- Device info -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">Paired Devices</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Right Ski</span><span style="color:var(--text);font-family:monospace;font-size:10px">VC42kV4TBdgNpj66sWzb</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text3)">Left Ski</span><span style="color:var(--text);font-family:monospace;font-size:10px">SkiSpot-02-Left</span></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:10px;color:var(--text3);padding:16px 0">
+        SkiSpot V1.0.0 &middot; SC Engineering &middot; 2nth.ai
+      </div>
+
+    </div>
+
+    <div class="tabbar">
+      <div class="tab" onclick="goHome()"><div class="tab-icon">&#127968;</div><div class="tab-label">Home</div></div>
+      <div class="tab" onclick="startFind('right')"><div class="tab-icon">&#128269;</div><div class="tab-label">Find</div></div>
+      <div class="tab active"><div class="tab-icon">&#9881;</div><div class="tab-label">Settings</div></div>
     </div>
   </div>
 
@@ -199,9 +290,6 @@
       <div id="sensor-badge" style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:6px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(88,166,255,.15)">Simulation</div>
       <div style="font-size:9px;font-weight:600;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;gap:4px">
         &#129517; <span id="compass-heading">—°</span>
-      </div>
-      <div style="font-size:9px;font-weight:600;padding:3px 10px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;gap:4px">
-        &#128205; <span id="gps-status">No GPS</span>
       </div>
     </div>
 
@@ -279,14 +367,12 @@
     ambientInterval: null,
     // Sensor state
     hasCompass: false,
-    hasGPS: false,
     compassHeading: 0,        // current device heading (0-360)
     startHeading: null,       // heading when scan started
     rotationDeg: 0,           // how far rotated since start
-    gpsLat: null,
-    gpsLng: null,
-    gpsAccuracy: null,
-    gpsWatchId: null,
+    compassOffset: 0,         // manual calibration offset
+    calibrating: false,
+    calReadings: [],
     sensorMode: 'sim',        // 'real' or 'sim'
   };
 
@@ -313,64 +399,55 @@
   // ═══ SENSOR APIs ═══
 
   function initSensors() {
-    // Compass: DeviceOrientationEvent
     if (typeof DeviceOrientationEvent !== 'undefined') {
-      // iOS 13+ requires permission
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission().then(function(response) {
           if (response === 'granted') enableCompass();
         }).catch(function() {});
       } else {
-        // Android / other — just listen
         enableCompass();
       }
     }
-
-    // GPS: Geolocation
-    if (navigator.geolocation) {
-      S.gpsWatchId = navigator.geolocation.watchPosition(
-        function(pos) {
-          S.hasGPS = true;
-          S.gpsLat = pos.coords.latitude;
-          S.gpsLng = pos.coords.longitude;
-          S.gpsAccuracy = pos.coords.accuracy;
-          updateSensorDisplay();
-        },
-        function() {},
-        { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 }
-      );
-    }
+    // Load saved offset
+    var saved = localStorage.getItem('skispot-compass-offset');
+    if (saved) S.compassOffset = parseInt(saved) || 0;
   }
 
   function enableCompass() {
     window.addEventListener('deviceorientation', function(e) {
-      // webkitCompassHeading for iOS, alpha for Android
       var heading = e.webkitCompassHeading || (e.alpha !== null ? (360 - e.alpha) : null);
       if (heading === null) return;
 
       S.hasCompass = true;
-      S.compassHeading = Math.round(heading);
+      var adjusted = (heading + S.compassOffset + 360) % 360;
+      S.compassHeading = Math.round(adjusted);
+      S.rawHeading = Math.round(heading);
 
-      // During scan: track rotation from start heading
       if (S.scanning && S.startHeading !== null) {
-        var delta = heading - S.startHeading;
+        var delta = adjusted - S.startHeading;
         if (delta < 0) delta += 360;
         S.rotationDeg = delta;
       }
 
+      // Feed calibration
+      if (S.calibrating) {
+        S.calReadings.push(heading);
+      }
+
       updateSensorDisplay();
+      updateSettingsCompass();
     }, true);
 
-    // Also try the newer AbsoluteOrientationSensor
     if (window.AbsoluteOrientationSensor) {
       try {
         var sensor = new AbsoluteOrientationSensor({ frequency: 30, referenceFrame: 'device' });
         sensor.addEventListener('reading', function() {
           var q = sensor.quaternion;
-          // Convert quaternion to heading
-          var heading = Math.atan2(2 * (q[0]*q[1] + q[2]*q[3]), 1 - 2*(q[1]*q[1] + q[2]*q[2]));
+          var heading = Math.atan2(2*(q[0]*q[1]+q[2]*q[3]), 1-2*(q[1]*q[1]+q[2]*q[2]));
           heading = ((heading * 180 / Math.PI) + 360) % 360;
-          S.compassHeading = Math.round(heading);
+          var adjusted = (heading + S.compassOffset + 360) % 360;
+          S.compassHeading = Math.round(adjusted);
+          S.rawHeading = Math.round(heading);
           S.hasCompass = true;
         });
         sensor.start();
@@ -379,23 +456,88 @@
   }
 
   function updateSensorDisplay() {
-    // Update compass heading display
     var headingEl = document.getElementById('compass-heading');
-    if (headingEl) {
-      headingEl.textContent = S.compassHeading + '°';
-    }
+    if (headingEl) headingEl.textContent = S.compassHeading + '°';
 
-    // Update GPS display
-    var gpsEl = document.getElementById('gps-status');
-    if (gpsEl && S.hasGPS) {
-      gpsEl.textContent = '±' + Math.round(S.gpsAccuracy) + 'm';
-      gpsEl.style.color = S.gpsAccuracy < 10 ? 'var(--green)' : S.gpsAccuracy < 30 ? 'var(--amber)' : 'var(--red)';
-    }
-
-    // If we have real compass during scan, update arrow
     if (S.scanning && S.hasCompass && S.sensorMode === 'real') {
       if (arrow) arrow.style.transform = 'translate(-50%,-50%) rotate(' + S.compassHeading + 'deg)';
     }
+  }
+
+  // Settings compass rose
+  function updateSettingsCompass() {
+    var canvas = document.getElementById('settings-compass');
+    if (!canvas || S.screen !== 'settings') return;
+    var ctx = canvas.getContext('2d');
+    var w = 180, h = 180, cx = w/2, cy = h/2, r = 70;
+    ctx.clearRect(0, 0, w, h);
+
+    // Ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,.08)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Tick marks
+    for (var i = 0; i < 360; i += 10) {
+      var rad = (i - 90) * Math.PI / 180;
+      var inner = i % 30 === 0 ? r - 12 : r - 6;
+      ctx.beginPath();
+      ctx.moveTo(cx + inner * Math.cos(rad), cy + inner * Math.sin(rad));
+      ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+      ctx.strokeStyle = i % 90 === 0 ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.08)';
+      ctx.lineWidth = i % 90 === 0 ? 2 : 1;
+      ctx.stroke();
+    }
+
+    // Cardinal labels
+    var dirs = [{a:0,l:'N',c:'var(--red)'},{a:90,l:'E',c:'var(--text3)'},{a:180,l:'S',c:'var(--text3)'},{a:270,l:'W',c:'var(--text3)'}];
+    dirs.forEach(function(d) {
+      var rad = (d.a - 90) * Math.PI / 180;
+      var lx = cx + (r + 14) * Math.cos(rad);
+      var ly = cy + (r + 14) * Math.sin(rad);
+      ctx.fillStyle = d.c;
+      ctx.font = 'bold 11px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(d.l, lx, ly);
+    });
+
+    // Needle
+    var heading = S.hasCompass ? S.compassHeading : 0;
+    var needleRad = (heading - 90) * Math.PI / 180;
+    // Red north end
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + (r - 16) * Math.cos(needleRad), cy + (r - 16) * Math.sin(needleRad));
+    ctx.strokeStyle = S.hasCompass ? 'var(--red)' : 'var(--text3)';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    // South end
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx - (r - 30) * Math.cos(needleRad), cy - (r - 30) * Math.sin(needleRad));
+    ctx.strokeStyle = 'rgba(255,255,255,.15)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI*2);
+    ctx.fillStyle = S.hasCompass ? 'var(--text)' : 'var(--text3)';
+    ctx.fill();
+
+    // Update heading text
+    var valEl = document.getElementById('set-heading-val');
+    var dirEl = document.getElementById('set-heading-dir');
+    if (valEl) valEl.textContent = S.hasCompass ? S.compassHeading + '°' : '—°';
+    if (dirEl) dirEl.textContent = S.hasCompass ? getCardinal(S.compassHeading) : 'No compass';
+  }
+
+  function getCardinal(deg) {
+    var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+    return dirs[Math.round(deg / 22.5) % 16];
   }
 
   // Detect if sensors are available and switch to real mode
@@ -684,6 +826,107 @@
       el.textContent = String(i);
     }
   }
+
+  // === SETTINGS ===
+  window.showSettings = function() {
+    S.screen = 'settings';
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen-settings').classList.add('active', 'screen-fade');
+    initSensors();
+    updateSettingsInfo();
+    // Start compass animation
+    if (!S._settingsRAF) {
+      (function tick() {
+        updateSettingsCompass();
+        S._settingsRAF = requestAnimationFrame(tick);
+      })();
+    }
+  };
+
+  function updateSettingsInfo() {
+    var el;
+    el = document.getElementById('set-orient');
+    if (el) el.textContent = typeof DeviceOrientationEvent !== 'undefined' ? (S.hasCompass ? 'Active' : 'Available') : 'Not supported';
+    el = document.getElementById('set-abs-orient');
+    if (el) el.textContent = window.AbsoluteOrientationSensor ? 'Available' : 'Not supported';
+    el = document.getElementById('set-accel');
+    if (el) el.textContent = window.Accelerometer ? 'Available' : (window.DeviceMotionEvent ? 'Via DeviceMotion' : 'Not supported');
+    el = document.getElementById('set-mode');
+    if (el) { el.textContent = S.sensorMode === 'real' ? 'Live Compass' : 'Simulation'; el.style.color = S.sensorMode === 'real' ? 'var(--green)' : 'var(--blue)'; }
+    el = document.getElementById('set-offset-display');
+    if (el) el.textContent = S.compassOffset + '°';
+    el = document.getElementById('offset-val');
+    if (el) el.textContent = S.compassOffset + '°';
+
+    // Compass status
+    var statusEl = document.getElementById('set-compass-status');
+    var detailEl = document.getElementById('set-compass-detail');
+    var dotEl = document.getElementById('set-compass-dot');
+    if (S.hasCompass) {
+      if (statusEl) statusEl.textContent = 'Active';
+      if (detailEl) detailEl.textContent = 'Heading: ' + S.compassHeading + '° ' + getCardinal(S.compassHeading);
+      if (dotEl) dotEl.style.background = 'var(--green)';
+    } else {
+      if (statusEl) statusEl.textContent = 'Not initialised';
+      if (detailEl) detailEl.textContent = 'Tap Calibrate to request permission';
+      if (dotEl) dotEl.style.background = 'var(--text3)';
+    }
+  }
+
+  window.calibrateCompass = function() {
+    var btn = document.getElementById('calibrate-btn');
+    var help = document.getElementById('calibrate-help');
+
+    if (!S.calibrating) {
+      // Start calibration
+      initSensors();
+      S.calibrating = true;
+      S.calReadings = [];
+      btn.textContent = 'Verify North';
+      btn.style.background = 'var(--green)';
+      help.textContent = 'Move your phone slowly in a figure-8 pattern for 5 seconds, then point it North and tap Verify.';
+    } else {
+      // Verify — take current reading as North
+      S.calibrating = false;
+      if (S.hasCompass && S.rawHeading !== undefined) {
+        // Current raw heading should be 0 (North) — offset is the difference
+        S.compassOffset = (360 - S.rawHeading) % 360;
+        if (S.compassOffset > 180) S.compassOffset -= 360; // keep offset small
+        localStorage.setItem('skispot-compass-offset', String(S.compassOffset));
+      }
+      btn.textContent = 'Calibrate Compass';
+      btn.style.background = 'var(--blue)';
+      help.textContent = 'Calibration complete. Offset: ' + S.compassOffset + '°. Compass should now read 0° when pointing North.';
+      updateSettingsInfo();
+    }
+  };
+
+  window.adjustOffset = function(delta) {
+    S.compassOffset = ((S.compassOffset + delta) + 360) % 360;
+    if (S.compassOffset > 180) S.compassOffset -= 360;
+    localStorage.setItem('skispot-compass-offset', String(S.compassOffset));
+    document.getElementById('offset-val').textContent = S.compassOffset + '°';
+    updateSettingsInfo();
+  };
+
+  window.resetOffset = function() {
+    S.compassOffset = 0;
+    localStorage.setItem('skispot-compass-offset', '0');
+    document.getElementById('offset-val').textContent = '0°';
+    updateSettingsInfo();
+  };
+
+  // Override goHome to clean up settings RAF
+  var _origGoHome = window.goHome;
+  window.goHome = function() {
+    if (S._settingsRAF) { cancelAnimationFrame(S._settingsRAF); S._settingsRAF = null; }
+    _origGoHome();
+  };
+
+  // Settings compass animation interval
+  setInterval(function() {
+    if (S.screen === 'settings') updateSettingsInfo();
+  }, 1000);
 
 })();
 
