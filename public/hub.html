@@ -13,7 +13,11 @@
     h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
     .sub{font-size:14px;color:#71717a;margin-bottom:32px}
     .group{margin-bottom:32px}
-    .group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a1a1aa;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e4e4e7}
+    .group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a1a1aa;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e4e4e7;cursor:pointer;display:flex;align-items:center;justify-content:space-between;-webkit-user-select:none;user-select:none}
+    .group-label::after{content:'▾';font-size:12px;color:#d4d4d8;transition:transform .2s}
+    .group.collapsed .group-label::after{transform:rotate(-90deg)}
+    .group.collapsed .link-row,.group.collapsed .access-panel{display:none!important}
+    .group-label:hover{color:#71717a}
     .link-row{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:4px;border-radius:8px;text-decoration:none;transition:background .1s}
     .link-row:hover{background:rgba(124,58,237,.04)}
     .link-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;flex-shrink:0}
@@ -783,6 +787,25 @@ function toggleAccess(userId, groupScope, granted) {
   // For now it's client-side only and shows an alert.
   console.log('Access ' + (granted ? 'granted' : 'revoked') + ': ' + user.name + ' → ' + groupScope + ' (new scope: ' + user.scope + ')');
 }
+
+// Collapsible groups — click label to toggle
+document.querySelectorAll('.group-label').forEach(function(label) {
+  label.addEventListener('click', function(e) {
+    if (e.target.tagName === 'INPUT') return; // don't collapse when clicking checkboxes
+    this.closest('.group').classList.toggle('collapsed');
+  });
+});
+
+// Auto-collapse non-essential groups on load (keep first 3 open)
+(function() {
+  var groups = document.querySelectorAll('.group[data-scope]');
+  groups.forEach(function(g, i) {
+    // Keep Agent Team, first partner group, and Platform open. Collapse the rest.
+    if (i > 2 && g.style.display !== 'none') {
+      g.classList.add('collapsed');
+    }
+  });
+})();
 </script>
 </body>
 </html>
