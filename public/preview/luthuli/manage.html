@@ -109,29 +109,39 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 .sec-action{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:1px;cursor:pointer;text-decoration:none}
 .sec-action:hover{color:var(--sage-dark)}
 
-/* Calendar */
+/* Calendar / Timeline */
 .cal-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .cal-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .cal-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)}
 .cal-nav{display:flex;align-items:center;gap:8px}
 .cal-nav button{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);transition:all .15s}
 .cal-nav button:hover{background:var(--bg);border-color:var(--sage)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-day-head{padding:6px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border)}
-.cal-cell{padding:4px 3px;min-height:52px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-size:10px;position:relative}
-.cal-cell:nth-child(7n){border-right:none}
-.cal-num{font-weight:600;color:var(--text);font-size:11px;margin-bottom:2px}
-.cal-cell.outside .cal-num{color:var(--muted)}
-.cal-cell.today{background:rgba(5,150,105,.04)}
-.cal-booking{font-family:'JetBrains Mono',monospace;font-size:7px;padding:1px 3px;border-radius:2px;margin-bottom:1px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;letter-spacing:.3px}
-.cal-booking:hover{opacity:.75}
-.cb-owner{background:rgba(90,122,92,.15);color:var(--sage-dark)}
-.cb-direct{background:rgba(37,99,235,.1);color:var(--blue)}
-.cb-ph{background:rgba(124,58,237,.1);color:var(--purple)}
-.cb-pending{background:rgba(217,119,6,.1);color:var(--amber)}
-.cal-legend{padding:8px 16px;display:flex;gap:14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.timeline{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.timeline::-webkit-scrollbar{height:6px}
+.timeline::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:3px}
+.timeline-hdr-row{display:contents}
+.timeline-hdr-corner{padding:6px 8px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--bg);position:sticky;left:0;z-index:3}
+.timeline-hdr-cell{padding:4px 0;text-align:center;font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);border-right:1px solid #f5f3ff;font-size:10px;font-weight:600;color:var(--text);line-height:1.2}
+.timeline-hdr-cell .day-dow{font-size:7px;font-weight:400;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;display:block;margin-top:1px}
+.timeline-hdr-cell.weekend{background:rgba(0,0,0,.02)}
+.timeline-hdr-cell.today{background:rgba(90,122,92,.08)}
+.timeline-row{display:contents}
+.timeline-label{padding:8px 8px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:11px;color:var(--text);border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg);position:sticky;left:0;z-index:2;white-space:nowrap;display:flex;align-items:center}
+.timeline-cell{border-right:1px solid #f5f3ff;border-bottom:1px solid var(--border);min-height:40px;position:relative}
+.timeline-cell.weekend{background:rgba(0,0,0,.02)}
+.timeline-cell.today{background:rgba(90,122,92,.06)}
+.booking-bar{position:absolute;top:4px;bottom:4px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:#fff;padding:0 6px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;z-index:1;transition:opacity .12s;letter-spacing:.3px;left:2px;right:2px}
+.booking-bar:hover{opacity:.85;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.booking-bar.bar-owner{background:#5a7a5c}
+.booking-bar.bar-direct{background:#2563eb}
+.booking-bar.bar-ph{background:#7c3aed}
+.booking-bar.bar-pending{background:#d97706;border:1px dashed rgba(255,255,255,.5)}
+.cal-legend{padding:8px 16px;display:flex;gap:14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);flex-wrap:wrap;align-items:center}
 .cal-legend-item{display:flex;align-items:center;gap:4px}
 .cal-legend-dot{width:10px;height:10px;border-radius:2px}
+.cal-export{margin-left:auto;display:flex;gap:6px}
+.cal-export button{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.cal-export button:hover{border-color:var(--sage);color:var(--sage)}
 
 /* Revenue */
 .rev-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
@@ -451,7 +461,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
         <div class="stat-card"><div class="stat-val stat-loading" id="statNet">--</div><div class="stat-label">Net Revenue</div></div>
       </div>
 
-      <!-- Bookings Calendar -->
+      <!-- Bookings Timeline -->
       <div>
         <div class="sec-head"><span class="sec-title">Bookings</span><span class="sec-action" id="calToday">Today</span></div>
         <div class="cal-card">
@@ -462,12 +472,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
               <button id="calNext">Next &rarr;</button>
             </div>
           </div>
-          <div class="cal-grid" id="calGrid"></div>
+          <div class="timeline" id="calTimeline"><div class="timeline-grid" id="calGrid"></div></div>
           <div class="cal-legend">
-            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(90,122,92,.3)"></span>Owner</span>
-            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(37,99,235,.2)"></span>Direct</span>
-            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(124,58,237,.2)"></span>PH</span>
-            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(217,119,6,.2)"></span>Pending</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#5a7a5c"></span>Owner</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#2563eb"></span>Direct</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#7c3aed"></span>PH</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:#d97706"></span>Pending</span>
+            <span class="cal-export">
+              <button id="exportGCal" title="Add bookings to Google Calendar">Add to Google Cal</button>
+              <button id="exportICS" title="Download .ics file">Download .ics</button>
+            </span>
           </div>
         </div>
       </div>
@@ -495,6 +509,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
         <div class="cov-cal-head">
           <span class="cov-cal-title">Staff Coverage — Next 4 Weeks</span>
         </div>
+        <div id="covBookingBar" style="padding:6px 10px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)"></div>
         <div class="cov-cal-grid" id="covCalGrid"></div>
         <div class="cov-summary" id="covSummary"></div>
       </div>
@@ -1140,59 +1155,101 @@ if (window.visualViewport) {
     renderCalendar();
   }
 
+  // All known pavilions in display order
+  const ALL_PAVILIONS = ['River Pavilion','Bush Pavilion','Sunset Pavilion','Guest Pavilion','Host Family','Full Lodge','Leopard','Elephant','Buffalo'];
+
   function renderCalendar(bookings) {
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
 
     const grid = document.getElementById('calGrid');
-    const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    let html = dayNames.map(d => '<div class="cal-day-head">' + d + '</div>').join('');
-
-    const firstDay = new Date(calYear, calMonth, 1);
-    let startDow = firstDay.getDay();
-    startDow = startDow === 0 ? 6 : startDow - 1; // Monday=0
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    const daysInPrev = new Date(calYear, calMonth, 0).getDate();
-
     const today = new Date();
     const isThisMonth = today.getFullYear() === calYear && today.getMonth() === calMonth;
+    const todayDay = isThisMonth ? today.getDate() : -1;
+    const dayAbbrs = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-    // Transform API bookings to calendar format, or use demo data
+    // Transform bookings
     const bk = bookings ? transformBookings(bookings) : getDemoBookings();
 
-    // Previous month overflow
-    for (let i = startDow - 1; i >= 0; i--) {
-      html += '<div class="cal-cell outside"><div class="cal-num">' + (daysInPrev - i) + '</div></div>';
-    }
+    // Store for export
+    lastRenderedBookings = bk;
 
+    // Determine pavilion rows: collect used pavilions, then add remaining known ones
+    const usedPavilions = [];
+    bk.forEach(b => {
+      if (b.pavilion && usedPavilions.indexOf(b.pavilion) === -1) usedPavilions.push(b.pavilion);
+    });
+    const pavilions = [];
+    // Add in canonical order first
+    ALL_PAVILIONS.forEach(p => {
+      if (usedPavilions.indexOf(p) !== -1) pavilions.push(p);
+    });
+    // Add any not in canonical list
+    usedPavilions.forEach(p => {
+      if (pavilions.indexOf(p) === -1) pavilions.push(p);
+    });
+    // If no pavilions found, show a default set
+    if (pavilions.length === 0) pavilions.push('River Pavilion','Bush Pavilion','Sunset Pavilion','Guest Pavilion');
+
+    // Set grid columns
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = '90px repeat(' + daysInMonth + ', minmax(28px, 1fr))';
+    grid.style.minWidth = (90 + daysInMonth * 30) + 'px';
+
+    let html = '';
+
+    // Header row: corner + day cells
+    html += '<div class="timeline-hdr-corner">Pavilion</div>';
     for (let d = 1; d <= daysInMonth; d++) {
-      const isToday = isThisMonth && d === today.getDate();
-      html += '<div class="cal-cell' + (isToday ? ' today' : '') + '">';
-      html += '<div class="cal-num">' + d + '</div>';
-
-      // Find bookings that cover this day
-      bk.forEach(b => {
-        if (d >= b.start && d <= b.end) {
-          const cls = 'cb-' + (b.type || 'direct');
-          const label = d === b.start ? b.name : '';
-          html += '<span class="cal-booking ' + cls + '" data-booking="' + encodeURIComponent(JSON.stringify(b)) + '">' + label + '</span>';
-        }
-      });
-
-      html += '</div>';
+      const dt = new Date(calYear, calMonth, d);
+      const dow = dt.getDay();
+      const isWeekend = dow === 0 || dow === 6;
+      const isTd = d === todayDay;
+      let cls = 'timeline-hdr-cell';
+      if (isWeekend) cls += ' weekend';
+      if (isTd) cls += ' today';
+      html += '<div class="' + cls + '">' + d + '<span class="day-dow">' + dayAbbrs[dow] + '</span></div>';
     }
 
-    // Next month overflow
-    const totalCells = startDow + daysInMonth;
-    const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-    for (let i = 1; i <= remaining; i++) {
-      html += '<div class="cal-cell outside"><div class="cal-num">' + i + '</div></div>';
-    }
+    // Pavilion rows
+    pavilions.forEach(pav => {
+      // Label
+      const shortLabel = pav.replace(' Pavilion','').replace('Full ','');
+      html += '<div class="timeline-label">' + shortLabel + '</div>';
+
+      // Day cells with booking bars
+      const pavBookings = bk.filter(b => b.pavilion === pav);
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dt = new Date(calYear, calMonth, d);
+        const dow = dt.getDay();
+        const isWeekend = dow === 0 || dow === 6;
+        const isTd = d === todayDay;
+        let cls = 'timeline-cell';
+        if (isWeekend) cls += ' weekend';
+        if (isTd) cls += ' today';
+        html += '<div class="' + cls + '">';
+
+        // Check if a booking starts on this day
+        pavBookings.forEach(b => {
+          if (b.start === d) {
+            const span = b.end - b.start + 1;
+            const barCls = 'booking-bar bar-' + (b.type || 'direct');
+            // Use CSS to span multiple cells via absolute positioning with calc width
+            // We position in the starting cell and calculate width as a percentage of cell count
+            const widthCalc = 'calc(' + span + '00% + ' + (span - 1) + 'px)';
+            html += '<div class="' + barCls + '" style="width:' + widthCalc + '" data-booking="' + encodeURIComponent(JSON.stringify(b)) + '">' + b.name + '</div>';
+          }
+        });
+
+        html += '</div>';
+      }
+    });
 
     grid.innerHTML = html;
 
     // Booking click handlers
-    grid.querySelectorAll('.cal-booking[data-booking]').forEach(el => {
+    grid.querySelectorAll('.booking-bar[data-booking]').forEach(el => {
       el.addEventListener('click', () => {
         try {
           const b = JSON.parse(decodeURIComponent(el.dataset.booking));
@@ -1201,6 +1258,9 @@ if (window.visualViewport) {
       });
     });
   }
+
+  // Store last rendered bookings for export
+  let lastRenderedBookings = [];
 
   function transformBookings(apiBookings) {
     return apiBookings.map(b => {
@@ -1250,12 +1310,12 @@ if (window.visualViewport) {
 
   function getDemoBookings() {
     return [
-      { name: 'Hamlin', start: 2, end: 8, type: 'owner', pavilion: 'Leopard', guests: 2, rate: 'Owner', ref: 'LTH-2026-041' },
-      { name: 'Van Zyl', start: 5, end: 10, type: 'direct', pavilion: 'Elephant', guests: 4, rate: 'R4,200/night', ref: 'LTH-2026-042' },
-      { name: 'Johnson (PH)', start: 12, end: 18, type: 'ph', pavilion: 'Leopard', guests: 3, rate: 'R5,800/night', ref: 'LTH-2026-043' },
-      { name: 'Pretorius', start: 14, end: 17, type: 'direct', pavilion: 'Buffalo', guests: 2, rate: 'R3,800/night', ref: 'LTH-2026-044' },
-      { name: 'Smith (pend)', start: 22, end: 26, type: 'pending', pavilion: 'Elephant', guests: 2, rate: 'R4,200/night', ref: 'LTH-2026-045' },
-      { name: 'Owner block', start: 25, end: 30, type: 'owner', pavilion: 'Leopard', guests: 0, rate: 'Owner', ref: 'LTH-2026-046' }
+      { name: 'Hamlin Family', start: 2, end: 7, type: 'owner', pavilion: 'River Pavilion', guests: 4, rate: 'Owner', ref: 'LTH-2026-041', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-02', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-08' },
+      { name: 'Van der Merwe', start: 6, end: 9, type: 'direct', pavilion: 'Bush Pavilion', guests: 2, rate: 'R2,800/night', ref: 'LTH-2026-042', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-06', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-10' },
+      { name: 'Ndlovu & Party', start: 12, end: 14, type: 'ph', pavilion: 'Sunset Pavilion', guests: 6, rate: 'R4,200/night', ref: 'LTH-2026-043', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-12', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-15' },
+      { name: 'Leppan', start: 16, end: 18, type: 'direct', pavilion: 'Bush Pavilion', guests: 4, rate: 'R2,800/night', ref: 'LTH-2026-044', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-16', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-19' },
+      { name: 'Thompson', start: 18, end: 20, type: 'pending', pavilion: 'Bush Pavilion', guests: 2, rate: 'R2,800/night', ref: 'LTH-2026-045', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-18', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-21' },
+      { name: 'Birding SA', start: 25, end: 27, type: 'direct', pavilion: 'River Pavilion', guests: 3, rate: 'R6,500/night', ref: 'LTH-2026-046', arrive: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-25', depart: calYear+'-'+String(calMonth+1).padStart(2,'0')+'-28' }
     ];
   }
 
@@ -1305,6 +1365,56 @@ if (window.visualViewport) {
     calYear = now.getFullYear();
     calMonth = now.getMonth();
     loadBookings();
+  });
+
+  // ── Export: Google Calendar ──
+  document.getElementById('exportGCal').addEventListener('click', () => {
+    const bk = lastRenderedBookings;
+    if (!bk || !bk.length) { showToast('No bookings to export'); return; }
+    // Open each booking as a Google Calendar event in new tabs
+    bk.forEach(b => {
+      const startDate = b.arrive || (calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(b.start).padStart(2,'0'));
+      const endDate = b.depart || (calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(b.end + 1).padStart(2,'0'));
+      const sd = startDate.replace(/-/g,'') + 'T140000';
+      const ed = endDate.replace(/-/g,'') + 'T100000';
+      const title = encodeURIComponent('Luthuli Lodge - ' + (b.name || 'Guest'));
+      const details = encodeURIComponent('Pavilion: ' + (b.pavilion||'--') + '\\nGuests: ' + (b.guests||'--') + '\\nRate: ' + (b.rate||'--') + '\\nSource: ' + (b.source||b.type||'--') + '\\nRef: ' + (b.ref||'--'));
+      const loc = encodeURIComponent('Luthuli Lodge, Mkuzi Game Reserve');
+      const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title + '&dates=' + sd + '/' + ed + '&details=' + details + '&location=' + loc;
+      window.open(url, '_blank');
+    });
+    showToast(bk.length + ' booking(s) opened in Google Calendar');
+  });
+
+  // ── Export: iCal (.ics) ──
+  document.getElementById('exportICS').addEventListener('click', () => {
+    const bk = lastRenderedBookings;
+    if (!bk || !bk.length) { showToast('No bookings to export'); return; }
+    let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Luthuli Lodge//Bookings//EN\r\nCALSCALE:GREGORIAN\r\n';
+    bk.forEach(b => {
+      const startDate = b.arrive || (calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(b.start).padStart(2,'0'));
+      const endDate = b.depart || (calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(b.end + 1).padStart(2,'0'));
+      const sd = startDate.replace(/-/g,'');
+      const ed = endDate.replace(/-/g,'');
+      const uid = (b.ref || 'LTH-' + sd + '-' + Math.random().toString(36).slice(2,8)) + '@luthuli.lodge';
+      ics += 'BEGIN:VEVENT\r\n';
+      ics += 'DTSTART;VALUE=DATE:' + sd + '\r\n';
+      ics += 'DTEND;VALUE=DATE:' + ed + '\r\n';
+      ics += 'SUMMARY:Luthuli Lodge - ' + (b.name||'Guest') + '\r\n';
+      ics += 'DESCRIPTION:Pavilion: ' + (b.pavilion||'--') + '\\nGuests: ' + (b.guests||'--') + '\\nRate: ' + (b.rate||'--') + '\\nSource: ' + (b.source||b.type||'--') + '\\nRef: ' + (b.ref||'--') + '\r\n';
+      ics += 'LOCATION:Luthuli Lodge\\, Mkuzi Game Reserve\r\n';
+      ics += 'UID:' + uid + '\r\n';
+      ics += 'END:VEVENT\r\n';
+    });
+    ics += 'END:VCALENDAR\r\n';
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'luthuli_bookings_' + calYear + '_' + String(calMonth+1).padStart(2,'0') + '.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('ICS file downloaded with ' + bk.length + ' booking(s)');
   });
 
   // Revenue
@@ -1390,8 +1500,8 @@ if (window.visualViewport) {
     const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
     const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    // Get demo bookings for guest overlay
-    const bk = getDemoBookings();
+    // Get bookings for guest overlay (use API data if available, else demo)
+    const bk = lastBookings ? transformBookings(lastBookings) : getDemoBookings();
 
     let html = '';
     // Header row
@@ -1426,9 +1536,11 @@ if (window.visualViewport) {
         const dd = cellDate.getDate();
         if (m === 3 && dd >= 15 && dd <= 18) thandiweStatus = 'leave';
 
-        // Check if guests on this day (simple: check if day of month falls in a booking range, same month)
+        // Check if guests on this day
         let hasGuests = false;
-        if (cellDate.getMonth() === calMonth && cellDate.getFullYear() === calYear) {
+        const cellM = cellDate.getMonth();
+        const cellY = cellDate.getFullYear();
+        if (cellM === calMonth && cellY === calYear) {
           bk.forEach(b => {
             if (dd >= b.start && dd <= b.end) hasGuests = true;
           });
@@ -1463,6 +1575,30 @@ if (window.visualViewport) {
     }
 
     grid.innerHTML = html;
+
+    // Booking indicator bar at top of coverage calendar
+    const covBar = document.getElementById('covBookingBar');
+    if (covBar) {
+      // Build a mini bar showing which days have guests
+      const totalWeekDays = 28;
+      let barHTML = '<span style="display:inline-block;margin-right:6px;vertical-align:middle">Guests in camp:</span>';
+      barHTML += '<span style="display:inline-flex;gap:1px;vertical-align:middle">';
+      for (let i = 0; i < totalWeekDays; i++) {
+        const cellDate2 = new Date(startDate);
+        cellDate2.setDate(cellDate2.getDate() + i);
+        const dd2 = cellDate2.getDate();
+        const cm2 = cellDate2.getMonth();
+        const cy2 = cellDate2.getFullYear();
+        let guests2 = false;
+        if (cm2 === calMonth && cy2 === calYear) {
+          bk.forEach(b => { if (dd2 >= b.start && dd2 <= b.end) guests2 = true; });
+        }
+        const bg = guests2 ? 'var(--amber)' : 'var(--border)';
+        barHTML += '<span style="display:inline-block;width:8px;height:8px;border-radius:1px;background:' + bg + '" title="' + cellDate2.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + (guests2 ? ' - guests':'') + '"></span>';
+      }
+      barHTML += '</span>';
+      covBar.innerHTML = barHTML;
+    }
 
     // Coverage summary
     const pct = totalDays > 0 ? Math.round(coveredDays / totalDays * 100) : 0;
