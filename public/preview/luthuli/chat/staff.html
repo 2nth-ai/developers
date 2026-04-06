@@ -25,24 +25,28 @@
 }
 
 html, body {
-  height: 100vh; /* fallback */
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: #000;
   -webkit-text-size-adjust: 100%;
+  margin: 0; padding: 0;
 }
 
 #app {
   max-width: 480px;
+  width: 100%;
+  height: 100dvh;
   height: var(--app-height, 100vh);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: #fff;
-  position: fixed;
-  inset: 0;
+  position: relative;
   overflow: hidden;
+}
+@supports (-webkit-touch-callout: none) {
+  #app { height: -webkit-fill-available; }
 }
 
 @media (min-width: 481px) {
@@ -429,6 +433,13 @@ html, body {
   color: var(--ios-text);
 }
 
+/* ── QUICK MENU ── */
+.quick-menu{display:flex;gap:4px;padding:6px 8px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.quick-menu::-webkit-scrollbar{display:none}
+.qm-item{font-size:11px;padding:6px 10px;border-radius:16px;border:1px solid rgba(0,122,255,.2);background:transparent;color:#007aff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.qm-item:hover{background:rgba(0,122,255,.08)}
+.qm-item:active{transform:scale(.95)}
+
 /* ── SUGGESTION CHIPS ── */
 .chips { display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px; }
 .chip { font-size:12px; padding:6px 14px; border-radius:16px; border:1px solid #007aff; background:transparent; color:#007aff; cursor:pointer; }
@@ -476,6 +487,13 @@ html, body {
   <div class="messages" id="messages"></div>
 
   <div class="input-bar">
+    <div class="quick-menu" id="quickMenu">
+      <button class="qm-item" data-ask="When do I work next?">📋 Schedule</button>
+      <button class="qm-item" data-ask="Who's covering today?">👥 Coverage</button>
+      <button class="qm-item" data-ask="Who's checking in this week?">🏠 Guests</button>
+      <button class="qm-item" data-ask="I'd like to request leave">📅 Leave</button>
+      <button class="qm-item" data-ask="Room is ready">✅ Room ready</button>
+    </div>
     <textarea class="input-field" id="input" rows="1" placeholder="Message"></textarea>
     <button class="send-btn" id="sendBtn">
       <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -581,6 +599,17 @@ if (window.visualViewport) {
 
   // ── Send handling ──
   sendBtn.addEventListener('click', sendMessage);
+
+  // Quick menu items
+  document.querySelectorAll('.qm-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ask = btn.dataset.ask;
+      if (ask && authState === 'authenticated') {
+        addBubble(ask, 'user');
+        handleInput(ask);
+      }
+    });
+  });
   inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();

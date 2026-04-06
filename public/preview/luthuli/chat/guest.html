@@ -30,24 +30,29 @@
 }
 
 html, body {
-  height: 100vh; /* fallback */
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #000;
   -webkit-text-size-adjust: 100%;
+  margin: 0; padding: 0;
 }
 
 #app {
   max-width: 480px;
+  width: 100%;
+  height: 100dvh;
   height: var(--app-height, 100vh);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: var(--wa-bg);
-  position: fixed;
-  inset: 0;
+  position: relative;
   overflow: hidden;
+}
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari fix */
+  #app { height: -webkit-fill-available; }
 }
 
 @media (min-width: 481px) {
@@ -456,6 +461,13 @@ html, body {
   visibility: hidden;
 }
 
+/* ── QUICK MENU ── */
+.quick-menu{display:flex;gap:4px;padding:6px 8px;overflow-x:auto;background:var(--wa-input-bg);flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:1px solid #ddd}
+.quick-menu::-webkit-scrollbar{display:none}
+.qm-item{font-size:11px;padding:6px 10px;border-radius:16px;border:1px solid rgba(0,0,0,.12);background:#fff;color:#075e54;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.qm-item:hover{background:#dcf8c6}
+.qm-item:active{transform:scale(.95)}
+
 /* ── INPUT BAR ── */
 .input-bar {
   background: var(--wa-input-bg);
@@ -685,6 +697,16 @@ html, body {
 
   <!-- CHAT AREA -->
   <div class="chat-area" id="chatArea"></div>
+
+  <!-- QUICK MENU -->
+  <div class="quick-menu" id="quickMenu">
+    <button class="qm-item" data-ask="What dates are available?">📅 Availability</button>
+    <button class="qm-item" data-ask="What are the rates?">💰 Pricing</button>
+    <button class="qm-item" data-ask="Tell me about the pavilions">🏠 Pavilions</button>
+    <button class="qm-item" data-ask="I'd like to make a booking">📝 Book</button>
+    <button class="qm-item" data-ask="Tell me about game drives">🦁 Guides</button>
+    <button class="qm-item" data-ask="How do I get to the lodge?">📍 Directions</button>
+  </div>
 
   <!-- INPUT BAR -->
   <div class="input-bar">
@@ -1186,6 +1208,14 @@ if (window.visualViewport) {
   });
 
   sendBtn.addEventListener('click', doSend);
+
+  // Quick menu items
+  document.querySelectorAll('.qm-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ask = btn.dataset.ask;
+      if (ask) sendMessage(ask);
+    });
+  });
 
   function doSend() {
     const text = inputField.value;

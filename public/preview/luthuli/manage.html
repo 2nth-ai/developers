@@ -67,6 +67,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 .input-field::placeholder{color:var(--muted)}
 .send-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--sage);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
 .send-btn:hover{background:var(--sage-dark)}
+
+/* Quick menu */
+.quick-menu{display:flex;gap:4px;padding:6px 10px;overflow-x:auto;border-top:1px solid var(--border);background:var(--bg2);flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.quick-menu::-webkit-scrollbar{display:none}
+.qm-item{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3px;padding:6px 10px;border-radius:14px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s;-webkit-tap-highlight-color:transparent}
+.qm-item:hover{border-color:var(--sage);color:var(--sage);background:rgba(90,122,92,.04)}
+.qm-item:active{transform:scale(.95)}
 .send-btn:active{transform:scale(.93)}
 .send-btn svg{width:16px;height:16px;fill:#fff}
 
@@ -308,6 +315,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
       </div>
     </div>
     <div class="chat-area" id="chatArea"></div>
+    <div class="quick-menu" id="quickMenu">
+      <button class="qm-item" data-ask="What's the occupancy this month?">📊 Occupancy</button>
+      <button class="qm-item" data-ask="Show me this month's revenue">💰 Revenue</button>
+      <button class="qm-item" data-ask="Who's working today?">👤 Staff</button>
+      <button class="qm-item" data-ask="Show upcoming bookings">📋 Bookings</button>
+      <button class="qm-item" data-ask="Any pending leave requests?">📅 Leave</button>
+      <button class="qm-item" data-ask="What's the systems status?">⚡ Systems</button>
+    </div>
     <div class="input-bar">
       <textarea class="input-field" id="inputField" rows="1" placeholder="Type a message..."></textarea>
       <button class="send-btn" id="sendBtn" aria-label="Send">
@@ -841,6 +856,17 @@ if (window.visualViewport) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
   });
   sendBtn.addEventListener('click', doSend);
+
+  // Quick menu items
+  document.querySelectorAll('.qm-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ask = btn.dataset.ask;
+      if (ask && authState === 'verified') {
+        inputField.value = '';
+        sendMessage(ask);
+      }
+    });
+  });
 
   function doSend() {
     const text = inputField.value;
