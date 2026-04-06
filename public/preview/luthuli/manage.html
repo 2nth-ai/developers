@@ -1206,14 +1206,18 @@ if (window.visualViewport) {
     return apiBookings.map(b => {
       const arrive = new Date(b.arrive + 'T00:00:00');
       const depart = new Date(b.depart + 'T00:00:00');
+      // Last night is the day before departure (depart is checkout day)
+      const lastNight = new Date(depart);
+      lastNight.setDate(lastNight.getDate() - 1);
+
       const startDay = arrive.getMonth() === calMonth && arrive.getFullYear() === calYear ? arrive.getDate() : 1;
       const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-      const endDay = depart.getMonth() === calMonth && depart.getFullYear() === calYear ? depart.getDate() : daysInMonth;
+      const endDay = lastNight.getMonth() === calMonth && lastNight.getFullYear() === calYear ? lastNight.getDate() : daysInMonth;
 
       // Only include if booking overlaps current month
       const monthStart = new Date(calYear, calMonth, 1);
       const monthEnd = new Date(calYear, calMonth + 1, 0);
-      if (depart < monthStart || arrive > monthEnd) return null;
+      if (depart <= monthStart || arrive > monthEnd) return null;
 
       const sourceMap = { 'Owner': 'owner', 'Direct': 'direct', 'Perfect Hideaways': 'ph' };
       const type = b.status === 'Pending' ? 'pending' : (sourceMap[b.source] || 'direct');
