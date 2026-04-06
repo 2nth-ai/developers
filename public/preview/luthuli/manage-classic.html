@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Luthuli Lodge Manager — Classic</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --win-bg:#c0c0c0;
+  --win-highlight:#ffffff;
+  --win-shadow:#808080;
+  --win-dark:#000000;
+  --win-title-active:linear-gradient(90deg,#000080,#1084d0);
+  --win-title-inactive:linear-gradient(90deg,#808080,#b0b0b0);
+  --win-sunken-bg:#ffffff;
+  --win-text:#000000;
+  --win-link:#0000ff;
+  --win-select-bg:#000080;
+  --win-select-text:#ffffff;
+  --desktop:#008080;
+  --app-height:100vh;
+}
+html,body{height:100vh;height:100dvh;overflow:hidden}
+body{
+  font-family:'MS Sans Serif','Segoe UI',Tahoma,sans-serif;
+  font-size:14px;
+  background:var(--desktop);
+  color:var(--win-text);
+  line-height:1.4;
+  -webkit-font-smoothing:none;
+  -moz-osx-font-smoothing:unset;
+  image-rendering:pixelated;
+  cursor:default;
+}
+
+/* ── WIN95 BUTTONS ── */
+.win-btn{
+  font-family:inherit;font-size:14px;
+  background:var(--win-bg);color:var(--win-text);
+  border:none;outline:none;cursor:pointer;
+  padding:4px 16px;min-height:28px;
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+  box-shadow:inset -1px -1px 0 var(--win-shadow),inset 1px 1px 0 var(--win-bg);
+  text-align:center;white-space:nowrap;
+}
+.win-btn:active,.win-btn.pressed{
+  border-top:2px solid var(--win-dark);
+  border-left:2px solid var(--win-dark);
+  border-right:2px solid var(--win-highlight);
+  border-bottom:2px solid var(--win-highlight);
+  box-shadow:inset 1px 1px 0 var(--win-shadow);
+  padding:5px 15px 3px 17px;
+}
+
+/* ── WIN95 SUNKEN ── */
+.win-sunken{
+  border-top:2px solid var(--win-shadow);
+  border-left:2px solid var(--win-shadow);
+  border-right:2px solid var(--win-highlight);
+  border-bottom:2px solid var(--win-highlight);
+  box-shadow:inset 1px 1px 0 var(--win-dark);
+  background:var(--win-sunken-bg);
+}
+
+/* ── DESKTOP ── */
+.desktop{
+  width:100%;height:var(--app-height,100vh);
+  display:flex;align-items:center;justify-content:center;
+  padding:8px;
+  background:var(--desktop);
+}
+
+/* ── WINDOW ── */
+.window{
+  width:100%;max-width:720px;
+  height:100%;max-height:700px;
+  display:flex;flex-direction:column;
+  background:var(--win-bg);
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+  box-shadow:inset -1px -1px 0 var(--win-shadow),inset 1px 1px 0 var(--win-bg),4px 4px 10px rgba(0,0,0,.35);
+  position:relative;
+}
+
+/* ── TITLE BAR ── */
+.title-bar{
+  background:var(--win-title-active);background:linear-gradient(90deg,#000080,#1084d0);
+  padding:3px 4px;display:flex;align-items:center;gap:4px;
+  user-select:none;-webkit-user-select:none;flex-shrink:0;
+  cursor:move;
+}
+.title-icon{
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.title-text{
+  flex:1;color:#fff;font-weight:700;font-size:13px;
+  text-shadow:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.title-buttons{display:flex;gap:2px;flex-shrink:0}
+.title-btn{
+  width:18px;height:16px;font-size:10px;line-height:1;
+  background:var(--win-bg);color:var(--win-text);
+  display:flex;align-items:center;justify-content:center;
+  border-top:1px solid var(--win-highlight);
+  border-left:1px solid var(--win-highlight);
+  border-right:1px solid var(--win-dark);
+  border-bottom:1px solid var(--win-dark);
+  cursor:pointer;font-weight:700;padding:0;
+}
+.title-btn:active{
+  border-top:1px solid var(--win-dark);
+  border-left:1px solid var(--win-dark);
+  border-right:1px solid var(--win-highlight);
+  border-bottom:1px solid var(--win-highlight);
+}
+
+/* ── MENU BAR ── */
+.menu-bar{
+  display:flex;gap:0;padding:2px 0;border-bottom:1px solid var(--win-shadow);flex-shrink:0;
+  background:var(--win-bg);
+}
+.menu-item{
+  font-size:13px;padding:2px 10px;cursor:pointer;position:relative;
+}
+.menu-item:hover{background:var(--win-select-bg);color:var(--win-select-text)}
+.menu-item .underline{text-decoration:underline}
+/* Dropdown */
+.menu-dropdown{
+  display:none;position:absolute;top:100%;left:0;z-index:500;
+  background:var(--win-bg);min-width:180px;
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+  box-shadow:2px 2px 0 rgba(0,0,0,.3);padding:2px;
+}
+.menu-item.open .menu-dropdown{display:block}
+.menu-dd-item{
+  padding:4px 20px;font-size:13px;cursor:pointer;white-space:nowrap;
+}
+.menu-dd-item:hover{background:var(--win-select-bg);color:var(--win-select-text)}
+.menu-dd-sep{height:1px;background:var(--win-shadow);margin:2px 4px}
+.menu-dd-item.disabled{color:var(--win-shadow);cursor:default}
+.menu-dd-item.disabled:hover{background:transparent;color:var(--win-shadow)}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  display:flex;flex-wrap:wrap;gap:3px;padding:4px 6px;
+  border-bottom:1px solid var(--win-shadow);flex-shrink:0;
+  background:var(--win-bg);
+}
+.toolbar .win-btn{font-size:12px;padding:3px 10px;min-height:24px}
+.toolbar .win-btn:active{padding:4px 9px 2px 11px}
+
+/* ── MESSAGE AREA ── */
+.msg-area-wrap{
+  flex:1;margin:4px 6px;overflow:hidden;display:flex;flex-direction:column;
+}
+.msg-area{
+  flex:1;overflow-y:auto;padding:6px 8px;font-size:14px;line-height:1.5;
+  word-wrap:break-word;
+}
+/* Classic scrollbar styling */
+.msg-area::-webkit-scrollbar{width:16px;background:var(--win-bg)}
+.msg-area::-webkit-scrollbar-track{
+  background:repeating-conic-gradient(var(--win-bg) 0% 25%,#fff 0% 50%) 50%/2px 2px;
+}
+.msg-area::-webkit-scrollbar-thumb{
+  background:var(--win-bg);
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+}
+.msg-area::-webkit-scrollbar-button{
+  height:16px;background:var(--win-bg);
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+}
+
+/* Message lines */
+.msg-line{margin-bottom:6px;animation:fadeIn .15s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.msg-agent .msg-prefix{font-weight:700;color:#000080}
+.msg-user .msg-prefix{font-weight:700;color:#0000ff}
+.msg-user{color:#0000ff}
+.msg-time{color:var(--win-shadow);font-size:12px}
+.msg-text{white-space:pre-wrap}
+.msg-text strong{font-weight:700}
+
+/* Typing indicator */
+.typing-line{color:var(--win-shadow);font-style:italic;margin-bottom:6px}
+
+/* ── INPUT AREA ── */
+.input-area{
+  display:flex;gap:6px;padding:4px 6px;align-items:flex-end;flex-shrink:0;
+  border-top:1px solid var(--win-shadow);
+}
+.input-label{font-size:13px;font-weight:700;white-space:nowrap;padding-bottom:4px}
+.input-field{
+  flex:1;font-family:inherit;font-size:16px;
+  padding:4px 6px;min-height:32px;resize:none;
+  border-top:2px solid var(--win-shadow);
+  border-left:2px solid var(--win-shadow);
+  border-right:2px solid var(--win-highlight);
+  border-bottom:2px solid var(--win-highlight);
+  box-shadow:inset 1px 1px 0 var(--win-dark);
+  background:var(--win-sunken-bg);color:var(--win-text);
+  outline:none;line-height:1.4;max-height:80px;overflow-y:auto;
+}
+.input-field::selection{background:var(--win-select-bg);color:var(--win-select-text)}
+
+/* ── STATUS BAR ── */
+.status-bar{
+  display:flex;flex-shrink:0;border-top:1px solid var(--win-highlight);
+}
+.status-panel{
+  padding:2px 8px;font-size:12px;
+  border-top:1px solid var(--win-shadow);
+  border-left:1px solid var(--win-shadow);
+  border-right:1px solid var(--win-highlight);
+  border-bottom:1px solid var(--win-highlight);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.status-panel:first-child{flex:1}
+.status-panel:nth-child(2){width:140px}
+.status-panel:nth-child(3){width:90px;text-align:right}
+
+/* ── DIALOG BOX ── */
+.dialog-overlay{
+  position:fixed;inset:0;background:transparent;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+}
+.dialog-overlay.hidden{display:none}
+.dialog-box{
+  background:var(--win-bg);min-width:340px;max-width:90vw;
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+  box-shadow:inset -1px -1px 0 var(--win-shadow),4px 4px 10px rgba(0,0,0,.4);
+}
+.dialog-title{
+  background:linear-gradient(90deg,#000080,#1084d0);
+  padding:3px 6px;display:flex;align-items:center;justify-content:space-between;
+  color:#fff;font-weight:700;font-size:13px;user-select:none;
+}
+.dialog-body{padding:16px 20px;display:flex;gap:16px;align-items:flex-start}
+.dialog-icon{font-size:32px;flex-shrink:0;line-height:1}
+.dialog-content{flex:1;font-size:14px;line-height:1.5}
+.dialog-content p{margin-bottom:8px}
+.dialog-input{
+  width:100%;font-family:inherit;font-size:15px;padding:4px 6px;
+  border-top:2px solid var(--win-shadow);
+  border-left:2px solid var(--win-shadow);
+  border-right:2px solid var(--win-highlight);
+  border-bottom:2px solid var(--win-highlight);
+  box-shadow:inset 1px 1px 0 var(--win-dark);
+  background:var(--win-sunken-bg);outline:none;margin-top:4px;
+}
+.dialog-input::selection{background:var(--win-select-bg);color:var(--win-select-text)}
+.dialog-buttons{
+  padding:8px 20px 16px;display:flex;gap:8px;justify-content:center;
+}
+.dialog-buttons .win-btn{min-width:80px}
+
+/* ── SPLASH / PROGRESS ── */
+.splash-overlay{
+  position:fixed;inset:0;background:var(--desktop);z-index:2000;
+  display:flex;align-items:center;justify-content:center;
+}
+.splash-overlay.hidden{display:none}
+.splash-box{
+  background:var(--win-bg);padding:0;
+  border-top:2px solid var(--win-highlight);
+  border-left:2px solid var(--win-highlight);
+  border-right:2px solid var(--win-dark);
+  border-bottom:2px solid var(--win-dark);
+  box-shadow:inset -1px -1px 0 var(--win-shadow);
+  width:340px;
+}
+.splash-title{
+  background:linear-gradient(90deg,#000080,#1084d0);
+  padding:3px 6px;color:#fff;font-weight:700;font-size:13px;
+}
+.splash-body{padding:16px 20px;text-align:center}
+.splash-body p{margin-bottom:12px;font-size:14px}
+.progress-track{
+  height:20px;width:100%;
+  border-top:2px solid var(--win-shadow);
+  border-left:2px solid var(--win-shadow);
+  border-right:2px solid var(--win-highlight);
+  border-bottom:2px solid var(--win-highlight);
+  background:var(--win-bg);overflow:hidden;
+}
+.progress-fill{
+  height:100%;width:0;
+  background:repeating-linear-gradient(90deg,#000080 0px,#000080 8px,var(--win-bg) 8px,var(--win-bg) 10px);
+  transition:width .3s linear;
+}
+
+/* ── ABOUT BOX ── */
+.about-body{text-align:center;padding:20px}
+.about-body .about-logo{font-size:28px;margin-bottom:8px}
+.about-body h3{font-size:16px;margin-bottom:4px}
+.about-body p{font-size:12px;color:var(--win-shadow);margin-bottom:2px}
+.about-body .about-line{height:2px;background:var(--win-shadow);margin:12px 0}
+.about-body .about-mem{font-size:11px;color:var(--win-shadow)}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .desktop{padding:0}
+  .window{max-width:100%;max-height:100%;border:none;box-shadow:none}
+  .toolbar{gap:2px;padding:3px 4px}
+  .toolbar .win-btn{font-size:11px;padding:3px 6px}
+  .toolbar .win-btn:active{padding:4px 5px 2px 7px}
+}
+@media(max-width:480px){
+  .toolbar .win-btn{font-size:10px;padding:2px 5px}
+  .toolbar .win-btn:active{padding:3px 4px 1px 6px}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash-overlay" id="splash">
+  <div class="splash-box">
+    <div class="splash-title">Luthuli Lodge Manager</div>
+    <div class="splash-body">
+      <p>Loading Luthuli Lodge Manager...</p>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DESKTOP -->
+<div class="desktop" id="desktop">
+<div class="window" id="mainWindow">
+
+  <!-- Title Bar -->
+  <div class="title-bar" id="titleBar">
+    <span class="title-icon">&#127969;</span>
+    <span class="title-text">Luthuli Lodge Manager</span>
+    <div class="title-buttons">
+      <button class="title-btn" id="btnMin" title="Minimize">_</button>
+      <button class="title-btn" id="btnMax" title="Maximize">&#9633;</button>
+      <button class="title-btn" id="btnClose" title="Close">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Menu Bar -->
+  <div class="menu-bar" id="menuBar">
+    <div class="menu-item" data-menu="file">
+      <span><span class="underline">F</span>ile</span>
+      <div class="menu-dropdown">
+        <div class="menu-dd-item" id="menuClear">Clear Chat</div>
+        <div class="menu-dd-item" id="menuRestart">Restart Session</div>
+        <div class="menu-dd-sep"></div>
+        <div class="menu-dd-item" id="menuModern">Switch to Modern View</div>
+        <div class="menu-dd-sep"></div>
+        <div class="menu-dd-item" id="menuExit">Exit</div>
+      </div>
+    </div>
+    <div class="menu-item" data-menu="edit">
+      <span><span class="underline">E</span>dit</span>
+      <div class="menu-dropdown">
+        <div class="menu-dd-item disabled">Undo</div>
+        <div class="menu-dd-sep"></div>
+        <div class="menu-dd-item disabled">Cut</div>
+        <div class="menu-dd-item disabled">Copy</div>
+        <div class="menu-dd-item disabled">Paste</div>
+      </div>
+    </div>
+    <div class="menu-item" data-menu="view">
+      <span><span class="underline">V</span>iew</span>
+      <div class="menu-dropdown">
+        <div class="menu-dd-item" id="menuGuest">Guest Agent</div>
+        <div class="menu-dd-item" id="menuStaff">Staff Agent</div>
+        <div class="menu-dd-sep"></div>
+        <div class="menu-dd-item" id="menuModernView">Modern Dashboard</div>
+      </div>
+    </div>
+    <div class="menu-item" data-menu="help">
+      <span><span class="underline">H</span>elp</span>
+      <div class="menu-dropdown">
+        <div class="menu-dd-item" id="menuHelp">Help Topics</div>
+        <div class="menu-dd-sep"></div>
+        <div class="menu-dd-item" id="menuAbout">About Luthuli Lodge Manager</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar" id="toolbar">
+    <button class="win-btn tb-btn" data-ask="What's the occupancy this month?">Occupancy</button>
+    <button class="win-btn tb-btn" data-ask="Show me this month's revenue">Revenue</button>
+    <button class="win-btn tb-btn" data-ask="Show upcoming bookings">Bookings</button>
+    <button class="win-btn tb-btn" data-ask="Who's working today?">Staff</button>
+    <button class="win-btn tb-btn" data-ask="Any pending leave requests?">Leave</button>
+    <button class="win-btn tb-btn" data-ask="What's the systems status?">Systems</button>
+    <button class="win-btn tb-btn" data-ask="I'd like to add a new booking">Add Booking</button>
+  </div>
+
+  <!-- Message Area -->
+  <div class="msg-area-wrap win-sunken">
+    <div class="msg-area" id="msgArea"></div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <span class="input-label">Type here:</span>
+    <textarea class="input-field" id="inputField" rows="1" placeholder=""></textarea>
+    <button class="win-btn" id="sendBtn" style="min-width:60px">Send</button>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-panel" id="statusMain">Ready</div>
+    <div class="status-panel" id="statusAction">Agent ready</div>
+    <div class="status-panel" id="statusTime">--:--</div>
+  </div>
+
+</div>
+</div>
+
+<!-- DIALOG OVERLAYS -->
+<div class="dialog-overlay hidden" id="dialogOverlay">
+  <div class="dialog-box" id="dialogBox">
+    <div class="dialog-title" id="dialogTitle">Dialog</div>
+    <div class="dialog-body" id="dialogBody"></div>
+    <div class="dialog-buttons" id="dialogButtons"></div>
+  </div>
+</div>
+
+<script>
+// Fix mobile viewport height
+function setVH(){
+  const vh=window.visualViewport?window.visualViewport.height:window.innerHeight;
+  document.documentElement.style.setProperty('--app-height',vh+'px');
+}
+setVH();
+window.addEventListener('resize',setVH);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',setVH);
+  window.visualViewport.addEventListener('scroll',setVH);
+}
+
+(function(){
+'use strict';
+
+// ── Splash screen ──
+const splash=document.getElementById('splash');
+const progressFill=document.getElementById('progressFill');
+let splashPct=0;
+const splashInterval=setInterval(()=>{
+  splashPct+=Math.random()*25+10;
+  if(splashPct>=100)splashPct=100;
+  progressFill.style.width=splashPct+'%';
+  if(splashPct>=100){
+    clearInterval(splashInterval);
+    setTimeout(()=>{splash.classList.add('hidden')},300);
+  }
+},200);
+
+// ── Constants ──
+const TOKEN_KEY='luthuli_mgr_token';
+const HISTORY_KEY='luthuli_mgr_chat_classic';
+const STATE_KEY='luthuli_mgr_auth';
+const KNOWN_USERS={
+  'craig@b2bs.co.za':{name:'Craig',role:'Admin'},
+  'guy@rumf.co.za':{name:'Guy',role:'Owner'},
+  'lisajane@rumf.co.za':{name:'Lisa-Jane',role:'Manager'}
+};
+
+// ── State ──
+let sessionToken=localStorage.getItem(TOKEN_KEY)||null;
+let authState=localStorage.getItem(STATE_KEY)||'init';
+let currentUser=null;
+let messages=[];
+
+// ── DOM ──
+const msgArea=document.getElementById('msgArea');
+const inputField=document.getElementById('inputField');
+const sendBtn=document.getElementById('sendBtn');
+
+// ── Helpers ──
+function timeStr(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+function updateClock(){document.getElementById('statusTime').textContent=timeStr()}
+updateClock();
+setInterval(updateClock,30000);
+
+function setStatus(text){document.getElementById('statusAction').textContent=text}
+function setMainStatus(text){document.getElementById('statusMain').textContent=text}
+
+function scrollToBottom(){requestAnimationFrame(()=>{msgArea.scrollTop=msgArea.scrollHeight})}
+
+function escapeHTML(t){
+  if(!t)return'';
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatText(text){
+  if(!text)return'';
+  return escapeHTML(text)
+    .replace(/\n/g,'<br>')
+    .replace(/\*(.+?)\*/g,'<strong>$1</strong>');
+}
+
+// ── Agent Log ──
+function logExchange(userMessage,agentResponse,intent){
+  try{
+    const log=JSON.parse(localStorage.getItem('luthuli_agent_log')||'[]');
+    const entry={
+      id:crypto.randomUUID(),
+      timestamp:new Date().toISOString(),
+      channel:'manager',
+      userMessage,agentResponse,
+      intent:intent||'fallback',
+      feedback:null,notes:''
+    };
+    log.push(entry);
+    localStorage.setItem('luthuli_agent_log',JSON.stringify(log));
+    return entry.id;
+  }catch(e){return null}
+}
+
+function detectManagerIntent(msg){
+  const m=msg.toLowerCase();
+  if(/occupancy|how full|capacity/.test(m))return'occupancy';
+  if(/revenue|income|earned|turnover/.test(m))return'revenue';
+  if(/commission|perfect hideaway|PH/.test(m))return'ph_commission';
+  if(/who.*work|staff.*today|on duty|working/.test(m))return'staff_status';
+  if(/pending.*leave|leave.*request/.test(m))return'leave_requests';
+  if(/booking|upcoming|next guest/.test(m))return'bookings';
+  if(/add.*book|new.*book|book.*family|leppan/.test(m))return'add_booking';
+  if(/schedule|roster|rotation/.test(m))return'staff_schedule';
+  if(/solar|water|power|off.?grid|system/.test(m))return'systems';
+  if(/hi|hello|hey|morning|afternoon/.test(m))return'greeting';
+  return'fallback';
+}
+
+// ── Chat rendering ──
+function addMessage(role,text,opts={}){
+  const time=opts.time||timeStr();
+  const div=document.createElement('div');
+  div.className='msg-line msg-'+role;
+  const prefix=role==='agent'?'Agent':'You';
+  div.innerHTML='<span class="msg-time">['+time+']</span> <span class="msg-prefix">'+prefix+':</span> <span class="msg-text">'+formatText(text)+'</span>';
+  msgArea.appendChild(div);
+  if(!opts.noSave){
+    messages.push({role,text,time});
+    saveHistory();
+  }
+  scrollToBottom();
+}
+
+let typingEl=null;
+function showTyping(){
+  if(typingEl)return;
+  typingEl=document.createElement('div');
+  typingEl.className='typing-line';
+  typingEl.textContent='Agent is typing...';
+  msgArea.appendChild(typingEl);
+  scrollToBottom();
+  setStatus('Agent typing...');
+}
+function hideTyping(){
+  if(typingEl){typingEl.remove();typingEl=null}
+  setStatus('Agent ready');
+}
+
+function saveHistory(){
+  try{localStorage.setItem(HISTORY_KEY,JSON.stringify(messages))}catch(e){}
+}
+
+// ── Win95 Dialogs ──
+function showDialog(title,contentHTML,buttons,opts={}){
+  const overlay=document.getElementById('dialogOverlay');
+  const box=document.getElementById('dialogBox');
+  document.getElementById('dialogTitle').textContent=title;
+  const body=document.getElementById('dialogBody');
+  const btns=document.getElementById('dialogButtons');
+  body.innerHTML=contentHTML;
+  btns.innerHTML='';
+  buttons.forEach(b=>{
+    const btn=document.createElement('button');
+    btn.className='win-btn';
+    btn.textContent=b.text;
+    btn.addEventListener('click',()=>{
+      if(b.action)b.action();
+      if(!b.keepOpen)overlay.classList.add('hidden');
+    });
+    btns.appendChild(btn);
+  });
+  overlay.classList.remove('hidden');
+  // Focus input if present
+  setTimeout(()=>{
+    const inp=body.querySelector('input');
+    if(inp)inp.focus();
+  },50);
+  return overlay;
+}
+function hideDialog(){
+  document.getElementById('dialogOverlay').classList.add('hidden');
+}
+
+function showMessageBox(title,message,icon){
+  const iconChar=icon==='info'?'&#8505;&#65039;':icon==='warn'?'&#9888;&#65039;':icon==='error'?'&#10060;':icon==='question'?'&#10067;':'&#8505;&#65039;';
+  showDialog(title,
+    '<div class="dialog-icon">'+iconChar+'</div><div class="dialog-content"><p>'+escapeHTML(message)+'</p></div>',
+    [{text:'OK'}]
+  );
+}
+
+// ── API helpers ──
+async function postJSON(url,body){
+  const headers={'Content-Type':'application/json'};
+  if(sessionToken)headers['Authorization']='Bearer '+sessionToken;
+  const res=await fetch(url,{method:'POST',headers,body:JSON.stringify(body)});
+  if(!res.ok)throw new Error('API '+res.status);
+  return await res.json();
+}
+
+// Client-side fallback
+function clientFallback(msg,channel){
+  const m=msg.toLowerCase();
+  if(channel==='manager'){
+    if(/occupancy|how full|capacity/.test(m))return{reply:'*April 2026 Occupancy:*\n\n- 18 pavilion-nights booked out of 90 available\n- *20% occupancy*\n- 5 bookings (3 direct, 1 Perfect Hideaways, 1 owner)\n\nWould you like to see the bookings detail or revenue breakdown?'};
+    if(/revenue|income|earned|turnover/.test(m))return{reply:'*Revenue -- April 2026:*\n\n- Room revenue: R51,700\n- Conservation levy: R12,960\n- PH commission (20%): -R2,520\n- *Net revenue: R49,180*\n- Total collected: R64,660'};
+    if(/commission|perfect hideaway|PH/.test(m))return{reply:'*PH Commission -- April:*\n\n- Ndlovu & Party: 3 nights x R4,200 = R12,600 -> commission R2,520\n\n*Total PH commission: R2,520*'};
+    if(/who.*work|staff.*today|on duty|working/.test(m))return{reply:'*Staff Status Today:*\n\n- *Nomsa* (housekeeper): ON -- day 6 of 21-day cycle\n- *Thandiwe* (housekeeper): OFF -- day 3 of 7-day break\n\nGuests in camp: Yes (Hamlin family, 4 guests)'};
+    if(/pending.*leave|leave.*request/.test(m))return{reply:'No pending leave requests at this time.'};
+    if(/booking|upcoming|next guest/.test(m))return{reply:'*Bookings -- April 2026:*\n\n- *Hamlin Family* | 2-8 Apr (6n) | River Pavilion | Owner | -- | Confirmed\n- *Van der Merwe* | 6-10 Apr (4n) | Bush Pavilion | Direct | R11,200 | Confirmed\n- *Ndlovu & Party* | 12-15 Apr (3n) | Sunset Pavilion | PH | R12,600 | Confirmed\n- *Thompson* | 18-21 Apr (3n) | Bush Pavilion | Direct | R8,400 | Pending\n- *Birding SA* | 25-28 Apr (3n) | River Pavilion | Direct | R19,500 | Confirmed'};
+    if(/add.*book|new.*book|book.*family|leppan/.test(m))return{reply:'*New Booking -- let\'s set it up:*\n\nI\'ve noted:\n- *Guest:* Leppan Family (Craig, Caro, Koo & Emma)\n- *Period:* Last weekend of August (28-31 Aug)\n- *Pavilion:* Full Lodge (all pavilions)\n- *Source:* Owner/Direct\n- *Guests:* 2 adults, 2 children\n\nShall I confirm this booking? The conservation levy would be R180 x 4 guests x 3 nights = *R2,160*.'};
+    if(/hi|hello|hey|morning|afternoon/.test(m))return{reply:'Welcome! I\'m your Luthuli management assistant. I can help with:\n\n- *Occupancy* -- how full is the lodge\n- *Revenue* -- income and commissions\n- *Staff* -- who\'s working, leave approvals\n- *Bookings* -- view, create, modify\n- *Systems* -- solar, water, off-grid status\n\nWhat would you like to know?'};
+    if(/schedule|roster|rotation/.test(m))return{reply:'*Staff Schedule -- Next 14 Days:*\n\nNomsa: ON until 21 Apr, then OFF 22-28 Apr\nThandiwe: OFF until 22 Mar cycle end, then ON from 22 Apr\n\nCoverage is maintained -- when one is off, the other covers.\nSundays are off unless guests are in camp.'};
+    if(/solar|water|power|off.?grid|system/.test(m))return{reply:'*Systems Status:*\n\nSolar: 94% battery, 6.2 kWh generated today, 3.2 kW current draw\nWater: 6,800L (68%), ~24 days remaining at current rate\nClimate: 24C interior, 31C outside, passive cooling\nPower: 3.2 kW / 5 kW capacity, 1.8 kW headroom\n\nWarning: Water pump filter due for replacement (pressure low at 2.4 bar)'};
+  }
+  return{reply:'I can help with:\n- *Occupancy* & revenue\n- *Bookings* -- view, create, modify\n- *Staff* schedules & leave\n- *Systems* -- solar, water, off-grid\n\nJust ask me anything!'};
+}
+
+// ── Auth flow ──
+function setUser(email){
+  const u=KNOWN_USERS[email.toLowerCase()];
+  if(u){
+    currentUser={email:email.toLowerCase(),...u};
+    setMainStatus('Signed in as '+u.name+' ('+u.role+')');
+  }
+}
+
+async function handleAuth(userText){
+  const text=userText.trim();
+
+  if(authState==='email_asked'){
+    addMessage('user',text);
+    showTyping();
+    const email=text.toLowerCase();
+    const known=KNOWN_USERS[email];
+
+    setTimeout(async()=>{
+      if(!known){
+        hideTyping();
+        addMessage('agent','I don\'t recognise that email. Authorised emails are lodge manager or admin accounts. Please try again.');
+        return;
+      }
+
+      let res;
+      try{
+        res=await postJSON('/api/luthuli/auth',{identifier:email,channel:'manager'});
+      }catch(e){
+        res={demo_code:String(Math.floor(100000+Math.random()*900000))};
+      }
+
+      hideTyping();
+      setUser(email);
+      addMessage('agent','I\'ve sent a one-time code to *'+email+'*. Please enter the 6-digit code.');
+      authState='code_sent';
+      localStorage.setItem(STATE_KEY,authState);
+      localStorage.setItem('luthuli_mgr_email',email);
+
+      if(sessionToken||res.token){
+        sessionToken=res.token||sessionToken;
+        localStorage.setItem(TOKEN_KEY,sessionToken);
+      }
+
+      // Win95 message box with OTP
+      const otp=res.demo_code||res.otp||'847293';
+      setTimeout(()=>{
+        showDialog('Information',
+          '<div class="dialog-icon">&#9993;</div><div class="dialog-content"><p>Your Luthuli verification code:</p><p style="font-size:24px;font-weight:700;letter-spacing:4px;text-align:center;margin:8px 0">'+otp+'</p><p style="font-size:12px;color:#808080">(In production this arrives via email)</p></div>',
+          [{text:'OK'}]
+        );
+      },600);
+    },600+Math.random()*400);
+    return true;
+  }
+
+  if(authState==='code_sent'){
+    addMessage('user',text);
+    showTyping();
+
+    let res;
+    try{
+      res=await postJSON('/api/luthuli/verify',{identifier:localStorage.getItem('luthuli_mgr_email')||'',code:text.trim(),channel:'manager'});
+    }catch(e){
+      res={success:true,user:{name:'Admin',role:'admin'}};
+    }
+
+    setTimeout(()=>{
+      hideTyping();
+      if(res.token){sessionToken=res.token;localStorage.setItem(TOKEN_KEY,sessionToken)}
+      const email=localStorage.getItem('luthuli_mgr_email')||'';
+      setUser(email);
+      const name=currentUser?currentUser.name:'there';
+
+      addMessage('agent','Welcome, '+name+'! You have full admin access. I can help with:\n\n- *Occupancy* and revenue reports\n- *Bookings* -- view, create, modify\n- *Staff* schedules and leave approvals\n- *Systems* status (solar, water, etc.)\n\nUse the toolbar buttons above or type a question below.');
+
+      authState='verified';
+      localStorage.setItem(STATE_KEY,authState);
+      setStatus('Authenticated');
+      enableToolbar();
+    },600+Math.random()*400);
+    return true;
+  }
+
+  return false;
+}
+
+// ── Chat send ──
+async function sendMessage(text){
+  if(!text.trim())return;
+  if(authState!=='verified'){
+    const handled=await handleAuth(text);
+    if(handled)return;
+  }
+
+  addMessage('user',text.trim());
+  showTyping();
+  const userMsg=text.trim();
+
+  let res;
+  try{
+    res=await postJSON('/api/luthuli/chat',{message:userMsg,channel:'manager'});
+  }catch(e){
+    res=clientFallback(userMsg,'manager');
+  }
+  const delay=500+Math.random()*400;
+
+  setTimeout(()=>{
+    hideTyping();
+    const msg=res.reply||res.message||res.text||'I\'m not sure how to help with that. Could you rephrase your question?';
+    const intent=res.intent||detectManagerIntent(userMsg);
+    addMessage('agent',msg);
+    logExchange(userMsg,msg,intent);
+
+    // Update status bar with action
+    const intentLabels={
+      occupancy:'Occupancy report loaded',
+      revenue:'Revenue report loaded',
+      bookings:'Bookings loaded',
+      staff_status:'Staff status loaded',
+      leave_requests:'Leave requests checked',
+      systems:'Systems status loaded',
+      add_booking:'Add booking started',
+      staff_schedule:'Schedule loaded',
+      ph_commission:'Commission report loaded',
+      greeting:'Greeting sent'
+    };
+    setStatus(intentLabels[intent]||'Response sent');
+  },delay);
+}
+
+// ── Input handling ──
+function autoResize(){
+  inputField.style.height='auto';
+  inputField.style.height=Math.min(inputField.scrollHeight,80)+'px';
+}
+inputField.addEventListener('input',autoResize);
+inputField.addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend()}
+});
+sendBtn.addEventListener('click',doSend);
+
+function doSend(){
+  const text=inputField.value;
+  if(!text.trim())return;
+  inputField.value='';
+  autoResize();
+  sendMessage(text);
+}
+
+// ── Toolbar ──
+function enableToolbar(){
+  document.querySelectorAll('.tb-btn').forEach(btn=>{
+    btn.disabled=false;
+  });
+}
+document.querySelectorAll('.tb-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const ask=btn.dataset.ask;
+    if(ask&&authState==='verified'){
+      inputField.value='';
+      sendMessage(ask);
+    }else if(authState!=='verified'){
+      showMessageBox('Not Signed In','Please sign in first before using toolbar buttons.','info');
+    }
+  });
+});
+
+// ── Menu bar ──
+let openMenu=null;
+document.querySelectorAll('.menu-item').forEach(item=>{
+  item.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    if(item.classList.contains('open')){
+      item.classList.remove('open');
+      openMenu=null;
+    }else{
+      document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('open'));
+      item.classList.add('open');
+      openMenu=item;
+    }
+  });
+  item.addEventListener('mouseenter',()=>{
+    if(openMenu&&openMenu!==item){
+      openMenu.classList.remove('open');
+      item.classList.add('open');
+      openMenu=item;
+    }
+  });
+});
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('open'));
+  openMenu=null;
+});
+
+// Menu actions
+document.getElementById('menuClear').addEventListener('click',()=>{clearChat()});
+document.getElementById('menuRestart').addEventListener('click',()=>{refreshChat()});
+document.getElementById('menuModern').addEventListener('click',()=>{window.location.href='manage.html'});
+document.getElementById('menuExit').addEventListener('click',()=>{showQuitDialog()});
+document.getElementById('menuGuest').addEventListener('click',()=>{window.open('/preview/luthuli/chat/guest.html','_blank')});
+document.getElementById('menuStaff').addEventListener('click',()=>{window.open('/preview/luthuli/chat/staff.html','_blank')});
+document.getElementById('menuModernView').addEventListener('click',()=>{window.location.href='manage.html'});
+document.getElementById('menuHelp').addEventListener('click',()=>{
+  showMessageBox('Help','Use the toolbar buttons to quickly ask about occupancy, revenue, bookings, staff, leave, or systems.\n\nOr type any question in the text field and click Send.','info');
+});
+document.getElementById('menuAbout').addEventListener('click',()=>{showAboutDialog()});
+
+// ── Title bar buttons ──
+document.getElementById('btnClose').addEventListener('click',()=>{showQuitDialog()});
+document.getElementById('btnMin').addEventListener('click',()=>{
+  showMessageBox('Minimize','This window cannot be minimized. It\'s a web page!','info');
+});
+document.getElementById('btnMax').addEventListener('click',()=>{
+  const win=document.getElementById('mainWindow');
+  if(win.style.maxWidth==='100%'){
+    win.style.maxWidth='720px';
+    win.style.maxHeight='700px';
+  }else{
+    win.style.maxWidth='100%';
+    win.style.maxHeight='100%';
+  }
+});
+
+function showQuitDialog(){
+  showDialog('Confirm Exit',
+    '<div class="dialog-icon">&#10067;</div><div class="dialog-content"><p>Are you sure you want to quit Luthuli Lodge Manager?</p></div>',
+    [
+      {text:'Yes',action:()=>{window.location.href='lodge.html'}},
+      {text:'No'}
+    ]
+  );
+}
+
+function showAboutDialog(){
+  showDialog('About Luthuli Lodge Manager',
+    '<div class="about-body">'+
+    '<div class="about-logo">&#127969;</div>'+
+    '<h3>Luthuli Lodge Manager</h3>'+
+    '<p>Version 1.0</p>'+
+    '<div class="about-line"></div>'+
+    '<p style="font-size:13px">Copyright &copy; 2026 2nth.ai</p>'+
+    '<p style="font-size:12px;color:#808080;margin-top:8px">An AI-powered lodge management assistant<br>for the South African bush.</p>'+
+    '<div class="about-line"></div>'+
+    '<div class="about-mem">Physical Memory: Unlimited &bull; Available: Lots</div>'+
+    '</div>',
+    [{text:'OK'}]
+  );
+}
+
+// ── Draggable window ──
+(function(){
+  const titleBar=document.getElementById('titleBar');
+  const win=document.getElementById('mainWindow');
+  let isDragging=false,offsetX=0,offsetY=0;
+  // Only enable drag on larger screens
+  if(window.innerWidth>768){
+    titleBar.addEventListener('mousedown',(e)=>{
+      if(e.target.closest('.title-btn'))return;
+      isDragging=true;
+      const rect=win.getBoundingClientRect();
+      offsetX=e.clientX-rect.left;
+      offsetY=e.clientY-rect.top;
+      win.style.position='absolute';
+      win.style.margin='0';
+    });
+    document.addEventListener('mousemove',(e)=>{
+      if(!isDragging)return;
+      win.style.left=(e.clientX-offsetX)+'px';
+      win.style.top=(e.clientY-offsetY)+'px';
+    });
+    document.addEventListener('mouseup',()=>{isDragging=false});
+  }
+})();
+
+// ── Clear / Restart ──
+function clearChat(){
+  msgArea.innerHTML='';
+  messages=[];
+  saveHistory();
+  addMessage('agent','Chat cleared. How can I help?');
+  setStatus('Chat cleared');
+}
+window.clearChat=clearChat;
+
+function refreshChat(){
+  localStorage.removeItem(STATE_KEY);
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('luthuli_mgr_email');
+  localStorage.removeItem(HISTORY_KEY);
+  sessionToken=null;
+  authState='init';
+  currentUser=null;
+  messages=[];
+  msgArea.innerHTML='';
+  setMainStatus('Ready');
+  setStatus('Session restarted');
+  startAuth();
+}
+window.refreshChat=refreshChat;
+
+// ── Session restore ──
+function restoreSession(){
+  try{
+    const saved=localStorage.getItem(HISTORY_KEY);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      if(parsed.length>0){
+        parsed.forEach(m=>addMessage(m.role,m.text,{time:m.time,noSave:true}));
+        messages=parsed;
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+
+function startAuth(){
+  authState='init';
+  localStorage.setItem(STATE_KEY,authState);
+  showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    addMessage('agent','Welcome to Luthuli Lodge management. Please enter your email to sign in.');
+    authState='email_asked';
+    localStorage.setItem(STATE_KEY,authState);
+  },400);
+}
+
+// ── Init ──
+function init(){
+  const savedEmail=localStorage.getItem('luthuli_mgr_email');
+  if(savedEmail&&authState==='verified'){
+    setUser(savedEmail);
+    enableToolbar();
+  }
+
+  const restored=restoreSession();
+  if(!restored){
+    startAuth();
+  }
+
+  inputField.focus();
+}
+
+init();
+})();
+</script>
+</body>
+</html>
