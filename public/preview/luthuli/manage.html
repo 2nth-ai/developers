@@ -741,6 +741,7 @@ if (window.visualViewport) {
   let messages = [];
   let calYear, calMonth; // for calendar nav
   let dashboardData = {};
+  let lastBookings = null; // Store last loaded API bookings
 
   // ── DOM ──
   const chatArea = document.getElementById('chatArea');
@@ -1156,8 +1157,8 @@ if (window.visualViewport) {
     const today = new Date();
     const isThisMonth = today.getFullYear() === calYear && today.getMonth() === calMonth;
 
-    // Demo bookings if no API data
-    const bk = bookings || getDemoBookings();
+    // Transform API bookings to calendar format, or use demo data
+    const bk = bookings ? transformBookings(bookings) : getDemoBookings();
 
     // Previous month overflow
     for (let i = startDow - 1; i >= 0; i--) {
@@ -1201,6 +1202,48 @@ if (window.visualViewport) {
     });
   }
 
+  function transformBookings(apiBookings) {
+    return apiBookings.map(b => {
+      const arrive = new Date(b.arrive + 'T00:00:00');
+      const depart = new Date(b.depart + 'T00:00:00');
+      const startDay = arrive.getMonth() === calMonth && arrive.getFullYear() === calYear ? arrive.getDate() : 1;
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const endDay = depart.getMonth() === calMonth && depart.getFullYear() === calYear ? depart.getDate() : daysInMonth;
+
+      // Only include if booking overlaps current month
+      const monthStart = new Date(calYear, calMonth, 1);
+      const monthEnd = new Date(calYear, calMonth + 1, 0);
+      if (depart < monthStart || arrive > monthEnd) return null;
+
+      const sourceMap = { 'Owner': 'owner', 'Direct': 'direct', 'Perfect Hideaways': 'ph' };
+      const type = b.status === 'Pending' ? 'pending' : (sourceMap[b.source] || 'direct');
+
+      const totalGuests = (b.adults || 0) + (b.children || 0);
+      const nights = b.nights || Math.round((depart - arrive) / 86400000);
+      const roomTotal = (b.base_rate || 0) * nights;
+
+      return {
+        name: b.guest_name || b.name || 'Guest',
+        start: startDay,
+        end: Math.min(endDay, daysInMonth),
+        type,
+        pavilion: b.pavilion || '--',
+        guests: totalGuests,
+        rate: b.base_rate ? 'R' + Number(b.base_rate).toLocaleString('en-ZA') + '/night' : 'Owner',
+        ref: b.id,
+        source: b.source,
+        status: b.status,
+        arrive: b.arrive,
+        depart: b.depart,
+        adults: b.adults,
+        children: b.children,
+        guide: b.guide,
+        email: b.guest_email,
+        total: roomTotal,
+      };
+    }).filter(Boolean);
+  }
+
   function getDemoBookings() {
     return [
       { name: 'Hamlin', start: 2, end: 8, type: 'owner', pavilion: 'Leopard', guests: 2, rate: 'Owner', ref: 'LTH-2026-041' },
@@ -1215,15 +1258,20 @@ if (window.visualViewport) {
   function showBookingModal(b) {
     document.getElementById('modalTitle').textContent = (b.name || 'Booking') + ' Details';
     const body = document.getElementById('modalBody');
-    const typeLabels = { owner: 'Owner', direct: 'Direct', ph: 'Professional Hunter', pending: 'Pending' };
+    const typeLabels = { owner: 'Owner', direct: 'Direct', ph: 'Perfect Hideaways', pending: 'Pending' };
+    const dateStr = b.arrive && b.depart ? b.arrive + ' to ' + b.depart : ('Day ' + b.start + ' - ' + b.end);
     body.innerHTML = [
       row('Reference', b.ref || '--'),
       row('Pavilion', b.pavilion || '--'),
-      row('Dates', 'Day ' + b.start + ' - ' + b.end),
-      row('Guests', b.guests != null ? b.guests : '--'),
+      row('Dates', dateStr),
+      row('Guests', b.adults != null ? b.adults + ' adults' + (b.children ? ', ' + b.children + ' children' : '') : (b.guests || '--')),
+      row('Guide', b.guide || '--'),
       row('Rate', b.rate || '--'),
-      row('Type', typeLabels[b.type] || b.type || '--')
-    ].join('');
+      row('Source', typeLabels[b.type] || b.source || b.type || '--'),
+      row('Status', b.status || typeLabels[b.type] || '--'),
+      b.email ? row('Email', b.email) : '',
+      b.total ? row('Room Total', 'R' + Number(b.total).toLocaleString('en-ZA')) : '',
+    ].filter(Boolean).join('');
     document.getElementById('modalOverlay').classList.add('active');
   }
 
@@ -1290,16 +1338,16 @@ if (window.visualViewport) {
 
   function renderLevyBreakdown() {
     const el = document.getElementById('levyBreakdown');
-    const bk = getDemoBookings();
-    const levyRate = 180; // R180 per person per night
+    const bk = lastBookings ? transformBookings(lastBookings) : getDemoBookings();
+    const levyRate = 180;
     let html = '';
     bk.forEach(b => {
       if (b.type === 'owner' || !b.guests) return;
-      const nights = b.end - b.start;
-      const levyTotal = levyRate * b.guests * nights;
+      const n = (b.arrive && b.depart) ? Math.round((new Date(b.depart+'T00:00:00') - new Date(b.arrive+'T00:00:00')) / 86400000) : (b.end - b.start);
+      const levyTotal = levyRate * b.guests * n;
       html += '<div class="feed-item">' +
         '<span class="feed-time" style="width:auto;flex-shrink:0;font-weight:600;color:var(--text)">' + b.name + '</span>' +
-        '<span style="flex:1;font-size:11px;color:var(--muted)">' + b.guests + ' guests x ' + nights + 'n x R180</span>' +
+        '<span style="flex:1;font-size:11px;color:var(--muted)">' + b.guests + ' guests x ' + n + 'n x R180</span>' +
         '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:600;color:var(--text)">' + fmtZAR(levyTotal) + '</span>' +
         '</div>';
     });
@@ -1542,12 +1590,14 @@ if (window.visualViewport) {
     ]);
 
     dashboardData = stats || {};
+    lastBookings = bookingsRes ? bookingsRes.bookings : null;
     renderStatusBar(dashboardData);
     renderStats(dashboardData);
     renderRevenue(dashboardData);
-    renderCalendar(bookingsRes ? bookingsRes.bookings : null);
+    renderCalendar(lastBookings);
     renderStaffSchedule(staffRes || dashboardData);
     renderFeed(dashboardData);
+    renderLevyBreakdown();
   }
 
   async function loadBookings() {
