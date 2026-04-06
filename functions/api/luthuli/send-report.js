@@ -14,9 +14,11 @@ export async function onRequestOptions() {
 
 export async function onRequestPost(context) {
   const { env } = context;
-  const resendKey = env.RESEND_API_KEY;
+  const resendKey = env.RESEND_API_KEY || env.RESEND_KEY;
   if (!resendKey) {
-    return new Response(JSON.stringify({ error: 'No Resend API key' }), { status: 500, headers: CORS });
+    // Debug: list available env keys (non-sensitive)
+    const keys = Object.keys(env).filter(k => !k.includes('SECRET') && !k.includes('KEY'));
+    return new Response(JSON.stringify({ error: 'No Resend API key found', available_bindings: keys }), { status: 500, headers: CORS });
   }
 
   const reportUrl = 'https://dev-luthuli-agents.developers-2nth-ai.pages.dev/preview/luthuli/report.html';
