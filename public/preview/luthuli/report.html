@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luthuli Lodge — Platform Report for Guy Hamlin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.7;-webkit-font-smoothing:antialiased}
+:root{--earth:#6b5c4d;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--green:#059669;--amber:#d97706;--blue:#2563eb;--red:#dc2626}
+.container{max-width:680px;margin:0 auto;padding:0 24px}
+header{background:var(--earth-dark);padding:40px 0;color:#faf9f6}
+header h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;margin-bottom:4px}
+header .sub{font-size:14px;color:rgba(250,249,246,.6)}
+header .date{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(250,249,246,.4);margin-top:12px}
+h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--earth-dark);margin:40px 0 14px;padding-top:20px;border-top:1px solid var(--border)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 8px}
+p{font-size:14px;color:var(--text2);margin-bottom:12px}
+a{color:var(--sage);text-decoration:none}
+a:hover{text-decoration:underline}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:16px 0}
+.card-title{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.link-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-decoration:none;transition:border-color .15s}
+.link-card:hover{border-color:var(--sage);text-decoration:none}
+.link-card .lc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.link-card .lc-desc{font-size:11px;color:var(--muted)}
+.link-card .lc-icon{font-size:20px;margin-bottom:6px}
+
+.check-list{list-style:none;padding:0}
+.check-list li{padding:8px 0;border-bottom:1px solid #f5f3ff;font-size:13px;display:flex;align-items:flex-start;gap:8px}
+.check-list li:last-child{border:none}
+.check-list .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+.step{display:flex;gap:14px;margin:12px 0;align-items:flex-start}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--sage);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body{flex:1}
+.step-title{font-weight:600;color:var(--text);font-size:14px}
+.step-desc{font-size:12px;color:var(--text2);margin-top:2px}
+
+.price-table{width:100%;border-collapse:collapse;margin:16px 0}
+.price-table th{text-align:left;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border)}
+.price-table td{padding:10px 12px;border-bottom:1px solid #f5f3ff;font-size:13px;color:var(--text2)}
+.price-table .amount{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text)}
+
+.highlight{background:rgba(90,122,92,.06);border:1px solid rgba(90,122,92,.2);border-radius:10px;padding:16px 20px;margin:20px 0}
+.highlight strong{color:var(--sage-dark)}
+
+.guarantee{background:rgba(5,150,105,.04);border:2px solid rgba(5,150,105,.2);border-radius:10px;padding:20px;margin:24px 0;text-align:center}
+.guarantee-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px}
+.guarantee-text{font-size:14px;color:var(--text2)}
+
+footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:11px;color:var(--muted);margin-top:40px}
+
+@media(max-width:600px){
+  .link-grid{grid-template-columns:1fr}
+  header h1{font-size:26px}
+}
+@media print{
+  body{background:#fff}
+  .container{max-width:100%}
+  header{padding:20px 0;break-after:avoid}
+  h2{break-after:avoid}
+  .link-card{break-inside:avoid}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Luthuli Lodge — Agent Platform</h1>
+    <div class="sub">What we've built, how to test it, and the path to production</div>
+    <div class="date">Prepared for Guy Hamlin — 6 April 2026</div>
+  </div>
+</header>
+
+<div class="container">
+
+<h2>What's Been Built</h2>
+
+<p>Over the past week, we've built a complete <strong>agent-first lodge management system</strong> for Luthuli Lodge. Instead of a traditional app with logins and dashboards, everything is driven by AI agents that guests, staff, and managers talk to naturally.</p>
+
+<div class="link-grid">
+  <a href="https://dev-luthuli-agents.developers-2nth-ai.pages.dev/preview/luthuli/manage.html" class="link-card" target="_blank">
+    <div class="lc-icon">🏠</div>
+    <div class="lc-title">Manager Dashboard</div>
+    <div class="lc-desc">Chat + dashboard — bookings, staff, revenue, plan</div>
+  </a>
+  <a href="https://dev-luthuli-agents.developers-2nth-ai.pages.dev/preview/luthuli/chat/guest.html" class="link-card" target="_blank">
+    <div class="lc-icon">💬</div>
+    <div class="lc-title">Guest Agent</div>
+    <div class="lc-desc">WhatsApp-style booking assistant</div>
+  </a>
+  <a href="https://dev-luthuli-agents.developers-2nth-ai.pages.dev/preview/luthuli/chat/staff.html" class="link-card" target="_blank">
+    <div class="lc-icon">📱</div>
+    <div class="lc-title">Staff Agent</div>
+    <div class="lc-desc">SMS-style for Nomsa & Thandiwe</div>
+  </a>
+  <a href="https://dev-luthuli-agents.developers-2nth-ai.pages.dev/preview/luthuli/lodge.html" class="link-card" target="_blank">
+    <div class="lc-icon">📊</div>
+    <div class="lc-title">Lodge Dashboard</div>
+    <div class="lc-desc">Pavilions, off-grid systems, wildlife</div>
+  </a>
+</div>
+
+<h3>What's Working Right Now</h3>
+
+<ul class="check-list">
+  <li><span class="icon">✅</span><div><strong>Guest booking via chat</strong> — guests ask about availability, pricing, pavilions, guides, and make bookings through a WhatsApp-style conversation. Bookings are saved to a real cloud database.</div></li>
+  <li><span class="icon">✅</span><div><strong>Staff scheduling</strong> — 21-on/7-off rotation for Nomsa and Thandiwe. Visual roster showing 4 weeks ahead with coverage indicators. Sundays auto-adjust based on guest bookings.</div></li>
+  <li><span class="icon">✅</span><div><strong>Booking calendar</strong> — Gantt-style timeline showing bookings per pavilion. Export to Google Calendar or download .ics file.</div></li>
+  <li><span class="icon">✅</span><div><strong>Rate management</strong> — Direct bookings vs Perfect Hideaways (20% commission). Conservation levy at R180/person/night auto-calculated.</div></li>
+  <li><span class="icon">✅</span><div><strong>Email notifications</strong> — Real emails to you (guy@rumf.co.za) and Lisa-Jane (hamlin@mweb.co.za) when bookings come in. Guest confirmation emails sent automatically.</div></li>
+  <li><span class="icon">✅</span><div><strong>Manager agent</strong> — Ask "what's occupancy this month?" or "show revenue" or "who's working today?" and get instant answers from live data.</div></li>
+  <li><span class="icon">✅</span><div><strong>Leave management</strong> — Staff request leave via their agent, manager approves/denies via chat.</div></li>
+  <li><span class="icon">✅</span><div><strong>Cloud database</strong> — All data persists in Cloudflare D1. Currently holding 7 guests, 7 bookings, 90+ chat messages, full audit trail.</div></li>
+  <li><span class="icon">✅</span><div><strong>Agent learning log</strong> — Every interaction is logged with feedback (thumbs up/down) so the agent improves over time.</div></li>
+</ul>
+
+<h2>How to Test It</h2>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <div class="step-title">Open the Manager Dashboard</div>
+    <div class="step-desc">Go to the Manager link above. Enter <code>guy@rumf.co.za</code> to sign in. You'll get an OTP code. After auth, you have full admin access — chat on the left, dashboard tabs on the right (scroll tabs for Staff, Finance, Maint, Plan).</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <div class="step-title">Ask the agent anything</div>
+    <div class="step-desc">Try: "What's occupancy this month?" or "Show bookings" or "Who's working today?" or "Revenue" or "PH commission". Use the quick-tap buttons below the chat area.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <div class="step-title">Make a guest booking</div>
+    <div class="step-desc">Open the Guest Agent (WhatsApp link). Say "I want to book". Walk through dates, guests, pavilion, guide, name, email. Confirm — the booking appears in your manager dashboard and you'll get an email notification.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-body">
+    <div class="step-title">Check the staff roster</div>
+    <div class="step-desc">Go to the Staff tab in the dashboard. See the 28-day roster with Nomsa and Thandiwe's rotation, coverage indicators, and guest presence markers.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-body">
+    <div class="step-title">Test the staff agent</div>
+    <div class="step-desc">Open the Staff Agent (SMS link). Enter "Nomsa" to sign in. Ask "when do I work next?" or "who's checking in?" or "I'd like to request leave".</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">6</div>
+  <div class="step-body">
+    <div class="step-title">Review the Plan tab</div>
+    <div class="step-desc">In the manager dashboard, scroll the tabs to "Plan". This shows what's live, what's coming next, and the full enterprise roadmap.</div>
+  </div>
+</div>
+
+<h2>Proposal: Paid Pilot</h2>
+
+<p>What you're seeing is a functional prototype built in a week. To take this to production — a system you, Lisa-Jane, guests, and staff actually use day-to-day — we propose a <strong>4-week paid pilot</strong>.</p>
+
+<h3>Pilot Scope</h3>
+
+<ul class="check-list">
+  <li><span class="icon">1.</span><div><strong>Real WhatsApp integration</strong> — Guests message a real number, the agent handles it. POPIA-compliant opt-in.</div></li>
+  <li><span class="icon">2.</span><div><strong>SMS for staff</strong> — Nomsa and Thandiwe get real SMS for schedules, guest arrivals, leave approvals.</div></li>
+  <li><span class="icon">3.</span><div><strong>Email inbox processing</strong> — Process Perfect Hideaways booking confirmations automatically. Thread guest email replies to bookings.</div></li>
+  <li><span class="icon">4.</span><div><strong>Payment tracking</strong> — Mark deposits received, track outstanding balances, payment reminders.</div></li>
+  <li><span class="icon">5.</span><div><strong>Claude AI agent upgrade</strong> — Natural conversation that handles complex requests, not just keyword matching.</div></li>
+  <li><span class="icon">6.</span><div><strong>Google Calendar sync</strong> — Two-way sync so bookings appear in your and LJ's calendars automatically.</div></li>
+  <li><span class="icon">7.</span><div><strong>Custom domain</strong> — lodge.luthuli.co.za or similar, with your branding.</div></li>
+  <li><span class="icon">8.</span><div><strong>Training & onboarding</strong> — Walk-through with you, LJ, Nomsa, and Thandiwe.</div></li>
+</ul>
+
+<h3>Investment</h3>
+
+<table class="price-table">
+  <thead>
+    <tr><th>Item</th><th>Detail</th><th>Amount</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Platform setup & pilot</td><td>4-week pilot including all 8 items above</td><td class="amount">R25,000</td></tr>
+    <tr><td>Monthly platform fee</td><td>Hosting, database, email, SMS credits, support</td><td class="amount">R2,500/mo</td></tr>
+    <tr><td>AI token usage</td><td>Claude API for natural language agent (estimated)</td><td class="amount">~R500/mo</td></tr>
+  </tbody>
+</table>
+
+<div class="guarantee">
+  <div class="guarantee-title">Production Guarantee</div>
+  <div class="guarantee-text">If the pilot does not progress to production use, <strong>all pilot costs are fully refunded</strong>. You only pay if it works for you.</div>
+</div>
+
+<div class="highlight">
+  <p style="margin:0"><strong>What this means:</strong> You test a real system with real bookings, real staff schedules, and real email notifications for 4 weeks. If it doesn't work for Luthuli Lodge, you get your money back. No risk.</p>
+</div>
+
+<h2>Why Agent-First</h2>
+
+<p>Traditional hospitality software makes everyone learn a new system — logins, menus, forms, training. Agent-first is different:</p>
+
+<ul class="check-list">
+  <li><span class="icon">💬</span><div><strong>Guests</strong> just message — like texting a friend. No app download, no account creation.</div></li>
+  <li><span class="icon">📱</span><div><strong>Staff</strong> get SMS — no training, no app, just read and reply.</div></li>
+  <li><span class="icon">🏠</span><div><strong>Managers</strong> ask questions — "how's occupancy?" instead of clicking through 5 screens.</div></li>
+</ul>
+
+<p>This is the same architecture 2nth.ai uses for enterprise clients across finance, healthcare, manufacturing, and professional services. Luthuli Lodge is the conservation hospitality template — built to scale from 1 lodge to a group.</p>
+
+<h2>Next Steps</h2>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <div class="step-title">Test this week</div>
+    <div class="step-desc">Use the links above. Make bookings, check the roster, ask the agent questions. Note what works and what doesn't.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <div class="step-title">Feedback call</div>
+    <div class="step-desc">Let's walk through it together — Craig and Guy. 30 minutes to review, prioritise, and agree on pilot scope.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <div class="step-title">Start pilot</div>
+    <div class="step-desc">4 weeks to production. Real WhatsApp, real SMS, real bookings. All costs refunded if it doesn't go live.</div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>Luthuli Lodge — Mkuzi Game Reserve — <a href="https://2nth.ai">Powered by 2nth.ai</a></p>
+    <p style="margin-top:4px">Report prepared by Craig Leppan — craig@b2bs.co.za — <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
