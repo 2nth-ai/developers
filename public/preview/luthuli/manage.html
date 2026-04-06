@@ -314,6 +314,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 .maint-task-due{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
 .maint-note{margin-top:14px;padding:12px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:8px;font-size:11px;color:var(--text2);font-style:italic}
 
+/* Plan tab */
+.plan-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.5}
+.plan-item strong{color:var(--text)}
+.plan-item.live{border-left:3px solid var(--green)}
+.plan-item.next{border-left:3px solid var(--amber)}
+.plan-item.future{border-left:3px solid var(--blue)}
+.plan-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.plan-table{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px}
+.plan-table strong{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text)}
+.plan-table span{color:var(--muted);font-size:10px}
+
 /* ── LOG LINK BUTTON ── */
 .log-link-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;margin-top:4px}
 .log-link-btn:hover{border-color:var(--sage);color:var(--sage)}
@@ -448,6 +459,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
       <button class="dash-tab" data-tab="staff">Staff</button>
       <button class="dash-tab" data-tab="finance">Finance</button>
       <button class="dash-tab" data-tab="maintenance">Maint</button>
+      <button class="dash-tab" data-tab="plan">Plan</button>
     </div>
 
     <!-- ═══ TAB: OVERVIEW ═══ -->
@@ -623,6 +635,98 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 
       <div class="maint-note">
         These systems will connect to IoT sensors in production. Currently showing demo data.
+      </div>
+
+    </div>
+
+    <!-- ═══ TAB: PLAN ═══ -->
+    <div class="tab-content" data-tab="plan">
+
+      <div style="margin-bottom:20px">
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--earth-dark);margin-bottom:4px">Platform Plan — Luthuli Lodge</h3>
+        <p style="font-size:13px;color:var(--muted);margin:0">Agent-first lodge management that scales from 1 lodge to enterprise. Built on 2nth.ai.</p>
+      </div>
+
+      <!-- What's Live -->
+      <div class="sec-head"><span class="sec-title" style="color:var(--green)">✓ Live Now</span></div>
+      <div style="display:grid;gap:8px;margin-bottom:20px">
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Guest Agent</strong> — WhatsApp-style booking assistant. Check availability, make reservations, get lodge info. Real-time D1 database.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Staff Agent</strong> — SMS-style assistant for Nomsa &amp; Thandiwe. Schedules, leave requests, guest check-ins, room readiness.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Manager Dashboard</strong> — Chat + dashboard for Guy, LJ, Craig. Bookings timeline, revenue, staff coverage, maintenance.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Booking Engine</strong> — Direct &amp; Perfect Hideaways with 20% commission logic. Conservation levy (R180/person/night). Guide allocation.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Staff Rotation</strong> — 21-on/7-off cycle, Sunday rules, leave management with approval workflow.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Email Notifications</strong> — Real emails to Guy &amp; LJ on new bookings. Guest confirmation emails. Toggle on/off.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Calendar Export</strong> — Google Calendar &amp; .ics download for all bookings.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>D1 Database</strong> — Persistent cloud database (Cloudflare D1). Guests, bookings, staff, chat history, audit log.</div>
+        <div class="plan-item live"><span class="plan-dot" style="background:var(--green)"></span><strong>Agent Learning Log</strong> — Track what guests &amp; staff ask, what worked, what didn't. Feedback + notes.</div>
+      </div>
+
+      <!-- Coming Next -->
+      <div class="sec-head"><span class="sec-title" style="color:var(--amber)">◐ Coming Next</span></div>
+      <div style="display:grid;gap:8px;margin-bottom:20px">
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>Email Inbox Processing</strong> — Receive &amp; process emails from guests, Perfect Hideaways, staff. Auto-create bookings from PH confirmation emails. Thread replies to booking records.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>WhatsApp Business API</strong> — Real WhatsApp integration (not simulated). Guests message the lodge number, agent responds. POPIA-compliant opt-in.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>SMS Gateway</strong> — Real SMS to/from staff via Twilio or Vonage. Schedule reminders, check-in alerts, leave approvals.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>Payment Processing</strong> — Deposit collection &amp; tracking. PayFast or Stripe integration. Auto-update booking status on payment.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>Google Calendar Sync</strong> — Two-way sync with Guy &amp; LJ's Google Calendars. Bookings appear automatically.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>Perfect Hideaways API</strong> — Auto-sync availability with PH portal. Rate management. Commission reconciliation.</div>
+        <div class="plan-item next"><span class="plan-dot" style="background:var(--amber)"></span><strong>Claude AI Upgrade</strong> — Replace rule-based agent with Claude API for natural conversation. Handle complex queries, multi-booking negotiations, special requests.</div>
+      </div>
+
+      <!-- Future -->
+      <div class="sec-head"><span class="sec-title" style="color:var(--blue)">○ Future — Enterprise Scale</span></div>
+      <div style="display:grid;gap:8px;margin-bottom:20px">
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Multi-Property</strong> — Manage multiple lodges from one dashboard. Shared staff pool, cross-property availability, group reporting.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>IoT Integration</strong> — Real-time solar, water, temperature from Victron inverter &amp; sensors. Alerts on low battery, water, equipment failure.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>OTA Channel Manager</strong> — Booking.com, Airbnb, TripAdvisor, Safari Now. Centralised rate &amp; availability management.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Financial Reporting</strong> — P&amp;L by month/quarter/year. VAT calculations. Conservation levy reporting to Ezemvelo. Payroll integration.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Guest CRM</strong> — Repeat guest recognition, preference tracking, birthday/anniversary reminders, loyalty programme.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Wildlife &amp; Conservation</strong> — Sighting database, ranger coordination, anti-poaching reporting, conservation impact metrics.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Voice Agent</strong> — ElevenLabs voice AI for phone-based bookings. Guest calls, agent handles the conversation.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Inventory &amp; Procurement</strong> — Stock tracking (food, fuel, supplies, linen). Auto-reorder thresholds. Supplier management.</div>
+        <div class="plan-item future"><span class="plan-dot" style="background:var(--blue)"></span><strong>Staff App</strong> — Native mobile app for housekeeping checklists, task photos, clock-in/out, training modules.</div>
+      </div>
+
+      <!-- Data Architecture -->
+      <div class="sec-head"><span class="sec-title">Data Architecture</span></div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Current D1 Schema — 8 Tables</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+          <div class="plan-table"><strong>guests</strong><br><span>name, email, phone, source</span></div>
+          <div class="plan-table"><strong>bookings</strong><br><span>dates, pavilion, guide, rate, status</span></div>
+          <div class="plan-table"><strong>staff</strong><br><span>name, role, rotation, leave</span></div>
+          <div class="plan-table"><strong>managers</strong><br><span>name, email, role (admin)</span></div>
+          <div class="plan-table"><strong>chat_messages</strong><br><span>full conversation history</span></div>
+          <div class="plan-table"><strong>staff_leave_requests</strong><br><span>dates, status, approver</span></div>
+          <div class="plan-table"><strong>system_log</strong><br><span>audit trail of all actions</span></div>
+          <div class="plan-table"><strong>otp_codes</strong><br><span>authentication tokens</span></div>
+        </div>
+        <div style="margin-top:16px;font-size:12px;color:var(--text2)">
+          <strong>Planned additions:</strong> payments, invoices, inventory, wildlife_sightings, maintenance_tasks, guest_preferences, channel_rates, property_config
+        </div>
+      </div>
+
+      <!-- Integration Map -->
+      <div class="sec-head"><span class="sec-title">Integration Map</span></div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+          <div><strong style="color:var(--green)">✓ Connected</strong>
+            <div style="color:var(--text2);margin-top:4px">Cloudflare D1 (database)<br>Cloudflare KV (sessions)<br>Resend (email delivery)<br>Google Calendar (export)</div>
+          </div>
+          <div><strong style="color:var(--amber)">◐ Next</strong>
+            <div style="color:var(--text2);margin-top:4px">Cloudflare Email Workers (inbound)<br>WhatsApp Business API<br>Twilio/Vonage (SMS)<br>PayFast (payments)<br>Google Calendar (2-way sync)</div>
+          </div>
+          <div><strong style="color:var(--blue)">○ Future</strong>
+            <div style="color:var(--text2);margin-top:4px">Perfect Hideaways API<br>Booking.com / Airbnb<br>Victron (solar inverter)<br>ElevenLabs (voice AI)<br>Claude API (smart agent)</div>
+          </div>
+          <div><strong style="color:var(--text)">Infrastructure</strong>
+            <div style="color:var(--text2);margin-top:4px">Cloudflare Pages (hosting)<br>Cloudflare Workers (API)<br>D1 + KV + R2 (data)<br>GitHub (source control)<br>2nth.ai (platform)</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(90,122,92,.06);border:1px solid rgba(90,122,92,.2);border-radius:10px;padding:16px;font-size:13px;color:var(--sage-dark)">
+        <strong>Built on 2nth.ai</strong> — This is an agent-first template designed to scale from a single bush lodge to a multi-property hospitality group. Every component is modular. The same architecture powers CRM, ERP, healthcare, and financial services on the 2nth.ai platform.
       </div>
 
     </div>
