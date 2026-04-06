@@ -2,6 +2,7 @@
 // Agent-first chat endpoint — routes messages through intent detection + multi-turn flows
 import { initDB, generateId } from './_lib/db.js';
 import { detectIntent, executeIntent } from './_lib/intents.js';
+import { sendBookingNotification, sendGuestConfirmation, emailsEnabled, setEmailEnabled } from './_lib/email.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -56,7 +57,7 @@ export async function onRequestPost(context) {
 
   if (flowState) {
     // Handle slot fill in active flow
-    const result = await handleFlow(db, flowState, message, { userId: effectiveUserId, channel, month });
+    const result = await handleFlow(db, flowState, message, { userId: effectiveUserId, channel, month, env });
     reply = result.reply;
     metadata = result.metadata;
     intentId = `flow:${flowState.flow}:${flowState.step}`;
@@ -82,6 +83,11 @@ export async function onRequestPost(context) {
     // If the intent starts a flow, store it
     if (result.flow) {
       await kv.put(flowKey, JSON.stringify(result.flow), { expirationTtl: 1800 });
+    }
+
+    // Handle email toggle
+    if (result.emailToggle !== undefined) {
+      await setEmailEnabled(kv, result.emailToggle);
     }
   }
 
@@ -213,7 +219,7 @@ async function handleBookingFlow(db, state, message, ctx) {
         const n = nights(slots.arrive, slots.depart);
         await db.prepare(
           `INSERT INTO bookings (id, guest_id, source, arrive, depart, adults, children, pavilion, guide, base_rate, status, notes)
-           VALUES (?, ?, 'Direct', ?, ?, ?, ?, ?, ?, ?, 'Pending', 'Booked via chat')`
+           VALUES (?, ?, 'Direct', ?, ?, ?, ?, ?, ?, ?, 'Pending', 'Booked via guest agent')`
         ).bind(bookingId, guestId, slots.arrive, slots.depart, slots.adults, slots.children, slots.pavilion, slots.guide, slots.base_rate).run();
 
         // Log it
@@ -222,8 +228,23 @@ async function handleBookingFlow(db, state, message, ctx) {
            VALUES (?, 'booking_created', ?, 'guest', 'booking', ?, ?, datetime('now'))`
         ).bind(generateId(), ctx.userId, bookingId, `${slots.name} - ${slots.arrive} to ${slots.depart}`).run();
 
+        // Send emails — notification to managers + confirmation to guest
+        const bookingData = { id: bookingId, ...slots };
+        let emailStatus = '';
+        try {
+          const mgrResult = await sendBookingNotification(ctx.env, bookingData);
+          const guestResult = await sendGuestConfirmation(ctx.env, bookingData);
+          if (mgrResult.sent) emailStatus += '\n\n📧 Notification sent to lodge managers.';
+          if (guestResult.sent) emailStatus += `\n📧 Confirmation sent to ${slots.email}.`;
+          if (!mgrResult.sent && !guestResult.sent) {
+            emailStatus += '\n\n(Email notifications are currently off)';
+          }
+        } catch (e) {
+          emailStatus = '\n\n(Email delivery pending)';
+        }
+
         return {
-          reply: `Booking confirmed! Reference: **${bookingId}**\n\nA confirmation will be sent to ${slots.email}. We look forward to hosting you at Luthuli Lodge!`,
+          reply: `Booking confirmed! Reference: **${bookingId}**\n\nYour stay at Luthuli Lodge is reserved. We look forward to hosting you!${emailStatus}`,
           metadata: { type: 'booking_card', data: { bookingId, ...slots, nights: n } },
         };
       } else {

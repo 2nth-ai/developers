@@ -459,10 +459,27 @@ const managerIntents = [
     },
   },
   {
+    id: 'toggle_emails',
+    patterns: [/(email|notification).*(on|off|enable|disable|toggle)/i, /(turn|switch).*(email|notification)/i],
+    handler: async (db, ctx) => {
+      const msg = ctx.message.toLowerCase();
+      const turnOn = /\b(on|enable|start)\b/.test(msg);
+      const turnOff = /\b(off|disable|stop)\b/.test(msg);
+      // Dynamic import to avoid circular deps
+      if (turnOn || turnOff) {
+        return {
+          reply: `Email notifications ${turnOn ? 'enabled' : 'disabled'}. ${turnOn ? 'Managers will receive booking notifications at guy@rumf.co.za and hamlin@mweb.co.za.' : 'No emails will be sent until re-enabled.'}`,
+          emailToggle: turnOn,
+        };
+      }
+      return { reply: 'Say "emails on" or "emails off" to toggle booking notifications to Guy and Lisa-Jane.' };
+    },
+  },
+  {
     id: 'fallback',
     patterns: [/.*/],
     handler: async () => ({
-      reply: `I can help with:\n- **Occupancy** — how full is the lodge\n- **Revenue** — income and commissions\n- **Staff status** — who's working today\n- **Bookings** — upcoming guests\n- **Leave** — approve/deny requests`,
+      reply: `I can help with:\n- **Occupancy** — how full is the lodge\n- **Revenue** — income and commissions\n- **Staff status** — who's working today\n- **Bookings** — upcoming guests\n- **Leave** — approve/deny requests\n- **Emails on/off** — toggle notifications`,
     }),
   },
 ];
