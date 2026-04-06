@@ -264,8 +264,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 }
 
 /* ── DASH TABS ── */
-.dash-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;background:var(--bg2);border-radius:10px 10px 0 0;margin-bottom:0}
-.dash-tab{flex:1;padding:10px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+.dash-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;background:var(--bg2);border-radius:10px 10px 0 0;margin-bottom:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dash-tabs::-webkit-scrollbar{display:none}
+.dash-tab{flex:1;padding:10px 8px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;min-width:60px;flex-shrink:0}
 .dash-tab:hover{color:var(--text2)}
 .dash-tab.active{color:var(--sage);border-bottom-color:var(--sage);font-weight:600}
 .tab-content{display:none}
