@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2BS Raspberry Pi Solutions — Edge Computing &amp; IoT</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:1px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a1a1aa;margin-top:40px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #e4e4e7}
+    .team-card{display:flex;gap:16px;align-items:start;background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:10px}
+    .team-avatar{width:48px;height:48px;border-radius:50%;background:#c51a4a;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;flex-shrink:0}
+    .team-card h3{margin:0 0 2px;font-size:15px;color:#18181b}
+    .team-card .role{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;color:#c51a4a;margin-bottom:4px}
+    .team-card p{margin:0;font-size:13px;color:#71717a;line-height:1.5}
+    .capability-list{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+    .cap-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 10px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase}
+    .cap-hw{color:#c51a4a;background:rgba(197,26,74,.06);border:1px solid rgba(197,26,74,.2)}
+    .cap-sw{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .cap-net{color:#0369a1;background:rgba(3,105,161,.06);border:1px solid rgba(3,105,161,.2)}
+    .cap-ai{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .cap-cloud{color:#d97706;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
+    .skill-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:12px;transition:border-color .15s}
+    .skill-card:hover{border-color:#c51a4a}
+    .skill-card h3{margin:0 0 6px;font-size:16px;color:#18181b}
+    .skill-card p{margin:0;font-size:13px;color:#71717a;line-height:1.5}
+    .skill-card .skill-meta{display:flex;gap:12px;margin-top:10px}
+    .skill-tier{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+    .tier-pi{color:#c51a4a;background:rgba(197,26,74,.06);border:1px solid rgba(197,26,74,.2)}
+    .tier-edge{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .tier-iot{color:#0369a1;background:rgba(3,105,161,.06);border:1px solid rgba(3,105,161,.2)}
+    .tier-pico{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:16px 0}
+    .board-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:16px;transition:border-color .15s}
+    .board-card:hover{border-color:#c51a4a}
+    .board-name{font-size:15px;font-weight:700;color:#18181b;margin-bottom:4px}
+    .board-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:#c51a4a;margin-bottom:6px}
+    .board-specs{font-size:11px;color:#71717a;line-height:1.6}
+    .board-use{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:#059669;margin-top:8px}
+    .solution-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:16px 0}
+    .solution-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;transition:border-color .15s}
+    .solution-card:hover{border-color:#c51a4a}
+    .solution-card h3{font-size:15px;font-weight:700;color:#18181b;margin:0 0 4px}
+    .solution-card .sol-type{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#c51a4a;margin-bottom:8px}
+    .solution-card p{font-size:12px;color:#71717a;line-height:1.6;margin:0 0 8px}
+    .solution-card .sol-stack{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav><a href="/docs.html">Docs</a><a href="/hub">Hub</a></nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/hub" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to Partner Hub</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo" style="background:#c51a4a">RPi</div>
+    <div>
+      <h1 style="margin-bottom:4px">B2BS Raspberry Pi Solutions</h1>
+      <div style="margin-bottom:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:4px 12px;border-radius:4px;background:rgba(197,26,74,.08);border:1px solid rgba(197,26,74,.2);color:#c51a4a">Edge Computing &mdash; Pi Zero to Pi 5 &amp; Pico W</span></div>
+      <div class="partner-meta">
+        <span>Part of <a href="/partners/b2bs-ai.html">B2BS.AI</a></span>
+        <span>|</span>
+        <span>Sibling: <a href="/partners/b2bs-iot.html">B2BS IoT (ESP32)</a></span>
+        <span>|</span>
+        <span>South Africa</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lead">B2BS builds production-ready solutions on the Raspberry Pi family &mdash; from Pico W microcontrollers to Pi 5 edge servers. Where our <a href="/partners/b2bs-iot.html">ESP32 practice</a> handles low-power sensing and field devices, the Pi practice handles the heavier lifting: edge AI inference, machine vision, kiosk displays, protocol gateways, automation controllers, and full Linux-based IoT systems that connect to the 2nth.ai platform.</p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="value">Pi 5</div><div class="label">Primary Board</div></div>
+    <div class="stat"><div class="value">Edge AI</div><div class="label">TFLite / ONNX</div></div>
+    <div class="stat"><div class="value">Python</div><div class="label">Primary Language</div></div>
+    <div class="stat"><div class="value">Pico W</div><div class="label">Microcontroller</div></div>
+    <div class="stat"><div class="value">MQTT</div><div class="label">Protocol</div></div>
+  </div>
+
+  <!-- Lead -->
+  <div class="section-label">Lead</div>
+  <div class="team-card">
+    <div class="team-avatar">CL</div>
+    <div>
+      <h3>Craig Leppan</h3>
+      <div class="role">Raspberry Pi Solutions &mdash; B2BS.AI</div>
+      <p>Designs and deploys Raspberry Pi-based edge computing, machine vision, IoT gateways, and automation solutions. Linux systems, Python hardware drivers, edge AI inference, and systemd-managed services deployed via SSH. <a href="mailto:craig@b2bs.co.za">craig@b2bs.co.za</a></p>
+    </div>
+  </div>
+
+  <!-- Capabilities -->
+  <div class="section-label">Capabilities</div>
+  <div class="capability-list">
+    <span class="cap-tag cap-hw">Raspberry Pi 5 / 4B</span>
+    <span class="cap-tag cap-hw">Pi Zero 2 W</span>
+    <span class="cap-tag cap-hw">Pico W / Pico 2 W</span>
+    <span class="cap-tag cap-hw">GPIO / I2C / SPI</span>
+    <span class="cap-tag cap-hw">Camera Module (PiCamera2)</span>
+    <span class="cap-tag cap-hw">HATs &amp; Breakout Boards</span>
+    <span class="cap-tag cap-sw">Python (gpiozero / lgpio)</span>
+    <span class="cap-tag cap-sw">MicroPython (Pico)</span>
+    <span class="cap-tag cap-sw">Systemd Services</span>
+    <span class="cap-tag cap-sw">Flask / FastAPI</span>
+    <span class="cap-tag cap-ai">TensorFlow Lite</span>
+    <span class="cap-tag cap-ai">ONNX Runtime</span>
+    <span class="cap-tag cap-ai">OpenCV / Machine Vision</span>
+    <span class="cap-tag cap-ai">Object Detection (YOLO)</span>
+    <span class="cap-tag cap-net">MQTT / MQTTS</span>
+    <span class="cap-tag cap-net">BLE Gateway (bleak)</span>
+    <span class="cap-tag cap-net">Modbus RTU / TCP</span>
+    <span class="cap-tag cap-net">Zigbee / LoRa</span>
+    <span class="cap-tag cap-cloud">Cloudflare Workers</span>
+    <span class="cap-tag cap-cloud">SSH Remote Deploy</span>
+    <span class="cap-tag cap-cloud">OTA Updates</span>
+    <span class="cap-tag cap-hw">3D Printed Enclosures</span>
+    <span class="cap-tag cap-hw">DIN Rail / Panel Mount</span>
+  </div>
+
+  <!-- Board Catalogue -->
+  <div class="section-label">Board Selection Guide</div>
+  <p style="font-size:13px;color:#71717a;margin-bottom:12px">We match the right Pi to the job. More power than ESP32, less cost than industrial PCs.</p>
+
+  <div class="board-grid">
+    <div class="board-card">
+      <div class="board-name">Raspberry Pi 5</div>
+      <div class="board-chip">Cortex-A76 4&times;2.4GHz &middot; 4/8GB</div>
+      <div class="board-specs">PCIe, dual 4K HDMI, USB3, GbE. Our primary board for edge AI, kiosks, and compute-heavy workloads. Runs TFLite &amp; ONNX inference at usable framerates.</div>
+      <div class="board-use">Edge AI &middot; Kiosk &middot; Gateway</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Raspberry Pi 4B</div>
+      <div class="board-chip">Cortex-A72 4&times;1.8GHz &middot; 2/4/8GB</div>
+      <div class="board-specs">Dual HDMI, USB3, GbE. Proven workhorse for automation, protocol gateways, and always-on services. Large ecosystem of HATs and accessories.</div>
+      <div class="board-use">Automation &middot; Gateway &middot; Camera</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Pi Zero 2 W</div>
+      <div class="board-chip">Cortex-A53 4&times;1GHz &middot; 512MB</div>
+      <div class="board-specs">WiFi, BT, tiny form factor. Perfect for single-purpose embedded tasks &mdash; sensor collection, camera timelapse, lightweight monitoring. Runs headless on 5V/1A.</div>
+      <div class="board-use">Sensor Hub &middot; Camera &middot; Embedded</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Pico W</div>
+      <div class="board-chip">RP2040 dual M0+ 133MHz &middot; 264KB</div>
+      <div class="board-specs">WiFi + BLE, 26 GPIO, ADC. MicroPython or C. Ultra-low power for battery-operated field sensors. No Linux overhead &mdash; bare metal or RTOS.</div>
+      <div class="board-use">Microcontroller &middot; Sensors &middot; Pico</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Pico 2 W</div>
+      <div class="board-chip">RP2350 dual M33 150MHz &middot; 520KB</div>
+      <div class="board-specs">WiFi + BLE, dual-arch (ARM + RISC-V), more RAM, security features. Drop-in upgrade from Pico W for projects that need more headroom.</div>
+      <div class="board-use">Pico &middot; Advanced Sensors</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Compute Module 5</div>
+      <div class="board-chip">Same SoC as Pi 5 &middot; SO-DIMM</div>
+      <div class="board-specs">For custom carrier boards in commercial products. eMMC storage, PCIe, dual camera. When the solution needs to ship as a product, not a dev board.</div>
+      <div class="board-use">Commercial Product &middot; OEM</div>
+    </div>
+  </div>
+
+  <!-- Solution Types -->
+  <div class="section-label">Solution Types We Build</div>
+
+  <div class="solution-grid">
+    <div class="solution-card">
+      <div class="sol-type">Sensor Hub</div>
+      <h3>Environmental Monitoring</h3>
+      <p>Collect temperature, humidity, pressure, air quality, motion, and light data. Local SQLite logging + MQTT push to cloud dashboard. Runs 24/7 on a Pi Zero 2 W.</p>
+      <div class="sol-stack">DHT22 / BME280 / PIR &rarr; Python &rarr; MQTT &rarr; 2nth.ai</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Edge AI</div>
+      <h3>On-Device ML Inference</h3>
+      <p>Image classification, object detection, anomaly detection running locally on Pi 5. TensorFlow Lite or ONNX Runtime. No cloud latency, no data leaving the site.</p>
+      <div class="sol-stack">PiCamera2 &rarr; TFLite / YOLO &rarr; alerts &rarr; 2nth.ai</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Automation</div>
+      <h3>Relay &amp; Motor Control</h3>
+      <p>Control relays, solenoids, servos, steppers, and pumps. Scheduled or event-driven. GPIO with hardware watchdog. Greenhouse, irrigation, access control, production lines.</p>
+      <div class="sol-stack">GPIO &rarr; Relay Board &rarr; Flask API &rarr; systemd</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Machine Vision</div>
+      <h3>Camera &amp; OCR</h3>
+      <p>Security cameras with motion detection, timelapse photography, barcode/QR scanning, OCR document reading, and MJPEG/RTSP streaming. Pi Camera Module or USB cam.</p>
+      <div class="sol-stack">PiCamera2 &rarr; OpenCV &rarr; detection &rarr; MQTT</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Gateway</div>
+      <h3>Protocol Bridge</h3>
+      <p>Bridge BLE sensors, Zigbee devices, LoRa nodes, or Modbus RTU/TCP equipment to cloud via MQTT or REST. The Pi runs as an always-on edge gateway with local buffering.</p>
+      <div class="sol-stack">BLE/Zigbee/Modbus &rarr; Pi &rarr; MQTT &rarr; Cloudflare</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Kiosk</div>
+      <h3>Touchscreen Display</h3>
+      <p>Interactive dashboards, POS terminals, digital signage, visitor check-in. Pi 5 + official touchscreen or HDMI monitor. Chromium kiosk mode or PyQt6. Auto-start on boot.</p>
+      <div class="sol-stack">Pi 5 &rarr; Chromium / PyQt6 &rarr; touchscreen &rarr; API</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Robotics</div>
+      <h3>Motor &amp; IMU Control</h3>
+      <p>DC motors via H-bridge, servo arrays, IMU (MPU6050/BNO055), ultrasonic/LIDAR distance, encoder feedback. Mobile robots, robotic arms, pan-tilt camera mounts.</p>
+      <div class="sol-stack">L298N / PCA9685 &rarr; IMU &rarr; Python &rarr; control loop</div>
+    </div>
+    <div class="solution-card">
+      <div class="sol-type">Pico Microcontroller</div>
+      <h3>MicroPython Field Devices</h3>
+      <p>Pico W for ultra-low-power battery sensors, analog inputs, PWM outputs. No Linux boot time &mdash; instant on. WiFi + BLE connectivity. Pairs with Pi gateway for aggregation.</p>
+      <div class="sol-stack">Pico W &rarr; MicroPython &rarr; WiFi &rarr; MQTT</div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="section-label">Skills &amp; Domain Knowledge</div>
+
+  <div class="skill-card">
+    <h3>iot/raspberry-pi</h3>
+    <p>Raspberry Pi system design: board selection (Pi 5/4B/Zero 2 W/Pico W), headless setup, GPIO programming (gpiozero, lgpio), I2C/SPI sensor drivers, camera integration (PiCamera2/libcamera), systemd service management, and deployment via SSH.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-pi">Raspberry Pi</span>
+      <span class="skill-tier tier-iot">Linux IoT</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/edge-inference</h3>
+    <p>Edge AI on Raspberry Pi: TensorFlow Lite, ONNX Runtime, and OpenCV-based inference pipelines. Model optimisation (quantisation, pruning) for ARM. Object detection (YOLO/MobileNet), image classification, and anomaly detection running locally without cloud dependency.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-pi">Pi 5</span>
+      <span class="skill-tier tier-edge">Edge ML</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/pi-automation</h3>
+    <p>GPIO-driven automation: relay control, PWM dimming, servo positioning, stepper motor sequencing, solenoid actuation. Hardware watchdog timers, graceful shutdown on SIGTERM, and safe GPIO cleanup. Flask/FastAPI for local control APIs.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-pi">GPIO</span>
+      <span class="skill-tier tier-iot">Automation</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/pi-gateway</h3>
+    <p>Protocol gateway design: BLE scanning (bleak), Zigbee coordination (zigpy), LoRa packet forwarding, Modbus RTU/TCP bridging. Local buffering with SQLite, MQTT forwarding to Cloudflare Workers, and device management via SSH.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-iot">Gateway</span>
+      <span class="skill-tier tier-edge">Protocol Bridge</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/pico-micropython</h3>
+    <p>Pico W and Pico 2 W development with MicroPython: machine module (Pin, I2C, SPI, PWM, ADC, Timer, UART), WiFi provisioning, MQTT client, deep sleep power management, and deployment via mpremote. Pairs with Linux Pi as gateway.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-pico">Pico W</span>
+      <span class="skill-tier tier-iot">MicroPython</span>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="section-label">Architecture &mdash; Pi in the 2nth.ai Stack</div>
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:#52525b">
+    <pre style="margin:0;white-space:pre-wrap">
+<span style="color:#c51a4a;font-weight:700">FIELD LAYER</span>
+  Pico W / ESP32 sensor nodes (battery, BLE/WiFi, MicroPython)
+      │
+      └── BLE / WiFi / LoRa
+
+<span style="color:#c51a4a;font-weight:700">EDGE LAYER</span>
+  Raspberry Pi 4/5 (Linux, always-on, mains power)
+      │
+      ├── Sensor aggregation (BLE gateway, Modbus bridge)
+      ├── Edge AI inference (TFLite, ONNX, OpenCV)
+      ├── Local automation (GPIO, relays, motors)
+      ├── Local storage (SQLite, CSV buffer)
+      └── Kiosk / dashboard (Chromium, PyQt6)
+      │
+      └── MQTT (TLS) / REST API
+
+<span style="color:#c51a4a;font-weight:700">CLOUD LAYER</span>
+  Cloudflare Workers (ingestion, API)
+      │
+      ├── D1 (time-series, device registry)
+      ├── KV (latest values, config, OTA manifests)
+      ├── R2 (firmware binaries, images, backups)
+      └── 2nth.ai (AI analysis, alerts, skills)
+    </pre>
+  </div>
+
+  <!-- How we use Pi vs ESP32 -->
+  <div class="section-label">When Pi vs When ESP32</div>
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:20px">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr><th style="text-align:left;padding:10px 12px;border-bottom:2px solid #e4e4e7;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">Requirement</th><th style="text-align:left;padding:10px 12px;border-bottom:2px solid #e4e4e7;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#c51a4a">Raspberry Pi</th><th style="text-align:left;padding:10px 12px;border-bottom:2px solid #e4e4e7;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#003459">ESP32</th></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">AI / ML inference</td><td style="padding:10px 12px;font-weight:600;color:#18181b">Pi 5 &mdash; TFLite, ONNX, YOLO</td><td style="padding:10px 12px;color:#71717a">TFLite Micro (limited)</td></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">Camera / vision</td><td style="padding:10px 12px;font-weight:600;color:#18181b">Pi Camera, OpenCV, libcamera</td><td style="padding:10px 12px;color:#71717a">ESP32-CAM (basic)</td></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">Display / kiosk</td><td style="padding:10px 12px;font-weight:600;color:#18181b">HDMI, touchscreen, browser</td><td style="padding:10px 12px;color:#71717a">Small TFT only</td></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">Protocol gateway</td><td style="padding:10px 12px;font-weight:600;color:#18181b">BLE+Zigbee+Modbus+LoRa</td><td style="padding:10px 12px;color:#71717a">BLE+WiFi only</td></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">Battery / low power</td><td style="padding:10px 12px;color:#71717a">Not ideal (2-5W idle)</td><td style="padding:10px 12px;font-weight:600;color:#18181b">Deep sleep &micro;A</td></tr>
+      <tr style="border-bottom:1px solid #e4e4e7"><td style="padding:10px 12px;color:#71717a">Unit cost sensitive</td><td style="padding:10px 12px;color:#71717a">$35-80 per board</td><td style="padding:10px 12px;font-weight:600;color:#18181b">$3-8 per board</td></tr>
+      <tr><td style="padding:10px 12px;color:#71717a">Needs full Linux</td><td style="padding:10px 12px;font-weight:600;color:#18181b">Yes &mdash; apt, pip, systemd</td><td style="padding:10px 12px;color:#71717a">No &mdash; RTOS / bare metal</td></tr>
+    </table>
+    <p style="font-size:12px;color:#a1a1aa;margin-top:12px;font-style:italic">In many deployments we use both: Pico W or ESP32 at the field edge, Raspberry Pi as the site gateway and edge compute node.</p>
+  </div>
+
+  <!-- Partnership Details -->
+  <div class="section-label">Partnership Details</div>
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;width:180px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Parent</td>
+      <td style="padding:10px 0;font-weight:600"><a href="/partners/b2bs-ai.html">B2BS.AI &mdash; Premier Developer Partner</a></td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Sibling</td>
+      <td style="padding:10px 0"><a href="/partners/b2bs-iot.html">B2BS IoT &mdash; ESP32 &amp; Edge Computing</a></td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Domain</td>
+      <td style="padding:10px 0">Raspberry Pi, Edge Computing, Machine Vision, IoT Gateways, Automation</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Lead</td>
+      <td style="padding:10px 0">Craig Leppan &mdash; craig@b2bs.co.za</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Skill Paths</td>
+      <td style="padding:10px 0"><code>iot/raspberry-pi</code>, <code>iot/edge-inference</code>, <code>iot/pi-automation</code>, <code>iot/pi-gateway</code>, <code>iot/pico-micropython</code></td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Boards</td>
+      <td style="padding:10px 0">Pi 5, Pi 4B, Pi Zero 2 W, Pico W, Pico 2 W, Compute Module 5</td>
+    </tr>
+    <tr>
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Ecosystem</td>
+      <td style="padding:10px 0"><a href="https://ai.b2bs.co.za">ai.b2bs.co.za</a></td>
+    </tr>
+  </table>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

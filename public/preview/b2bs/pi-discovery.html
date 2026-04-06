@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pi Discovery — B2BS Raspberry Pi — 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <meta name="description" content="Connect a Raspberry Pi via USB. Auto-detect board, view GPIO pinout, configure WiFi & SSH, deploy a demo. Powered by @raspberry-pi skill.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--c-carbon:#ffffff;--c-graphite:#f7f8fa;--c-gunmetal:#f0f1f3;--c-chassis:#e8e9eb;--c-titanium:#0a0a0a;--c-steel-900:#e4e4e7;--c-steel-800:#d4d4d8;--c-steel-700:#a1a1aa;--c-steel-600:#71717a;--c-steel-500:#52525b;--c-steel-400:#3f3f46;--c-steel-300:#27272a;--c-border:rgba(0,0,0,.08);--c-border-s:rgba(0,0,0,.12);--c-grid-line:rgba(0,0,0,.03);--c-brand:#c51a4a;--c-brand-dim:rgba(197,26,74,.08);--c-green:#059669;--c-amber:#d97706;--c-red:#dc2626;--c-blue:#0369a1}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    *{-webkit-font-smoothing:antialiased}
+    html{scroll-behavior:smooth}
+    body{font-family:'Barlow',sans-serif;background:var(--c-carbon);color:var(--c-steel-500);line-height:1.625}
+    a{color:var(--c-brand);text-decoration:none}a:hover{text-decoration:underline}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--c-carbon);border-bottom:1px solid var(--c-border)}
+    @supports(backdrop-filter:blur(12px)){nav{background:color-mix(in srgb,var(--c-carbon) 85%,transparent);backdrop-filter:blur(12px)}}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 24px}
+    .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--c-titanium)}
+    .nav-brand span{color:var(--c-brand)}
+    .nav-links{display:flex;align-items:center;gap:16px}
+    .nav-link{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--c-steel-600);transition:color .15s}
+    .nav-link:hover{color:var(--c-steel-400);text-decoration:none}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+    .hero{position:relative;padding:100px 0 48px;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent,transparent 99px,var(--c-grid-line) 99px,var(--c-grid-line) 100px),repeating-linear-gradient(0deg,transparent,transparent 99px,var(--c-grid-line) 99px,var(--c-grid-line) 100px)}
+    .hero-line{position:absolute;width:100%;height:1px;top:55%;background:linear-gradient(90deg,transparent,var(--c-brand) 30%,transparent 70%);opacity:.25}
+    .hero-inner{position:relative}
+    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--c-brand);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--c-brand);animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,7vw,72px);line-height:.9;letter-spacing:.04em;color:var(--c-titanium);margin-bottom:16px}
+    .hero h1 em{color:var(--c-brand);font-style:normal}
+    .hero-sub{font-size:17px;color:var(--c-steel-400);max-width:560px;line-height:1.65;margin-bottom:24px}
+
+    .section{padding:56px 0;border-top:1px solid var(--c-border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--c-brand);font-weight:600;margin-bottom:6px}
+    .sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,4vw,36px);letter-spacing:.04em;color:var(--c-titanium);line-height:.95;margin-bottom:8px}
+    .sec-desc{font-size:15px;color:var(--c-steel-500);max-width:560px;line-height:1.65;margin-bottom:24px}
+
+    .connect-area{text-align:center;padding:48px 0}
+    .connect-btn{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:1px;font-weight:700;padding:16px 36px;border-radius:6px;border:2px solid var(--c-brand);background:var(--c-brand-dim);color:var(--c-brand);cursor:pointer;transition:all .2s}
+    .connect-btn:hover{background:rgba(197,26,74,.15);transform:translateY(-1px)}
+    .connect-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .connect-btn svg{width:24px;height:24px}
+    .connect-status{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--c-steel-600);margin-top:12px}
+    .connect-status.ok{color:var(--c-green)}
+    .connect-status.err{color:var(--c-red)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    .board-card{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:28px;margin:24px 0;display:none}
+    .board-card.visible{display:block;animation:fadeUp .4s ease-out}
+    .board-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+    .board-icon{width:56px;height:56px;border-radius:12px;background:var(--c-brand-dim);border:1px solid rgba(197,26,74,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--c-brand)}
+    .board-name{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--c-titanium);letter-spacing:.04em;line-height:1}
+    .board-variant{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-brand);margin-top:2px}
+    .spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--c-border);border:1px solid var(--c-border);border-radius:6px;overflow:hidden;margin-bottom:20px}
+    .spec-cell{background:var(--c-graphite);padding:14px}
+    .spec-cell-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--c-steel-700);margin-bottom:3px}
+    .spec-cell-value{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--c-titanium);line-height:1}
+    .tag-list{display:flex;gap:6px;flex-wrap:wrap}
+    .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 10px;border-radius:3px;border:1px solid var(--c-border);color:var(--c-steel-500)}
+    .tag.active{border-color:var(--c-brand);color:var(--c-brand);background:var(--c-brand-dim)}
+
+    .pinout{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:24px;margin:24px 0;display:none;overflow-x:auto}
+    .pinout.visible{display:block;animation:fadeUp .4s ease-out}
+    .pinout pre{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--c-steel-400);margin:0}
+    .pin-label{color:var(--c-brand)}.pin-power{color:var(--c-red)}.pin-gnd{color:var(--c-steel-700)}.pin-io{color:var(--c-green)}.pin-spi{color:var(--c-blue)}.pin-i2c{color:var(--c-amber)}.pin-uart{color:#7c3aed}
+
+    .config-panel{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:28px;margin:24px 0;display:none}
+    .config-panel.visible{display:block;animation:fadeUp .4s ease-out}
+    .config-panel h3{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--c-titanium);letter-spacing:.04em;margin-bottom:16px}
+    .config-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .config-field{display:flex;flex-direction:column;gap:4px}
+    .config-field label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600)}
+    .config-field input,.config-field select{background:var(--c-carbon);border:1px solid var(--c-border);color:var(--c-titanium);padding:10px 14px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none}
+    .config-field input:focus,.config-field select:focus{border-color:var(--c-brand)}
+    .config-btn{grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;padding:12px;border-radius:4px;border:1px solid var(--c-brand);background:var(--c-brand-dim);color:var(--c-brand);cursor:pointer;transition:background .15s}
+    .config-btn:hover{background:rgba(197,26,74,.15)}
+
+    .demos{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:24px 0;display:none}
+    .demos.visible{display:grid;animation:fadeUp .4s ease-out}
+    .demo-card{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:10px;padding:22px;transition:border-color .2s;cursor:pointer}
+    .demo-card:hover{border-color:var(--c-brand)}
+    .demo-card.selected{border-color:var(--c-brand);background:rgba(197,26,74,.04)}
+    .demo-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--c-brand);font-weight:600;margin-bottom:6px}
+    .demo-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--c-titanium);letter-spacing:.04em;line-height:1;margin-bottom:6px}
+    .demo-desc{font-size:13px;color:var(--c-steel-500);line-height:1.5;margin-bottom:10px}
+    .demo-tags{display:flex;gap:4px;flex-wrap:wrap}
+    .demo-tag{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid var(--c-border);color:var(--c-steel-600)}
+
+    .terminal{background:#0a0a0a;border:1px solid var(--c-border);border-radius:8px;padding:16px;margin:24px 0;max-height:320px;overflow-y:auto;display:none;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#22c55e}
+    .terminal.visible{display:block;animation:fadeUp .3s ease-out}
+    .t-info{color:var(--c-brand)}.t-warn{color:var(--c-amber)}.t-err{color:var(--c-red)}.t-dim{color:var(--c-steel-700)}.t-ok{color:var(--c-green)}
+
+    .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--c-border);border-radius:10px;overflow:hidden;margin:24px 0}
+    .flow-step{padding:20px 12px;text-align:center;border-right:1px solid var(--c-border);background:var(--c-graphite);transition:background .2s}
+    .flow-step:last-child{border:none}
+    .flow-step.active{background:rgba(197,26,74,.06)}
+    .flow-step.done{background:rgba(34,197,94,.04)}
+    .flow-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--c-steel-700);margin-bottom:4px}
+    .flow-step.active .flow-num{color:var(--c-brand)}
+    .flow-step.done .flow-num{color:var(--c-green)}
+    .flow-step h4{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600);margin-bottom:2px}
+    .flow-step.active h4{color:var(--c-brand)}
+    .flow-step.done h4{color:var(--c-green)}
+    .flow-step p{font-size:10px;color:var(--c-steel-700)}
+
+    .skill-ref{background:var(--c-graphite);border:1px solid var(--c-border);border-radius:8px;padding:16px 20px;margin:24px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .skill-ref-text{font-size:13px;color:var(--c-steel-500)}.skill-ref-text strong{color:var(--c-steel-300)}
+    .skill-ref a{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--c-brand);font-weight:700;white-space:nowrap}
+
+    footer{border-top:1px solid var(--c-border);padding:24px 0;margin-top:48px}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-copy{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-700)}
+    .footer-links{display:flex;gap:20px}
+    .footer-link{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--c-steel-600)}
+    .footer-link:hover{color:var(--c-brand);text-decoration:none}
+
+    @media(max-width:768px){.flow{grid-template-columns:repeat(3,1fr)}.flow-step:nth-child(3){border-right:none}.config-form{grid-template-columns:1fr}.spec-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/preview/b2bs/" class="nav-brand" style="text-decoration:none"><span>2</span>NTH <span style="font-size:11px;color:var(--c-steel-600);letter-spacing:2px;font-family:'JetBrains Mono',monospace">RASPBERRY PI</span></a>
+    <div class="nav-links">
+      <a href="/partners/b2bs-rpi.html" class="nav-link">RPi Partner</a>
+      <a href="/partners/b2bs-iot.html" class="nav-link">ESP32 IoT</a>
+      <a href="/preview/b2bs/chip-discovery.html" class="nav-link">ESP32 Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Pi Discovery &mdash; WebSerial + SSH Config</div>
+      <h1>PLUG IN.<br><em>DISCOVER.</em><br>CONFIGURE.</h1>
+      <p class="hero-sub">Connect any Raspberry Pi board via USB-C. We auto-detect the board, show its GPIO pinout, configure WiFi &amp; SSH, and deploy a working demo &mdash; all from the browser.</p>
+      <div class="skill-ref">
+        <div class="skill-ref-text">Powered by <strong>@raspberry-pi</strong> &mdash; the 2nth IoT skill for Pi development</div>
+        <a href="/partners/b2bs-rpi.html">View RPi Partner &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Flow -->
+  <div class="section">
+    <div class="sec-label">00 &mdash; Process</div>
+    <div class="sec-title">DISCOVERY PIPELINE</div>
+    <div class="sec-desc">Six steps from USB-C plug to running solution. Each stage validates before proceeding.</div>
+    <div class="flow">
+      <div class="flow-step active" id="fs-1"><div class="flow-num">01</div><h4>Connect</h4><p>USB-C serial</p></div>
+      <div class="flow-step" id="fs-2"><div class="flow-num">02</div><h4>Detect</h4><p>Board ID</p></div>
+      <div class="flow-step" id="fs-3"><div class="flow-num">03</div><h4>Pinout</h4><p>GPIO map</p></div>
+      <div class="flow-step" id="fs-4"><div class="flow-num">04</div><h4>Configure</h4><p>WiFi + SSH</p></div>
+      <div class="flow-step" id="fs-5"><div class="flow-num">05</div><h4>Deploy</h4><p>Demo</p></div>
+      <div class="flow-step" id="fs-6"><div class="flow-num">06</div><h4>Live</h4><p>Monitor</p></div>
+    </div>
+  </div>
+
+  <!-- 01 Connect -->
+  <div class="section" id="s-connect">
+    <div class="sec-label">01 &mdash; Connect</div>
+    <div class="sec-title">CONNECT YOUR RASPBERRY PI</div>
+    <div class="sec-desc">Plug in your Pi via USB-C. For Pi 5/4: use the USB-C power port with a serial console cable, or connect a Pico W directly via USB. Click the button to open the port selector.</div>
+
+    <div class="connect-area">
+      <button class="connect-btn" id="btn-connect" onclick="connectDevice()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M12 7V3"/><path d="M7 7V5"/><path d="M17 7V5"/></svg>
+        CONNECT PI VIA USB
+      </button>
+      <div class="connect-status" id="connect-status">WebSerial API ready &mdash; Chrome, Edge, or Opera required</div>
+    </div>
+
+    <div class="terminal" id="terminal"></div>
+  </div>
+
+  <!-- 02 Board Profile -->
+  <div class="section" id="s-profile" style="display:none">
+    <div class="sec-label">02 &mdash; Board Profile</div>
+    <div class="sec-title" id="profile-title">DETECTED BOARD</div>
+    <div class="sec-desc">Hardware capabilities from the @raspberry-pi skill. Based on USB descriptor and serial handshake.</div>
+
+    <div class="board-card visible" id="board-card">
+      <div class="board-header">
+        <div class="board-icon">RPi</div>
+        <div>
+          <div class="board-name" id="board-name">Raspberry Pi 5</div>
+          <div class="board-variant" id="board-variant">Cortex-A76 4&times;2.4GHz &middot; 8GB</div>
+        </div>
+      </div>
+      <div class="spec-grid" id="board-specs"></div>
+      <div class="tag-list" id="board-tags"></div>
+    </div>
+  </div>
+
+  <!-- 03 Pinout -->
+  <div class="section" id="s-pinout" style="display:none">
+    <div class="sec-label">03 &mdash; GPIO Pinout</div>
+    <div class="sec-title">PIN CONFIGURATION</div>
+    <div class="sec-desc">40-pin GPIO header mapping. Power in red, ground in grey, I2C in amber, SPI in blue, UART in purple, GPIO in green.</div>
+    <div class="pinout visible" id="pinout-diagram"></div>
+  </div>
+
+  <!-- 04 WiFi + SSH Config -->
+  <div class="section" id="s-config" style="display:none">
+    <div class="sec-label">04 &mdash; Configure</div>
+    <div class="sec-title">WIFI &amp; SSH PROVISIONING</div>
+    <div class="sec-desc">Configure network and access credentials. For Linux Pi boards, this writes to wpa_supplicant and enables SSH. For Pico W, credentials are stored in flash.</div>
+
+    <div class="config-panel visible">
+      <h3>NETWORK &amp; ACCESS</h3>
+      <div class="config-form">
+        <div class="config-field">
+          <label>WiFi SSID</label>
+          <input type="text" id="cfg-ssid" placeholder="MyNetwork">
+        </div>
+        <div class="config-field">
+          <label>WiFi Password</label>
+          <input type="password" id="cfg-pass" placeholder="********">
+        </div>
+        <div class="config-field">
+          <label>Hostname</label>
+          <input type="text" id="cfg-hostname" placeholder="pi-sensor-01">
+        </div>
+        <div class="config-field">
+          <label>SSH Username</label>
+          <input type="text" id="cfg-user" placeholder="pi" value="pi">
+        </div>
+        <div class="config-field">
+          <label>SSH Password</label>
+          <input type="password" id="cfg-sshpass" placeholder="Set a strong password">
+        </div>
+        <div class="config-field">
+          <label>MQTT Broker (optional)</label>
+          <input type="text" id="cfg-mqtt" placeholder="mqtt.2nth.io">
+        </div>
+        <div class="config-field">
+          <label>Country Code</label>
+          <input type="text" id="cfg-country" placeholder="ZA" value="ZA" maxlength="2" style="text-transform:uppercase">
+        </div>
+        <div class="config-field">
+          <label>Time Zone</label>
+          <select id="cfg-tz">
+            <option value="Africa/Johannesburg">Africa/Johannesburg (SAST)</option>
+            <option value="Europe/London">Europe/London (GMT/BST)</option>
+            <option value="America/New_York">America/New_York (EST)</option>
+            <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+            <option value="Australia/Sydney">Australia/Sydney (AEST)</option>
+          </select>
+        </div>
+        <button class="config-btn" onclick="writeConfig()">WRITE CONFIGURATION &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 Demo Selection -->
+  <div class="section" id="s-demos" style="display:none">
+    <div class="sec-label">05 &mdash; Deploy Demo</div>
+    <div class="sec-title" id="demos-title">DEMOS FOR YOUR BOARD</div>
+    <div class="sec-desc">Select a demo for the detected board. The setup script, Python code, and systemd service will be deployed over the serial/SSH connection.</div>
+    <div class="demos visible" id="demo-grid"></div>
+    <button class="connect-btn" id="btn-deploy" onclick="deployDemo()" style="display:none;margin-top:16px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      DEPLOY SELECTED DEMO
+    </button>
+  </div>
+
+  <!-- 06 Live Monitor -->
+  <div class="section" id="s-live" style="display:none">
+    <div class="sec-label">06 &mdash; Live</div>
+    <div class="sec-title">DEVICE ONLINE</div>
+    <div class="sec-desc">Your Pi is running. Serial output and connection details below.</div>
+
+    <div id="live-endpoints" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:24px"></div>
+
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--c-steel-600);display:flex;align-items:center;gap:8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--c-green);animation:blink 2s ease-in-out infinite"></span>
+          SERIAL MONITOR
+        </div>
+        <button onclick="document.getElementById('live-term').innerHTML=''" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--c-steel-600);background:none;border:1px solid var(--c-border);padding:4px 10px;border-radius:3px;cursor:pointer">CLEAR</button>
+      </div>
+      <div id="live-term" style="background:#0a0a0a;border:1px solid var(--c-border);border-radius:8px;padding:16px;max-height:320px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;color:#22c55e"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-copy">B2BS Raspberry Pi &mdash; Pi Discovery &mdash; 2nth.ai</span>
+      <div class="footer-links">
+        <a href="/partners/b2bs-rpi.html" class="footer-link">RPi Partner</a>
+        <a href="/partners/b2bs-iot.html" class="footer-link">ESP32 IoT</a>
+        <a href="/preview/b2bs/chip-discovery.html" class="footer-link">ESP32 Discovery</a>
+        <a href="https://pinout.xyz" class="footer-link" target="_blank">pinout.xyz</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── Board Database ──────────────────────────────────────────
+const BOARDS = {
+  'pi5': {
+    name:'Raspberry Pi 5', variant:'Cortex-A76 4×2.4GHz · 4/8GB',
+    icon:'Pi5', cpu:'Cortex-A76',cores:'4',freq:'2.4 GHz',ram:'4/8GB',
+    wifi:'802.11ac dual-band',bt:'BLE 5.0',eth:'GbE',usb:'2×USB3 + 2×USB2',
+    gpio:'40-pin header',pcie:'PCIe 2.0 x1',hdmi:'2× micro-HDMI 4K60',
+    camera:'2× CSI (4-lane)',storage:'microSD / NVMe (HAT)',power:'USB-C 5V/5A (PD)',
+    tags:['WiFi 5','BLE 5.0','PCIe','USB3','4K','Camera','GPIO','NVMe'],
+    use:['Edge AI','Kiosk','Gateway','Automation','Camera','Robotics']
+  },
+  'pi4': {
+    name:'Raspberry Pi 4B', variant:'Cortex-A72 4×1.8GHz · 2/4/8GB',
+    icon:'Pi4', cpu:'Cortex-A72',cores:'4',freq:'1.8 GHz',ram:'2/4/8GB',
+    wifi:'802.11ac dual-band',bt:'BLE 5.0',eth:'GbE',usb:'2×USB3 + 2×USB2',
+    gpio:'40-pin header',pcie:'No',hdmi:'2× micro-HDMI 4K30',
+    camera:'1× CSI (2-lane)',storage:'microSD',power:'USB-C 5V/3A',
+    tags:['WiFi 5','BLE 5.0','USB3','GbE','GPIO','Camera'],
+    use:['Automation','Gateway','Camera','Kiosk','General IoT']
+  },
+  'pi-zero2w': {
+    name:'Pi Zero 2 W', variant:'Cortex-A53 4×1GHz · 512MB',
+    icon:'Z2W', cpu:'Cortex-A53',cores:'4',freq:'1.0 GHz',ram:'512MB',
+    wifi:'802.11n 2.4GHz',bt:'BLE 4.2',eth:'No (USB adapter)',usb:'1× micro-USB OTG',
+    gpio:'40-pin header (unpopulated)',pcie:'No',hdmi:'mini-HDMI',
+    camera:'1× CSI',storage:'microSD',power:'micro-USB 5V/2A',
+    tags:['WiFi','BLE 4.2','Compact','Low Power','Camera','GPIO'],
+    use:['Sensor Hub','Camera','Embedded','Lightweight Monitor']
+  },
+  'pico-w': {
+    name:'Pico W', variant:'RP2040 dual M0+ 133MHz · 264KB SRAM',
+    icon:'PW', cpu:'RP2040 (Cortex-M0+)',cores:'2',freq:'133 MHz',ram:'264KB SRAM',
+    wifi:'802.11n 2.4GHz',bt:'BLE 5.2',eth:'No',usb:'USB 1.1 device',
+    gpio:'26 multi-function GPIO',pcie:'No',hdmi:'No',
+    camera:'No',storage:'2MB Flash (on-board)',power:'USB or VSYS 1.8-5.5V',
+    tags:['WiFi','BLE 5.2','MicroPython','ADC','PWM','I2C','SPI','Ultra-low power'],
+    use:['Microcontroller','Sensors','Battery Devices','Field Nodes']
+  },
+  'pico-2w': {
+    name:'Pico 2 W', variant:'RP2350 dual M33 150MHz · 520KB SRAM',
+    icon:'P2W', cpu:'RP2350 (Cortex-M33 + RISC-V)',cores:'2',freq:'150 MHz',ram:'520KB SRAM',
+    wifi:'802.11n 2.4GHz',bt:'BLE 5.2',eth:'No',usb:'USB 1.1 device',
+    gpio:'26 multi-function GPIO',pcie:'No',hdmi:'No',
+    camera:'No',storage:'4MB Flash (on-board)',power:'USB or VSYS 1.8-5.5V',
+    tags:['WiFi','BLE 5.2','MicroPython','RISC-V','ARM','Security','ADC','PWM'],
+    use:['Microcontroller','Advanced Sensors','Secure Devices']
+  }
+};
+
+// ─── Demo Database ───────────────────────────────────────────
+const DEMOS = {
+  'sensor-hub':     {name:'Sensor Hub',       desc:'Read DHT22/BME280 temperature, humidity, pressure. Log to SQLite, push via MQTT every 60s. Systemd auto-start.', tags:['I2C','MQTT','SQLite','systemd'], boards:['pi5','pi4','pi-zero2w']},
+  'edge-ai':        {name:'Edge AI — Object Detection', desc:'PiCamera2 + TFLite MobileNet SSD. Detect objects in real-time, log to MQTT, serve MJPEG stream.', tags:['TFLite','Camera','MQTT','OpenCV'], boards:['pi5','pi4']},
+  'gpio-blink':     {name:'GPIO Blink',       desc:'Classic LED blink on GPIO17. Validates boot, GPIO driver, and gpiozero. The "hello world" of Pi.', tags:['GPIO','gpiozero'], boards:['pi5','pi4','pi-zero2w']},
+  'relay-control':  {name:'Relay Controller', desc:'4-channel relay board on GPIO. Flask API for on/off/schedule. Systemd managed. Home/industrial automation.', tags:['GPIO','Flask','Relay','API'], boards:['pi5','pi4','pi-zero2w']},
+  'camera-stream':  {name:'Camera Stream',    desc:'PiCamera2 MJPEG stream over WiFi. Motion detection with OpenCV. Access from any browser on the network.', tags:['Camera','MJPEG','OpenCV','Flask'], boards:['pi5','pi4','pi-zero2w']},
+  'ble-gateway':    {name:'BLE Gateway',      desc:'Scan for BLE advertisements (bleak). Forward device data to MQTT. Track RSSI for proximity. Runs 24/7.', tags:['BLE','bleak','MQTT','Gateway'], boards:['pi5','pi4','pi-zero2w']},
+  'kiosk-dashboard':{name:'Kiosk Dashboard',  desc:'Chromium in kiosk mode showing a live dashboard. Touchscreen support. Auto-start on boot. No desktop clutter.', tags:['Chromium','X11','Touchscreen','systemd'], boards:['pi5','pi4']},
+  'mqtt-publish':   {name:'MQTT Publisher',    desc:'Connect to WiFi, publish system telemetry (CPU temp, RAM, disk) to MQTT every 10s. Proves cloud connectivity.', tags:['WiFi','MQTT','TLS'], boards:['pi5','pi4','pi-zero2w','pico-w','pico-2w']},
+  'pico-sensor':    {name:'Pico Sensor Node', desc:'MicroPython: read analog sensor + DHT22, publish via WiFi MQTT. Deep sleep between readings. Battery optimised.', tags:['MicroPython','ADC','MQTT','Sleep'], boards:['pico-w','pico-2w']},
+  'pico-relay':     {name:'Pico Relay Switch', desc:'MicroPython: WiFi-controlled relay. Simple HTTP API. Toggle from browser. Instant boot, no Linux overhead.', tags:['MicroPython','GPIO','HTTP','WiFi'], boards:['pico-w','pico-2w']},
+};
+
+// ─── 40-Pin Pinout (Pi 5/4/Zero 2 W) ────────────────────────
+const PINOUT_40PIN = `
+<span class="pin-label">         Raspberry Pi 40-Pin GPIO Header</span>
+<span class="pin-label">         (Pi 5 / Pi 4B / Pi Zero 2 W)</span>
+
+<span class="pin-label">     Pin#  Function         Function  Pin#</span>
+     ┌───────────────────────────────────┐
+ <span class="pin-power">3V3</span>  │[ 1]  <span class="pin-power">3.3V Power</span>       <span class="pin-power">5V Power</span>    [2 ]│  <span class="pin-power">5V</span>
+ <span class="pin-i2c">SDA</span>  │[ 3]  <span class="pin-i2c">GPIO2  (SDA1)</span>    <span class="pin-power">5V Power</span>    [4 ]│  <span class="pin-power">5V</span>
+ <span class="pin-i2c">SCL</span>  │[ 5]  <span class="pin-i2c">GPIO3  (SCL1)</span>    <span class="pin-gnd">GND</span>         [6 ]│  <span class="pin-gnd">GND</span>
+ <span class="pin-io">GP4</span>  │[ 7]  <span class="pin-io">GPIO4  (GPCLK0)</span>  <span class="pin-uart">GPIO14 (TX)</span> [8 ]│  <span class="pin-uart">TXD</span>
+ <span class="pin-gnd">GND</span>  │[ 9]  <span class="pin-gnd">GND</span>              <span class="pin-uart">GPIO15 (RX)</span> [10]│  <span class="pin-uart">RXD</span>
+ <span class="pin-io">G17</span>  │[11]  <span class="pin-io">GPIO17</span>           <span class="pin-io">GPIO18 (PWM)</span>[12]│  <span class="pin-io">PWM0</span>
+ <span class="pin-io">G27</span>  │[13]  <span class="pin-io">GPIO27</span>           <span class="pin-gnd">GND</span>         [14]│  <span class="pin-gnd">GND</span>
+ <span class="pin-io">G22</span>  │[15]  <span class="pin-io">GPIO22</span>           <span class="pin-io">GPIO23</span>      [16]│  <span class="pin-io">G23</span>
+ <span class="pin-power">3V3</span>  │[17]  <span class="pin-power">3.3V Power</span>       <span class="pin-io">GPIO24</span>      [18]│  <span class="pin-io">G24</span>
+ <span class="pin-spi">MOSI</span> │[19]  <span class="pin-spi">GPIO10 (MOSI)</span>    <span class="pin-gnd">GND</span>         [20]│  <span class="pin-gnd">GND</span>
+ <span class="pin-spi">MISO</span> │[21]  <span class="pin-spi">GPIO9  (MISO)</span>    <span class="pin-io">GPIO25</span>      [22]│  <span class="pin-io">G25</span>
+ <span class="pin-spi">SCLK</span> │[23]  <span class="pin-spi">GPIO11 (SCLK)</span>    <span class="pin-spi">GPIO8 (CE0)</span> [24]│  <span class="pin-spi">CE0</span>
+ <span class="pin-gnd">GND</span>  │[25]  <span class="pin-gnd">GND</span>              <span class="pin-spi">GPIO7 (CE1)</span> [26]│  <span class="pin-spi">CE1</span>
+ <span class="pin-i2c">ID_SD</span>│[27]  <span class="pin-i2c">GPIO0  (ID_SD)</span>   <span class="pin-i2c">GPIO1(ID_SC)</span>[28]│  <span class="pin-i2c">ID_SC</span>
+ <span class="pin-io">GP5</span>  │[29]  <span class="pin-io">GPIO5</span>            <span class="pin-gnd">GND</span>         [30]│  <span class="pin-gnd">GND</span>
+ <span class="pin-io">GP6</span>  │[31]  <span class="pin-io">GPIO6</span>            <span class="pin-io">GPIO12(PWM)</span> [32]│  <span class="pin-io">PWM0</span>
+ <span class="pin-io">GP13</span> │[33]  <span class="pin-io">GPIO13 (PWM1)</span>    <span class="pin-gnd">GND</span>         [34]│  <span class="pin-gnd">GND</span>
+ <span class="pin-io">G19</span>  │[35]  <span class="pin-io">GPIO19 (MISO1)</span>   <span class="pin-io">GPIO16</span>      [36]│  <span class="pin-io">G16</span>
+ <span class="pin-io">G26</span>  │[37]  <span class="pin-io">GPIO26</span>           <span class="pin-io">GPIO20(MOSI)</span>[38]│  <span class="pin-io">G20</span>
+ <span class="pin-gnd">GND</span>  │[39]  <span class="pin-gnd">GND</span>              <span class="pin-io">GPIO21(SCLK)</span>[40]│  <span class="pin-io">G21</span>
+     └───────────────────────────────────┘
+
+  <span class="pin-power">■ 3V3/5V</span>  <span class="pin-gnd">■ GND</span>  <span class="pin-io">■ GPIO</span>  <span class="pin-i2c">■ I2C</span>  <span class="pin-spi">■ SPI</span>  <span class="pin-uart">■ UART</span>`;
+
+const PINOUT_PICO = `
+<span class="pin-label">           Raspberry Pi Pico W / Pico 2 W</span>
+
+<span class="pin-label">  Pin#  Function         Function  Pin#</span>
+  ┌──────────────────────────────────┐
+  │[ 1]  <span class="pin-io">GP0  (UART0 TX)</span>  <span class="pin-power">VBUS</span>     [40]│
+  │[ 2]  <span class="pin-io">GP1  (UART0 RX)</span>  <span class="pin-power">VSYS</span>     [39]│
+  │[ 3]  <span class="pin-gnd">GND</span>              <span class="pin-gnd">GND</span>      [38]│
+  │[ 4]  <span class="pin-i2c">GP2  (I2C1 SDA)</span>  <span class="pin-power">3V3_EN</span>   [37]│
+  │[ 5]  <span class="pin-i2c">GP3  (I2C1 SCL)</span>  <span class="pin-power">3V3 OUT</span>  [36]│
+  │[ 6]  <span class="pin-io">GP4  (SPI0 RX)</span>   <span class="pin-spi">GP28(ADC2)</span>[35]│
+  │[ 7]  <span class="pin-io">GP5  (SPI0 CS)</span>   <span class="pin-gnd">AGND</span>     [34]│
+  │[ 8]  <span class="pin-gnd">GND</span>              <span class="pin-spi">GP27(ADC1)</span>[33]│
+  │[ 9]  <span class="pin-io">GP6  (SPI0 SCK)</span>  <span class="pin-spi">GP26(ADC0)</span>[32]│
+  │[10]  <span class="pin-io">GP7  (SPI0 TX)</span>   <span class="pin-io">RUN</span>      [31]│
+  │[11]  <span class="pin-io">GP8  (I2C0 SDA)</span>  <span class="pin-io">GP22</span>     [30]│
+  │[12]  <span class="pin-io">GP9  (I2C0 SCL)</span>  <span class="pin-gnd">GND</span>      [29]│
+  │[13]  <span class="pin-gnd">GND</span>              <span class="pin-io">GP21</span>     [28]│
+  │[14]  <span class="pin-io">GP10 (SPI1 SCK)</span>  <span class="pin-io">GP20</span>     [27]│
+  │[15]  <span class="pin-io">GP11 (SPI1 TX)</span>   <span class="pin-io">GP19</span>     [26]│
+  │[16]  <span class="pin-io">GP12 (SPI1 RX)</span>   <span class="pin-io">GP18</span>     [25]│
+  │[17]  <span class="pin-io">GP13 (SPI1 CS)</span>   <span class="pin-gnd">GND</span>      [24]│
+  │[18]  <span class="pin-gnd">GND</span>              <span class="pin-io">GP17</span>     [23]│
+  │[19]  <span class="pin-io">GP14</span>             <span class="pin-io">GP16</span>     [22]│
+  │[20]  <span class="pin-io">GP15</span>             <span class="pin-io">GP15</span>     [21]│
+  └──────────────────────────────────┘
+             <span class="pin-label">USB</span>     <span class="pin-label">BOOTSEL</span>
+
+  <span class="pin-power">■ Power</span>  <span class="pin-gnd">■ GND</span>  <span class="pin-io">■ GPIO</span>  <span class="pin-i2c">■ I2C</span>  <span class="pin-spi">■ SPI/ADC</span>`;
+
+// ─── State ───────────────────────────────────────────────────
+let port = null;
+let reader = null;
+let detectedBoard = null;
+let selectedDemo = null;
+
+// ─── Connection Logic ────────────────────────────────────────
+async function connectDevice() {
+  const status = document.getElementById('connect-status');
+  const term = document.getElementById('terminal');
+
+  if (!('serial' in navigator)) {
+    status.className = 'connect-status err';
+    status.textContent = 'WebSerial not supported — use Chrome, Edge, or Opera';
+    return;
+  }
+
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+
+    status.className = 'connect-status ok';
+    status.textContent = 'Connected — reading device info...';
+    term.classList.add('visible');
+    log(term, 'Serial port opened at 115200 baud', 't-info');
+
+    // Try to detect the board
+    setTimeout(() => detectBoard(term), 500);
+
+  } catch (e) {
+    if (e.name === 'NotFoundError') {
+      status.textContent = 'No device selected — try again';
+    } else {
+      status.className = 'connect-status err';
+      status.textContent = 'Connection failed: ' + e.message;
+    }
+  }
+}
+
+async function detectBoard(term) {
+  // In production: read USB descriptor / serial handshake to identify board
+  // For demo: simulate detection based on USB vendor/product or user prompt
+  log(term, 'Querying USB descriptor...', 't-dim');
+
+  const info = port.getInfo();
+  const vid = info.usbVendorId;
+  const pid = info.usbProductId;
+  log(term, `USB VID: 0x${vid?.toString(16)||'????'}  PID: 0x${pid?.toString(16)||'????'}`, 't-info');
+
+  // Raspberry Pi Foundation VID = 0x2E8A
+  // Pi 5 USB-C serial: varies by adapter
+  // Pico W: VID=0x2E8A PID=0x0005
+  let boardId;
+  if (vid === 0x2E8A && (pid === 0x0005 || pid === 0x000A)) {
+    boardId = pid === 0x000A ? 'pico-2w' : 'pico-w';
+  } else if (vid === 0x2E8A) {
+    boardId = 'pi5';
+  } else {
+    // Try common USB-serial adapters used with Pi
+    boardId = 'pi5'; // default to Pi 5 for demo
+  }
+
+  log(term, `Detected: ${BOARDS[boardId].name}`, 't-ok');
+  log(term, `CPU: ${BOARDS[boardId].cpu} × ${BOARDS[boardId].cores} @ ${BOARDS[boardId].freq}`, 't-dim');
+  log(term, `RAM: ${BOARDS[boardId].ram}  WiFi: ${BOARDS[boardId].wifi}`, 't-dim');
+  log(term, 'Board profile loaded from @raspberry-pi skill', 't-info');
+
+  detectedBoard = boardId;
+  showBoardProfile(boardId);
+  showPinout(boardId);
+  showConfig(boardId);
+  showDemos(boardId);
+  updateFlow(2);
+}
+
+function showBoardProfile(id) {
+  const b = BOARDS[id];
+  document.getElementById('s-profile').style.display = '';
+  document.getElementById('profile-title').textContent = b.name.toUpperCase();
+  document.getElementById('board-name').textContent = b.name;
+  document.getElementById('board-variant').textContent = b.variant;
+  document.getElementById('board-card').querySelector('.board-icon').textContent = b.icon;
+
+  const specs = [
+    ['CPU', b.cpu], ['Cores', b.cores], ['Frequency', b.freq], ['RAM', b.ram],
+    ['WiFi', b.wifi], ['Bluetooth', b.bt], ['Ethernet', b.eth], ['USB', b.usb],
+    ['GPIO', b.gpio], ['PCIe', b.pcie], ['Display', b.hdmi], ['Camera', b.camera],
+    ['Storage', b.storage], ['Power', b.power]
+  ];
+  document.getElementById('board-specs').innerHTML = specs.map(([l,v]) =>
+    `<div class="spec-cell"><div class="spec-cell-label">${l}</div><div class="spec-cell-value" style="font-size:${v.length>12?'13px':'18px'}">${v}</div></div>`
+  ).join('');
+
+  document.getElementById('board-tags').innerHTML = b.tags.map(t =>
+    `<span class="tag active">${t}</span>`
+  ).join('') + b.use.map(u => `<span class="tag">${u}</span>`).join('');
+
+  updateFlow(2);
+}
+
+function showPinout(id) {
+  document.getElementById('s-pinout').style.display = '';
+  const isPico = id.startsWith('pico');
+  document.getElementById('pinout-diagram').innerHTML = '<pre>' + (isPico ? PINOUT_PICO : PINOUT_40PIN) + '</pre>';
+  document.getElementById('pinout-diagram').classList.add('visible');
+  updateFlow(3);
+}
+
+function showConfig(id) {
+  document.getElementById('s-config').style.display = '';
+  const hostname = id.startsWith('pico') ? 'pico-sensor-01' : 'pi-sensor-01';
+  document.getElementById('cfg-hostname').placeholder = hostname;
+  if (id.startsWith('pico')) {
+    document.getElementById('cfg-user').value = '';
+    document.getElementById('cfg-user').placeholder = 'N/A (MicroPython)';
+    document.getElementById('cfg-user').disabled = true;
+    document.getElementById('cfg-sshpass').disabled = true;
+    document.getElementById('cfg-sshpass').placeholder = 'N/A (MicroPython)';
+  }
+  updateFlow(4);
+}
+
+function showDemos(id) {
+  document.getElementById('s-demos').style.display = '';
+  const grid = document.getElementById('demo-grid');
+  let i = 1;
+  grid.innerHTML = '';
+  for (const [key, d] of Object.entries(DEMOS)) {
+    if (!d.boards.includes(id)) continue;
+    const card = document.createElement('div');
+    card.className = 'demo-card';
+    card.onclick = () => selectDemo(key, card);
+    card.innerHTML = `
+      <div class="demo-num">DEMO ${String(i).padStart(2,'0')}</div>
+      <div class="demo-name">${d.name}</div>
+      <div class="demo-desc">${d.desc}</div>
+      <div class="demo-tags">${d.tags.map(t=>`<span class="demo-tag">${t}</span>`).join('')}</div>`;
+    grid.appendChild(card);
+    i++;
+  }
+  grid.classList.add('visible');
+}
+
+function selectDemo(key, card) {
+  document.querySelectorAll('.demo-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedDemo = key;
+  document.getElementById('btn-deploy').style.display = '';
+  updateFlow(5);
+}
+
+function writeConfig() {
+  const ssid = document.getElementById('cfg-ssid').value;
+  const hostname = document.getElementById('cfg-hostname').value;
+  const term = document.getElementById('terminal');
+  term.classList.add('visible');
+
+  if (!ssid) { log(term, 'ERROR: WiFi SSID is required', 't-err'); return; }
+
+  log(term, '─── Writing configuration ───', 't-info');
+  log(term, `WiFi SSID: ${ssid}`, 't-dim');
+  log(term, `Hostname: ${hostname || 'default'}`, 't-dim');
+  log(term, `Country: ${document.getElementById('cfg-country').value}`, 't-dim');
+
+  if (detectedBoard && !detectedBoard.startsWith('pico')) {
+    log(term, 'Writing wpa_supplicant.conf...', 't-dim');
+    log(term, 'Enabling SSH...', 't-dim');
+    log(term, `Setting timezone: ${document.getElementById('cfg-tz').value}`, 't-dim');
+    log(term, `SSH user: ${document.getElementById('cfg-user').value}`, 't-dim');
+  } else {
+    log(term, 'Writing WiFi credentials to Pico flash...', 't-dim');
+  }
+
+  setTimeout(() => {
+    log(term, 'Configuration written successfully', 't-ok');
+    updateFlow(4);
+  }, 800);
+}
+
+async function deployDemo() {
+  if (!selectedDemo) return;
+  const term = document.getElementById('terminal');
+  term.classList.add('visible');
+  const demo = DEMOS[selectedDemo];
+
+  log(term, `─── Deploying: ${demo.name} ───`, 't-info');
+  log(term, `Board: ${BOARDS[detectedBoard].name}`, 't-dim');
+
+  const steps = detectedBoard.startsWith('pico')
+    ? ['Compiling MicroPython bundle...','Writing main.py to flash...','Writing config.py...','Rebooting Pico...']
+    : ['Creating virtualenv...','Installing dependencies (pip)...','Writing src/main.py...','Writing systemd service...','Enabling service...','Starting service...'];
+
+  for (const step of steps) {
+    await delay(600);
+    log(term, step, 't-dim');
+  }
+
+  await delay(800);
+  log(term, `✓ ${demo.name} deployed and running`, 't-ok');
+  updateFlow(6);
+  showLive(demo);
+}
+
+function showLive(demo) {
+  document.getElementById('s-live').style.display = '';
+  const hostname = document.getElementById('cfg-hostname').value || 'pi-sensor-01';
+  const isPico = detectedBoard.startsWith('pico');
+
+  const endpoints = [];
+  if (!isPico) {
+    endpoints.push({label:'SSH',value:`ssh pi@${hostname}.local`,desc:'Remote terminal access'});
+    endpoints.push({label:'Service Status',value:`systemctl status ${selectedDemo}`,desc:'Check via SSH'});
+  }
+  if (demo.tags.includes('MQTT')) endpoints.push({label:'MQTT Topic',value:`2nth/${hostname}/telemetry`,desc:'Subscribe to this topic'});
+  if (demo.tags.includes('Flask') || demo.tags.includes('HTTP')) endpoints.push({label:'Web UI',value:`http://${hostname}.local:5000`,desc:'Open in browser'});
+  if (demo.tags.includes('MJPEG')) endpoints.push({label:'Camera Stream',value:`http://${hostname}.local:8080/stream`,desc:'MJPEG in browser'});
+
+  document.getElementById('live-endpoints').innerHTML = endpoints.map(e => `
+    <div style="background:var(--c-graphite);border:1px solid var(--c-border);border-radius:8px;padding:16px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--c-brand);margin-bottom:4px">${e.label}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--c-titanium);font-weight:600;margin-bottom:2px;word-break:break-all">${e.value}</div>
+      <div style="font-size:12px;color:var(--c-steel-600)">${e.desc}</div>
+    </div>`).join('');
+
+  // Simulate live output
+  const lterm = document.getElementById('live-term');
+  const msgs = [
+    `[${hostname}] Service started: ${demo.name}`,
+    `[${hostname}] WiFi connected — IP: 192.168.1.${Math.floor(Math.random()*200+10)}`,
+    `[${hostname}] MQTT broker connected`,
+    `[${hostname}] Sensor read: temp=23.4°C humidity=58% pressure=1013hPa`,
+    `[${hostname}] Published to 2nth/${hostname}/telemetry`,
+  ];
+  msgs.forEach((m,i) => setTimeout(() => {
+    lterm.innerHTML += `<div>${m}</div>`;
+    lterm.scrollTop = lterm.scrollHeight;
+  }, (i+1)*1200));
+}
+
+// ─── Helpers ─────────────────────────────────────────────────
+function log(el, msg, cls) {
+  el.innerHTML += `<div class="${cls||''}">${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function updateFlow(step) {
+  for (let i = 1; i <= 6; i++) {
+    const el = document.getElementById('fs-'+i);
+    el.className = 'flow-step' + (i < step ? ' done' : i === step ? ' active' : '');
+  }
+}
+
+// ─── Init ────────────────────────────────────────────────────
+if (!('serial' in navigator)) {
+  document.getElementById('connect-status').textContent = 'WebSerial not supported — use Chrome, Edge, or Opera';
+  document.getElementById('connect-status').className = 'connect-status err';
+  document.getElementById('btn-connect').disabled = true;
+}
+</script>
+</body>
+</html>
