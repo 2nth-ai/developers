@@ -10,7 +10,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--earth:#6b5c4d;--earth-light:#d4c8b8;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--sage-dark:#3a5a3c;--sand:#c4b59a;--stone:#8a8075;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb;--purple:#7c3aed}
-html,body{height:100%;overflow:hidden}
+html,body{height:100vh;height:100dvh;overflow:hidden}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
 
 /* ── HEADER ── */
@@ -25,7 +25,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 .mobile-toggle:hover{border-color:rgba(250,249,246,.6)}
 
 /* ── LAYOUT ── */
-.app-body{display:flex;height:calc(100% - 52px);max-width:1200px;margin:0 auto;overflow:hidden}
+.app-body{display:flex;height:calc(var(--app-height, 100vh) - 52px);max-width:1200px;margin:0 auto;overflow:hidden}
 
 /* ── CHAT PANEL ── */
 .chat-panel{width:380px;min-width:380px;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2)}
@@ -61,7 +61,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 @keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* Input bar */
-.input-bar{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;background:var(--bg2)}
+.input-bar{padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;background:var(--bg2)}
 .input-field{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:none;max-height:100px;overflow-y:auto;line-height:1.4;color:var(--text);background:var(--bg)}
 .input-field:focus{border-color:var(--sage)}
 .input-field::placeholder{color:var(--muted)}
@@ -240,6 +240,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
   .sb-alerts{margin-left:0}
   .app-body{padding-bottom:48px;position:relative}
 }
+
+/* ── AGENT LEARNING LOG ── */
+.log-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.log-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.log-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)}
+.log-stats{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.3px}
+.log-stats .stat-good{color:var(--green)}
+.log-stats .stat-bad{color:var(--red)}
+.log-stats .stat-fallback{color:var(--amber)}
+.log-filters{display:flex;gap:4px;padding:8px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.log-filter{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .12s}
+.log-filter:hover{border-color:var(--sage);color:var(--sage)}
+.log-filter.active{background:var(--sage);color:#fff;border-color:var(--sage)}
+.log-body{max-height:320px;overflow-y:auto}
+.log-body::-webkit-scrollbar{width:4px}
+.log-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:2px}
+.log-row{display:flex;align-items:center;gap:8px;padding:6px 16px;border-bottom:1px solid var(--border);font-size:12px;transition:background .1s}
+.log-row:last-child{border-bottom:none}
+.log-row:hover{background:rgba(0,0,0,.02)}
+.log-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:60px;flex-shrink:0}
+.log-channel{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;width:52px;text-align:center}
+.log-channel.ch-guest{background:rgba(7,94,84,.1);color:#075e54}
+.log-channel.ch-staff{background:rgba(0,122,255,.1);color:#007aff}
+.log-channel.ch-manager{background:rgba(61,50,41,.1);color:#3d3229}
+.log-user-msg{flex:1;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.log-intent{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;flex-shrink:0;letter-spacing:.3px}
+.log-intent.intent-fallback{background:rgba(217,119,6,.1);color:var(--amber)}
+.log-intent.intent-matched{background:rgba(5,150,105,.08);color:var(--green)}
+.log-feedback{font-size:14px;flex-shrink:0;width:24px;text-align:center}
+.log-note-btn{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 8px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;flex-shrink:0;transition:all .12s}
+.log-note-btn:hover{border-color:var(--sage);color:var(--sage)}
+.log-note-input{font-family:'Inter',sans-serif;font-size:11px;border:1px solid var(--sage);border-radius:4px;padding:3px 8px;width:160px;outline:none;flex-shrink:0}
+.log-footer{padding:8px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end}
+.log-export{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:4px 12px;border-radius:4px;border:1px solid var(--sage);background:transparent;color:var(--sage);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s}
+.log-export:hover{background:var(--sage);color:#fff}
+.log-empty{padding:24px 16px;text-align:center;color:var(--muted);font-size:12px;font-style:italic}
 </style>
 </head>
 <body>
@@ -374,6 +410,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
       </div>
     </div>
 
+    <!-- Agent Learning Log -->
+    <div>
+      <div class="sec-head"><span class="sec-title">Agent Learning Log</span></div>
+      <div class="log-card">
+        <div class="log-header">
+          <span class="log-title" id="logTitle">Agent Learning Log</span>
+          <span class="log-stats" id="logStats">--</span>
+        </div>
+        <div class="log-filters" id="logFilters">
+          <button class="log-filter active" data-filter="all">All</button>
+          <button class="log-filter" data-filter="guest">Guest</button>
+          <button class="log-filter" data-filter="staff">Staff</button>
+          <button class="log-filter" data-filter="manager">Manager</button>
+          <button class="log-filter" data-filter="bad">Needs review</button>
+        </div>
+        <div class="log-body" id="logBody">
+          <div class="log-empty">No interactions logged yet.</div>
+        </div>
+        <div class="log-footer">
+          <button class="log-export" id="logExport">Export CSV</button>
+        </div>
+      </div>
+    </div>
+
     <div style="height:20px"></div>
   </div>
 </div>
@@ -410,8 +470,55 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 </div>
 
 <script>
+// Fix mobile viewport height
+function setVH() {
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+}
+setVH();
+window.addEventListener('resize', setVH);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setVH);
+  window.visualViewport.addEventListener('scroll', setVH);
+}
+
 (function() {
   'use strict';
+
+  // ── Agent Log Helper ──
+  function logExchange(userMessage, agentResponse, intent) {
+    try {
+      const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+      const entry = {
+        id: crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        channel: 'manager',
+        userMessage: userMessage,
+        agentResponse: agentResponse,
+        intent: intent || 'fallback',
+        feedback: null,
+        notes: ''
+      };
+      log.push(entry);
+      localStorage.setItem('luthuli_agent_log', JSON.stringify(log));
+      return entry.id;
+    } catch(e) { return null; }
+  }
+
+  function detectManagerIntent(msg) {
+    const m = msg.toLowerCase();
+    if (/occupancy|how full|capacity/.test(m)) return 'occupancy';
+    if (/revenue|income|earned|turnover/.test(m)) return 'revenue';
+    if (/commission|perfect hideaway|PH/.test(m)) return 'ph_commission';
+    if (/who.*work|staff.*today|on duty|working/.test(m)) return 'staff_status';
+    if (/pending.*leave|leave.*request/.test(m)) return 'leave_requests';
+    if (/booking|upcoming|next guest/.test(m)) return 'bookings';
+    if (/add.*book|new.*book|book.*family|leppan/.test(m)) return 'add_booking';
+    if (/schedule|roster|rotation/.test(m)) return 'staff_schedule';
+    if (/solar|water|power|off.?grid|system/.test(m)) return 'systems';
+    if (/hi|hello|hey|morning|afternoon/.test(m)) return 'greeting';
+    return 'fallback';
+  }
 
   // ── Constants ──
   const TOKEN_KEY = 'luthuli_mgr_token';
@@ -698,20 +805,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
 
     addMessage('user', text.trim());
     showTyping();
+    const userMsg = text.trim();
 
     let res;
     try {
-      res = await postJSON('/api/luthuli/chat', { message: text.trim(), channel: 'manager' });
+      res = await postJSON('/api/luthuli/chat', { message: userMsg, channel: 'manager' });
     } catch(e) {
       // API unavailable — use client-side fallback
-      res = clientFallback(text.trim(), 'manager');
+      res = clientFallback(userMsg, 'manager');
     }
     const delay = 500 + Math.random() * 400;
 
     setTimeout(() => {
       hideTyping();
       const msg = res.reply || res.message || res.text || "I'm not sure how to help with that. Could you rephrase your question?";
+      const intent = res.intent || detectManagerIntent(userMsg);
       addMessage('agent', msg);
+
+      // Log exchange
+      logExchange(userMsg, msg, intent);
+      // Refresh log panel
+      renderAgentLog();
 
       if (res.refresh) loadAllDashboard();
     }, delay);
@@ -1189,6 +1303,134 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
     return false;
   }
 
+  // ── Agent Learning Log ──
+  let logFilter = 'all';
+
+  function renderAgentLog() {
+    const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+    const body = document.getElementById('logBody');
+    const statsEl = document.getElementById('logStats');
+    const titleEl = document.getElementById('logTitle');
+
+    // Stats
+    const todayStr2 = new Date().toISOString().slice(0, 10);
+    const todayEntries = log.filter(e => e.timestamp && e.timestamp.slice(0, 10) === todayStr2);
+    const total = log.length;
+    const fallbacks = log.filter(e => e.intent === 'fallback').length;
+    const good = log.filter(e => e.feedback === 'good').length;
+    const bad = log.filter(e => e.feedback === 'bad').length;
+    const understood = total - fallbacks;
+    const pct = total > 0 ? Math.round(understood / total * 100) : 0;
+
+    titleEl.textContent = 'Agent Learning Log \u2014 ' + todayEntries.length + ' interaction' + (todayEntries.length !== 1 ? 's' : '') + ' today';
+    statsEl.innerHTML = total + ' interactions | <span class="stat-good">' + understood + ' understood (' + pct + '%)</span> | <span class="stat-fallback">' + fallbacks + ' fallback</span> | <span class="stat-bad">' + bad + ' flagged</span>';
+
+    // Filter
+    let filtered = log;
+    if (logFilter === 'guest') filtered = log.filter(e => e.channel === 'guest');
+    else if (logFilter === 'staff') filtered = log.filter(e => e.channel === 'staff');
+    else if (logFilter === 'manager') filtered = log.filter(e => e.channel === 'manager');
+    else if (logFilter === 'bad') filtered = log.filter(e => e.feedback === 'bad');
+
+    // Sort newest first
+    filtered = filtered.slice().reverse();
+
+    if (filtered.length === 0) {
+      body.innerHTML = '<div class="log-empty">No interactions match this filter.</div>';
+      return;
+    }
+
+    body.innerHTML = filtered.map(entry => {
+      const t = new Date(entry.timestamp);
+      const timeStr2 = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const chCls = 'ch-' + (entry.channel || 'guest');
+      const intentCls = entry.intent === 'fallback' ? 'intent-fallback' : 'intent-matched';
+      const fb = entry.feedback === 'good' ? '\uD83D\uDC4D' : (entry.feedback === 'bad' ? '\uD83D\uDC4E' : '\u2014');
+      const noteDisplay = entry.notes ? '<span style="font-size:10px;color:var(--text2);" title="' + entry.notes.replace(/"/g, '&quot;') + '">\uD83D\uDCDD</span>' : '';
+
+      return '<div class="log-row" data-id="' + entry.id + '">' +
+        '<span class="log-time">' + timeStr2 + '</span>' +
+        '<span class="log-channel ' + chCls + '">' + (entry.channel || '?') + '</span>' +
+        '<span class="log-user-msg" title="' + (entry.userMessage || '').replace(/"/g, '&quot;') + '">\u201C' + (entry.userMessage || '') + '\u201D</span>' +
+        '<span class="log-intent ' + intentCls + '">\u2192 ' + (entry.intent || 'fallback') + '</span>' +
+        '<span class="log-feedback">' + fb + '</span>' +
+        noteDisplay +
+        '<button class="log-note-btn" data-logid="' + entry.id + '">Add note</button>' +
+        '</div>';
+    }).join('');
+
+    // Note button handlers
+    body.querySelectorAll('.log-note-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.logid;
+        const row = btn.closest('.log-row');
+        // Replace button with input
+        const input = document.createElement('input');
+        input.className = 'log-note-input';
+        input.placeholder = 'What should the response be?';
+        // Pre-fill if note exists
+        const currentLog = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+        const currentEntry = currentLog.find(e => e.id === id);
+        if (currentEntry && currentEntry.notes) input.value = currentEntry.notes;
+        btn.replaceWith(input);
+        input.focus();
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const note = input.value.trim();
+            if (note) {
+              const lg = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+              const ent = lg.find(e2 => e2.id === id);
+              if (ent) { ent.notes = note; localStorage.setItem('luthuli_agent_log', JSON.stringify(lg)); }
+            }
+            renderAgentLog();
+          } else if (e.key === 'Escape') {
+            renderAgentLog();
+          }
+        });
+        input.addEventListener('blur', () => {
+          const note = input.value.trim();
+          if (note) {
+            const lg = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+            const ent = lg.find(e2 => e2.id === id);
+            if (ent) { ent.notes = note; localStorage.setItem('luthuli_agent_log', JSON.stringify(lg)); }
+          }
+          renderAgentLog();
+        });
+      });
+    });
+  }
+
+  // Filter button handlers
+  document.getElementById('logFilters').addEventListener('click', (e) => {
+    const btn = e.target.closest('.log-filter');
+    if (!btn) return;
+    document.querySelectorAll('.log-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    logFilter = btn.dataset.filter;
+    renderAgentLog();
+  });
+
+  // Export CSV
+  document.getElementById('logExport').addEventListener('click', () => {
+    const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+    if (!log.length) return;
+    const headers = ['timestamp', 'channel', 'userMessage', 'agentResponse', 'intent', 'feedback', 'notes'];
+    const csvRows = [headers.join(',')];
+    log.forEach(entry => {
+      csvRows.push(headers.map(h => {
+        let val = (entry[h] || '').toString().replace(/"/g, '""');
+        return '"' + val + '"';
+      }).join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'luthuli_agent_log_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
   // ── Init ──
   function init() {
     // Check for saved auth
@@ -1222,6 +1464,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
     renderStaffSchedule({});
     renderFeed({});
 
+    // Render agent learning log
+    renderAgentLog();
+
     // If already authenticated, load real data
     if (authState === 'verified') {
       loadAllDashboard();
@@ -1230,6 +1475,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
     // Auto-refresh every 60 seconds
     setInterval(() => {
       if (authState === 'verified') loadAllDashboard();
+      renderAgentLog();
     }, 60000);
 
     inputField.focus();

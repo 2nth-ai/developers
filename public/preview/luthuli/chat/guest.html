@@ -30,7 +30,8 @@
 }
 
 html, body {
-  height: 100%;
+  height: 100vh; /* fallback */
+  height: 100dvh;
   overflow: hidden;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #000;
@@ -39,13 +40,22 @@ html, body {
 
 #app {
   max-width: 480px;
-  height: 100%;
+  height: var(--app-height, 100vh);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: var(--wa-bg);
-  position: relative;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
+}
+
+@media (min-width: 481px) {
+  #app {
+    position: relative;
+    inset: auto;
+    margin: 0 auto;
+  }
 }
 
 /* ── HEADER ── */
@@ -452,7 +462,7 @@ html, body {
   display: flex;
   align-items: flex-end;
   padding: 6px 6px;
-  padding-bottom: calc(6px + var(--safe-bottom));
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   gap: 6px;
   flex-shrink: 0;
   z-index: 10;
@@ -631,6 +641,27 @@ html, body {
 .chips { display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px; }
 .chip { font-size:12px; padding:6px 14px; border-radius:16px; border:1px solid rgba(0,0,0,.15); background:#fff; color:#075e54; cursor:pointer; white-space:nowrap; }
 .chip:hover { background:#dcf8c6; }
+
+/* ── FEEDBACK ROW ── */
+.feedback-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+  justify-content: flex-start;
+}
+.feedback-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.35;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.feedback-btn:hover { opacity: 0.6; }
+.feedback-btn.selected { opacity: 1; background: rgba(0,0,0,0.06); }
 </style>
 </head>
 <body>
@@ -682,8 +713,66 @@ html, body {
 </div>
 
 <script>
+// Fix mobile viewport height
+function setVH() {
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+}
+setVH();
+window.addEventListener('resize', setVH);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setVH);
+  window.visualViewport.addEventListener('scroll', setVH);
+}
+
 (function() {
   'use strict';
+
+  // ── Agent Log Helper ──
+  function logExchange(userMessage, agentResponse, intent) {
+    try {
+      const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+      const entry = {
+        id: crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        channel: 'guest',
+        userMessage: userMessage,
+        agentResponse: agentResponse,
+        intent: intent || 'fallback',
+        feedback: null,
+        notes: ''
+      };
+      log.push(entry);
+      localStorage.setItem('luthuli_agent_log', JSON.stringify(log));
+      return entry.id;
+    } catch(e) { return null; }
+  }
+
+  function updateLogFeedback(logId, feedback) {
+    try {
+      const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+      const entry = log.find(e => e.id === logId);
+      if (entry) { entry.feedback = feedback; localStorage.setItem('luthuli_agent_log', JSON.stringify(log)); }
+    } catch(e) {}
+  }
+
+  function addFeedbackRow(logId) {
+    const row = document.createElement('div');
+    row.className = 'feedback-row';
+    const btnGood = document.createElement('button');
+    btnGood.className = 'feedback-btn';
+    btnGood.textContent = '\uD83D\uDC4D';
+    btnGood.title = 'Good response';
+    const btnBad = document.createElement('button');
+    btnBad.className = 'feedback-btn';
+    btnBad.textContent = '\uD83D\uDC4E';
+    btnBad.title = 'Bad response';
+    btnGood.addEventListener('click', () => { btnGood.classList.add('selected'); btnBad.classList.remove('selected'); updateLogFeedback(logId, 'good'); });
+    btnBad.addEventListener('click', () => { btnBad.classList.add('selected'); btnGood.classList.remove('selected'); updateLogFeedback(logId, 'bad'); });
+    row.appendChild(btnGood);
+    row.appendChild(btnBad);
+    return row;
+  }
 
   // ── State ──
   const TOKEN_KEY = 'luthuli_session_token';
@@ -1042,16 +1131,25 @@ html, body {
     }
     const delay = 500 + Math.random() * 300;
 
+    const userMsg = text.trim();
     setTimeout(() => {
       hideTyping();
       markAllRead();
 
       const msg = res.reply || res.message || res.text || "I can help with availability, bookings, pricing, or lodge info. Just ask!";
+      const intent = res.intent || detectGuestIntent(userMsg);
 
       if (res.card || res.metadata) {
         addMessage('agent', msg, { card: res.card || res.metadata });
       } else {
         addMessage('agent', msg);
+      }
+
+      // Log exchange and add feedback buttons
+      const logId = logExchange(userMsg, msg, intent);
+      if (logId) {
+        const lastRow = chatArea.querySelector('.msg-row:last-child');
+        if (lastRow) lastRow.appendChild(addFeedbackRow(logId));
       }
     }, delay);
   }
@@ -1098,17 +1196,21 @@ html, body {
     sendMessage(text);
   }
 
-  // ── Mobile keyboard handling ──
-  const vv = window.visualViewport;
-  if (vv) {
-    vv.addEventListener('resize', () => {
-      document.getElementById('app').style.height = vv.height + 'px';
-      scrollToBottom();
-    });
-    vv.addEventListener('scroll', () => {
-      document.getElementById('app').style.height = vv.height + 'px';
-    });
+  // ── Intent detection for logging ──
+  function detectGuestIntent(msg) {
+    const m = msg.toLowerCase();
+    if (/avail|dates|vacancy|free|open/.test(m)) return 'availability';
+    if (/price|rate|cost|how much/.test(m)) return 'pricing';
+    if (/levy|conservation fee/.test(m)) return 'levy_info';
+    if (/book|reserve|want to stay/.test(m)) return 'booking';
+    if (/where|location|direction/.test(m)) return 'directions';
+    if (/room|pavilion|accommodation|sleep/.test(m)) return 'pavilions';
+    if (/guide|game drive|safari/.test(m)) return 'game_drives';
+    if (/hi|hello|hey|morning|afternoon/.test(m)) return 'greeting';
+    return 'fallback';
   }
+
+  // Virtual keyboard scroll handled by global setVH
 
   // Prevent body bounce on iOS
   document.body.addEventListener('touchmove', (e) => {

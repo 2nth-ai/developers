@@ -25,7 +25,8 @@
 }
 
 html, body {
-  height: 100%;
+  height: 100vh; /* fallback */
+  height: 100dvh;
   overflow: hidden;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: #000;
@@ -34,13 +35,22 @@ html, body {
 
 #app {
   max-width: 480px;
-  height: 100%;
+  height: var(--app-height, 100vh);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: #fff;
-  position: relative;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
+}
+
+@media (min-width: 481px) {
+  #app {
+    position: relative;
+    inset: auto;
+    margin: 0 auto;
+  }
 }
 
 /* ── HEADER ── */
@@ -311,7 +321,7 @@ html, body {
   align-items: flex-end;
   gap: 8px;
   padding: 8px 12px;
-  padding-bottom: calc(8px + var(--safe-bottom));
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   background: var(--ios-header);
   border-top: 0.5px solid var(--ios-border);
   flex-shrink: 0;
@@ -423,6 +433,27 @@ html, body {
 .chips { display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px; }
 .chip { font-size:12px; padding:6px 14px; border-radius:16px; border:1px solid #007aff; background:transparent; color:#007aff; cursor:pointer; }
 .chip:hover { background:rgba(0,122,255,.08); }
+
+/* ── FEEDBACK ROW ── */
+.feedback-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+  justify-content: flex-start;
+}
+.feedback-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.35;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.feedback-btn:hover { opacity: 0.6; }
+.feedback-btn.selected { opacity: 1; background: rgba(0,0,0,0.06); }
 </style>
 </head>
 <body>
@@ -455,8 +486,79 @@ html, body {
 <div class="toast" id="toast"></div>
 
 <script>
+// Fix mobile viewport height
+function setVH() {
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', vh + 'px');
+}
+setVH();
+window.addEventListener('resize', setVH);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setVH);
+  window.visualViewport.addEventListener('scroll', setVH);
+}
+
 (function() {
   'use strict';
+
+  // ── Agent Log Helper ──
+  function logExchange(userMessage, agentResponse, intent) {
+    try {
+      const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+      const entry = {
+        id: crypto.randomUUID(),
+        timestamp: new Date().toISOString(),
+        channel: 'staff',
+        userMessage: userMessage,
+        agentResponse: agentResponse,
+        intent: intent || 'fallback',
+        feedback: null,
+        notes: ''
+      };
+      log.push(entry);
+      localStorage.setItem('luthuli_agent_log', JSON.stringify(log));
+      return entry.id;
+    } catch(e) { return null; }
+  }
+
+  function updateLogFeedback(logId, feedback) {
+    try {
+      const log = JSON.parse(localStorage.getItem('luthuli_agent_log') || '[]');
+      const entry = log.find(e => e.id === logId);
+      if (entry) { entry.feedback = feedback; localStorage.setItem('luthuli_agent_log', JSON.stringify(log)); }
+    } catch(e) {}
+  }
+
+  function addFeedbackRow(logId) {
+    const row = document.createElement('div');
+    row.className = 'feedback-row';
+    const btnGood = document.createElement('button');
+    btnGood.className = 'feedback-btn';
+    btnGood.textContent = '\uD83D\uDC4D';
+    btnGood.title = 'Good response';
+    const btnBad = document.createElement('button');
+    btnBad.className = 'feedback-btn';
+    btnBad.textContent = '\uD83D\uDC4E';
+    btnBad.title = 'Bad response';
+    btnGood.addEventListener('click', () => { btnGood.classList.add('selected'); btnBad.classList.remove('selected'); updateLogFeedback(logId, 'good'); });
+    btnBad.addEventListener('click', () => { btnBad.classList.add('selected'); btnGood.classList.remove('selected'); updateLogFeedback(logId, 'bad'); });
+    row.appendChild(btnGood);
+    row.appendChild(btnBad);
+    return row;
+  }
+
+  // ── Intent detection for logging ──
+  function detectStaffIntent(msg) {
+    const m = msg.toLowerCase();
+    if (/schedule|when.*work|shift|roster/.test(m)) return 'my_schedule';
+    if (/who.*cover|who.*on|coverage/.test(m)) return 'staff_coverage';
+    if (/check.?in|arriving|guest|who.*coming/.test(m)) return 'guest_checkins';
+    if (/leave|day off|time off/.test(m)) return 'leave_request';
+    if (/room.*ready|cleaned|prepared/.test(m)) return 'room_ready';
+    if (/my leave|leave status/.test(m)) return 'leave_status';
+    if (/hi|hello|hey|morning|afternoon/.test(m)) return 'greeting';
+    return 'fallback';
+  }
 
   const messagesEl = document.getElementById('messages');
   const inputEl = document.getElementById('input');
@@ -612,14 +714,25 @@ html, body {
   };
 
   // ── Delayed agent reply ──
+  let _lastUserMsg = '';
+  let _lastIntent = 'fallback';
+
   function agentReply(text, delay, extra) {
     showTyping();
+    const userMsg = _lastUserMsg;
+    const intent = _lastIntent;
     setTimeout(() => {
       hideTyping();
       if (extra) {
         addRichBubble(text, extra);
       } else {
         addBubble(text, 'agent');
+      }
+      // Log exchange and add feedback buttons
+      const logId = logExchange(userMsg, text || '[rich content]', intent);
+      if (logId) {
+        const lastRow = messagesEl.querySelector('.bubble-row:last-child, .msg-row:last-child');
+        if (lastRow) lastRow.appendChild(addFeedbackRow(logId));
       }
     }, delay || 1200);
   }
@@ -669,12 +782,16 @@ html, body {
     }
 
     // ── Authenticated: handle capabilities ──
+    _lastUserMsg = text;
+
     if (pendingLeave) {
+      _lastIntent = 'leave_confirm';
       handleLeaveConfirm(text);
       return;
     }
 
     const lower = text.toLowerCase();
+    _lastIntent = detectStaffIntent(text);
 
     if (lower.includes('schedule') || lower.includes('work next') || lower.includes('when do i work') || lower.includes('roster')) {
       handleSchedule();
@@ -849,10 +966,22 @@ html, body {
       if (!res.ok) throw new Error('API ' + res.status);
       const data = await res.json();
       hideTyping();
-      addBubble(data.reply || data.message || staffFallback(text), 'agent');
+      const reply = data.reply || data.message || staffFallback(text);
+      addBubble(reply, 'agent');
+      const logId = logExchange(text, reply, data.intent || _lastIntent);
+      if (logId) {
+        const lastRow = messagesEl.querySelector('.bubble-row:last-child');
+        if (lastRow) lastRow.appendChild(addFeedbackRow(logId));
+      }
     } catch (e) {
       hideTyping();
-      addBubble(staffFallback(text), 'agent');
+      const reply = staffFallback(text);
+      addBubble(reply, 'agent');
+      const logId = logExchange(text, reply, _lastIntent);
+      if (logId) {
+        const lastRow = messagesEl.querySelector('.bubble-row:last-child');
+        if (lastRow) lastRow.appendChild(addFeedbackRow(logId));
+      }
     }
   }
 
@@ -877,13 +1006,7 @@ html, body {
     setTimeout(scrollToBottom, 300);
   });
 
-  // Adjust for virtual keyboard on iOS
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      document.getElementById('app').style.height = window.visualViewport.height + 'px';
-      scrollToBottom();
-    });
-  }
+  // Virtual keyboard scroll handled by global setVH
 })();
 </script>
 </body>
