@@ -246,7 +246,73 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
   .sb-divider{display:none}
   .sb-alerts{margin-left:0}
   .app-body{padding-bottom:48px;position:relative}
+  .maint-grid{grid-template-columns:1fr}
+  .staff-stats-row{grid-template-columns:1fr}
+  .cov-cal-grid{font-size:8px}
+  .cov-cal-week-label{font-size:7px;padding:4px 4px}
+  .cov-cal-cell{min-height:36px}
 }
+
+/* ── DASH TABS ── */
+.dash-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;background:var(--bg2);border-radius:10px 10px 0 0;margin-bottom:0}
+.dash-tab{flex:1;padding:10px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+.dash-tab:hover{color:var(--text2)}
+.dash-tab.active{color:var(--sage);border-bottom-color:var(--sage);font-weight:600}
+.tab-content{display:none}
+.tab-content.active{display:flex;flex-direction:column;gap:14px}
+
+/* ── STAFF COVERAGE CALENDAR ── */
+.cov-calendar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.cov-cal-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cov-cal-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)}
+.cov-cal-grid{display:grid;grid-template-columns:70px repeat(7,1fr);font-family:'JetBrains Mono',monospace;font-size:10px}
+.cov-cal-hdr{padding:6px 4px;text-align:center;font-size:8px;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border)}
+.cov-cal-week-label{padding:6px 8px;font-size:9px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center}
+.cov-cal-cell{padding:4px 2px;min-height:44px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.cov-cal-cell:nth-child(8n){border-right:none}
+.cov-cal-cell.sunday{outline:2px solid var(--blue);outline-offset:-2px;border-radius:2px}
+.cov-cal-cell .guest-bar{position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber);border-radius:0 0 2px 2px}
+.cov-cal-cell .staff-pip{display:flex;align-items:center;gap:2px;font-size:8px;font-weight:600;letter-spacing:.3px}
+.cov-cal-cell .staff-pip.work{color:var(--sage-dark)}
+.cov-cal-cell .staff-pip.off{color:var(--muted)}
+.cov-cal-cell .staff-pip.leave{color:var(--amber)}
+.cov-dot{width:5px;height:5px;border-radius:50%;position:absolute;bottom:3px;right:3px}
+.cov-dot.green{background:var(--green)}
+.cov-dot.red{background:var(--red)}
+.cov-summary{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.cov-pct-bar{flex:1;height:14px;background:var(--border);border-radius:7px;overflow:hidden}
+.cov-pct-fill{height:100%;background:var(--sage);border-radius:7px;transition:width .3s}
+.cov-pct-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--text);white-space:nowrap}
+.staff-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.staff-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.staff-stat-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.staff-stat-detail{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.6}
+
+/* ── MAINTENANCE TAB ── */
+.maint-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.maint-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.maint-card-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.maint-val{font-size:22px;font-weight:700;color:var(--text)}
+.maint-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.maint-bar{height:8px;background:var(--border);border-radius:4px;margin-top:8px;overflow:hidden}
+.maint-bar-fill{height:100%;border-radius:4px}
+.maint-tasks{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.maint-task{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px}
+.maint-task:last-child{border-bottom:none}
+.maint-task-status{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.maint-task-name{flex:1;color:var(--text)}
+.maint-task-due{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.maint-note{margin-top:14px;padding:12px 16px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12);border-radius:8px;font-size:11px;color:var(--text2);font-style:italic}
+
+/* ── LOG LINK BUTTON ── */
+.log-link-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;margin-top:4px}
+.log-link-btn:hover{border-color:var(--sage);color:var(--sage)}
+
+/* ── LOG OVERLAY ── */
+.log-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.log-overlay.active{opacity:1;pointer-events:auto}
+.log-overlay-card{background:var(--bg2);border-radius:12px;max-width:700px;width:95%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:scale(.95);transition:transform .2s}
+.log-overlay.active .log-overlay-card{transform:scale(1)}
 
 /* ── AGENT LEARNING LOG ── */
 .log-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -372,72 +438,197 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
       <div class="sb-alerts" id="sbAlerts"></div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-card"><div class="stat-val stat-loading" id="statOcc">--</div><div class="stat-label">Occupancy %</div></div>
-      <div class="stat-card"><div class="stat-val stat-loading" id="statRevRoom">--</div><div class="stat-label">Room Revenue</div></div>
-      <div class="stat-card"><div class="stat-val stat-loading" id="statLevy">--</div><div class="stat-label">Conservation Levy</div></div>
-      <div class="stat-card"><div class="stat-val stat-loading" id="statNet">--</div><div class="stat-label">Net Revenue</div></div>
+    <!-- TAB BAR -->
+    <div class="dash-tabs" id="dashTabs">
+      <button class="dash-tab active" data-tab="overview">Overview</button>
+      <button class="dash-tab" data-tab="staff">Staff</button>
+      <button class="dash-tab" data-tab="finance">Finance</button>
+      <button class="dash-tab" data-tab="maintenance">Maint</button>
     </div>
 
-    <!-- Bookings Calendar -->
-    <div>
-      <div class="sec-head"><span class="sec-title">Bookings</span><span class="sec-action" id="calToday">Today</span></div>
-      <div class="cal-card">
-        <div class="cal-head">
-          <span class="cal-title" id="calMonthLabel">--</span>
-          <div class="cal-nav">
-            <button id="calPrev">&larr; Prev</button>
-            <button id="calNext">Next &rarr;</button>
+    <!-- ═══ TAB: OVERVIEW ═══ -->
+    <div class="tab-content active" data-tab="overview">
+
+      <!-- Quick Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-val stat-loading" id="statOcc">--</div><div class="stat-label">Occupancy %</div></div>
+        <div class="stat-card"><div class="stat-val stat-loading" id="statBookings">--</div><div class="stat-label">Bookings</div></div>
+        <div class="stat-card"><div class="stat-val stat-loading" id="statRevRoom">--</div><div class="stat-label">Room Revenue</div></div>
+        <div class="stat-card"><div class="stat-val stat-loading" id="statNet">--</div><div class="stat-label">Net Revenue</div></div>
+      </div>
+
+      <!-- Bookings Calendar -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Bookings</span><span class="sec-action" id="calToday">Today</span></div>
+        <div class="cal-card">
+          <div class="cal-head">
+            <span class="cal-title" id="calMonthLabel">--</span>
+            <div class="cal-nav">
+              <button id="calPrev">&larr; Prev</button>
+              <button id="calNext">Next &rarr;</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend">
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(90,122,92,.3)"></span>Owner</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(37,99,235,.2)"></span>Direct</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(124,58,237,.2)"></span>PH</span>
+            <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(217,119,6,.2)"></span>Pending</span>
           </div>
         </div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div class="cal-legend">
-          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(90,122,92,.3)"></span>Owner</span>
-          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(37,99,235,.2)"></span>Direct</span>
-          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(124,58,237,.2)"></span>PH</span>
-          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(217,119,6,.2)"></span>Pending</span>
+      </div>
+
+      <!-- Activity Feed (compact, last 5) -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Activity</span></div>
+        <div class="feed-card" id="feedCard">
+          <div class="placeholder">Loading activity...</div>
         </div>
       </div>
+
+      <!-- Agent Learning Log link -->
+      <div style="text-align:center">
+        <button class="log-link-btn" id="openLogBtn">Agent Learning Log</button>
+      </div>
+
     </div>
 
-    <!-- Revenue Breakdown -->
-    <div>
-      <div class="sec-head"><span class="sec-title">Revenue</span></div>
-      <div class="rev-card" id="revCard">
-        <div class="rev-grid" id="revGrid">
-          <div class="rev-item"><div class="rev-val" id="revDirect">--</div><div class="rev-label">Direct Revenue</div></div>
-          <div class="rev-item"><div class="rev-val" id="revPH">--</div><div class="rev-label">PH Revenue</div></div>
-          <div class="rev-item"><div class="rev-val" id="revComm">--</div><div class="rev-label">PH Commission</div></div>
-          <div class="rev-item"><div class="rev-val" id="revLevyTotal">--</div><div class="rev-label">Levy Total</div></div>
+    <!-- ═══ TAB: STAFF ═══ -->
+    <div class="tab-content" data-tab="staff">
+
+      <!-- Coverage Calendar -->
+      <div class="cov-calendar">
+        <div class="cov-cal-head">
+          <span class="cov-cal-title">Staff Coverage — Next 4 Weeks</span>
         </div>
-        <div class="rev-bar-wrap" id="revBar"></div>
+        <div class="cov-cal-grid" id="covCalGrid"></div>
+        <div class="cov-summary" id="covSummary"></div>
       </div>
+
+      <!-- Pending leave requests -->
+      <div id="staffLeaveReqs"></div>
+
+      <!-- Staff stats -->
+      <div class="staff-stats-row" id="staffStatsRow"></div>
+
     </div>
 
-    <!-- Staff Schedule -->
-    <div>
-      <div class="sec-head"><span class="sec-title">Staff Schedule</span><a class="sec-action" href="staff.html">Full View</a></div>
-      <div class="staff-card" id="staffCard">
-        <div class="placeholder">Loading staff schedule...</div>
+    <!-- ═══ TAB: FINANCE ═══ -->
+    <div class="tab-content" data-tab="finance">
+
+      <!-- Revenue summary cards -->
+      <div class="stats-grid" id="financeStatsGrid">
+        <div class="stat-card"><div class="stat-val" id="finRevRoom">--</div><div class="stat-label">Room Revenue</div></div>
+        <div class="stat-card"><div class="stat-val" id="finPHComm">--</div><div class="stat-label">PH Commission</div></div>
+        <div class="stat-card"><div class="stat-val" id="finLevy">--</div><div class="stat-label">Conservation Levy</div></div>
+        <div class="stat-card"><div class="stat-val" id="finNet">--</div><div class="stat-label">Net Revenue</div></div>
       </div>
+
+      <!-- Revenue Breakdown -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Revenue Breakdown</span></div>
+        <div class="rev-card" id="revCard">
+          <div class="rev-grid" id="revGrid">
+            <div class="rev-item"><div class="rev-val" id="revDirect">--</div><div class="rev-label">Direct Revenue</div></div>
+            <div class="rev-item"><div class="rev-val" id="revPH">--</div><div class="rev-label">PH Revenue</div></div>
+            <div class="rev-item"><div class="rev-val" id="revComm">--</div><div class="rev-label">PH Commission</div></div>
+            <div class="rev-item"><div class="rev-val" id="revLevyTotal">--</div><div class="rev-label">Levy Total</div></div>
+          </div>
+          <div class="rev-bar-wrap" id="revBar"></div>
+        </div>
+      </div>
+
+      <!-- Conservation levy per booking -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Conservation Levy by Booking</span></div>
+        <div class="feed-card" id="levyBreakdown"></div>
+      </div>
+
+      <!-- Monthly comparison placeholder -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Monthly Comparison</span></div>
+        <div class="feed-card" style="text-align:center;padding:24px 16px;">
+          <div style="font-size:11px;color:var(--muted);font-style:italic">Coming soon — monthly trend data will appear here once there are 2+ months of data.</div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Activity Feed -->
-    <div>
-      <div class="sec-head"><span class="sec-title">Activity</span></div>
-      <div class="feed-card" id="feedCard">
-        <div class="placeholder">Loading activity...</div>
+    <!-- ═══ TAB: MAINTENANCE ═══ -->
+    <div class="tab-content" data-tab="maintenance">
+
+      <div class="maint-grid">
+        <!-- Solar -->
+        <div class="maint-card">
+          <div class="maint-card-title">Solar Status</div>
+          <div class="maint-val">94%</div>
+          <div class="maint-sub">Battery level — 6.2 kWh generated today</div>
+          <div class="maint-bar"><div class="maint-bar-fill" style="width:94%;background:var(--green)"></div></div>
+          <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2)">
+            Current draw: 3.2 kW / 5 kW capacity<br>
+            Headroom: 1.8 kW<br>
+            Panels: 12 x 400W (clean)
+          </div>
+        </div>
+
+        <!-- Water -->
+        <div class="maint-card">
+          <div class="maint-card-title">Water Status</div>
+          <div class="maint-val">6,800L</div>
+          <div class="maint-sub">68% capacity — ~24 days remaining</div>
+          <div class="maint-bar"><div class="maint-bar-fill" style="width:68%;background:var(--blue)"></div></div>
+          <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2)">
+            Tank: 10,000L total<br>
+            Daily usage: ~280L<br>
+            <span style="color:var(--amber)">Pump filter pressure: 2.4 bar (low)</span>
+          </div>
+        </div>
       </div>
+
+      <!-- Maintenance Tasks -->
+      <div>
+        <div class="sec-head"><span class="sec-title">Maintenance Tasks</span></div>
+        <div class="maint-tasks">
+          <div class="maint-task">
+            <span class="maint-task-status" style="background:var(--amber)"></span>
+            <span class="maint-task-name">Water pump filter clean/replace</span>
+            <span class="maint-task-due">Overdue</span>
+          </div>
+          <div class="maint-task">
+            <span class="maint-task-status" style="background:var(--blue)"></span>
+            <span class="maint-task-name">Deck inspection — River Pavilion</span>
+            <span class="maint-task-due">This week</span>
+          </div>
+          <div class="maint-task">
+            <span class="maint-task-status" style="background:var(--muted)"></span>
+            <span class="maint-task-name">Solar panel clean</span>
+            <span class="maint-task-due">14 Apr</span>
+          </div>
+          <div class="maint-task">
+            <span class="maint-task-status" style="background:var(--muted)"></span>
+            <span class="maint-task-name">Perimeter fence walk</span>
+            <span class="maint-task-due">Weekly — next 10 Apr</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="maint-note">
+        These systems will connect to IoT sensors in production. Currently showing demo data.
+      </div>
+
     </div>
 
-    <!-- Agent Learning Log -->
-    <div>
-      <div class="sec-head"><span class="sec-title">Agent Learning Log</span></div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- AGENT LEARNING LOG OVERLAY -->
+  <div class="log-overlay" id="logOverlay">
+    <div class="log-overlay-card">
       <div class="log-card">
         <div class="log-header">
           <span class="log-title" id="logTitle">Agent Learning Log</span>
           <span class="log-stats" id="logStats">--</span>
+          <button class="modal-close" id="logOverlayClose" style="float:none;margin-left:auto">&times;</button>
         </div>
         <div class="log-filters" id="logFilters">
           <button class="log-filter active" data-filter="all">All</button>
@@ -454,8 +645,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-heig
         </div>
       </div>
     </div>
-
-    <div style="height:20px"></div>
   </div>
 </div>
 
@@ -940,10 +1129,10 @@ if (window.visualViewport) {
   function renderStats(data) {
     document.getElementById('statOcc').textContent = (data.occupancy != null ? data.occupancy + '%' : '67%');
     document.getElementById('statOcc').classList.remove('stat-loading');
+    document.getElementById('statBookings').textContent = data.bookings_count || '6';
+    document.getElementById('statBookings').classList.remove('stat-loading');
     document.getElementById('statRevRoom').textContent = fmtZAR(data.room_revenue || 84500);
     document.getElementById('statRevRoom').classList.remove('stat-loading');
-    document.getElementById('statLevy').textContent = fmtZAR(data.conservation_levy || 12600);
-    document.getElementById('statLevy').classList.remove('stat-loading');
     document.getElementById('statNet').textContent = fmtZAR(data.net_revenue || 72400);
     document.getElementById('statNet').classList.remove('stat-loading');
   }
@@ -1078,6 +1267,8 @@ if (window.visualViewport) {
     const ph = data.ph_revenue || 32500;
     const comm = data.ph_commission || 9750;
     const levy = data.conservation_levy || 12600;
+    const roomRev = data.room_revenue || 84500;
+    const netRev = data.net_revenue || 72400;
 
     document.getElementById('revDirect').textContent = fmtZAR(direct);
     document.getElementById('revPH').textContent = fmtZAR(ph);
@@ -1092,96 +1283,209 @@ if (window.visualViewport) {
         '<div class="rev-bar-seg" style="flex:' + dPct + ';background:var(--blue)">' + dPct + '%</div>' +
         '<div class="rev-bar-seg" style="flex:' + pPct + ';background:var(--purple)">' + pPct + '%</div>';
     }
+
+    // Finance tab summary cards
+    document.getElementById('finRevRoom').textContent = fmtZAR(roomRev);
+    document.getElementById('finPHComm').textContent = fmtZAR(comm);
+    document.getElementById('finLevy').textContent = fmtZAR(levy);
+    document.getElementById('finNet').textContent = fmtZAR(netRev);
+
+    // Conservation levy breakdown per booking
+    renderLevyBreakdown();
   }
 
-  // Staff schedule
-  function renderStaffSchedule(data) {
-    const card = document.getElementById('staffCard');
-    const staff = data.staff || [
-      { name: 'Nomsa', status: 'on', schedule: generateDemoSchedule(true) },
-      { name: 'Thandiwe', status: 'off', schedule: generateDemoSchedule(false) }
-    ];
+  function renderLevyBreakdown() {
+    const el = document.getElementById('levyBreakdown');
+    const bk = getDemoBookings();
+    const levyRate = 180; // R180 per person per night
+    let html = '';
+    bk.forEach(b => {
+      if (b.type === 'owner' || !b.guests) return;
+      const nights = b.end - b.start;
+      const levyTotal = levyRate * b.guests * nights;
+      html += '<div class="feed-item">' +
+        '<span class="feed-time" style="width:auto;flex-shrink:0;font-weight:600;color:var(--text)">' + b.name + '</span>' +
+        '<span style="flex:1;font-size:11px;color:var(--muted)">' + b.guests + ' guests x ' + nights + 'n x R180</span>' +
+        '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:600;color:var(--text)">' + fmtZAR(levyTotal) + '</span>' +
+        '</div>';
+    });
+    if (!html) html = '<div class="placeholder">No levy-applicable bookings</div>';
+    el.innerHTML = html;
+  }
 
-    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  // Staff rotation logic (21-on / 7-off)
+  function getRotationStatus(rotationStart, dateStr) {
+    const start = new Date(rotationStart + 'T00:00:00Z');
+    const d = new Date(dateStr + 'T00:00:00Z');
+    const diff = Math.floor((d - start) / 86400000);
+    const cycleDay = ((diff % 28) + 28) % 28;
+    return { status: cycleDay < 21 ? 'work' : 'off', cycleDay: cycleDay };
+  }
+
+  const NOMSA_START = '2026-03-01';
+  const THANDIWE_START = '2026-03-22';
+
+  function renderStaffSchedule(data) {
+    renderCoverageCalendar(data);
+    renderStaffLeaveReqs(data);
+    renderStaffStats();
+  }
+
+  function renderCoverageCalendar(data) {
+    const grid = document.getElementById('covCalGrid');
+    const summary = document.getElementById('covSummary');
     const today = new Date();
-    const isThisMonth = today.getFullYear() === calYear && today.getMonth() === calMonth;
-    const todayDate = today.getDate();
+    // Start from next Monday (or today if Monday)
+    const startDate = new Date(today);
+    const dayOfWeek = startDate.getDay();
+    const daysUntilMon = dayOfWeek === 0 ? 1 : (dayOfWeek === 1 ? 0 : 8 - dayOfWeek);
+    startDate.setDate(startDate.getDate() + daysUntilMon);
+
+    const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    // Get demo bookings for guest overlay
+    const bk = getDemoBookings();
 
     let html = '';
+    // Header row
+    html += '<div class="cov-cal-hdr"></div>';
+    dayNames.forEach(d => { html += '<div class="cov-cal-hdr">' + d + '</div>'; });
 
-    staff.forEach(s => {
-      const badgeCls = s.status === 'on' ? 'badge-on' : (s.status === 'leave' ? 'badge-leave' : 'badge-off');
-      const badgeText = s.status === 'on' ? 'On Duty' : (s.status === 'leave' ? 'Leave' : 'Off Duty');
-      html += '<div class="staff-section">';
-      html += '<div class="staff-name-row"><span class="staff-name">' + s.name + '</span><span class="staff-badge ' + badgeCls + '">' + badgeText + '</span></div>';
+    let coveredDays = 0;
+    let totalDays = 0;
 
-      // Day headers
-      html += '<div class="sched-row">';
-      for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
-        html += '<span class="sched-day-head">' + d + '</span>';
+    // 4 weeks
+    for (let w = 0; w < 4; w++) {
+      const weekStart = new Date(startDate);
+      weekStart.setDate(weekStart.getDate() + w * 7);
+      const weekLabel = monthNames[weekStart.getMonth()] + ' ' + weekStart.getDate();
+      html += '<div class="cov-cal-week-label">' + weekLabel + '</div>';
+
+      for (let d = 0; d < 7; d++) {
+        const cellDate = new Date(weekStart);
+        cellDate.setDate(cellDate.getDate() + d);
+        const dateStr = cellDate.toISOString().slice(0, 10);
+        const isSunday = cellDate.getDay() === 0;
+        const isToday = cellDate.toDateString() === today.toDateString();
+
+        const nomsaRot = getRotationStatus(NOMSA_START, dateStr);
+        const thandiweRot = getRotationStatus(THANDIWE_START, dateStr);
+
+        let nomsaStatus = nomsaRot.status;
+        let thandiweStatus = thandiweRot.status;
+
+        // Check for leave (demo: Thandiwe leave 15-18 Apr)
+        const m = cellDate.getMonth();
+        const dd = cellDate.getDate();
+        if (m === 3 && dd >= 15 && dd <= 18) thandiweStatus = 'leave';
+
+        // Check if guests on this day (simple: check if day of month falls in a booking range, same month)
+        let hasGuests = false;
+        if (cellDate.getMonth() === calMonth && cellDate.getFullYear() === calYear) {
+          bk.forEach(b => {
+            if (dd >= b.start && dd <= b.end) hasGuests = true;
+          });
+        }
+
+        const atLeastOne = (nomsaStatus === 'work' || thandiweStatus === 'work');
+        totalDays++;
+        if (atLeastOne) coveredDays++;
+
+        const sundayClass = isSunday ? ' sunday' : '';
+        const todayStyle = isToday ? 'outline:2px solid var(--sage);outline-offset:-1px;' : '';
+
+        html += '<div class="cov-cal-cell' + sundayClass + '" style="' + todayStyle + '">';
+        if (hasGuests) html += '<div class="guest-bar"></div>';
+
+        // Nomsa pip
+        const nCls = nomsaStatus === 'work' ? 'work' : (nomsaStatus === 'leave' ? 'leave' : 'off');
+        const nIcon = nomsaStatus === 'work' ? '\u2713' : (nomsaStatus === 'leave' ? 'L' : '\u2014');
+        html += '<span class="staff-pip ' + nCls + '">N' + nIcon + '</span>';
+
+        // Thandiwe pip
+        const tCls = thandiweStatus === 'work' ? 'work' : (thandiweStatus === 'leave' ? 'leave' : 'off');
+        const tIcon = thandiweStatus === 'work' ? '\u2713' : (thandiweStatus === 'leave' ? 'L' : '\u2014');
+        html += '<span class="staff-pip ' + tCls + '">T' + tIcon + '</span>';
+
+        // Coverage dot
+        const dotCls = atLeastOne ? 'green' : 'red';
+        html += '<span class="cov-dot ' + dotCls + '"></span>';
+
+        html += '</div>';
       }
-      html += '</div>';
-
-      // Schedule cells
-      html += '<div class="sched-row">';
-      const sched = s.schedule || [];
-      for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
-        const st = sched[d - 1] || 'off';
-        const cls = st === 'work' ? 'sc-work' : (st === 'leave' ? 'sc-leave' : 'sc-off');
-        const isT = isThisMonth && d === todayDate;
-        html += '<span class="sched-cell ' + cls + '" style="' + (isT ? 'outline:2px solid var(--sage);outline-offset:-1px' : '') + '"></span>';
-      }
-      html += '</div>';
-      html += '</div>';
-    });
-
-    // Coverage
-    html += '<div class="coverage-row">';
-    html += '<div class="coverage-label">Coverage</div>';
-    html += '<div class="coverage-bar">';
-    for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
-      let count = 0;
-      staff.forEach(s => {
-        const sched = s.schedule || [];
-        if ((sched[d - 1] || 'off') === 'work') count++;
-      });
-      const cls = count >= 2 ? 'cov-ok' : (count === 1 ? 'cov-one' : 'cov-gap');
-      html += '<span class="cov-cell ' + cls + '">' + count + '</span>';
     }
-    html += '</div></div>';
 
-    // Leave requests
+    grid.innerHTML = html;
+
+    // Coverage summary
+    const pct = totalDays > 0 ? Math.round(coveredDays / totalDays * 100) : 0;
+    summary.innerHTML =
+      '<span class="cov-pct-label">Coverage: ' + pct + '%</span>' +
+      '<div class="cov-pct-bar"><div class="cov-pct-fill" style="width:' + pct + '%"></div></div>' +
+      '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:var(--muted)">' + coveredDays + '/' + totalDays + ' days</span>';
+  }
+
+  function renderStaffLeaveReqs(data) {
+    const container = document.getElementById('staffLeaveReqs');
     const leaveReqs = data.leave_requests || [
       { staff: 'Thandiwe', dates: '15-18 Apr', reason: 'Family event', id: 'lr1' }
     ];
-    if (leaveReqs.length) {
-      html += '<div class="leave-req">';
-      html += '<div class="leave-req-title">Pending Leave Requests</div>';
-      leaveReqs.forEach(lr => {
-        html += '<div class="leave-req-item">';
-        html += '<span class="leave-req-info"><strong>' + lr.staff + '</strong> -- ' + lr.dates + (lr.reason ? ' (' + lr.reason + ')' : '') + '</span>';
-        html += '<span class="leave-req-actions">';
-        html += '<button class="btn-approve" data-lr="' + lr.id + '">Approve</button>';
-        html += '<button class="btn-deny" data-lr="' + lr.id + '">Deny</button>';
-        html += '</span></div>';
-      });
-      html += '</div>';
+    if (!leaveReqs.length) {
+      container.innerHTML = '';
+      return;
     }
+    let html = '<div class="leave-req">';
+    html += '<div class="leave-req-title">Pending Leave Requests</div>';
+    leaveReqs.forEach(lr => {
+      html += '<div class="leave-req-item">';
+      html += '<span class="leave-req-info"><strong>' + lr.staff + '</strong> -- ' + lr.dates + (lr.reason ? ' (' + lr.reason + ')' : '') + '</span>';
+      html += '<span class="leave-req-actions">';
+      html += '<button class="btn-approve" data-lr="' + lr.id + '">Approve</button>';
+      html += '<button class="btn-deny" data-lr="' + lr.id + '">Deny</button>';
+      html += '</span></div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
 
-    card.innerHTML = html;
-
-    // Leave action handlers
-    card.querySelectorAll('.btn-approve').forEach(btn => {
+    container.querySelectorAll('.btn-approve').forEach(btn => {
       btn.addEventListener('click', () => handleLeaveAction(btn.dataset.lr, 'approve'));
     });
-    card.querySelectorAll('.btn-deny').forEach(btn => {
+    container.querySelectorAll('.btn-deny').forEach(btn => {
       btn.addEventListener('click', () => handleLeaveAction(btn.dataset.lr, 'deny'));
     });
   }
 
+  function renderStaffStats() {
+    const container = document.getElementById('staffStatsRow');
+    const todayStr3 = new Date().toISOString().slice(0, 10);
+    const nomsaRot = getRotationStatus(NOMSA_START, todayStr3);
+    const thandiweRot = getRotationStatus(THANDIWE_START, todayStr3);
+
+    const nomsaOnOff = nomsaRot.status === 'work' ? 'Day ' + (nomsaRot.cycleDay + 1) + ' of 21' : 'Day ' + (nomsaRot.cycleDay - 20) + ' of 7 (off)';
+    const thandiweOnOff = thandiweRot.status === 'work' ? 'Day ' + (thandiweRot.cycleDay + 1) + ' of 21' : 'Day ' + (thandiweRot.cycleDay - 20) + ' of 7 (off)';
+
+    container.innerHTML =
+      '<div class="staff-stat-card">' +
+        '<div class="staff-stat-name">Nomsa</div>' +
+        '<div class="staff-stat-detail">' +
+          '<span class="staff-badge ' + (nomsaRot.status === 'work' ? 'badge-on' : 'badge-off') + '">' + (nomsaRot.status === 'work' ? 'On Duty' : 'Off Duty') + '</span><br>' +
+          nomsaOnOff + '<br>' +
+          '12 leave days remaining' +
+        '</div>' +
+      '</div>' +
+      '<div class="staff-stat-card">' +
+        '<div class="staff-stat-name">Thandiwe</div>' +
+        '<div class="staff-stat-detail">' +
+          '<span class="staff-badge ' + (thandiweRot.status === 'work' ? 'badge-on' : 'badge-off') + '">' + (thandiweRot.status === 'work' ? 'On Duty' : 'Off Duty') + '</span><br>' +
+          thandiweOnOff + '<br>' +
+          '8 leave days remaining' +
+        '</div>' +
+      '</div>';
+  }
+
   function handleLeaveAction(id, action) {
     showToast('Leave request ' + (action === 'approve' ? 'approved' : 'denied'));
-    // Remove the request from UI
     const item = document.querySelector('[data-lr="' + id + '"]');
     if (item) {
       const parent = item.closest('.leave-req-item');
@@ -1189,29 +1493,11 @@ if (window.visualViewport) {
     }
   }
 
-  function generateDemoSchedule(isNomsa) {
-    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    const sched = [];
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dow = new Date(calYear, calMonth, d).getDay();
-      if (isNomsa) {
-        // Nomsa: 5 on, 2 off pattern (off on 6th and 7th days of each cycle)
-        const cycle = (d - 1) % 7;
-        sched.push(cycle < 5 ? 'work' : 'off');
-      } else {
-        // Thandiwe: offset pattern, plus some leave
-        const cycle = (d + 2) % 7;
-        if (d >= 15 && d <= 18) sched.push('leave');
-        else sched.push(cycle < 5 ? 'work' : 'off');
-      }
-    }
-    return sched;
-  }
-
-  // Activity feed
+  // Activity feed (compact, last 5 items)
   function renderFeed(data) {
     const card = document.getElementById('feedCard');
-    const items = data.activity || getDemoActivity();
+    const allItems = data.activity || getDemoActivity();
+    const items = allItems.slice(0, 5);
 
     if (!items.length) {
       card.innerHTML = '<div class="placeholder">No recent activity</div>';
@@ -1275,6 +1561,34 @@ if (window.visualViewport) {
     const res = await getJSON('/api/luthuli/bookings?month=' + monthStr);
     renderCalendar(res ? res.bookings : null);
   }
+
+  // ── Dashboard tab switching ──
+  document.getElementById('dashTabs').addEventListener('click', (e) => {
+    const tab = e.target.closest('.dash-tab');
+    if (!tab) return;
+    const tabName = tab.dataset.tab;
+    // Deactivate all tabs
+    document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    // Activate selected
+    tab.classList.add('active');
+    const content = document.querySelector('.tab-content[data-tab="' + tabName + '"]');
+    if (content) content.classList.add('active');
+  });
+
+  // ── Log overlay ──
+  document.getElementById('openLogBtn').addEventListener('click', () => {
+    document.getElementById('logOverlay').classList.add('active');
+    renderAgentLog();
+  });
+  document.getElementById('logOverlayClose').addEventListener('click', () => {
+    document.getElementById('logOverlay').classList.remove('active');
+  });
+  document.getElementById('logOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('logOverlay')) {
+      document.getElementById('logOverlay').classList.remove('active');
+    }
+  });
 
   // ── Mobile tabs ──
   const tabChat = document.getElementById('tabChat');
