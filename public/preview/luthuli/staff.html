@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Rotation — Luthuli Lodge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--earth:#6b5c4d;--earth-light:#d4c8b8;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--sage-dark:#3a5a3c;--sand:#c4b59a;--stone:#8a8075;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{background:var(--earth-dark);padding:12px 0;color:#faf9f6}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,249,246,.6);text-decoration:none;margin-left:18px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#faf9f6}
+    h1{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:4px}
+    h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);margin:24px 0 12px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    /* Coverage bar */
+    .coverage-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:20px 0}
+    .coverage-bar h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
+    .cov-row{display:flex;gap:2px;margin-bottom:4px}
+    .cov-cell{flex:1;height:20px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;cursor:default;position:relative}
+    .cov-ok{background:var(--sage)}
+    .cov-one{background:var(--sand)}
+    .cov-gap{background:var(--red);animation:pulse 2s infinite}
+    .cov-none{background:var(--border);color:var(--muted)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+    .cov-labels{display:flex;gap:2px;margin-top:2px}
+    .cov-label{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted)}
+
+    /* Legend */
+    .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin:12px 0;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+    .legend-item{display:flex;align-items:center;gap:5px}
+    .legend-dot{width:14px;height:14px;border-radius:3px;border:1px solid var(--border)}
+
+    /* Calendar grid */
+    .staff-cal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+    .staff-cal-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .cal-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text)}
+    .cal-nav{display:flex;align-items:center;gap:12px}
+    .cal-nav button{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);transition:all .15s}
+    .cal-nav button:hover{background:var(--bg);border-color:var(--sage)}
+
+    .staff-grid{padding:16px 20px}
+    .staff-section{margin-bottom:20px}
+    .staff-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .staff-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+    .badge-on{background:rgba(5,150,105,.08);color:var(--green)}
+    .badge-off{background:rgba(168,162,158,.08);color:var(--muted)}
+    .badge-leave{background:rgba(217,119,6,.08);color:var(--amber)}
+
+    .day-row{display:flex;gap:2px;margin-bottom:2px}
+    .day-header-row .dh{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--muted);padding:4px 0}
+
+    .day-cell{flex:1;min-height:38px;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:11px;font-weight:600;transition:all .15s;position:relative;user-select:none}
+    .day-cell:hover{transform:scale(1.05);z-index:1;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .day-cell .day-num{font-size:12px;font-weight:700}
+    .day-cell .day-tag{font-family:'JetBrains Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+    .day-cell.outside{opacity:.25;pointer-events:none}
+    .day-cell.dc-work{background:var(--sage-light);color:var(--sage-dark)}
+    .day-cell.dc-off{background:#f0eeeb;color:var(--muted)}
+    .day-cell.dc-leave{background:#fef3c7;color:var(--amber)}
+    .day-cell.dc-sunday-off{background:#dbeafe;color:var(--blue)}
+    .day-cell.dc-sunday-work{background:#86efac;color:var(--sage-dark)}
+    .day-cell.dc-sunday-work .day-tag{color:var(--sage-dark)}
+
+    /* Stats panel */
+    .stats-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:20px 0}
+    .staff-stats{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px}
+    .staff-stats h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px}
+    .stat-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+    .stat-row:last-child{border:none}
+    .stat-row .label{color:var(--muted)}
+    .stat-row .val{font-weight:600;color:var(--text)}
+    .stat-row .val.warn{color:var(--amber)}
+    .stat-row .val.danger{color:var(--red)}
+
+    /* Settings */
+    .settings{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:20px 0}
+    .settings h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px}
+    .settings-row{display:flex;gap:16px;align-items:end;flex-wrap:wrap}
+    .settings-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .settings-field input{padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+    .settings-field input:focus{border-color:var(--sage)}
+    .btn{padding:10px 20px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all .15s}
+    .btn-primary{background:var(--sage);color:#fff}.btn-primary:hover{background:var(--sage-dark)}
+    .btn-secondary{background:var(--bg);border:1px solid var(--border);color:var(--text2)}.btn-secondary:hover{border-color:var(--sage)}
+    .btn-danger{background:none;border:1px solid var(--red);color:var(--red);font-size:10px;padding:8px 14px}.btn-danger:hover{background:var(--red);color:#fff}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:40px}
+    footer a{color:var(--sage)}
+    @media(max-width:768px){.stats-panel{grid-template-columns:1fr}.settings-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="/preview/luthuli/lodge.html" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
+    <nav>
+      <a href="/preview/luthuli/lodge.html">Dashboard</a>
+      <a href="/preview/luthuli/bookings.html">Bookings</a>
+      <a href="#" class="active">Staff</a>
+      <a href="/preview/luthuli/rooms.html">Rooms</a>
+      <a href="/preview/luthuli/offgrid.html">Off-Grid</a>
+      <a href="/preview/luthuli/">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:24px">
+  <h1>Staff Rotation</h1>
+  <div class="sub">Housekeeper schedule — 21 days on, 7 days off rotation. Click any day to override.</div>
+
+  <!-- Coverage bar -->
+  <div class="coverage-bar">
+    <h3>Coverage status <span id="coverage-month" style="font-weight:400;color:var(--muted);font-size:12px"></span></h3>
+    <div class="cov-row" id="cov-row"></div>
+    <div class="cov-labels" id="cov-labels"></div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot" style="background:var(--sage-light)"></span> Working</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#f0eeeb"></span> Rotation off</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#fef3c7"></span> Annual leave</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#dbeafe"></span> Sunday off (no guests)</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#86efac"></span> Sunday working (guests in camp)</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span> Coverage gap</span>
+  </div>
+
+  <!-- Calendar -->
+  <div class="staff-cal">
+    <div class="staff-cal-head">
+      <div class="cal-nav">
+        <button onclick="navMonth(-1)">&larr; Prev</button>
+        <span class="cal-title" id="cal-title"></span>
+        <button onclick="navMonth(1)">Next &rarr;</button>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)">Click day to cycle: Work &rarr; Off &rarr; Leave</div>
+    </div>
+    <div class="staff-grid" id="staff-grid"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-panel" id="stats-panel"></div>
+
+  <!-- Settings -->
+  <div class="settings">
+    <h3>Rotation settings</h3>
+    <div class="settings-row">
+      <div class="settings-field">
+        <label>Nomsa rotation start date</label>
+        <input type="date" id="s-nomsa-start" onchange="updateStartDate(0, this.value)">
+      </div>
+      <div class="settings-field">
+        <label>Thandiwe rotation start date</label>
+        <input type="date" id="s-thandiwe-start" onchange="updateStartDate(1, this.value)">
+      </div>
+      <button class="btn btn-primary" onclick="resetAll()">Regenerate schedule</button>
+      <button class="btn btn-danger" onclick="clearOverrides()">Clear overrides</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="container">Luthuli Lodge &middot; Mkuzi Game Reserve &middot; <a href="/preview/luthuli/">Luthuli</a> &middot; <a href="https://2nth.ai">2nth.ai</a></div></footer>
+
+<script>
+// === CONFIG ===
+const STAFF_KEY = 'luthuli_staff';
+const BOOKINGS_KEY = 'luthuli_bookings';
+const ROTATION_ON = 21;
+const ROTATION_OFF = 7;
+const ANNUAL_LEAVE_DAYS = 15;
+
+const STAFF = [
+  { name: 'Nomsa', id: 0 },
+  { name: 'Thandiwe', id: 1 }
+];
+
+let viewYear = 2026;
+let viewMonth = 3; // April (0-indexed)
+let staffData = null;
+
+// === DATA ===
+function loadData() {
+  const raw = localStorage.getItem(STAFF_KEY);
+  if (raw) { staffData = JSON.parse(raw); return; }
+  seedData();
+}
+
+function saveStaffData() { localStorage.setItem(STAFF_KEY, JSON.stringify(staffData)); }
+
+function seedData() {
+  // Nomsa starts her 21-on cycle on 1 March 2026
+  // Thandiwe starts her 21-on cycle on 22 March 2026 (when Nomsa goes off)
+  staffData = {
+    rotationStarts: ['2026-03-01', '2026-03-22'],
+    overrides: {} // key: "staffId-YYYY-MM-DD" => "work" | "off" | "leave"
+  };
+  saveStaffData();
+}
+
+function resetAll() {
+  staffData.overrides = {};
+  saveStaffData();
+  renderAll();
+}
+
+function clearOverrides() {
+  if (!confirm('Clear all manual overrides?')) return;
+  staffData.overrides = {};
+  saveStaffData();
+  renderAll();
+}
+
+function updateStartDate(staffIdx, val) {
+  staffData.rotationStarts[staffIdx] = val;
+  saveStaffData();
+  renderAll();
+}
+
+// === BOOKINGS INTEGRATION ===
+function getBookings() {
+  try {
+    return JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+  } catch { return []; }
+}
+
+function hasGuestsOnDate(dateStr) {
+  const bookings = getBookings();
+  const d = new Date(dateStr);
+  return bookings.some(b => {
+    if (b.source === 'Owner') return false; // owner stays don't count
+    const a = new Date(b.arrive), dep = new Date(b.depart);
+    return d >= a && d < dep;
+  });
+}
+
+// === SCHEDULE COMPUTATION ===
+function getRotationStatus(staffIdx, dateStr) {
+  // Check override first
+  const key = staffIdx + '-' + dateStr;
+  if (staffData.overrides[key]) return staffData.overrides[key];
+
+  const startDate = new Date(staffData.rotationStarts[staffIdx]);
+  const d = new Date(dateStr);
+  const diffDays = Math.floor((d - startDate) / 86400000);
+  const cycleDay = ((diffDays % (ROTATION_ON + ROTATION_OFF)) + (ROTATION_ON + ROTATION_OFF)) % (ROTATION_ON + ROTATION_OFF);
+
+  if (cycleDay < ROTATION_ON) {
+    // On duty, but check if Sunday with no guests
+    if (d.getDay() === 0 && !hasGuestsOnDate(dateStr)) return 'sunday-off';
+    if (d.getDay() === 0 && hasGuestsOnDate(dateStr)) return 'sunday-work';
+    return 'work';
+  } else {
+    return 'off';
+  }
+}
+
+function toggleDay(staffIdx, dateStr) {
+  const key = staffIdx + '-' + dateStr;
+  const current = staffData.overrides[key] || null;
+  if (!current) {
+    // First click: set to opposite of auto
+    const auto = getRotationStatus(staffIdx, dateStr);
+    if (auto === 'work' || auto === 'sunday-work' || auto === 'sunday-off') {
+      staffData.overrides[key] = 'off';
+    } else {
+      staffData.overrides[key] = 'work';
+    }
+  } else if (current === 'work') {
+    staffData.overrides[key] = 'off';
+  } else if (current === 'off') {
+    staffData.overrides[key] = 'leave';
+  } else {
+    // leave -> clear override
+    delete staffData.overrides[key];
+  }
+  saveStaffData();
+  renderAll();
+}
+
+function isWorking(staffIdx, dateStr) {
+  const s = getRotationStatus(staffIdx, dateStr);
+  return s === 'work' || s === 'sunday-work';
+}
+
+// === RENDER ===
+function renderAll() {
+  renderCalendar();
+  renderCoverage();
+  renderStats();
+  renderSettings();
+}
+
+function navMonth(delta) {
+  viewMonth += delta;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  renderAll();
+}
+
+function renderCalendar() {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-title').textContent = `${monthNames[viewMonth]} ${viewYear}`;
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+  const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+
+  let html = '';
+  STAFF.forEach((staff, sIdx) => {
+    const status = getRotationStatus(sIdx, new Date(viewYear, viewMonth, 15).toISOString().slice(0, 10));
+    let badgeCls = 'badge-on', badgeText = 'ON DUTY';
+    if (status === 'off') { badgeCls = 'badge-off'; badgeText = 'OFF'; }
+    if (status === 'leave') { badgeCls = 'badge-leave'; badgeText = 'LEAVE'; }
+
+    html += `<div class="staff-section">`;
+    html += `<div class="staff-name">${staff.name} <span class="staff-badge ${badgeCls}">${badgeText}</span></div>`;
+
+    // Day headers
+    html += '<div class="day-row day-header-row"><div class="dh">Mon</div><div class="dh">Tue</div><div class="dh">Wed</div><div class="dh">Thu</div><div class="dh">Fri</div><div class="dh">Sat</div><div class="dh">Sun</div></div>';
+
+    // Day cells
+    for (let i = 0; i < totalCells; i += 7) {
+      html += '<div class="day-row">';
+      for (let j = 0; j < 7; j++) {
+        const ci = i + j;
+        let day, isOutside = false, dateStr = '';
+        if (ci < startOffset) { day = prevMonthDays - startOffset + ci + 1; isOutside = true; }
+        else if (ci >= startOffset + daysInMonth) { day = ci - startOffset - daysInMonth + 1; isOutside = true; }
+        else {
+          day = ci - startOffset + 1;
+          dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        if (isOutside) {
+          html += `<div class="day-cell outside"><div class="day-num">${day}</div></div>`;
+          continue;
+        }
+
+        const st = getRotationStatus(sIdx, dateStr);
+        let cls = 'dc-work', tag = 'ON';
+        if (st === 'off') { cls = 'dc-off'; tag = 'OFF'; }
+        else if (st === 'leave') { cls = 'dc-leave'; tag = 'LEAVE'; }
+        else if (st === 'sunday-off') { cls = 'dc-sunday-off'; tag = 'SUN OFF'; }
+        else if (st === 'sunday-work') { cls = 'dc-sunday-work'; tag = 'SUN+G'; }
+
+        const isOverride = staffData.overrides[sIdx + '-' + dateStr] ? ' *' : '';
+        html += `<div class="day-cell ${cls}" onclick="toggleDay(${sIdx},'${dateStr}')" title="${staff.name}: ${st}${isOverride ? ' (override)' : ''}"><div class="day-num">${day}</div><div class="day-tag">${tag}${isOverride}</div></div>`;
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+
+  document.getElementById('staff-grid').innerHTML = html;
+}
+
+function renderCoverage() {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('coverage-month').textContent = `- ${monthNames[viewMonth]} ${viewYear}`;
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  let covHtml = '', labelHtml = '';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const w0 = isWorking(0, dateStr);
+    const w1 = isWorking(1, dateStr);
+    const count = (w0 ? 1 : 0) + (w1 ? 1 : 0);
+    let cls = 'cov-none', label = '0';
+    if (count === 2) { cls = 'cov-ok'; label = '2'; }
+    else if (count === 1) { cls = 'cov-one'; label = '1'; }
+    else { cls = 'cov-gap'; label = '!'; }
+    covHtml += `<div class="cov-cell ${cls}" title="Day ${d}: ${count} staff">${label}</div>`;
+    labelHtml += `<div class="cov-label">${d}</div>`;
+  }
+
+  document.getElementById('cov-row').innerHTML = covHtml;
+  document.getElementById('cov-labels').innerHTML = labelHtml;
+}
+
+function renderStats() {
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  let html = '';
+
+  STAFF.forEach((staff, sIdx) => {
+    let monthWork = 0, monthOff = 0, monthLeave = 0, yearWork = 0, yearLeave = 0;
+
+    // Monthly stats
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const st = getRotationStatus(sIdx, dateStr);
+      if (st === 'work' || st === 'sunday-work') monthWork++;
+      else if (st === 'leave') monthLeave++;
+      else monthOff++;
+    }
+
+    // Yearly stats
+    for (let m = 0; m < 12; m++) {
+      const dim = new Date(viewYear, m + 1, 0).getDate();
+      for (let d = 1; d <= dim; d++) {
+        const ds = `${viewYear}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const st = getRotationStatus(sIdx, ds);
+        if (st === 'work' || st === 'sunday-work') yearWork++;
+        if (st === 'leave') yearLeave++;
+      }
+    }
+
+    const leaveRemaining = ANNUAL_LEAVE_DAYS - yearLeave;
+    const leaveClass = leaveRemaining <= 0 ? 'danger' : leaveRemaining <= 5 ? 'warn' : '';
+
+    // Next rotation change
+    let nextChange = '';
+    const today = new Date(viewYear, viewMonth, 1);
+    for (let i = 0; i < 60; i++) {
+      const dd = new Date(today);
+      dd.setDate(dd.getDate() + i);
+      const ds = dd.toISOString().slice(0, 10);
+      const dsNext = new Date(dd);
+      dsNext.setDate(dsNext.getDate() + 1);
+      const dsNextStr = dsNext.toISOString().slice(0, 10);
+      const cur = isWorking(sIdx, ds);
+      const next = isWorking(sIdx, dsNextStr);
+      if (cur !== next) {
+        nextChange = dsNextStr;
+        break;
+      }
+    }
+
+    html += `<div class="staff-stats">
+      <h3>${staff.name}</h3>
+      <div class="stat-row"><span class="label">Days worked (this month)</span><span class="val">${monthWork}</span></div>
+      <div class="stat-row"><span class="label">Days off (this month)</span><span class="val">${monthOff}</span></div>
+      <div class="stat-row"><span class="label">Leave days (this month)</span><span class="val">${monthLeave}</span></div>
+      <div class="stat-row"><span class="label">Days worked (${viewYear})</span><span class="val">${yearWork}</span></div>
+      <div class="stat-row"><span class="label">Leave used (${viewYear})</span><span class="val">${yearLeave} / ${ANNUAL_LEAVE_DAYS}</span></div>
+      <div class="stat-row"><span class="label">Leave remaining</span><span class="val ${leaveClass}">${leaveRemaining}</span></div>
+      <div class="stat-row"><span class="label">Next rotation change</span><span class="val">${nextChange ? new Date(nextChange).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' }) : 'N/A'}</span></div>
+    </div>`;
+  });
+
+  document.getElementById('stats-panel').innerHTML = html;
+}
+
+function renderSettings() {
+  document.getElementById('s-nomsa-start').value = staffData.rotationStarts[0];
+  document.getElementById('s-thandiwe-start').value = staffData.rotationStarts[1];
+}
+
+// Init
+loadData();
+renderAll();
+</script>
+</body>
+</html>

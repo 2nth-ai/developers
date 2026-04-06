@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Management — Luthuli Lodge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--earth:#6b5c4d;--earth-light:#d4c8b8;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--sage-dark:#3a5a3c;--sand:#c4b59a;--stone:#8a8075;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb;--purple:#7c3aed}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ── */
+.app-header{background:var(--earth-dark);padding:0 20px;color:#faf9f6;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0;z-index:100}
+.brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+.brand-sub{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:rgba(250,249,246,.5);margin-left:4px}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-user{font-size:12px;font-weight:500;color:rgba(250,249,246,.8)}
+.role-badge{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:1px;background:rgba(90,122,92,.3);color:var(--sage-light)}
+.mobile-toggle{display:none;background:none;border:1px solid rgba(250,249,246,.3);border-radius:6px;padding:4px 10px;color:#faf9f6;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.mobile-toggle:hover{border-color:rgba(250,249,246,.6)}
+
+/* ── LAYOUT ── */
+.app-body{display:flex;height:calc(100% - 52px);max-width:1200px;margin:0 auto;overflow:hidden}
+
+/* ── CHAT PANEL ── */
+.chat-panel{width:380px;min-width:380px;display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg2)}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.chat-header-left h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);margin:0}
+.chat-header-left .chat-sub{font-size:11px;color:var(--muted)}
+.chat-actions{display:flex;gap:6px}
+.chat-action{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.5px;text-transform:uppercase;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);cursor:pointer;text-decoration:none;transition:all .12s}
+.chat-action:hover{border-color:var(--sage);color:var(--sage);text-decoration:none}
+.chat-area{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:3px;background:var(--bg)}
+.chat-area::-webkit-scrollbar{width:5px}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:3px}
+
+/* Bubbles */
+.msg-row{display:flex;margin-bottom:2px;animation:fadeInUp .2s ease-out}
+.msg-row.agent{justify-content:flex-start}
+.msg-row.user{justify-content:flex-end}
+.bubble{max-width:85%;padding:8px 12px;border-radius:10px;font-size:13.5px;line-height:1.45;word-wrap:break-word;position:relative}
+.msg-row.agent .bubble{background:#f5f0eb;color:var(--text);border-top-left-radius:2px}
+.msg-row.user .bubble{background:var(--earth-dark);color:#faf9f6;border-top-right-radius:2px}
+.bubble-time{font-size:10px;color:var(--muted);margin-top:4px;display:block;text-align:right}
+.msg-row.user .bubble-time{color:rgba(250,249,246,.5)}
+.msg-row.agent + .msg-row.agent .bubble{border-top-left-radius:10px}
+.msg-row.user + .msg-row.user .bubble{border-top-right-radius:10px}
+
+/* Typing */
+.typing-row{display:flex;justify-content:flex-start;margin-bottom:2px}
+.typing-bubble{background:#f5f0eb;padding:10px 16px;border-radius:10px;border-top-left-radius:2px;display:flex;gap:4px;align-items:center}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:typingBounce 1.4s infinite ease-in-out}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Input bar */
+.input-bar{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;background:var(--bg2)}
+.input-field{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:none;max-height:100px;overflow-y:auto;line-height:1.4;color:var(--text);background:var(--bg)}
+.input-field:focus{border-color:var(--sage)}
+.input-field::placeholder{color:var(--muted)}
+.send-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--sage);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.send-btn:hover{background:var(--sage-dark)}
+.send-btn:active{transform:scale(.93)}
+.send-btn svg{width:16px;height:16px;fill:#fff}
+
+/* ── DASHBOARD PANEL ── */
+.dash-panel{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+.dash-panel::-webkit-scrollbar{width:5px}
+.dash-panel::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
+
+/* Status bar */
+.status-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sb-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);font-weight:500}
+.sb-divider{width:1px;height:20px;background:var(--border)}
+.sb-staff{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.staff-dot{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green)}.dot-amber{background:var(--amber)}.dot-red{background:var(--red)}.dot-gray{background:var(--muted)}
+.sb-guests{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.sb-alerts{margin-left:auto;display:flex;gap:6px}
+.alert-badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:.5px}
+.alert-leave{background:rgba(217,119,6,.1);color:var(--amber)}
+.alert-booking{background:rgba(37,99,235,.08);color:var(--blue)}
+
+/* Quick stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.stat-val{font-size:22px;font-weight:700;color:var(--text)}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.stat-loading{color:var(--muted);font-size:14px}
+
+/* Section headers */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.sec-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text)}
+.sec-action{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:1px;cursor:pointer;text-decoration:none}
+.sec-action:hover{color:var(--sage-dark)}
+
+/* Calendar */
+.cal-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.cal-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cal-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text)}
+.cal-nav{display:flex;align-items:center;gap:8px}
+.cal-nav button{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);transition:all .15s}
+.cal-nav button:hover{background:var(--bg);border-color:var(--sage)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day-head{padding:6px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border)}
+.cal-cell{padding:4px 3px;min-height:52px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-size:10px;position:relative}
+.cal-cell:nth-child(7n){border-right:none}
+.cal-num{font-weight:600;color:var(--text);font-size:11px;margin-bottom:2px}
+.cal-cell.outside .cal-num{color:var(--muted)}
+.cal-cell.today{background:rgba(5,150,105,.04)}
+.cal-booking{font-family:'JetBrains Mono',monospace;font-size:7px;padding:1px 3px;border-radius:2px;margin-bottom:1px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;letter-spacing:.3px}
+.cal-booking:hover{opacity:.75}
+.cb-owner{background:rgba(90,122,92,.15);color:var(--sage-dark)}
+.cb-direct{background:rgba(37,99,235,.1);color:var(--blue)}
+.cb-ph{background:rgba(124,58,237,.1);color:var(--purple)}
+.cb-pending{background:rgba(217,119,6,.1);color:var(--amber)}
+.cal-legend{padding:8px 16px;display:flex;gap:14px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+.cal-legend-item{display:flex;align-items:center;gap:4px}
+.cal-legend-dot{width:10px;height:10px;border-radius:2px}
+
+/* Revenue */
+.rev-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.rev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px}
+.rev-item{text-align:center}
+.rev-val{font-size:18px;font-weight:700;color:var(--text)}
+.rev-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.rev-bar-wrap{margin-top:12px;display:flex;gap:4px;height:20px;border-radius:4px;overflow:hidden}
+.rev-bar-seg{height:100%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;color:#fff;min-width:24px}
+
+/* Staff schedule */
+.staff-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.staff-section{margin-bottom:14px}
+.staff-section:last-child{margin-bottom:0}
+.staff-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.staff-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--text)}
+.staff-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.badge-on{background:rgba(5,150,105,.08);color:var(--green)}
+.badge-off{background:rgba(168,162,158,.08);color:var(--muted)}
+.badge-leave{background:rgba(217,119,6,.08);color:var(--amber)}
+.sched-row{display:flex;gap:2px;margin-bottom:4px}
+.sched-day-head{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--muted);letter-spacing:.5px}
+.sched-cell{flex:1;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;cursor:default}
+.sc-work{background:var(--sage-light);color:var(--sage-dark)}
+.sc-off{background:#f0eeeb;color:var(--muted)}
+.sc-leave{background:#fef3c7;color:var(--amber)}
+.coverage-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.coverage-label{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.coverage-bar{display:flex;gap:2px}
+.cov-cell{flex:1;height:14px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
+.cov-ok{background:var(--sage)}
+.cov-one{background:var(--sand);color:var(--earth-dark)}
+.cov-gap{background:var(--red);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* Leave requests */
+.leave-req{margin-top:10px;padding:10px;background:rgba(217,119,6,.04);border:1px solid rgba(217,119,6,.15);border-radius:8px}
+.leave-req-title{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--amber);font-weight:700;margin-bottom:6px}
+.leave-req-item{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:4px 0}
+.leave-req-info{color:var(--text2)}
+.leave-req-actions{display:flex;gap:4px}
+.btn-approve,.btn-deny{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:3px 10px;border-radius:4px;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s}
+.btn-approve{background:var(--sage);color:#fff}.btn-approve:hover{background:var(--sage-dark)}
+.btn-deny{background:var(--border);color:var(--text2)}.btn-deny:hover{background:#d6d3d1}
+
+/* Activity feed */
+.feed-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.feed-item{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;align-items:flex-start}
+.feed-item:last-child{border:none}
+.feed-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);width:48px;flex-shrink:0;padding-top:1px}
+.feed-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.feed-text{color:var(--text2);flex:1}
+.feed-text strong{color:var(--text);font-weight:600}
+
+/* Placeholder / loading */
+.placeholder{color:var(--muted);font-size:12px;text-align:center;padding:24px 16px;font-style:italic}
+
+/* ── TOAST ── */
+.toast-overlay{position:fixed;top:60px;right:20px;z-index:9999;pointer-events:none}
+.toast{background:rgba(40,40,40,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.25);transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);pointer-events:auto;max-width:340px;font-size:13px}
+.toast.show{transform:translateX(0)}
+.toast-icon{width:28px;height:28px;border-radius:6px;background:var(--sage);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+
+/* ── BOOKING DETAIL MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal-card{background:var(--bg2);border-radius:12px;padding:24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:scale(.95);transition:transform .2s}
+.modal-overlay.active .modal-card{transform:scale(1)}
+.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:12px}
+.modal-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.modal-row:last-child{border:none}
+.modal-row .label{color:var(--muted)}
+.modal-row .val{color:var(--text);font-weight:500}
+
+/* ── SUGGESTION CHIPS ── */
+.chips { display:flex; flex-wrap:wrap; gap:6px; padding:8px 12px; }
+.chip { font-family:'JetBrains Mono',monospace; font-size:10px; padding:5px 12px; border-radius:14px; border:1px solid rgba(90,122,92,.3); background:transparent; color:#5a7a5c; cursor:pointer; }
+.chip:hover { background:rgba(90,122,92,.08); }
+
+/* ── AGENT LINKS ── */
+.agent-links{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.al-label{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.al-row{display:flex;gap:10px}
+.al-card{flex:1;display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;text-decoration:none;transition:border-color .15s,background .15s}
+.al-card:hover{border-color:var(--sage);background:rgba(90,122,92,.03)}
+.al-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#faf9f6;flex-shrink:0}
+.al-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.2}
+.al-desc{font-size:10px;color:var(--muted);line-height:1.2;display:none}
+@media(min-width:769px){.al-card{flex-direction:column;text-align:center;padding:10px 6px}.al-desc{display:block;margin-top:2px}}
+
+/* ── MOBILE ── */
+.mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+.mobile-tabs-inner{display:flex}
+.mobile-tab{flex:1;padding:10px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);cursor:pointer;border:none;background:none;transition:color .15s}
+.mobile-tab.active{color:var(--sage)}
+.mobile-tab svg{display:block;margin:0 auto 3px;width:20px;height:20px}
+.mobile-tab.active svg{fill:var(--sage)}
+
+@media(max-width:768px){
+  .app-body{flex-direction:column}
+  .chat-panel{width:100%;min-width:0;border-right:none;flex:1}
+  .dash-panel{position:absolute;top:52px;left:0;right:0;bottom:48px;background:var(--bg);z-index:50;display:none}
+  .dash-panel.mobile-show{display:flex;flex-direction:column;overflow-y:auto}
+  .chat-panel.mobile-hide{display:none}
+  .mobile-tabs{display:block}
+  .mobile-toggle{display:inline-block}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .rev-grid{grid-template-columns:repeat(2,1fr)}
+  .status-bar{flex-direction:column;align-items:flex-start;gap:8px}
+  .sb-divider{display:none}
+  .sb-alerts{margin-left:0}
+  .app-body{padding-bottom:48px;position:relative}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div style="display:flex;align-items:center;gap:8px">
+    <a class="brand" href="lodge.html"><span class="brand-dot"></span>Luthuli Lodge</a>
+    <span class="brand-sub">Management</span>
+  </div>
+  <div class="header-right">
+    <span class="header-user" id="headerUser"></span>
+    <span class="role-badge" id="headerRole" style="display:none"></span>
+    <button class="mobile-toggle" id="mobileToggle" style="display:none">Dashboard</button>
+  </div>
+</header>
+
+<!-- BODY -->
+<div class="app-body" id="appBody">
+  <!-- CHAT PANEL -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <h2>Lodge Assistant</h2>
+        <div class="chat-sub" id="chatStatus">Ready</div>
+      </div>
+      <div class="chat-actions">
+        <button class="chat-action" onclick="clearChat()" title="Clear conversation">Clear</button>
+        <button class="chat-action" onclick="refreshChat()" title="Restart session">Restart</button>
+      </div>
+    </div>
+    <div class="chat-area" id="chatArea"></div>
+    <div class="input-bar">
+      <textarea class="input-field" id="inputField" rows="1" placeholder="Type a message..."></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PANEL -->
+  <div class="dash-panel" id="dashPanel">
+
+    <!-- Agent Links -->
+    <div class="agent-links">
+      <div class="al-label">Agent Links</div>
+      <div class="al-row">
+        <a href="/preview/luthuli/chat/guest.html" target="_blank" class="al-card">
+          <span class="al-icon" style="background:#075e54">G</span>
+          <span class="al-name">Guest Agent</span>
+          <span class="al-desc">Share with guests for bookings</span>
+        </a>
+        <a href="/preview/luthuli/chat/staff.html" target="_blank" class="al-card">
+          <span class="al-icon" style="background:#007aff">S</span>
+          <span class="al-name">Staff Agent</span>
+          <span class="al-desc">Share with Nomsa &amp; Thandiwe</span>
+        </a>
+        <a href="/preview/luthuli/manage.html" target="_blank" class="al-card">
+          <span class="al-icon" style="background:#3d3229">M</span>
+          <span class="al-name">Manager</span>
+          <span class="al-desc">This dashboard</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+      <span class="sb-date" id="sbDate">--</span>
+      <span class="sb-divider"></span>
+      <span class="sb-staff" id="sbStaff">Staff: loading...</span>
+      <span class="sb-divider"></span>
+      <span class="sb-guests" id="sbGuests">Guests: --</span>
+      <div class="sb-alerts" id="sbAlerts"></div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-val stat-loading" id="statOcc">--</div><div class="stat-label">Occupancy %</div></div>
+      <div class="stat-card"><div class="stat-val stat-loading" id="statRevRoom">--</div><div class="stat-label">Room Revenue</div></div>
+      <div class="stat-card"><div class="stat-val stat-loading" id="statLevy">--</div><div class="stat-label">Conservation Levy</div></div>
+      <div class="stat-card"><div class="stat-val stat-loading" id="statNet">--</div><div class="stat-label">Net Revenue</div></div>
+    </div>
+
+    <!-- Bookings Calendar -->
+    <div>
+      <div class="sec-head"><span class="sec-title">Bookings</span><span class="sec-action" id="calToday">Today</span></div>
+      <div class="cal-card">
+        <div class="cal-head">
+          <span class="cal-title" id="calMonthLabel">--</span>
+          <div class="cal-nav">
+            <button id="calPrev">&larr; Prev</button>
+            <button id="calNext">Next &rarr;</button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(90,122,92,.3)"></span>Owner</span>
+          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(37,99,235,.2)"></span>Direct</span>
+          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(124,58,237,.2)"></span>PH</span>
+          <span class="cal-legend-item"><span class="cal-legend-dot" style="background:rgba(217,119,6,.2)"></span>Pending</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Breakdown -->
+    <div>
+      <div class="sec-head"><span class="sec-title">Revenue</span></div>
+      <div class="rev-card" id="revCard">
+        <div class="rev-grid" id="revGrid">
+          <div class="rev-item"><div class="rev-val" id="revDirect">--</div><div class="rev-label">Direct Revenue</div></div>
+          <div class="rev-item"><div class="rev-val" id="revPH">--</div><div class="rev-label">PH Revenue</div></div>
+          <div class="rev-item"><div class="rev-val" id="revComm">--</div><div class="rev-label">PH Commission</div></div>
+          <div class="rev-item"><div class="rev-val" id="revLevyTotal">--</div><div class="rev-label">Levy Total</div></div>
+        </div>
+        <div class="rev-bar-wrap" id="revBar"></div>
+      </div>
+    </div>
+
+    <!-- Staff Schedule -->
+    <div>
+      <div class="sec-head"><span class="sec-title">Staff Schedule</span><a class="sec-action" href="staff.html">Full View</a></div>
+      <div class="staff-card" id="staffCard">
+        <div class="placeholder">Loading staff schedule...</div>
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div>
+      <div class="sec-head"><span class="sec-title">Activity</span></div>
+      <div class="feed-card" id="feedCard">
+        <div class="placeholder">Loading activity...</div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- MOBILE TABS -->
+<div class="mobile-tabs" id="mobileTabs">
+  <div class="mobile-tabs-inner">
+    <button class="mobile-tab active" id="tabChat">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+      Chat
+    </button>
+    <button class="mobile-tab" id="tabDash">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </button>
+  </div>
+</div>
+
+<!-- BOOKING DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-title" id="modalTitle">Booking Details</div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-overlay" id="toastOverlay">
+  <div class="toast" id="toast">
+    <div class="toast-icon">&#x2709;</div>
+    <span id="toastText"></span>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Constants ──
+  const TOKEN_KEY = 'luthuli_mgr_token';
+  const HISTORY_KEY = 'luthuli_mgr_chat';
+  const STATE_KEY = 'luthuli_mgr_auth';
+  const KNOWN_USERS = {
+    'craig@b2bs.co.za': { name: 'Craig', role: 'Admin' },
+    'guy@rumf.co.za': { name: 'Guy', role: 'Owner' },
+    'lisajane@rumf.co.za': { name: 'Lisa-Jane', role: 'Manager' }
+  };
+
+  // ── State ──
+  let sessionToken = localStorage.getItem(TOKEN_KEY) || null;
+  let authState = localStorage.getItem(STATE_KEY) || 'init';
+  let currentUser = null;
+  let messages = [];
+  let calYear, calMonth; // for calendar nav
+  let dashboardData = {};
+
+  // ── DOM ──
+  const chatArea = document.getElementById('chatArea');
+  const inputField = document.getElementById('inputField');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatStatus = document.getElementById('chatStatus');
+  const headerUser = document.getElementById('headerUser');
+  const headerRole = document.getElementById('headerRole');
+
+  // ── Helpers ──
+  function timeStr() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  function todayStr() {
+    return new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function fmtZAR(n) {
+    if (n == null) return '--';
+    return 'R ' + Number(n).toLocaleString('en-ZA');
+  }
+  function scrollToBottom() {
+    requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; });
+  }
+
+  // ── Chat rendering ──
+  function addMessage(role, text, opts = {}) {
+    const time = opts.time || timeStr();
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + role;
+    let html = '<div class="bubble">';
+    html += '<span class="bubble-text">' + formatText(text) + '</span>';
+    html += '<span class="bubble-time">' + time + '</span>';
+    html += '</div>';
+    row.innerHTML = html;
+    chatArea.appendChild(row);
+    if (!opts.noSave) {
+      messages.push({ role, text, time });
+      saveHistory();
+    }
+    scrollToBottom();
+  }
+
+  function formatText(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>')
+      .replace(/\*(.+?)\*/g, '<strong>$1</strong>');
+  }
+
+  // ── Suggestion chips ──
+  let chipsEl = null;
+
+  function showChips(chipTexts) {
+    removeChips();
+    const row = document.createElement('div');
+    row.className = 'chips';
+    chipTexts.forEach(text => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = text;
+      btn.addEventListener('click', () => {
+        removeChips();
+        inputField.value = text;
+        doSend();
+      });
+      row.appendChild(btn);
+    });
+    chipsEl = row;
+    chatArea.appendChild(row);
+    scrollToBottom();
+  }
+
+  function removeChips() {
+    if (chipsEl) { chipsEl.remove(); chipsEl = null; }
+  }
+
+  let typingEl = null;
+  function showTyping() {
+    if (typingEl) return;
+    chatStatus.textContent = 'typing...';
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing-row';
+    typingEl.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    chatArea.appendChild(typingEl);
+    scrollToBottom();
+  }
+  function hideTyping() {
+    chatStatus.textContent = 'Online';
+    if (typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  function showToast(text) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastText').textContent = text;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 5000);
+  }
+
+  function saveHistory() {
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(messages)); } catch(e) {}
+  }
+
+  // ── API helpers ──
+  async function postJSON(url, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (sessionToken) headers['Authorization'] = 'Bearer ' + sessionToken;
+    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error('API ' + res.status);
+    return await res.json();
+  }
+
+  // Client-side fallback when API is not available (demo mode)
+  function clientFallback(msg, channel) {
+    const m = msg.toLowerCase();
+
+    // Manager intents
+    if (channel === 'manager') {
+      if (/occupancy|how full|capacity/.test(m)) return { reply: '**April 2026 Occupancy:**\n\n- 18 pavilion-nights booked out of 90 available\n- **20% occupancy**\n- 5 bookings (3 direct, 1 Perfect Hideaways, 1 owner)\n\nWould you like to see the bookings detail or revenue breakdown?' };
+      if (/revenue|income|earned|turnover/.test(m)) return { reply: '**Revenue — April 2026:**\n\n- Room revenue: R51,700\n- Conservation levy: R12,960\n- PH commission (20%): -R2,520\n- **Net revenue: R49,180**\n- Total collected: R64,660' };
+      if (/commission|perfect hideaway|PH/.test(m)) return { reply: '**PH Commission — April:**\n\n- Ndlovu & Party: 3 nights x R4,200 = R12,600 → commission R2,520\n\n**Total PH commission: R2,520**' };
+      if (/who.*work|staff.*today|on duty|working/.test(m)) return { reply: '**Staff Status Today:**\n\n- **Nomsa** (housekeeper): ON — day 6 of 21-day cycle\n- **Thandiwe** (housekeeper): OFF — day 3 of 7-day break\n\nGuests in camp: Yes (Hamlin family, 4 guests)' };
+      if (/pending.*leave|leave.*request/.test(m)) return { reply: 'No pending leave requests at this time.' };
+      if (/booking|upcoming|next guest/.test(m)) return { reply: '**Bookings — April 2026:**\n\n- **Hamlin Family** | 2–8 Apr (6n) | River Pavilion | Owner | — | Confirmed\n- **Van der Merwe** | 6–10 Apr (4n) | Bush Pavilion | Direct | R11,200 | Confirmed\n- **Ndlovu & Party** | 12–15 Apr (3n) | Sunset Pavilion | PH | R12,600 | Confirmed\n- **Thompson** | 18–21 Apr (3n) | Bush Pavilion | Direct | R8,400 | Pending\n- **Birding SA** | 25–28 Apr (3n) | River Pavilion | Direct | R19,500 | Confirmed' };
+      if (/add.*book|new.*book|book.*family|leppan/.test(m)) return { reply: '**New Booking — let\'s set it up:**\n\nI\'ve noted:\n- **Guest:** Leppan Family (Craig, Caro, Koo & Emma)\n- **Period:** Last weekend of August (28–31 Aug)\n- **Pavilion:** Full Lodge (all pavilions)\n- **Source:** Owner/Direct\n- **Guests:** 2 adults, 2 children\n\nShall I confirm this booking? The conservation levy would be R180 × 4 guests × 3 nights = **R2,160**.' };
+      if (/hi|hello|hey|morning|afternoon/.test(m)) return { reply: 'Welcome! I\'m your Luthuli management assistant. I can help with:\n\n- **Occupancy** — how full is the lodge\n- **Revenue** — income and commissions\n- **Staff** — who\'s working, leave approvals\n- **Bookings** — view, create, modify\n- **Systems** — solar, water, off-grid status\n\nWhat would you like to know?' };
+      if (/schedule|roster|rotation/.test(m)) return { reply: '**Staff Schedule — Next 14 Days:**\n\nNomsa: ON until 21 Apr, then OFF 22–28 Apr\nThandiwe: OFF until 22 Mar cycle end, then ON from 22 Apr\n\nCoverage is maintained — when one is off, the other covers.\nSundays are off unless guests are in camp.' };
+      if (/solar|water|power|off.?grid|system/.test(m)) return { reply: '**Systems Status:**\n\n☀️ **Solar:** 94% battery, 6.2 kWh generated today, 3.2 kW current draw\n💧 **Water:** 6,800L (68%), ~24 days remaining at current rate\n🌡️ **Climate:** 24°C interior, 31°C outside, passive cooling\n⚡ **Power:** 3.2 kW / 5 kW capacity, 1.8 kW headroom\n\n⚠️ Water pump filter due for replacement (pressure low at 2.4 bar)' };
+    }
+
+    // Staff intents
+    if (channel === 'staff') {
+      if (/schedule|when.*work|shift|roster/.test(m)) return { reply: '**Your Schedule (next 7 days):**\n\n7 Apr: ON (work)\n8 Apr: ON (work)\n9 Apr: ON (work)\n10 Apr: ON (work)\n11 Apr: ON (work)\n12 Apr: ON (work)\n13 Apr: OFF (Sunday — no guests)\n\nYou\'re on day 7 of your 21-day cycle. Next break starts 22 Apr.' };
+      if (/who.*cover|who.*on/.test(m)) return { reply: '**Coverage Today:**\n\n- Nomsa: ON\n- Thandiwe: OFF (break day 3 of 7)\n\nYou have single coverage today.' };
+      if (/check.?in|arriving|guest/.test(m)) return { reply: '**Upcoming Check-ins:**\n\n- **Van der Merwe** arrives 6 Apr (2 adults) — Bush Pavilion\n- **Ndlovu & Party** arrives 12 Apr (4 adults) — Sunset Pavilion' };
+      if (/leave|day off|time off/.test(m)) return { reply: 'Sure, let\'s request time off. What start and end dates do you need? (e.g. 10-14 May)' };
+      if (/room.*ready|cleaned/.test(m)) return { reply: '✓ Room status logged. The manager has been notified. Thank you!' };
+    }
+
+    // Guest intents
+    if (/avail|dates|vacancy|free|open/.test(m)) return { reply: '**April 2026 Availability:**\n\nBooked:\n- River Pavilion: 2–8 Apr, 25–28 Apr\n- Bush Pavilion: 6–10 Apr, 18–21 Apr\n- Sunset Pavilion: 12–15 Apr\n\nPlenty of open dates! Would you like to make a booking?' };
+    if (/price|rate|cost|how much/.test(m)) return { reply: '**Rates:**\n\n- River Pavilion (sleeps 4): R2,800/night\n- Bush Pavilion (sleeps 2): R2,800/night\n- Sunset Pavilion (sleeps 6): R4,200/night\n\nConservation levy: R180/person/night\nPerfect Hideaways bookings: +20% platform fee\n\nWould you like to check availability?' };
+    if (/book|reserve/.test(m)) return { reply: 'Great, let\'s get you booked! What are your preferred dates? (e.g. 15-18 May)' };
+    if (/hi|hello|hey/.test(m)) return { reply: 'Welcome to Luthuli Lodge! I\'m your assistant. I can help with availability, bookings, pricing, or lodge info. What would you like to know?' };
+
+    return { reply: 'I can help with:\n- **Occupancy** & revenue\n- **Bookings** — view, create, modify\n- **Staff** schedules & leave\n- **Systems** — solar, water, off-grid\n\nJust ask me anything!' };
+  }
+  async function getJSON(url) {
+    const headers = {};
+    if (sessionToken) headers['Authorization'] = 'Bearer ' + sessionToken;
+    try {
+      const res = await fetch(url, { headers });
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // ── Auth flow ──
+  function setUser(email) {
+    const u = KNOWN_USERS[email.toLowerCase()];
+    if (u) {
+      currentUser = { email: email.toLowerCase(), ...u };
+      headerUser.textContent = u.name;
+      headerRole.textContent = u.role;
+      headerRole.style.display = '';
+    }
+  }
+
+  async function handleAuth(userText) {
+    const text = userText.trim();
+
+    if (authState === 'email_asked') {
+      addMessage('user', text);
+      showTyping();
+
+      const email = text.toLowerCase();
+      const known = KNOWN_USERS[email];
+
+      setTimeout(async () => {
+        if (!known) {
+          hideTyping();
+          addMessage('agent', "I don't recognise that email. Authorised emails are lodge manager or admin accounts. Please try again.");
+          return;
+        }
+
+        // Send OTP request
+        let res;
+        try {
+          res = await postJSON('/api/luthuli/auth', { identifier: email, channel: 'manager' });
+        } catch(e) {
+          res = { demo_code: String(Math.floor(100000 + Math.random() * 900000)) };
+        }
+
+        hideTyping();
+        setUser(email);
+        addMessage('agent', "I've sent a one-time code to *" + email + "*. Please enter the 6-digit code.");
+        authState = 'code_sent';
+        localStorage.setItem(STATE_KEY, authState);
+        localStorage.setItem('luthuli_mgr_email', email);
+
+        if (sessionToken || res.token) {
+          sessionToken = res.token || sessionToken;
+          localStorage.setItem(TOKEN_KEY, sessionToken);
+        }
+
+        // Demo toast with OTP
+        const otp = res.demo_code || res.otp || '847293';
+        setTimeout(() => showToast('Your Luthuli code: ' + otp), 600);
+      }, 600 + Math.random() * 400);
+
+      return true;
+    }
+
+    if (authState === 'code_sent') {
+      addMessage('user', text);
+      showTyping();
+
+      let res;
+      try {
+        res = await postJSON('/api/luthuli/verify', { identifier: localStorage.getItem('luthuli_mgr_email') || '', code: text.trim(), channel: 'manager' });
+      } catch(e) {
+        res = { success: true, user: { name: 'Admin', role: 'admin' } };
+      }
+
+      setTimeout(() => {
+        hideTyping();
+
+        if (res.token) {
+          sessionToken = res.token;
+          localStorage.setItem(TOKEN_KEY, sessionToken);
+        }
+
+        const email = localStorage.getItem('luthuli_mgr_email') || '';
+        setUser(email);
+        const name = currentUser ? currentUser.name : 'there';
+
+        addMessage('agent', "Welcome, " + name + "! You have full admin access. I can help with:\n\n* *Occupancy* and revenue reports\n* *Bookings* -- view, create, modify\n* *Staff* schedules and leave approvals\n* *Systems* status (solar, water, etc.)\n\nThe dashboard on the right shows live data. Ask me anything or use the panels directly.");
+
+        authState = 'verified';
+        localStorage.setItem(STATE_KEY, authState);
+
+        setTimeout(() => {
+          showChips(['Occupancy', 'Revenue', 'Bookings', 'Staff today', 'PH commission', 'Pending leave', 'Systems status', 'Add a booking']);
+        }, 300);
+
+        // Load dashboard
+        loadAllDashboard();
+      }, 600 + Math.random() * 400);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  // ── Chat send ──
+  async function sendMessage(text) {
+    if (!text.trim()) return;
+    removeChips();
+
+    if (authState !== 'verified') {
+      const handled = await handleAuth(text);
+      if (handled) return;
+    }
+
+    addMessage('user', text.trim());
+    showTyping();
+
+    let res;
+    try {
+      res = await postJSON('/api/luthuli/chat', { message: text.trim(), channel: 'manager' });
+    } catch(e) {
+      // API unavailable — use client-side fallback
+      res = clientFallback(text.trim(), 'manager');
+    }
+    const delay = 500 + Math.random() * 400;
+
+    setTimeout(() => {
+      hideTyping();
+      const msg = res.reply || res.message || res.text || "I'm not sure how to help with that. Could you rephrase your question?";
+      addMessage('agent', msg);
+
+      if (res.refresh) loadAllDashboard();
+    }, delay);
+  }
+
+  // ── Input handling ──
+  function autoResize() {
+    inputField.style.height = 'auto';
+    inputField.style.height = Math.min(inputField.scrollHeight, 100) + 'px';
+  }
+  inputField.addEventListener('input', autoResize);
+  inputField.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
+  });
+  sendBtn.addEventListener('click', doSend);
+
+  function doSend() {
+    const text = inputField.value;
+    if (!text.trim()) return;
+    inputField.value = '';
+    autoResize();
+    sendMessage(text);
+  }
+
+  // ── Clear / Restart ──
+  window.clearChat = function() {
+    chatArea.innerHTML = '';
+    removeChips();
+    addMessage('agent', 'Chat cleared. How can I help?');
+    showChips(['Occupancy', 'Revenue', 'Bookings', 'Staff today', 'PH commission', 'Pending leave', 'Systems status', 'Add a booking']);
+  };
+  window.refreshChat = function() {
+    localStorage.removeItem(STATE_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('luthuli_mgr_email');
+    sessionToken = null;
+    authState = 'init';
+    currentUser = null;
+    chatArea.innerHTML = '';
+    removeChips();
+    document.getElementById('chatStatus').textContent = 'Ready';
+    const userEl = document.querySelector('.header-user');
+    if (userEl) userEl.textContent = '';
+    const badgeEl = document.querySelector('.role-badge');
+    if (badgeEl) badgeEl.style.display = 'none';
+    addMessage('agent', "Welcome! Please enter your email to sign in.");
+  };
+
+  // ── DASHBOARD ──
+
+  // Status bar
+  function renderStatusBar(data) {
+    document.getElementById('sbDate').textContent = todayStr();
+
+    const staff = data.staff || [];
+    const sbStaff = document.getElementById('sbStaff');
+    if (staff.length) {
+      sbStaff.innerHTML = staff.map(s => {
+        const on = s.status === 'on';
+        return '<span class="staff-dot"><span class="dot ' + (on ? 'dot-green' : 'dot-gray') + '"></span>' + s.name + ' (' + (on ? 'on' : 'off') + ')</span>';
+      }).join('&nbsp;&nbsp;');
+    } else {
+      sbStaff.innerHTML = '<span class="staff-dot"><span class="dot dot-green"></span>Nomsa (on)</span>&nbsp;&nbsp;<span class="staff-dot"><span class="dot dot-gray"></span>Thandiwe (off)</span>';
+    }
+
+    document.getElementById('sbGuests').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="opacity:.6"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> ' + (data.guests_in_camp != null ? data.guests_in_camp : 4) + ' guests';
+
+    const alerts = document.getElementById('sbAlerts');
+    let alertHTML = '';
+    if (data.pending_leave > 0) alertHTML += '<span class="alert-badge alert-leave">' + data.pending_leave + ' leave request' + (data.pending_leave > 1 ? 's' : '') + '</span>';
+    if (data.unconfirmed_bookings > 0) alertHTML += '<span class="alert-badge alert-booking">' + data.unconfirmed_bookings + ' unconfirmed</span>';
+    // Fallback demo alerts
+    if (!alertHTML && !data.guests_in_camp) {
+      alertHTML = '<span class="alert-badge alert-leave">1 leave request</span><span class="alert-badge alert-booking">2 unconfirmed</span>';
+    }
+    alerts.innerHTML = alertHTML;
+  }
+
+  // Quick stats
+  function renderStats(data) {
+    document.getElementById('statOcc').textContent = (data.occupancy != null ? data.occupancy + '%' : '67%');
+    document.getElementById('statOcc').classList.remove('stat-loading');
+    document.getElementById('statRevRoom').textContent = fmtZAR(data.room_revenue || 84500);
+    document.getElementById('statRevRoom').classList.remove('stat-loading');
+    document.getElementById('statLevy').textContent = fmtZAR(data.conservation_levy || 12600);
+    document.getElementById('statLevy').classList.remove('stat-loading');
+    document.getElementById('statNet').textContent = fmtZAR(data.net_revenue || 72400);
+    document.getElementById('statNet').classList.remove('stat-loading');
+  }
+
+  // Calendar
+  function initCalendar() {
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    renderCalendar();
+  }
+
+  function renderCalendar(bookings) {
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
+
+    const grid = document.getElementById('calGrid');
+    const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    let html = dayNames.map(d => '<div class="cal-day-head">' + d + '</div>').join('');
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    let startDow = firstDay.getDay();
+    startDow = startDow === 0 ? 6 : startDow - 1; // Monday=0
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+    const today = new Date();
+    const isThisMonth = today.getFullYear() === calYear && today.getMonth() === calMonth;
+
+    // Demo bookings if no API data
+    const bk = bookings || getDemoBookings();
+
+    // Previous month overflow
+    for (let i = startDow - 1; i >= 0; i--) {
+      html += '<div class="cal-cell outside"><div class="cal-num">' + (daysInPrev - i) + '</div></div>';
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isToday = isThisMonth && d === today.getDate();
+      html += '<div class="cal-cell' + (isToday ? ' today' : '') + '">';
+      html += '<div class="cal-num">' + d + '</div>';
+
+      // Find bookings that cover this day
+      bk.forEach(b => {
+        if (d >= b.start && d <= b.end) {
+          const cls = 'cb-' + (b.type || 'direct');
+          const label = d === b.start ? b.name : '';
+          html += '<span class="cal-booking ' + cls + '" data-booking="' + encodeURIComponent(JSON.stringify(b)) + '">' + label + '</span>';
+        }
+      });
+
+      html += '</div>';
+    }
+
+    // Next month overflow
+    const totalCells = startDow + daysInMonth;
+    const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (let i = 1; i <= remaining; i++) {
+      html += '<div class="cal-cell outside"><div class="cal-num">' + i + '</div></div>';
+    }
+
+    grid.innerHTML = html;
+
+    // Booking click handlers
+    grid.querySelectorAll('.cal-booking[data-booking]').forEach(el => {
+      el.addEventListener('click', () => {
+        try {
+          const b = JSON.parse(decodeURIComponent(el.dataset.booking));
+          showBookingModal(b);
+        } catch(e) {}
+      });
+    });
+  }
+
+  function getDemoBookings() {
+    return [
+      { name: 'Hamlin', start: 2, end: 8, type: 'owner', pavilion: 'Leopard', guests: 2, rate: 'Owner', ref: 'LTH-2026-041' },
+      { name: 'Van Zyl', start: 5, end: 10, type: 'direct', pavilion: 'Elephant', guests: 4, rate: 'R4,200/night', ref: 'LTH-2026-042' },
+      { name: 'Johnson (PH)', start: 12, end: 18, type: 'ph', pavilion: 'Leopard', guests: 3, rate: 'R5,800/night', ref: 'LTH-2026-043' },
+      { name: 'Pretorius', start: 14, end: 17, type: 'direct', pavilion: 'Buffalo', guests: 2, rate: 'R3,800/night', ref: 'LTH-2026-044' },
+      { name: 'Smith (pend)', start: 22, end: 26, type: 'pending', pavilion: 'Elephant', guests: 2, rate: 'R4,200/night', ref: 'LTH-2026-045' },
+      { name: 'Owner block', start: 25, end: 30, type: 'owner', pavilion: 'Leopard', guests: 0, rate: 'Owner', ref: 'LTH-2026-046' }
+    ];
+  }
+
+  function showBookingModal(b) {
+    document.getElementById('modalTitle').textContent = (b.name || 'Booking') + ' Details';
+    const body = document.getElementById('modalBody');
+    const typeLabels = { owner: 'Owner', direct: 'Direct', ph: 'Professional Hunter', pending: 'Pending' };
+    body.innerHTML = [
+      row('Reference', b.ref || '--'),
+      row('Pavilion', b.pavilion || '--'),
+      row('Dates', 'Day ' + b.start + ' - ' + b.end),
+      row('Guests', b.guests != null ? b.guests : '--'),
+      row('Rate', b.rate || '--'),
+      row('Type', typeLabels[b.type] || b.type || '--')
+    ].join('');
+    document.getElementById('modalOverlay').classList.add('active');
+  }
+
+  function row(label, val) {
+    return '<div class="modal-row"><span class="label">' + label + '</span><span class="val">' + val + '</span></div>';
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('active');
+  });
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('modalOverlay').classList.remove('active');
+  });
+
+  document.getElementById('calPrev').addEventListener('click', () => {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    loadBookings();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    loadBookings();
+  });
+  document.getElementById('calToday').addEventListener('click', () => {
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    loadBookings();
+  });
+
+  // Revenue
+  function renderRevenue(data) {
+    const direct = data.direct_revenue || 52000;
+    const ph = data.ph_revenue || 32500;
+    const comm = data.ph_commission || 9750;
+    const levy = data.conservation_levy || 12600;
+
+    document.getElementById('revDirect').textContent = fmtZAR(direct);
+    document.getElementById('revPH').textContent = fmtZAR(ph);
+    document.getElementById('revComm').textContent = fmtZAR(comm);
+    document.getElementById('revLevyTotal').textContent = fmtZAR(levy);
+
+    const total = direct + ph;
+    if (total > 0) {
+      const dPct = Math.round(direct / total * 100);
+      const pPct = 100 - dPct;
+      document.getElementById('revBar').innerHTML =
+        '<div class="rev-bar-seg" style="flex:' + dPct + ';background:var(--blue)">' + dPct + '%</div>' +
+        '<div class="rev-bar-seg" style="flex:' + pPct + ';background:var(--purple)">' + pPct + '%</div>';
+    }
+  }
+
+  // Staff schedule
+  function renderStaffSchedule(data) {
+    const card = document.getElementById('staffCard');
+    const staff = data.staff || [
+      { name: 'Nomsa', status: 'on', schedule: generateDemoSchedule(true) },
+      { name: 'Thandiwe', status: 'off', schedule: generateDemoSchedule(false) }
+    ];
+
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+    const isThisMonth = today.getFullYear() === calYear && today.getMonth() === calMonth;
+    const todayDate = today.getDate();
+
+    let html = '';
+
+    staff.forEach(s => {
+      const badgeCls = s.status === 'on' ? 'badge-on' : (s.status === 'leave' ? 'badge-leave' : 'badge-off');
+      const badgeText = s.status === 'on' ? 'On Duty' : (s.status === 'leave' ? 'Leave' : 'Off Duty');
+      html += '<div class="staff-section">';
+      html += '<div class="staff-name-row"><span class="staff-name">' + s.name + '</span><span class="staff-badge ' + badgeCls + '">' + badgeText + '</span></div>';
+
+      // Day headers
+      html += '<div class="sched-row">';
+      for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
+        html += '<span class="sched-day-head">' + d + '</span>';
+      }
+      html += '</div>';
+
+      // Schedule cells
+      html += '<div class="sched-row">';
+      const sched = s.schedule || [];
+      for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
+        const st = sched[d - 1] || 'off';
+        const cls = st === 'work' ? 'sc-work' : (st === 'leave' ? 'sc-leave' : 'sc-off');
+        const isT = isThisMonth && d === todayDate;
+        html += '<span class="sched-cell ' + cls + '" style="' + (isT ? 'outline:2px solid var(--sage);outline-offset:-1px' : '') + '"></span>';
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+
+    // Coverage
+    html += '<div class="coverage-row">';
+    html += '<div class="coverage-label">Coverage</div>';
+    html += '<div class="coverage-bar">';
+    for (let d = 1; d <= Math.min(daysInMonth, 31); d++) {
+      let count = 0;
+      staff.forEach(s => {
+        const sched = s.schedule || [];
+        if ((sched[d - 1] || 'off') === 'work') count++;
+      });
+      const cls = count >= 2 ? 'cov-ok' : (count === 1 ? 'cov-one' : 'cov-gap');
+      html += '<span class="cov-cell ' + cls + '">' + count + '</span>';
+    }
+    html += '</div></div>';
+
+    // Leave requests
+    const leaveReqs = data.leave_requests || [
+      { staff: 'Thandiwe', dates: '15-18 Apr', reason: 'Family event', id: 'lr1' }
+    ];
+    if (leaveReqs.length) {
+      html += '<div class="leave-req">';
+      html += '<div class="leave-req-title">Pending Leave Requests</div>';
+      leaveReqs.forEach(lr => {
+        html += '<div class="leave-req-item">';
+        html += '<span class="leave-req-info"><strong>' + lr.staff + '</strong> -- ' + lr.dates + (lr.reason ? ' (' + lr.reason + ')' : '') + '</span>';
+        html += '<span class="leave-req-actions">';
+        html += '<button class="btn-approve" data-lr="' + lr.id + '">Approve</button>';
+        html += '<button class="btn-deny" data-lr="' + lr.id + '">Deny</button>';
+        html += '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    card.innerHTML = html;
+
+    // Leave action handlers
+    card.querySelectorAll('.btn-approve').forEach(btn => {
+      btn.addEventListener('click', () => handleLeaveAction(btn.dataset.lr, 'approve'));
+    });
+    card.querySelectorAll('.btn-deny').forEach(btn => {
+      btn.addEventListener('click', () => handleLeaveAction(btn.dataset.lr, 'deny'));
+    });
+  }
+
+  function handleLeaveAction(id, action) {
+    showToast('Leave request ' + (action === 'approve' ? 'approved' : 'denied'));
+    // Remove the request from UI
+    const item = document.querySelector('[data-lr="' + id + '"]');
+    if (item) {
+      const parent = item.closest('.leave-req-item');
+      if (parent) parent.style.display = 'none';
+    }
+  }
+
+  function generateDemoSchedule(isNomsa) {
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const sched = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dow = new Date(calYear, calMonth, d).getDay();
+      if (isNomsa) {
+        // Nomsa: 5 on, 2 off pattern (off on 6th and 7th days of each cycle)
+        const cycle = (d - 1) % 7;
+        sched.push(cycle < 5 ? 'work' : 'off');
+      } else {
+        // Thandiwe: offset pattern, plus some leave
+        const cycle = (d + 2) % 7;
+        if (d >= 15 && d <= 18) sched.push('leave');
+        else sched.push(cycle < 5 ? 'work' : 'off');
+      }
+    }
+    return sched;
+  }
+
+  // Activity feed
+  function renderFeed(data) {
+    const card = document.getElementById('feedCard');
+    const items = data.activity || getDemoActivity();
+
+    if (!items.length) {
+      card.innerHTML = '<div class="placeholder">No recent activity</div>';
+      return;
+    }
+
+    const dotColors = {
+      booking: 'dot-blue',
+      leave: 'dot-amber',
+      auth: 'dot-green',
+      system: 'dot-gray',
+      approval: 'dot-green',
+      alert: 'dot-red'
+    };
+
+    card.innerHTML = items.map(item => {
+      const dotCls = dotColors[item.type] || 'dot-gray';
+      return '<div class="feed-item">' +
+        '<span class="feed-time">' + (item.time || '--:--') + '</span>' +
+        '<span class="feed-dot dot ' + dotCls + '"></span>' +
+        '<span class="feed-text">' + item.text + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function getDemoActivity() {
+    return [
+      { time: '09:42', type: 'booking', text: '<strong>New booking</strong> created -- Van Zyl, Elephant Pavilion, 5-10 Apr' },
+      { time: '09:15', type: 'leave', text: '<strong>Leave requested</strong> -- Thandiwe, 15-18 Apr (Family event)' },
+      { time: '08:30', type: 'auth', text: '<strong>OTP verified</strong> -- Craig signed in (Manager dashboard)' },
+      { time: '08:12', type: 'system', text: '<strong>Solar</strong> battery at 94%, all systems normal' },
+      { time: 'Yesterday', type: 'booking', text: '<strong>Booking confirmed</strong> -- Johnson PH safari, Leopard, 12-18 Apr' },
+      { time: 'Yesterday', type: 'approval', text: '<strong>Leave approved</strong> -- Nomsa rest day swap (14 Apr)' },
+      { time: '31 Mar', type: 'booking', text: '<strong>Booking pending</strong> -- Smith, Elephant, 22-26 Apr (awaiting deposit)' },
+      { time: '30 Mar', type: 'system', text: '<strong>Water</strong> tank refilled to 85%' }
+    ];
+  }
+
+  // ── Data loading ──
+  async function loadAllDashboard() {
+    const monthStr = calYear + '-' + String(calMonth + 1).padStart(2, '0');
+
+    // Load in parallel
+    const [stats, bookingsRes, staffRes] = await Promise.all([
+      getJSON('/api/luthuli/stats?month=' + monthStr),
+      getJSON('/api/luthuli/bookings?month=' + monthStr),
+      getJSON('/api/luthuli/staff?month=' + monthStr)
+    ]);
+
+    dashboardData = stats || {};
+    renderStatusBar(dashboardData);
+    renderStats(dashboardData);
+    renderRevenue(dashboardData);
+    renderCalendar(bookingsRes ? bookingsRes.bookings : null);
+    renderStaffSchedule(staffRes || dashboardData);
+    renderFeed(dashboardData);
+  }
+
+  async function loadBookings() {
+    const monthStr = calYear + '-' + String(calMonth + 1).padStart(2, '0');
+    const res = await getJSON('/api/luthuli/bookings?month=' + monthStr);
+    renderCalendar(res ? res.bookings : null);
+  }
+
+  // ── Mobile tabs ──
+  const tabChat = document.getElementById('tabChat');
+  const tabDash = document.getElementById('tabDash');
+  const chatPanel = document.getElementById('chatPanel');
+  const dashPanel = document.getElementById('dashPanel');
+  const mobileToggle = document.getElementById('mobileToggle');
+
+  function switchToChat() {
+    chatPanel.classList.remove('mobile-hide');
+    dashPanel.classList.remove('mobile-show');
+    tabChat.classList.add('active');
+    tabDash.classList.remove('active');
+    mobileToggle.textContent = 'Dashboard';
+  }
+
+  function switchToDash() {
+    chatPanel.classList.add('mobile-hide');
+    dashPanel.classList.add('mobile-show');
+    tabChat.classList.remove('active');
+    tabDash.classList.add('active');
+    mobileToggle.textContent = 'Chat';
+  }
+
+  tabChat.addEventListener('click', switchToChat);
+  tabDash.addEventListener('click', switchToDash);
+  mobileToggle.addEventListener('click', () => {
+    if (dashPanel.classList.contains('mobile-show')) switchToChat();
+    else switchToDash();
+  });
+
+  // Show mobile toggle on small screens
+  function checkMobile() {
+    if (window.innerWidth <= 768) {
+      mobileToggle.style.display = '';
+    } else {
+      mobileToggle.style.display = 'none';
+      chatPanel.classList.remove('mobile-hide');
+      dashPanel.classList.remove('mobile-show');
+    }
+  }
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+
+  // ── Session restore ──
+  function restoreSession() {
+    try {
+      const saved = localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.length > 0) {
+          parsed.forEach(m => addMessage(m.role, m.text, { time: m.time, noSave: true }));
+          messages = parsed;
+          return true;
+        }
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  // ── Init ──
+  function init() {
+    // Check for saved auth
+    const savedEmail = localStorage.getItem('luthuli_mgr_email');
+    if (savedEmail && authState === 'verified') {
+      setUser(savedEmail);
+    }
+
+    const restored = restoreSession();
+
+    if (!restored) {
+      authState = 'init';
+      localStorage.setItem(STATE_KEY, authState);
+
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addMessage('agent', "Welcome to Luthuli Lodge management. Please enter your email to sign in.");
+        authState = 'email_asked';
+        localStorage.setItem(STATE_KEY, authState);
+      }, 600);
+    }
+
+    // Init calendar
+    initCalendar();
+
+    // Load dashboard with defaults/placeholders
+    renderStatusBar({});
+    renderStats({});
+    renderRevenue({});
+    renderStaffSchedule({});
+    renderFeed({});
+
+    // If already authenticated, load real data
+    if (authState === 'verified') {
+      loadAllDashboard();
+    }
+
+    // Auto-refresh every 60 seconds
+    setInterval(() => {
+      if (authState === 'verified') loadAllDashboard();
+    }, 60000);
+
+    inputField.focus();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

@@ -9,3 +9,10 @@ SITE_URL = "https://developers-2nth-ai.pages.dev"
 [[kv_namespaces]]
 binding = "SESSIONS"
 id = "ca4387f6d46e491094aa982a40e36cb8"
+
+# Luthuli Lodge D1 database — create with: wrangler d1 create luthuli-lodge
+# Then update the database_id below
+[[d1_databases]]
+binding = "LUTHULI_DB"
+database_name = "luthuli-lodge"
+database_id = "TODO_CREATE_WITH_WRANGLER"

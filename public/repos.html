@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2nth.ai — Developer Repos &amp; Partner Builds</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .repos{max-width:940px;margin:48px auto 0;padding:0 24px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
+    .sub{font-size:14px;color:#71717a;margin-bottom:24px}
+
+    /* Stats */
+    .stats-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+    .stat-pill{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;color:#71717a;display:flex;align-items:center;gap:6px}
+    .stat-pill .val{font-weight:700;color:#18181b;font-size:14px}
+
+    /* Filters */
+    .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    .filter-btn{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:4px;border:1px solid #e4e4e7;background:#fff;color:#71717a;cursor:pointer;transition:all .15s}
+    .filter-btn:hover,.filter-btn.active{border-color:#7c3aed;color:#7c3aed;background:rgba(124,58,237,.04)}
+
+    /* Category headers */
+    .category{margin-top:36px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+    .category-label{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#18181b}
+    .category-line{flex:1;height:1px;background:#e4e4e7}
+    .category-count{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:#a1a1aa;text-transform:uppercase}
+
+    /* Partner group */
+    .partner-group{margin-bottom:16px;border:1px solid #ede9f6;border-radius:10px;background:#fff;overflow:hidden;transition:border-color .15s}
+    .partner-group:hover{border-color:rgba(124,58,237,.25)}
+    .partner-header{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;-webkit-user-select:none;user-select:none}
+    .partner-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;flex-shrink:0}
+    .partner-info{flex:1;min-width:0}
+    .partner-name{font-size:15px;font-weight:600;color:#18181b}
+    .partner-desc{font-size:11px;color:#a1a1aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .partner-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+    .partner-toggle{font-size:14px;color:#d4d4d8;transition:transform .2s;flex-shrink:0}
+    .partner-group.open .partner-toggle{transform:rotate(180deg)}
+
+    /* Partner body (expandable) */
+    .partner-body{display:none;border-top:1px solid #f5f3ff;padding:16px 20px}
+    .partner-group.open .partner-body{display:block}
+
+    /* Repo row inside partner */
+    .repo-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f9f8fd}
+    .repo-row:last-child{border-bottom:none}
+    .repo-row-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:#fff;flex-shrink:0}
+    .repo-row-info{flex:1;min-width:0}
+    .repo-row-name{font-size:13px;font-weight:600;color:#18181b}
+    .repo-row-name a{color:inherit;text-decoration:none}
+    .repo-row-name a:hover{color:#7c3aed}
+    .repo-row-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a1a1aa;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:2px}
+    .repo-row-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+
+    /* Branch tags */
+    .branch-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:#f5f3ff;border:1px solid #ede9f6;color:#7c3aed;cursor:default;white-space:nowrap}
+    .branch-tag.default{color:#059669;background:rgba(5,150,105,.04);border-color:rgba(5,150,105,.2)}
+
+    /* Visibility badge */
+    .vis-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:3px;border:1px solid}
+    .vis-private{color:#d97706;border-color:rgba(217,119,6,.25);background:rgba(217,119,6,.06)}
+    .vis-public{color:#059669;border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.06)}
+
+    /* Action buttons */
+    .act-btn{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.5px;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid #e4e4e7;color:#71717a;text-decoration:none;transition:all .12s;display:inline-flex;align-items:center;gap:3px;background:#fff;cursor:pointer}
+    .act-btn:hover{border-color:#7c3aed;color:#7c3aed;text-decoration:none;background:rgba(124,58,237,.04)}
+    .act-btn.primary{background:#7c3aed;color:#fff;border-color:#7c3aed}
+    .act-btn.primary:hover{background:#6d28d9;color:#fff}
+
+    /* Build/demo links inside expanded partner */
+    .builds-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#a1a1aa;margin:14px 0 8px;padding-top:12px;border-top:1px solid #f5f3ff}
+    .build-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+    .build-icon{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;flex-shrink:0}
+    .build-info{flex:1;min-width:0}
+    .build-name{font-size:12px;font-weight:500;color:#18181b}
+    .build-name a{color:inherit;text-decoration:none}
+    .build-name a:hover{color:#7c3aed}
+    .build-desc{font-size:10px;color:#a1a1aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* Language dot */
+    .lang-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+    /* Loading */
+    .loading{text-align:center;padding:60px 0;font-family:'JetBrains Mono',monospace;font-size:12px;color:#a1a1aa}
+    .loading .spinner{display:inline-block;width:20px;height:20px;border:2px solid #ede9f6;border-top-color:#7c3aed;border-radius:50%;animation:spin .6s linear infinite;margin-bottom:12px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error-msg{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:16px;font-size:13px;color:#dc2626;margin:24px 0}
+
+    /* Clone modal */
+    .clone-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+    .clone-overlay.show{display:flex}
+    .clone-box{background:#fff;border-radius:12px;padding:28px;max-width:520px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+    .clone-box h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:16px}
+    .clone-input{width:100%;font-family:'JetBrains Mono',monospace;font-size:11px;padding:10px 14px;border:1px solid #ede9f6;border-radius:6px;background:#faf9fc;color:#18181b;margin-bottom:6px;cursor:pointer}
+    .clone-input:hover{border-color:#7c3aed}
+    .clone-hint{font-size:10px;color:#a1a1aa;margin-bottom:14px}
+    .clone-close{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:6px 16px;border-radius:4px;border:1px solid #e4e4e7;background:#fff;color:#71717a;cursor:pointer}
+    .clone-close:hover{border-color:#7c3aed;color:#7c3aed}
+
+    /* Org selector */
+    .org-select{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 10px;border-radius:4px;border:1px solid #e4e4e7;background:#fff;color:#18181b;cursor:pointer}
+
+    @media(max-width:600px){
+      .repo-row{flex-direction:column;align-items:flex-start;gap:8px}
+      .repo-row-actions{width:100%}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/hub.html">Hub</a>
+      <a href="/portal.html">Portal</a>
+    </nav>
+  </div>
+</header>
+
+<div class="repos">
+  <h1>DEVELOPER REPOS &amp; PARTNER BUILDS</h1>
+  <div class="sub">All partner solutions, demo builds, and project repos. Fork, clone, extend.</div>
+
+  <!-- Org selector -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <label style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">Organisation</label>
+    <select class="org-select" id="org-select" onchange="loadRepos()">
+      <option value="2nth-ai" selected>2nth-ai</option>
+      <option value="imbilawork">imbilawork</option>
+    </select>
+    <button class="act-btn" onclick="expandAll()" style="margin-left:auto">Expand All</button>
+    <button class="act-btn" onclick="collapseAll()">Collapse All</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row" style="display:none">
+    <div class="stat-pill"><span class="val" id="stat-repos">—</span> repos</div>
+    <div class="stat-pill"><span class="val" id="stat-partners">—</span> partners</div>
+    <div class="stat-pill"><span class="val" id="stat-builds">—</span> builds &amp; demos</div>
+    <div class="stat-pill"><span class="val" id="stat-recent">—</span> active this week</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar" id="filter-bar" style="display:none">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="partners">Partners</button>
+    <button class="filter-btn" data-filter="platform">Platform</button>
+    <button class="filter-btn" data-filter="recent">Active this week</button>
+  </div>
+
+  <div id="repo-list">
+    <div class="loading">
+      <div class="spinner"></div><br>
+      Loading repositories from GitHub...
+    </div>
+  </div>
+</div>
+
+<!-- Clone modal -->
+<div class="clone-overlay" id="clone-modal">
+  <div class="clone-box">
+    <h3 id="clone-title">Clone Repository</h3>
+    <input class="clone-input" id="clone-https" readonly onclick="copyClone(this)">
+    <div class="clone-hint">Click to copy &mdash; HTTPS</div>
+    <input class="clone-input" id="clone-ssh" readonly onclick="copyClone(this)">
+    <div class="clone-hint">Click to copy &mdash; SSH</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button class="clone-close" onclick="closeClone()">Close</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+var allRepos = [];
+var currentFilter = 'all';
+
+var LANG_COLORS = {
+  JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',
+  HTML:'#e34c26',CSS:'#563d7c',Shell:'#89e051',Rust:'#dea584',
+  Go:'#00ADD8',Vue:'#41b883',SCSS:'#c6538c',Markdown:'#083fa1'
+};
+
+// Partner registry: maps partner slug to display info + their builds/demos/pages
+var DEVS_REPO = 'https://github.com/2nth-ai/developers';
+var DEVS_TREE = DEVS_REPO + '/tree/main/public';
+
+var PARTNERS = {
+  'proximity-green': {
+    name: 'Proximity Green', color: '#059669', initials: 'PG',
+    desc: 'Spatial gallery, shared workspace technology',
+    category: 'technology',
+    github: { preview: DEVS_TREE + '/preview/proximity-green', partner: DEVS_TREE + '/partners/proximity-green.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/proximity-green.html', icon:'PG', desc:'Skills, platform, customers, spatial gallery architecture' },
+      { name:'Workshop17 Space Directory', url:'/preview/proximity-green/gallery/', icon:'W17', desc:'5 sites, 186 spaces, live availability, floor plan' },
+      { name:'Silo Gallery', url:'/preview/proximity-green/gallery/silo.html', icon:'SG', color:'#0a1f1a', desc:'15-room visual walkthrough of the spatial gallery concept' },
+      { name:'Skills Hub', url:'/preview/proximity-green/', icon:'SK', desc:'AI skills for shared spaces — branded preview' }
+    ]
+  },
+  'scengineering': {
+    name: 'SC Engineering', color: '#1e40af', initials: 'SCE', fg: '#93c5fd',
+    desc: 'Premium build — mechatronics, CNC, robotics, product development',
+    category: 'technology',
+    github: { preview: DEVS_TREE + '/preview/scengineering', partner: DEVS_TREE + '/partners/scengineering.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/scengineering.html', icon:'SCE', desc:'Premium build — 10M tokens' },
+      { name:'AI Engineering Showcase', url:'/preview/scengineering/', icon:'AI', desc:'CNC optimisation, intelligent robotics, predictive maintenance' },
+      { name:'FANUC Mobile Factory', url:'/preview/scengineering/fanuc.html', icon:'F', color:'#d97706', desc:'Containerised M-20iB/35S robot cell — drill, cut, deburr, inspect' },
+      { name:'BLE Environment Scanner', url:'/preview/scengineering/ble-scanner.html', icon:'BLE', desc:'Discover Bluetooth devices, track RSSI signal levels' },
+      { name:'AI Toolpath Optimiser', url:'/preview/scengineering/toolpath.html', icon:'CNC', desc:'AI generates optimised G-code with feeds, speeds, cycle time' }
+    ]
+  },
+  'dronescan': {
+    name: 'DroneScan / SkiSpot', color: '#0d1117', initials: 'DS', fg: '#58a6ff',
+    desc: 'Drone-powered warehouse inventory + BLE ski finder',
+    category: 'technology',
+    github: { preview: DEVS_TREE + '/preview/dronescan', partner: DEVS_TREE + '/partners/dronescan.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/dronescan.html', icon:'DS', color:'#1e40af', desc:'Drone-powered warehouse inventory' },
+      { name:'SkiSpot V1.0.0', url:'/preview/dronescan/skispot.html', icon:'SK', desc:'BLE ski finder — compass, RSSI graph, 360° rotation scan' },
+      { name:'SkiSpot Consumer App', url:'/preview/dronescan/skispot-consumer.html', icon:'SC', desc:'Device list, compass finder, distance estimate, approach tracking' },
+      { name:'SkiSpot RSSI Monitor', url:'/preview/dronescan/skispot-monitor.html', icon:'RF', color:'#1e40af', desc:'Live signal evaluation, chart, distribution, CSV export' }
+    ]
+  },
+  'optimaltech': {
+    name: 'Optimal Tech', color: '#0078d4', initials: 'OT',
+    desc: 'Microsoft Technology — Azure, M365, Dynamics 365, Power Platform',
+    category: 'premier',
+    github: { preview: DEVS_TREE + '/preview/optimaltech', partner: DEVS_TREE + '/partners/optimaltech.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/optimaltech.html', icon:'OT', desc:'Premium build — enterprise security, 1M tokens' },
+      { name:'Elastic Compute Explainer', url:'/preview/optimaltech/', icon:'AI', desc:'How to sell 2nth.io + 2nth.ai to clients — margin model, templates' },
+      { name:'2nth.io Compute — First Partner', url:'/preview/2nth-io/', icon:'IO', color:'#06b6d4', desc:'Managed open-source infra — ERPNext, TwentyCRM, 12+ templates' }
+    ]
+  },
+  'b2bs': {
+    name: 'B2B AI Solutions', color: '#003459', initials: 'B2B', fg: '#00a8e8',
+    desc: 'Premier developer partner — 12 fractional C-suite agents, all domains',
+    category: 'premier',
+    github: { preview: DEVS_TREE + '/preview/b2bs', partner: DEVS_TREE + '/partners/b2bs-ai.html' },
+    builds: [
+      { name:'Partner Profile & 12 Agents', url:'/partners/b2bs-ai.html', icon:'B2B', desc:'Premier tier, full platform access' },
+      { name:'AI Solutions Showcase', url:'/preview/b2bs/', icon:'AI', desc:'4 practices, solutions portfolio' },
+      { name:'Agent Marketplace', url:'https://ai.b2bs.co.za', icon:'AG', desc:'10 sales/marketing agents, 50K free tokens' },
+      { name:'ESP32 Chip Discovery', url:'/preview/b2bs/chip-discovery.html', icon:'IoT', color:'#0891b2', desc:'USB auto-detect, pinout, Wi-Fi config, flash, serial monitor' },
+      { name:'IoT Partner Profile', url:'/partners/b2bs-iot.html', icon:'IoT', color:'#003459', desc:'ESP32 board catalogue, reference designs, sensor nodes' },
+      { name:'Recall.ai Meeting Skill', url:'https://b2b-skills-demo.pages.dev', icon:'RC', desc:'Meeting bots, live status, transcript generation' },
+      { name:'20CRM', url:'https://dev.20crm-2nth-ai.pages.dev/', icon:'20', color:'#06b6d4', desc:'TwentyCRM for the 2nth ecosystem' }
+    ]
+  },
+  'vibecrafters': {
+    name: 'VibeCrafters', color: '#1C1C2E', initials: 'VC', fg: '#FF6B6B',
+    desc: 'Premium contracted — AI-powered web agency, Emma Leppan creative lead',
+    category: 'creative',
+    github: { preview: DEVS_TREE + '/preview/vibecrafters', partner: DEVS_TREE + '/partners/vibecrafters.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/vibecrafters.html', icon:'VC', desc:'Premium contracted, AI-powered web agency' },
+      { name:'VibeCrafters Platform (Dev)', url:'https://vibecrafters-platform.pages.dev', icon:'AI', desc:'AI agency dashboard — briefs, projects, Vibe creative director' },
+      { name:'Kate Sunley Concept', url:'https://portal.vibecrafters.com/client/ks/', icon:'KS', color:'#2C1810', desc:'The Art of the Beautiful Pause — brand extraction' },
+      { name:'TC Inc — Property Law', url:'https://portal.vibecrafters.com/client/tcinc/', icon:'TC', color:'#1a1a2e', desc:'Property Law. Precisely Delivered.' },
+      { name:'Walker Phillip', url:'https://portal.vibecrafters.com/client/walkerp/', icon:'WP', color:'#0a2540', desc:'Specialist Recruitment for Africa\'s Financial Markets' }
+    ]
+  },
+  'ctrl-future': {
+    name: 'Ctrl Future', color: '#7c3aed', initials: 'CF',
+    desc: 'AI Strategy & Readiness — Katherine Janisch',
+    category: 'premier',
+    github: { preview: DEVS_TREE + '/preview/ctrl-future', partner: DEVS_TREE + '/partners/ctrl-future.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/ctrl-future.html', icon:'CF', desc:'Build partner, 1M tokens, 3-month sponsored, 4 AI skills' },
+      { name:'AI Readiness Showcase', url:'/preview/ctrl-future/', icon:'AI', desc:'AI readiness demo, workforce impact analysis, governance' }
+    ]
+  },
+  'republic-lifestyle': {
+    name: 'Republic Lifestyle', color: '#1c1917', initials: 'RL', fg: '#C4B895',
+    desc: 'Premium build — textile manufacturing, Sage X3',
+    category: 'premier',
+    github: { preview: DEVS_TREE + '/preview/republic-lifestyle', partner: DEVS_TREE + '/partners/republic-lifestyle.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/republic-lifestyle.html', icon:'RL', desc:'Premium tier, 10M tokens, Sage X3, 5 AI skills' },
+      { name:'AI Manufacturing Showcase', url:'/preview/republic-lifestyle/', icon:'AI', desc:'Products, demos, Sage X3, Noha blueprint' },
+      { name:'Sage X3 Dashboard', url:'https://republic.2nth.ai', icon:'X3', desc:'Live BI — R14.2M revenue, 847 customers, AI reports' },
+      { name:'Noha AI Studio', url:'https://demo.noha.2nth.ai', icon:'NH', color:'#292524', desc:'ERPNext production intelligence — BOM, stock, QC' }
+    ]
+  },
+  'jankovich': {
+    name: 'Jonty Jankovich-Besan', color: '#1e3a5f', initials: 'JJB', fg: '#93c5fd',
+    desc: 'Specialist consulting — Sea Harvest, Aqunion, corporate strategy',
+    category: 'specialist',
+    github: { preview: DEVS_TREE + '/preview/jankovich', partner: DEVS_TREE + '/partners/jankovich-consulting.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/jankovich-consulting.html', icon:'JJB', desc:'Corporate strategy, board governance, operations' },
+      { name:'Boris — Abalone Market Intelligence', url:'/preview/jankovich/boris.html', icon:'B', color:'#c9a84c', desc:'Prices, buyers, sellers, supply forecasts, AI agent' }
+    ]
+  },
+  'eatfitsa': {
+    name: 'EatFitSA', color: '#059669', initials: 'EF', fg: '#d1fae5',
+    desc: 'Specialist medical — Erica Jankovich RD, gut health, IBS, FODMAP',
+    category: 'specialist',
+    github: { preview: DEVS_TREE + '/preview/eatfitsa', partner: DEVS_TREE + '/partners/eatfitsa.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/eatfitsa.html', icon:'EF', desc:'HPCSA registered dietitian, referral network' },
+      { name:'AI Patient Screening', url:'/preview/eatfitsa/', icon:'AI', desc:'Symptom screening, triage, dietitian matching' }
+    ]
+  },
+  'gananda': {
+    name: 'Gananda Connect', color: '#78350f', initials: 'GC', fg: '#fbbf24',
+    desc: 'Financial advisory & agricultural finance — Barry Hawke',
+    category: 'specialist',
+    github: { preview: DEVS_TREE + '/preview/gananda', partner: DEVS_TREE + '/partners/gananda.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/gananda.html', icon:'GC', desc:'CFA, M&A, capital raising, agri-tech, Africa markets' },
+      { name:'AI Financial Advisory', url:'/preview/gananda/', icon:'AI', desc:'Deal intelligence, agricultural investment' },
+      { name:'Soleil Sitrus Cash Flow', url:'/preview/gananda/cashflow.html', icon:'CF', color:'#3d7a3e', desc:'R48.2M citrus season model, scenario analysis' }
+    ]
+  },
+  'durpro': {
+    name: 'DurPro Workforce', color: '#34405a', initials: 'DP',
+    desc: 'Specialist recruitment — Jacqui Denny, labour outsourcing, HR services',
+    category: 'professional',
+    github: { preview: DEVS_TREE + '/preview/durpro', partner: DEVS_TREE + '/partners/durpro.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/durpro.html', icon:'DP', desc:'Specialist recruitment, 1M tokens, 100+ brands' },
+      { name:'AI Workforce Intelligence', url:'/preview/durpro/', icon:'AI', color:'#006ba1', desc:'Role design, workforce planning, compliance' },
+      { name:'Ask Brian — AI Labour Lawyer', url:'/preview/durpro/brian.html', icon:'B', color:'#e4373c', desc:'LRA, BCEA, CCMA, dismissals, TES, contracts' }
+    ]
+  },
+  'presbury': {
+    name: 'Paul Presbury', color: '#0f172a', initials: 'PP', fg: '#06b6d4',
+    desc: 'Strategic leadership — turnaround, FMCG, eCommerce, governance',
+    category: 'professional',
+    github: { preview: DEVS_TREE + '/preview/presbury', partner: DEVS_TREE + '/partners/presbury.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/presbury.html', icon:'PP', desc:'Specialist partner — turnaround, governance' },
+      { name:'AI Turnaround Showcase', url:'/preview/presbury/', icon:'AI', color:'#06b6d4', desc:'Business diagnostic, 90-day recovery, restructuring' }
+    ]
+  },
+  'gridlineprop': {
+    name: 'GridLineProp', color: '#d97706', initials: 'GP',
+    desc: 'Property development — Grant Kneale, SANS 10400, NHBRC',
+    category: 'professional',
+    github: { preview: DEVS_TREE + '/preview/gridlineprop', partner: DEVS_TREE + '/partners/gridlineprop.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/gridlineprop.html', icon:'GP', desc:'Build partner — construction, 5M tokens' },
+      { name:'Silvercroft Constantia', url:'/preview/gridlineprop/silvercroft.html', icon:'SC', color:'#b8860b', desc:'3 luxury off-grid homes — solar, water, security, AI managed' },
+      { name:'AI for Construction & QS', url:'/preview/gridlineprop/construction-ai.html', icon:'AI', color:'#1d3557', desc:'QS takeoff, estimating, 4D programme, digital twin' },
+      { name:'openBIM Skill', url:'https://2nth-skills.pages.dev/biz/openbim.html', icon:'BIM', color:'#2d6a4f', desc:'IFC, BCF, IDS, bSDD, digital twins, SA compliance' }
+    ]
+  },
+  'rohrs': {
+    name: 'Rohrs & Associates', color: '#0c4a6e', initials: 'R&A', fg: '#38bdf8',
+    desc: 'Future of Cash & Payments — Barry Röhrs, SMART Cash, ATM economics',
+    category: 'specialist',
+    github: { preview: DEVS_TREE + '/preview/rohrs-associates', partner: DEVS_TREE + '/partners/rohrs-associates.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/rohrs-associates.html', icon:'R&A', desc:'Builder partner — payments infrastructure, 2M tokens' },
+      { name:'Future of Cash AI Concept', url:'/preview/rohrs-associates/', icon:'AI', desc:'SA payments ecosystem, SMART Cash, ATM intelligence' }
+    ]
+  },
+  'agilex': {
+    name: 'AgileX', color: '#E04032', initials: 'AX',
+    desc: 'Recruitment AI — sourcing, interviews, compliance',
+    category: 'professional',
+    github: { partner: DEVS_TREE + '/partners/agilex.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/agilex.html', icon:'AX', desc:'5 recruitment agents — sourcing, interviews, scheduling' }
+    ]
+  },
+  'scanman': {
+    name: 'ScanMan', color: '#22873a', initials: 'SM',
+    desc: 'Warehouse intelligence — early access build partner',
+    category: 'technology',
+    github: { preview: DEVS_TREE + '/preview/scanman', partner: DEVS_TREE + '/partners/scanman.html' },
+    builds: [
+      { name:'Partner Profile', url:'/partners/scanman.html', icon:'SM', desc:'Early access build, 5 AI skills, roadmap' },
+      { name:'AI Warehouse Showcase', url:'/preview/scanman/', icon:'AI', desc:'Reimagined concept — warehouse intelligence to the power of n' },
+      { name:'Live Warehouse Simulation', url:'/preview/scanman/warehouse.html', icon:'WH', desc:'Hillcrest DC — ERPNext, zone map, live scans, Jasper AI' }
+    ]
+  },
+  'luthuli': {
+    name: 'Luthuli', color: '#3d3229', initials: 'L',
+    desc: 'Conservation architecture — Guy Hamlin',
+    category: 'specialist',
+    github: { preview: DEVS_TREE + '/preview/luthuli' },
+    builds: [
+      { name:'Platform Concept', url:'/preview/luthuli/', icon:'L', desc:'Conservation architecture partner explainer' },
+      { name:'Lodge Dashboard', url:'/preview/luthuli/lodge.html', icon:'LH', color:'#5a7a5c', desc:'Pavilions, bookings, off-grid systems, wildlife' }
+    ]
+  },
+  'balwin': {
+    name: 'Balwin', color: '#1e293b', initials: 'BW',
+    desc: 'Property development concept',
+    category: 'professional',
+    github: { preview: DEVS_TREE + '/preview/balwin' },
+    builds: [
+      { name:'Concept Preview', url:'/preview/balwin/', icon:'BW', desc:'Property development concept site' }
+    ]
+  }
+};
+
+// Category display order and labels
+var CATEGORIES = [
+  { key:'platform', label:'PLATFORM', sub:'Core repos & infrastructure' },
+  { key:'technology', label:'TECHNOLOGY', sub:'IoT, spatial, warehouse' },
+  { key:'premier', label:'PREMIER PARTNERS', sub:'Full platform access' },
+  { key:'creative', label:'DESIGN & CREATIVE', sub:'Surface agency' },
+  { key:'specialist', label:'SPECIALIST DOMAIN', sub:'Finance, medical, consulting' },
+  { key:'professional', label:'PROFESSIONAL SERVICES', sub:'Recruitment, property, strategy' }
+];
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '—';
+  var secs = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (secs < 60) return 'just now';
+  if (secs < 3600) return Math.floor(secs/60) + 'm ago';
+  if (secs < 86400) return Math.floor(secs/3600) + 'h ago';
+  if (secs < 604800) return Math.floor(secs/86400) + 'd ago';
+  if (secs < 2592000) return Math.floor(secs/604800) + 'w ago';
+  return new Date(dateStr).toLocaleDateString('en-ZA',{day:'numeric',month:'short'});
+}
+
+function matchPartner(repoName) {
+  // Try exact match first, then partial
+  var slug = repoName.toLowerCase().replace(/[^a-z0-9-]/g,'');
+  for (var key in PARTNERS) {
+    if (slug === key || slug.indexOf(key) >= 0 || key.indexOf(slug) >= 0) return key;
+  }
+  // Special mappings
+  var MAP = {
+    'developers': null, 'skills': null, '2nth-site': null, '2nth-io': null,
+    '2nth-mem': null, '2nth-org': null, 'code-review': null,
+    'bateleurs-2nth': 'luthuli'
+  };
+  if (MAP[repoName] !== undefined) return MAP[repoName];
+  return null;
+}
+
+async function loadRepos() {
+  var org = document.getElementById('org-select').value;
+  var listEl = document.getElementById('repo-list');
+  listEl.innerHTML = '<div class="loading"><div class="spinner"></div><br>Loading repositories from GitHub...</div>';
+  document.getElementById('stats-row').style.display = 'none';
+  document.getElementById('filter-bar').style.display = 'none';
+
+  try {
+    var url = 'https://api.github.com/orgs/' + org + '/repos?per_page=100&sort=pushed&type=all';
+    var headers = { Accept: 'application/vnd.github+json' };
+    var token = window.__githubToken;
+    if (token) headers.Authorization = 'Bearer ' + token;
+
+    var resp = await fetch(url, { headers: headers });
+    if (resp.status === 401 || resp.status === 403) {
+      delete headers.Authorization;
+      resp = await fetch(url, { headers: headers });
+    }
+    if (!resp.ok) throw new Error('GitHub API returned ' + resp.status);
+
+    allRepos = await resp.json();
+
+    // Fetch branches in parallel
+    await Promise.all(allRepos.map(async function(repo) {
+      try {
+        var r = await fetch('https://api.github.com/repos/' + repo.full_name + '/branches?per_page=30', { headers: headers });
+        repo._branches = r.ok ? await r.json() : [];
+      } catch(e) { repo._branches = []; }
+    }));
+
+    renderAll();
+  } catch (err) {
+    listEl.innerHTML = '<div class="error-msg">Failed to load: ' + err.message + '<br><br>If this is a private org, <a href="/api/auth/login">sign in with GitHub</a> first.</div>';
+  }
+}
+
+function renderAll() {
+  renderStats();
+  document.getElementById('filter-bar').style.display = 'flex';
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderGroups();
+    };
+  });
+  renderGroups();
+}
+
+function renderStats() {
+  var weekAgo = Date.now() - 7*86400000;
+  var partnerCount = Object.keys(PARTNERS).length;
+  var buildCount = 0;
+  for (var k in PARTNERS) buildCount += PARTNERS[k].builds.length;
+  var recent = allRepos.filter(function(r){return new Date(r.pushed_at).getTime() > weekAgo}).length;
+
+  document.getElementById('stat-repos').textContent = allRepos.length;
+  document.getElementById('stat-partners').textContent = partnerCount;
+  document.getElementById('stat-builds').textContent = buildCount;
+  document.getElementById('stat-recent').textContent = recent;
+  document.getElementById('stats-row').style.display = 'flex';
+}
+
+function renderGroups() {
+  var listEl = document.getElementById('repo-list');
+  var html = '';
+
+  // Separate repos into partner-matched and platform
+  var partnerRepos = {}; // key → [repos]
+  var platformRepos = [];
+
+  allRepos.forEach(function(repo) {
+    var partner = matchPartner(repo.name);
+    if (partner) {
+      if (!partnerRepos[partner]) partnerRepos[partner] = [];
+      partnerRepos[partner].push(repo);
+    } else {
+      platformRepos.push(repo);
+    }
+  });
+
+  // Also include partners that don't have their own repo (they're in the developers repo)
+  for (var key in PARTNERS) {
+    if (!partnerRepos[key]) partnerRepos[key] = [];
+  }
+
+  // Render by category
+  CATEGORIES.forEach(function(cat) {
+    if (currentFilter !== 'all' && currentFilter !== cat.key &&
+        !(currentFilter === 'partners' && cat.key !== 'platform') &&
+        !(currentFilter === 'platform' && cat.key === 'platform') &&
+        !(currentFilter === 'recent')) return;
+
+    var catPartners = [];
+    for (var key in PARTNERS) {
+      if (PARTNERS[key].category === cat.key) catPartners.push(key);
+    }
+
+    // For platform category, show platform repos
+    if (cat.key === 'platform') {
+      var platRepos = currentFilter === 'recent'
+        ? platformRepos.filter(function(r){return new Date(r.pushed_at).getTime() > Date.now()-7*86400000})
+        : platformRepos;
+      if (platRepos.length === 0 && currentFilter === 'recent') return;
+
+      html += '<div class="category"><span class="category-label">' + cat.label + '</span><div class="category-line"></div><span class="category-count">' + cat.sub + '</span></div>';
+      platRepos.forEach(function(repo) {
+        html += renderPlatformRepo(repo);
+      });
+      return;
+    }
+
+    // Filter by recent activity if needed
+    if (currentFilter === 'recent') {
+      catPartners = catPartners.filter(function(key) {
+        var repos = partnerRepos[key] || [];
+        return repos.some(function(r){return new Date(r.pushed_at).getTime() > Date.now()-7*86400000});
+      });
+    }
+
+    if (catPartners.length === 0) return;
+
+    html += '<div class="category"><span class="category-label">' + cat.label + '</span><div class="category-line"></div><span class="category-count">' + cat.sub + '</span></div>';
+    catPartners.forEach(function(key) {
+      html += renderPartnerGroup(key, partnerRepos[key] || []);
+    });
+  });
+
+  listEl.innerHTML = html || '<div class="loading">No results match this filter.</div>';
+
+  // Wire up toggle clicks
+  document.querySelectorAll('.partner-header').forEach(function(hdr) {
+    hdr.onclick = function() {
+      hdr.closest('.partner-group').classList.toggle('open');
+    };
+  });
+}
+
+function renderPlatformRepo(repo) {
+  var branches = repo._branches || [];
+  var defBranch = repo.default_branch || 'main';
+  var langColor = LANG_COLORS[repo.language] || '#a1a1aa';
+
+  var html = '<div class="partner-group open">';
+  html += '<div class="partner-header" onclick="this.closest(\'.partner-group\').classList.toggle(\'open\')">';
+  html += '<div class="partner-icon" style="background:#18181b">' + repo.name.substring(0,2).toUpperCase() + '</div>';
+  html += '<div class="partner-info">';
+  html += '<div class="partner-name">' + repo.name + ' <span class="vis-badge ' + (repo.private?'vis-private':'vis-public') + '">' + (repo.private?'private':'public') + '</span></div>';
+  if (repo.description) html += '<div class="partner-desc">' + repo.description + '</div>';
+  html += '<div class="partner-badges" style="margin-top:4px">';
+  html += '<span class="branch-tag default">' + defBranch + '</span>';
+  branches.forEach(function(b){ if(b.name!==defBranch) html += '<span class="branch-tag">' + b.name + '</span>'; });
+  if (repo.language) html += '<span style="display:inline-flex;align-items:center;gap:3px;font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#a1a1aa"><span class="lang-dot" style="background:' + langColor + '"></span>' + repo.language + '</span>';
+  html += '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#a1a1aa">' + timeAgo(repo.pushed_at) + '</span>';
+  html += '</div></div>';
+  html += '<div class="partner-toggle">&#9662;</div>';
+  html += '</div>';
+
+  html += '<div class="partner-body">';
+  html += '<div class="repo-row-actions">';
+  html += '<a href="' + repo.html_url + '" target="_blank" class="act-btn primary">GitHub</a>';
+  html += '<a href="' + repo.html_url + '/fork" target="_blank" class="act-btn">Fork</a>';
+  html += '<button class="act-btn" onclick="event.stopPropagation();showClone(\'' + repo.name + '\',\'' + repo.clone_url + '\',\'' + repo.ssh_url + '\')">Clone</button>';
+  html += '<a href="' + repo.html_url + '/pulls" target="_blank" class="act-btn">PRs</a>';
+  if (branches.length > 1) html += '<a href="' + repo.html_url + '/branches" target="_blank" class="act-btn">' + branches.length + ' branches</a>';
+  html += '</div>';
+  html += '</div></div>';
+  return html;
+}
+
+function renderPartnerGroup(key, repos) {
+  var p = PARTNERS[key];
+  var fg = p.fg || '#fff';
+
+  var html = '<div class="partner-group">';
+  html += '<div class="partner-header">';
+  html += '<div class="partner-icon" style="background:' + p.color + ';color:' + fg + '">' + p.initials + '</div>';
+  html += '<div class="partner-info">';
+  html += '<div class="partner-name">' + p.name + '</div>';
+  html += '<div class="partner-desc">' + p.desc + '</div>';
+  html += '<div class="partner-badges" style="margin-top:4px">';
+  html += '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);padding:1px 6px;border-radius:3px">' + p.builds.length + ' build' + (p.builds.length!==1?'s':'') + '</span>';
+  if (repos.length > 0) {
+    html += '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);padding:1px 6px;border-radius:3px">' + repos.length + ' repo' + (repos.length!==1?'s':'') + '</span>';
+    var latest = repos.sort(function(a,b){return new Date(b.pushed_at)-new Date(a.pushed_at)})[0];
+    html += '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:#a1a1aa">' + timeAgo(latest.pushed_at) + '</span>';
+  }
+  html += '</div></div>';
+  html += '<div class="partner-toggle">&#9662;</div>';
+  html += '</div>';
+
+  // Expandable body
+  html += '<div class="partner-body">';
+
+  // GitHub source links
+  if (p.github) {
+    html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
+    if (p.github.preview) {
+      html += '<a href="' + p.github.preview + '" target="_blank" class="act-btn primary" style="font-size:9px">&#9671; GitHub Source — Preview</a>';
+    }
+    if (p.github.partner) {
+      html += '<a href="' + p.github.partner + '" target="_blank" class="act-btn" style="font-size:9px">&#9671; GitHub Source — Partner Page</a>';
+    }
+    html += '<a href="' + DEVS_REPO + '" target="_blank" class="act-btn" style="font-size:9px">&#9671; developers repo</a>';
+    html += '</div>';
+  }
+
+  // Repos
+  if (repos.length > 0) {
+    repos.forEach(function(repo) {
+      var branches = repo._branches || [];
+      var defBranch = repo.default_branch || 'main';
+      var langColor = LANG_COLORS[repo.language] || '#a1a1aa';
+
+      html += '<div class="repo-row">';
+      html += '<div class="repo-row-icon" style="background:' + p.color + ';color:' + fg + '">' + repo.name.substring(0,2).toUpperCase() + '</div>';
+      html += '<div class="repo-row-info">';
+      html += '<div class="repo-row-name"><a href="' + repo.html_url + '" target="_blank">' + repo.full_name + '</a> <span class="vis-badge ' + (repo.private?'vis-private':'vis-public') + '">' + (repo.private?'private':'public') + '</span></div>';
+      html += '<div class="repo-row-meta">';
+      html += '<span class="branch-tag default">' + defBranch + '</span>';
+      branches.forEach(function(b){ if(b.name!==defBranch) html += '<span class="branch-tag">' + b.name + '</span>'; });
+      if (repo.language) html += '<span style="display:inline-flex;align-items:center;gap:3px"><span class="lang-dot" style="background:' + langColor + '"></span>' + repo.language + '</span>';
+      html += '<span>' + timeAgo(repo.pushed_at) + '</span>';
+      html += '</div></div>';
+      html += '<div class="repo-row-actions">';
+      html += '<a href="' + repo.html_url + '" target="_blank" class="act-btn primary">GitHub</a>';
+      html += '<a href="' + repo.html_url + '/fork" target="_blank" class="act-btn">Fork</a>';
+      html += '<button class="act-btn" onclick="event.stopPropagation();showClone(\'' + repo.name + '\',\'' + repo.clone_url + '\',\'' + repo.ssh_url + '\')">Clone</button>';
+      html += '<a href="' + repo.html_url + '/pulls" target="_blank" class="act-btn">PRs</a>';
+      html += '</div>';
+      html += '</div>';
+    });
+  }
+
+  // Builds & demos
+  if (p.builds.length > 0) {
+    html += '<div class="builds-label">Builds &amp; Demos</div>';
+    p.builds.forEach(function(b) {
+      var bColor = b.color || p.color;
+      var bFg = b.fg || fg;
+      // Derive GitHub source link from build URL
+      var ghSource = '';
+      if (b.url.startsWith('/preview/') || b.url.startsWith('/partners/')) {
+        ghSource = DEVS_TREE + b.url;
+      }
+      html += '<div class="build-row">';
+      html += '<div class="build-icon" style="background:' + bColor + ';color:' + bFg + '">' + (b.icon||'') + '</div>';
+      html += '<div class="build-info">';
+      html += '<div class="build-name"><a href="' + b.url + '" target="_blank">' + b.name + '</a>';
+      if (ghSource) html += ' <a href="' + ghSource + '" target="_blank" style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:#a1a1aa;text-decoration:none;border:1px solid #e4e4e7;padding:1px 5px;border-radius:2px;vertical-align:middle" title="View source on GitHub">src</a>';
+      html += '</div>';
+      if (b.desc) html += '<div class="build-desc">' + b.desc + '</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+function showClone(name, httpsUrl, sshUrl) {
+  document.getElementById('clone-title').textContent = 'Clone ' + name;
+  document.getElementById('clone-https').value = 'git clone ' + httpsUrl;
+  document.getElementById('clone-ssh').value = 'git clone ' + sshUrl;
+  document.getElementById('clone-modal').classList.add('show');
+}
+function closeClone() { document.getElementById('clone-modal').classList.remove('show'); }
+function copyClone(input) {
+  navigator.clipboard.writeText(input.value).then(function() {
+    input.style.borderColor = '#059669';
+    setTimeout(function(){ input.style.borderColor = ''; }, 800);
+  });
+}
+function expandAll() { document.querySelectorAll('.partner-group').forEach(function(g){g.classList.add('open')}); }
+function collapseAll() { document.querySelectorAll('.partner-group').forEach(function(g){g.classList.remove('open')}); }
+
+document.getElementById('clone-modal').addEventListener('click', function(e){ if(e.target===this) closeClone(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeClone(); });
+
+(async function() {
+  try {
+    var r = await fetch('/api/auth/session');
+    if (r.ok) { var d = await r.json(); if (d.github_token) window.__githubToken = d.github_token; }
+  } catch(e) {}
+  loadRepos();
+})();
+</script>
+
+</body>
+</html>

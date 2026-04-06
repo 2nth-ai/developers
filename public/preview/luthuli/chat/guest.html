@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Luthuli Lodge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --wa-green: #075e54;
+  --wa-green-light: #128c7e;
+  --wa-bg: #ece5dd;
+  --wa-user-bubble: #dcf8c6;
+  --wa-agent-bubble: #ffffff;
+  --wa-input-bg: #f0f0f0;
+  --wa-header: #075e54;
+  --lodge-brown: #3d3229;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #000;
+  -webkit-text-size-adjust: 100%;
+}
+
+#app {
+  max-width: 480px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--wa-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--wa-header);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 8px 6px;
+  padding-top: calc(8px + var(--safe-top));
+  min-height: 56px;
+  flex-shrink: 0;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+.header-back {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: .9;
+}
+
+.header-back svg {
+  width: 22px;
+  height: 22px;
+  fill: #fff;
+}
+
+.header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--lodge-brown);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #e8dcc8;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.header-name {
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-status {
+  font-size: 12px;
+  opacity: .85;
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.header-actions button {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.header-actions button:active {
+  background: rgba(255,255,255,.15);
+}
+
+.header-actions svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+}
+
+/* ── CHAT AREA ── */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background-color: var(--wa-bg);
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8bfb3' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── DATE SEPARATOR ── */
+.date-sep {
+  align-self: center;
+  background: #e1d8cb;
+  color: #5e5246;
+  font-size: 11.5px;
+  padding: 4px 12px;
+  border-radius: 7px;
+  margin: 6px 0;
+  box-shadow: 0 1px 1px rgba(0,0,0,.06);
+}
+
+/* ── BUBBLES ── */
+.msg-row {
+  display: flex;
+  margin-bottom: 1px;
+}
+
+.msg-row.agent { justify-content: flex-start; }
+.msg-row.user { justify-content: flex-end; }
+
+.bubble {
+  max-width: 82%;
+  padding: 6px 8px 4px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 14.2px;
+  line-height: 1.38;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-shadow: 0 1px 0.5px rgba(0,0,0,.08);
+}
+
+.msg-row.agent .bubble {
+  background: var(--wa-agent-bubble);
+  border-top-left-radius: 0;
+  margin-left: 2px;
+}
+
+.msg-row.user .bubble {
+  background: var(--wa-user-bubble);
+  border-top-right-radius: 0;
+  margin-right: 2px;
+}
+
+/* triangle tails */
+.msg-row.agent .bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-top: 0 solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 8px solid var(--wa-agent-bubble);
+}
+
+.msg-row.user .bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -8px;
+  width: 0;
+  height: 0;
+  border-top: 0 solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 8px solid var(--wa-user-bubble);
+}
+
+/* first in group gets tail */
+.msg-row.agent + .msg-row.agent .bubble::before,
+.msg-row.user + .msg-row.user .bubble::before {
+  display: none;
+}
+.msg-row.agent + .msg-row.agent .bubble {
+  border-top-left-radius: 8px;
+}
+.msg-row.user + .msg-row.user .bubble {
+  border-top-right-radius: 8px;
+}
+
+.bubble-text {
+  margin-right: 52px;
+}
+
+.bubble-meta {
+  float: right;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  margin-left: 8px;
+  position: relative;
+  top: 4px;
+}
+
+.bubble-time {
+  font-size: 11px;
+  color: #8a9a8a;
+}
+
+.msg-row.agent .bubble-time { color: #9a9a9a; }
+
+.bubble-check {
+  display: flex;
+  align-items: center;
+}
+
+.bubble-check svg {
+  width: 16px;
+  height: 12px;
+}
+
+/* ── TYPING INDICATOR ── */
+.typing-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1px;
+}
+
+.typing-bubble {
+  background: var(--wa-agent-bubble);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  margin-left: 2px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  box-shadow: 0 1px 0.5px rgba(0,0,0,.08);
+  position: relative;
+}
+
+.typing-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 0; height: 0;
+  border-top: 0 solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 8px solid var(--wa-agent-bubble);
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a0a0a0;
+  animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ── STRUCTURED CARDS ── */
+.card {
+  background: #fff;
+  border: 1px solid #e0ddd8;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.card-header {
+  background: #f8f7f5;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--lodge-brown);
+  border-bottom: 1px solid #e8e4df;
+}
+
+.card-body {
+  padding: 10px 12px;
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 3px 0;
+  color: #444;
+}
+
+.card-row .label {
+  color: #888;
+}
+
+.card-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.badge-confirmed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+/* confirmation card */
+.confirm-card {
+  text-align: center;
+  padding: 16px 12px;
+}
+
+.confirm-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #28a745;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.confirm-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+}
+
+.confirm-ref {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* availability mini-cal */
+.mini-cal {
+  margin-top: 4px;
+}
+
+.mini-cal-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lodge-brown);
+  padding: 6px 0 4px;
+  text-align: center;
+}
+
+.mini-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  font-size: 11px;
+  text-align: center;
+}
+
+.mini-cal-grid .day-label {
+  font-weight: 600;
+  color: #888;
+  padding: 2px 0;
+}
+
+.mini-cal-grid .day {
+  padding: 4px 2px;
+  border-radius: 4px;
+}
+
+.mini-cal-grid .day.open {
+  background: #d4edda;
+  color: #155724;
+}
+
+.mini-cal-grid .day.booked {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.mini-cal-grid .day.empty {
+  visibility: hidden;
+}
+
+/* ── INPUT BAR ── */
+.input-bar {
+  background: var(--wa-input-bg);
+  display: flex;
+  align-items: flex-end;
+  padding: 6px 6px;
+  padding-bottom: calc(6px + var(--safe-bottom));
+  gap: 6px;
+  flex-shrink: 0;
+  z-index: 10;
+  border-top: 1px solid #ddd;
+}
+
+.input-emoji {
+  width: 36px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: .55;
+}
+
+.input-emoji svg {
+  width: 24px;
+  height: 24px;
+  fill: #6b6b6b;
+}
+
+.input-field-wrap {
+  flex: 1;
+  background: #fff;
+  border-radius: 21px;
+  display: flex;
+  align-items: flex-end;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+}
+
+.input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.35;
+  padding: 9px 0;
+  max-height: 100px;
+  overflow-y: auto;
+  resize: none;
+  background: transparent;
+  color: #222;
+}
+
+.input-field::placeholder {
+  color: #aaa;
+}
+
+.input-send {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.input-send.mic {
+  background: none;
+}
+
+.input-send.mic svg {
+  width: 24px;
+  height: 24px;
+  fill: #6b6b6b;
+}
+
+.input-send.send {
+  background: var(--wa-green);
+}
+
+.input-send.send svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+}
+
+.input-send:active {
+  transform: scale(.93);
+}
+
+/* ── TOAST ── */
+.toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 480px;
+  width: 100%;
+  z-index: 9999;
+  padding: 8px 10px;
+  padding-top: calc(8px + var(--safe-top));
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(40,40,40,.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  transform: translateY(-120%);
+  transition: transform .35s cubic-bezier(.4,.0,.2,1);
+  pointer-events: auto;
+}
+
+.toast.show {
+  transform: translateY(0);
+}
+
+.toast-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #34c759;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-app {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.toast-text {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-row, .typing-row {
+  animation: fadeInUp .2s ease-out;
+}
+
+/* scrollbar */
+.chat-area::-webkit-scrollbar {
+  width: 5px;
+}
+.chat-area::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.15);
+  border-radius: 3px;
+}
+
+/* ── SUGGESTION CHIPS ── */
+.chips { display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px; }
+.chip { font-size:12px; padding:6px 14px; border-radius:16px; border:1px solid rgba(0,0,0,.15); background:#fff; color:#075e54; cursor:pointer; white-space:nowrap; }
+.chip:hover { background:#dcf8c6; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-back">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </div>
+    <div class="header-avatar">L</div>
+    <div class="header-info">
+      <div class="header-name">Luthuli Lodge</div>
+      <div class="header-status" id="headerStatus">online</div>
+    </div>
+    <div class="header-actions">
+      <button aria-label="Clear chat" onclick="clearGuestChat()" style="font-size:9px;font-family:'Inter',sans-serif;letter-spacing:.5px">Clear</button>
+      <button aria-label="Restart" onclick="restartGuestChat()" style="font-size:9px;font-family:'Inter',sans-serif;letter-spacing:.5px">Restart</button>
+    </div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="chat-area" id="chatArea"></div>
+
+  <!-- INPUT BAR -->
+  <div class="input-bar">
+    <div class="input-emoji">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-4-8c.78 0 1.41-.63 1.41-1.41S8.78 9.18 8 9.18s-1.41.63-1.41 1.41S7.22 12 8 12zm8 0c.78 0 1.41-.63 1.41-1.41S16.78 9.18 16 9.18s-1.41.63-1.41 1.41S15.22 12 16 12zm-4 5.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+    </div>
+    <div class="input-field-wrap">
+      <textarea class="input-field" id="inputField" rows="1" placeholder="Type a message..."></textarea>
+    </div>
+    <button class="input-send mic" id="sendBtn" aria-label="Send">
+      <svg class="mic-icon" viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3zm-1-9a1 1 0 112 0v6a1 1 0 01-2 0V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+      <svg class="send-icon" style="display:none" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-overlay" id="toastOverlay">
+  <div class="toast" id="toast">
+    <div class="toast-icon">&#x1F4AC;</div>
+    <div class="toast-content">
+      <div class="toast-app">Messages</div>
+      <div class="toast-text" id="toastText"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── State ──
+  const TOKEN_KEY = 'luthuli_session_token';
+  const HISTORY_KEY = 'luthuli_chat_history';
+  const STATE_KEY = 'luthuli_auth_state';
+
+  let sessionToken = localStorage.getItem(TOKEN_KEY) || null;
+  let authState = localStorage.getItem(STATE_KEY) || 'init'; // init | phone_asked | code_sent | verified
+  let messages = [];
+
+  const chatArea = document.getElementById('chatArea');
+  const inputField = document.getElementById('inputField');
+  const sendBtn = document.getElementById('sendBtn');
+  const headerStatus = document.getElementById('headerStatus');
+
+  // ── Helpers ──
+  function now() {
+    const d = new Date();
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function today() {
+    return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    });
+  }
+
+  // ── Checkmark SVGs ──
+  const singleCheck = '<svg viewBox="0 0 16 11"><path fill="#8a9a8a" d="M11.07.66L4.88 6.85 2.15 4.12 1.02 5.25l3.86 3.86L12.2 1.79z"/></svg>';
+  const doubleCheckGray = '<svg viewBox="0 0 16 11"><path fill="#8a9a8a" d="M11.07.66L4.88 6.85 2.15 4.12 1.02 5.25l3.86 3.86L12.2 1.79z"/><path fill="#8a9a8a" d="M14.07.66L7.88 6.85l-.7-.7-1.13 1.13 1.83 1.83L15.2 1.79z"/></svg>';
+  const doubleCheckBlue = '<svg viewBox="0 0 16 11"><path fill="#53bdeb" d="M11.07.66L4.88 6.85 2.15 4.12 1.02 5.25l3.86 3.86L12.2 1.79z"/><path fill="#53bdeb" d="M14.07.66L7.88 6.85l-.7-.7-1.13 1.13 1.83 1.83L15.2 1.79z"/></svg>';
+
+  // ── Render helpers ──
+  function addDateSep(text) {
+    const el = document.createElement('div');
+    el.className = 'date-sep';
+    el.textContent = text || today();
+    chatArea.appendChild(el);
+  }
+
+  function addMessage(role, text, opts = {}) {
+    const time = opts.time || now();
+    const check = role === 'user' ? (opts.read ? doubleCheckBlue : doubleCheckGray) : singleCheck;
+
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + role;
+
+    let html = '<div class="bubble">';
+
+    // structured content
+    if (opts.card) {
+      html += renderCard(opts.card);
+    } else {
+      html += '<span class="bubble-text">' + formatText(text) + '</span>';
+    }
+
+    html += '<span class="bubble-meta">';
+    html += '<span class="bubble-time">' + time + '</span>';
+    if (role === 'user') {
+      html += '<span class="bubble-check">' + check + '</span>';
+    }
+    html += '</span>';
+    html += '</div>';
+
+    row.innerHTML = html;
+    chatArea.appendChild(row);
+
+    messages.push({ role, text, time, card: opts.card || null });
+    saveHistory();
+    scrollToBottom();
+  }
+
+  function formatText(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\n/g, '<br>')
+      .replace(/\*(.+?)\*/g, '<strong>$1</strong>');
+  }
+
+  function renderCard(card) {
+    if (card.type === 'booking') {
+      return `<div class="card">
+        <div class="card-header">${card.title || 'Booking Details'}</div>
+        <div class="card-body">
+          ${card.pavilion ? `<div class="card-row"><span class="label">Pavilion</span><span>${card.pavilion}</span></div>` : ''}
+          ${card.dates ? `<div class="card-row"><span class="label">Dates</span><span>${card.dates}</span></div>` : ''}
+          ${card.guests ? `<div class="card-row"><span class="label">Guests</span><span>${card.guests}</span></div>` : ''}
+          ${card.rate ? `<div class="card-row"><span class="label">Rate</span><span>${card.rate}</span></div>` : ''}
+          ${card.status ? `<div class="card-badge ${card.status === 'Confirmed' ? 'badge-confirmed' : 'badge-pending'}">${card.status}</div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    if (card.type === 'confirmation') {
+      return `<div class="card">
+        <div class="card-body confirm-card">
+          <div class="confirm-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+          <div style="font-weight:600;font-size:15px;color:#155724">${card.title || 'Booking Confirmed!'}</div>
+          <div class="confirm-ref">Ref: ${card.ref || '---'}</div>
+          ${card.summary ? `<div style="font-size:13px;color:#555;margin-top:8px">${card.summary}</div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    if (card.type === 'availability') {
+      return renderAvailabilityCard(card);
+    }
+
+    return '';
+  }
+
+  function renderAvailabilityCard(card) {
+    const days = ['S','M','T','W','T','F','S'];
+    let grid = days.map(d => `<div class="day-label">${d}</div>`).join('');
+
+    if (card.dates) {
+      const firstDay = card.startDay || 0;
+      for (let i = 0; i < firstDay; i++) {
+        grid += '<div class="day empty">.</div>';
+      }
+      card.dates.forEach(d => {
+        const cls = d.booked ? 'booked' : 'open';
+        grid += `<div class="day ${cls}">${d.day}</div>`;
+      });
+    }
+
+    return `<div class="card mini-cal">
+      <div class="mini-cal-title">${card.month || 'Availability'}</div>
+      <div class="card-body"><div class="mini-cal-grid">${grid}</div></div>
+      <div style="padding:4px 12px 8px;display:flex;gap:12px;font-size:11px;color:#888">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#d4edda;display:inline-block"></span>Available</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#f8d7da;display:inline-block"></span>Booked</span>
+      </div>
+    </div>`;
+  }
+
+  // ── Suggestion chips ──
+  let chipsEl = null;
+
+  function showChips(chipTexts) {
+    removeChips();
+    const row = document.createElement('div');
+    row.className = 'chips';
+    chipTexts.forEach(text => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = text;
+      btn.addEventListener('click', () => {
+        removeChips();
+        sendMessage(text);
+      });
+      row.appendChild(btn);
+    });
+    chipsEl = row;
+    chatArea.appendChild(row);
+    scrollToBottom();
+  }
+
+  function removeChips() {
+    if (chipsEl) { chipsEl.remove(); chipsEl = null; }
+  }
+
+  // ── Clear / Restart ──
+  window.clearGuestChat = function() {
+    chatArea.innerHTML = '';
+    removeChips();
+    addMessage('agent', 'Chat cleared. How can I help?');
+    showChips(['Check availability', 'Rates & pricing', 'Our pavilions', 'Game drives', 'Make a booking', 'How to get here']);
+  };
+  window.restartGuestChat = function() {
+    localStorage.removeItem(STATE_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('luthuli_phone');
+    sessionToken = null;
+    authState = 'init';
+    chatArea.innerHTML = '';
+    removeChips();
+    headerStatus.textContent = 'online';
+    setTimeout(() => {
+      addMessage('agent', "Welcome to Luthuli Lodge! 🌿\n\nI'm your booking assistant. To get started, what's your phone number?");
+      authState = 'phone_asked';
+      localStorage.setItem(STATE_KEY, authState);
+    }, 400);
+  };
+
+  // ── Typing indicator ──
+  let typingEl = null;
+
+  function showTyping() {
+    if (typingEl) return;
+    headerStatus.textContent = 'typing...';
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing-row';
+    typingEl.innerHTML = '<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    chatArea.appendChild(typingEl);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    headerStatus.textContent = 'online';
+    if (typingEl) {
+      typingEl.remove();
+      typingEl = null;
+    }
+  }
+
+  // ── Toast ──
+  function showToast(text) {
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    toastText.textContent = text;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 5000);
+  }
+
+  // ── API Calls ──
+  async function postJSON(url, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (sessionToken) headers['Authorization'] = 'Bearer ' + sessionToken;
+    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error('API ' + res.status);
+    return await res.json();
+  }
+
+  function clientFallback(msg, channel) {
+    const m = msg.toLowerCase();
+    if (/avail|dates|vacancy|free|open/.test(m)) return { reply: '**April 2026 Availability:**\n\nBooked:\n- River Pavilion: 2–8 Apr, 25–28 Apr\n- Bush Pavilion: 6–10 Apr, 18–21 Apr\n- Sunset Pavilion: 12–15 Apr\n\nPlenty of open dates! Would you like to make a booking?' };
+    if (/price|rate|cost|how much/.test(m)) return { reply: '**Luthuli Lodge Rates:**\n\n- River Pavilion (sleeps 4): R2,800/night\n- Bush Pavilion (sleeps 2): R2,800/night\n- Sunset Pavilion (sleeps 6): R4,200/night\n\n**Conservation levy:** R180/person/night\n**Perfect Hideaways:** +20% platform fee\n\nWould you like to check availability?' };
+    if (/levy|conservation fee/.test(m)) return { reply: 'The **conservation levy** is R180 per person per night. It covers anti-poaching, wildlife monitoring, and habitat restoration. Children pay the same levy.' };
+    if (/book|reserve|want to stay/.test(m)) return { reply: 'Great, let\'s get you booked! What are your preferred **arrival and departure dates**? (e.g. 15-18 May)' };
+    if (/where|location|direction/.test(m)) return { reply: '**Luthuli Lodge** is in Mkuzi Game Reserve, KwaZulu-Natal.\n\nGPS: -27.6167, 32.0333\nNearest town: Mkuze (20 min)\nNearest airport: King Shaka (KZN) — 3.5 hours\n\nThe lodge is on a private conservancy with Big 5.' };
+    if (/room|pavilion|accommodation|sleep/.test(m)) return { reply: '**Our 3 Pavilions:**\n\n**River Pavilion** — Sleeps 4, overlooks the riverbed, plunge pool\n**Bush Pavilion** — Sleeps 2, intimate and secluded\n**Sunset Pavilion** — Sleeps 6, wraparound deck, private boma\n\nAll include housekeeping, minibar, Wi-Fi, and game drives.' };
+    if (/guide|game drive|safari/.test(m)) return { reply: '**Guides:**\n\n- **Thabo** — Head guide, FGASA Level 3, big cats specialist\n- **Sipho** — Senior guide, birding expert\n- **External** — available on request\n\nDrives at 05:30 and 15:30, ~3 hours each.' };
+    if (/hi|hello|hey|morning|afternoon/.test(m)) return { reply: 'Welcome to Luthuli Lodge! 🌿\n\nI can help you with:\n- Check availability\n- Pricing & rates\n- Pavilion info\n- Game drives & guides\n- Make a booking\n\nWhat would you like to know?' };
+    return { reply: 'I can help with:\n- **Availability** — check open dates\n- **Bookings** — reserve your stay\n- **Pricing** — rates and fees\n- **Lodge info** — pavilions, guides, directions\n\nJust ask!' };
+  }
+
+  // ── Auth flow ──
+  async function handleAuth(userText) {
+    if (authState === 'phone_asked') {
+      // User typed their phone number
+      addMessage('user', userText, { read: false });
+      showTyping();
+
+      let res;
+      try {
+        res = await postJSON('/api/luthuli/auth', { identifier: userText, channel: 'guest' });
+      } catch(e) {
+        res = { demo_code: String(Math.floor(100000 + Math.random() * 900000)) };
+      }
+      const delay = 500 + Math.random() * 300;
+
+      setTimeout(() => {
+        hideTyping();
+
+        if (res.error && !res.otp) {
+          addMessage('agent', res.error || "Sorry, I couldn't verify that number. Please try again.");
+          return;
+        }
+
+        addMessage('agent', "I've sent a verification code to your phone. Please enter the 6-digit code below.");
+        authState = 'code_sent';
+        localStorage.setItem(STATE_KEY, authState);
+
+        if (res.token) {
+          sessionToken = res.token;
+          localStorage.setItem(TOKEN_KEY, sessionToken);
+        }
+
+        // Show demo toast with OTP
+        const otp = res.demo_code || res.otp || '482913';
+        setTimeout(() => {
+          showToast('Your Luthuli verification code is ' + otp);
+        }, 600);
+      }, delay);
+
+      return true;
+    }
+
+    if (authState === 'code_sent') {
+      // User typed their verification code
+      addMessage('user', userText, { read: false });
+      showTyping();
+
+      let res;
+      try {
+        res = await postJSON('/api/luthuli/verify', { identifier: localStorage.getItem('luthuli_phone') || '', code: userText.trim(), channel: 'guest' });
+      } catch(e) {
+        res = { success: true, user: { name: 'Guest', role: 'guest' } };
+      }
+      const delay = 500 + Math.random() * 300;
+
+      setTimeout(() => {
+        hideTyping();
+
+        if (res.error && !res.verified) {
+          addMessage('agent', res.error || "That code doesn't look right. Please try again.");
+          return;
+        }
+
+        if (res.token) {
+          sessionToken = res.token;
+          localStorage.setItem(TOKEN_KEY, sessionToken);
+        }
+
+        // Mark previous user messages as read
+        markAllRead();
+
+        addMessage('agent', "You're verified! \u2705 How can I help you today?\n\nI can help with:\n\u2022 *Check availability* for dates\n\u2022 *Make a booking*\n\u2022 *View your bookings*\n\u2022 *Lodge information & rates*");
+        authState = 'verified';
+        localStorage.setItem(STATE_KEY, authState);
+
+        setTimeout(() => {
+          showChips(['Check availability', 'Rates & pricing', 'Our pavilions', 'Game drives', 'Make a booking', 'How to get here']);
+        }, 300);
+      }, delay);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  function markAllRead() {
+    document.querySelectorAll('.msg-row.user .bubble-check').forEach(el => {
+      el.innerHTML = doubleCheckBlue;
+    });
+  }
+
+  // ── Chat ──
+  async function sendMessage(text) {
+    if (!text.trim()) return;
+    removeChips();
+
+    // Check if still in auth flow
+    if (authState !== 'verified') {
+      const handled = await handleAuth(text.trim());
+      if (handled) return;
+    }
+
+    addMessage('user', text.trim(), { read: false });
+    showTyping();
+
+    let res;
+    try {
+      res = await postJSON('/api/luthuli/chat', { message: text.trim(), channel: 'guest' });
+    } catch(e) {
+      res = clientFallback(text.trim(), 'guest');
+    }
+    const delay = 500 + Math.random() * 300;
+
+    setTimeout(() => {
+      hideTyping();
+      markAllRead();
+
+      const msg = res.reply || res.message || res.text || "I can help with availability, bookings, pricing, or lodge info. Just ask!";
+
+      if (res.card || res.metadata) {
+        addMessage('agent', msg, { card: res.card || res.metadata });
+      } else {
+        addMessage('agent', msg);
+      }
+    }, delay);
+  }
+
+  // ── Input handling ──
+  function updateSendButton() {
+    const hasText = inputField.value.trim().length > 0;
+    if (hasText) {
+      sendBtn.className = 'input-send send';
+      sendBtn.querySelector('.mic-icon').style.display = 'none';
+      sendBtn.querySelector('.send-icon').style.display = '';
+    } else {
+      sendBtn.className = 'input-send mic';
+      sendBtn.querySelector('.mic-icon').style.display = '';
+      sendBtn.querySelector('.send-icon').style.display = 'none';
+    }
+  }
+
+  function autoResize() {
+    inputField.style.height = 'auto';
+    inputField.style.height = Math.min(inputField.scrollHeight, 100) + 'px';
+  }
+
+  inputField.addEventListener('input', () => {
+    updateSendButton();
+    autoResize();
+  });
+
+  inputField.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      doSend();
+    }
+  });
+
+  sendBtn.addEventListener('click', doSend);
+
+  function doSend() {
+    const text = inputField.value;
+    if (!text.trim()) return;
+    inputField.value = '';
+    autoResize();
+    updateSendButton();
+    sendMessage(text);
+  }
+
+  // ── Mobile keyboard handling ──
+  const vv = window.visualViewport;
+  if (vv) {
+    vv.addEventListener('resize', () => {
+      document.getElementById('app').style.height = vv.height + 'px';
+      scrollToBottom();
+    });
+    vv.addEventListener('scroll', () => {
+      document.getElementById('app').style.height = vv.height + 'px';
+    });
+  }
+
+  // Prevent body bounce on iOS
+  document.body.addEventListener('touchmove', (e) => {
+    if (!chatArea.contains(e.target)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // ── Session restore ──
+  function saveHistory() {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(messages));
+    } catch(e) {}
+  }
+
+  function restoreSession() {
+    try {
+      const saved = localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.length > 0) {
+          addDateSep();
+          parsed.forEach(m => {
+            addMessage(m.role, m.text, { time: m.time, card: m.card, read: true });
+          });
+          // Remove double-saved entries
+          messages = parsed;
+          saveHistory();
+          return true;
+        }
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  // ── Init ──
+  function init() {
+    const restored = restoreSession();
+
+    if (!restored) {
+      authState = 'init';
+      localStorage.setItem(STATE_KEY, authState);
+
+      addDateSep();
+
+      // Simulate initial agent greeting with typing delay
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addMessage('agent', "Welcome to Luthuli Lodge! \uD83C\uDF3F I'm your booking assistant. I can help you check availability, make reservations, and answer questions about the lodge.");
+
+        setTimeout(() => {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addMessage('agent', "To get started, what's your phone number?");
+            authState = 'phone_asked';
+            localStorage.setItem(STATE_KEY, authState);
+          }, 600);
+        }, 400);
+      }, 800);
+    }
+  }
+
+  init();
+  inputField.focus();
+})();
+</script>
+</body>
+</html>
