@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andile — 2nth.ai Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    :root { --an-purple:#1C5014; --an-green:#7DB02A; --an-green-dim:#5a8020; --an-bg:#1A3A1C; --an-light:#F3F7F0; }
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:50%;background:var(--an-purple);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    /* Andile logo mark — stylised N inside circle */
+    .partner-logo svg{width:36px;height:36px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;font-weight:700}
+    .badge-fintech{background:rgba(28,80,20,.08);border:1px solid rgba(28,80,20,.25);color:var(--an-purple)}
+    .badge-build{background:rgba(125,176,42,.1);border:1px solid rgba(125,176,42,.35);color:var(--an-green-dim)}
+    .badge-global{background:rgba(28,80,20,.06);border:1px solid rgba(28,80,20,.18);color:var(--an-purple)}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #D4E4CC;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--an-purple)}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .dark-band{background:var(--an-bg);border-radius:12px;padding:32px;margin:32px 0;color:#f0e8f5}
+    .dark-band h2{color:#fff;border:none;margin-top:0}
+    .domain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
+    .domain-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:20px;transition:border-color .15s}
+    .domain-card:hover{border-color:var(--an-green)}
+    .domain-card .icon{font-size:22px;margin-bottom:10px}
+    .domain-card h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green);margin:0 0 6px}
+    .domain-card p{font-size:13px;color:rgba(255,255,255,.5);margin:0;line-height:1.5}
+    .use-case-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:20px 0}
+    .use-case{background:#fff;border:1px solid #D4E4CC;border-radius:10px;padding:20px;border-left:3px solid var(--an-purple)}
+    .use-case h3{font-size:15px;color:#18181b;margin:0 0 6px}
+    .use-case p{font-size:13px;color:#52525b;margin:0;line-height:1.5}
+    .use-case .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green-dim);margin-bottom:8px}
+    .geo-strip{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+    .geo{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:4px;background:#F3F7F0;border:1px solid #A8C898;color:var(--an-purple)}
+    .tech-stack{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+    .tech-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:4px;background:#F3F7F0;border:1px solid #A8C898;color:var(--an-purple)}
+    .partner-model{background:#F3F7F0;border:1px solid #A8C898;border-radius:10px;padding:24px;margin:24px 0}
+    .model-row{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid #e8ddef;align-items:start}
+    .model-row:last-child{border-bottom:none;padding-bottom:0}
+    .model-who{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--an-purple);width:80px;flex-shrink:0;padding-top:2px}
+    .model-what{font-size:13px;color:#52525b;line-height:1.5}
+    .founder-card{display:flex;align-items:center;gap:20px;background:#fff;border:1px solid #D4E4CC;border-radius:10px;padding:20px;margin:20px 0}
+    .founder-avatar{width:52px;height:52px;border-radius:50%;background:var(--an-green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .founder-name{font-size:16px;font-weight:700;color:#18181b}
+    .founder-role{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green-dim);margin-top:2px}
+    .founder-bio{font-size:13px;color:#52525b;margin-top:6px;line-height:1.5}
+    .cta-bar{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;padding-top:24px;border-top:1px solid #e4e4e7}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;border-radius:6px;border:none;cursor:pointer;text-decoration:none;transition:all .15s}
+    .btn-primary{background:var(--an-purple);color:#fff}.btn-primary:hover{background:#144010;text-decoration:none}
+    .btn-green{background:var(--an-green);color:#fff}.btn-green:hover{background:var(--an-green-dim);text-decoration:none}
+    .btn-outline{background:none;border:1px solid #A8C898;color:#52525b}.btn-outline:hover{border-color:var(--an-purple);color:var(--an-purple);text-decoration:none}
+    /* Andile header stripe */
+    .andile-header-stripe{height:6px;background:linear-gradient(90deg,var(--an-bg) 0%,var(--an-purple) 40%,var(--an-green) 70%,#a8c840 100%)}
+  </style>
+</head>
+<body>
+
+<div class="andile-header-stripe"></div>
+<header style="background:var(--an-purple);border-bottom:none">
+  <div class="container">
+    <a href="/" class="logo" style="color:#fff"><span style="color:var(--an-green)">2</span>NTH <span style="font-size:14px;color:rgba(255,255,255,.5);letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html" style="color:rgba(255,255,255,.7)">Docs</a>
+      <a href="/portal.html" style="color:rgba(255,255,255,.7)">Portal</a>
+      <a href="https://github.com/2nth-ai" style="color:rgba(255,255,255,.7)">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/portal.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to portal</a></div>
+
+  <!-- HEADER -->
+  <div class="partner-header">
+    <div class="partner-logo">
+      <!-- Andile wordmark A lettermark -->
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 7 L28 29 M18 7 L8 29" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 22 L24 22" stroke="#7DB02A" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1 style="margin:0;font-size:2rem;color:var(--an-purple);font-family:'Barlow',sans-serif;font-weight:800;letter-spacing:-0.5px">ANDILE</h1>
+      <div class="partner-meta">
+        <span>andile.net</span>
+        <span>Johannesburg, South Africa</span>
+        <span>Founded 2008</span>
+        <span>~70 people</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <span class="badge badge-fintech">Capital Markets</span>
+        <span class="badge badge-global">&#127760; 16 Countries</span>
+        <span class="badge badge-build">Build Partner</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:1.05rem;color:#52525b;max-width:680px;line-height:1.7">
+    Andile is a fintech professional services firm specialising in Trade, Treasury, Risk, and Assurance for banks and financial institutions across EMEA and APAC. Founded in 2008, they bring deep capital markets expertise — now partnering with 2nth.ai to layer AI intelligence into the platforms they implement and manage.
+  </p>
+
+  <!-- STATS -->
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="value">16</div>
+      <div class="label">Countries</div>
+    </div>
+    <div class="stat">
+      <div class="value">2008</div>
+      <div class="label">Founded</div>
+    </div>
+    <div class="stat">
+      <div class="value">70+</div>
+      <div class="label">Specialists</div>
+    </div>
+    <div class="stat">
+      <div class="value">3</div>
+      <div class="label">Continents</div>
+    </div>
+    <div class="stat">
+      <div class="value">EMEA</div>
+      <div class="label">Primary Region</div>
+    </div>
+  </div>
+
+  <!-- DOMAIN EXPERTISE -->
+  <div class="dark-band">
+    <h2>Domain expertise</h2>
+    <p style="color:rgba(255,255,255,.5);font-size:14px;margin-bottom:20px">Andile's specialists bring rare depth in capital markets systems and operations — the context that makes AI outputs useful rather than generic.</p>
+    <div class="domain-grid">
+      <div class="domain-card">
+        <div class="icon">&#128200;</div>
+        <h4>Trade & Treasury</h4>
+        <p>Derivatives, FX, fixed income, repo. Platform expertise across Nasdaq/Calypso, FinMechanics, FIS.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">&#9888;&#65039;</div>
+        <h4>Risk & Assurance</h4>
+        <p>Market risk, credit risk, operational risk. Regulatory reporting, model validation, audit-ready data.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">&#9729;&#65039;</div>
+        <h4>Digital Transform</h4>
+        <p>BAR process methodology, FinMio platform, cloud migration for trading infrastructure.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">&#127760;</div>
+        <h4>Managed Services</h4>
+        <p>Service desk, Evergreen support, agile contracting for banks across Africa, UK, EU, APAC.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI USE CASES -->
+  <h2>AI use cases — where 2nth.ai plugs in</h2>
+  <div class="use-case-grid">
+    <div class="use-case">
+      <div class="tag">Reporting</div>
+      <h3>Regulatory Report Intelligence</h3>
+      <p>AI agents that parse SWIFT, FRTB, and Basel IV outputs — flag exceptions, summarise positions, generate human-readable commentary for regulators.</p>
+    </div>
+    <div class="use-case">
+      <div class="tag">Operations</div>
+      <h3>Trade Ops Automation</h3>
+      <p>Natural-language queries against trade books. AI triage for failed settlements, reconciliation breaks, and margin calls — routed to the right desk.</p>
+    </div>
+    <div class="use-case">
+      <div class="tag">Knowledge</div>
+      <h3>Platform Knowledge Base</h3>
+      <p>AI-indexed documentation for Calypso, FinMechanics, and FIS — so analysts get instant answers instead of digging through vendor manuals.</p>
+    </div>
+    <div class="use-case" style="border-left-color:var(--an-green)">
+      <div class="tag" style="color:var(--an-green-dim)">Africa Opportunity ★</div>
+      <h3>African Central Bank Reporting</h3>
+      <p>Edge-deployed AI that meets SARB, CBN, and RBA data sovereignty requirements. Low-latency, in-country compute via Cloudflare's African PoPs.</p>
+    </div>
+    <div class="use-case">
+      <div class="tag">Advisory</div>
+      <h3>Implementation Copilot</h3>
+      <p>AI co-pilot during Calypso or FinMechanics implementations — surfaces configuration patterns, flags common pitfalls, generates test cases.</p>
+    </div>
+    <div class="use-case">
+      <div class="tag">Client Delivery</div>
+      <h3>White-label AI for Clients</h3>
+      <p>Andile delivers branded AI tools to bank clients — built on 2nth.ai infrastructure, deployed in the client's own cloud environment.</p>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <h2>Tech stack</h2>
+  <div class="tech-stack">
+    <span class="tech-tag">Cloudflare Workers</span>
+    <span class="tech-tag">D1 SQLite (edge)</span>
+    <span class="tech-tag">Vectorize (RAG)</span>
+    <span class="tech-tag">Workers AI (routing)</span>
+    <span class="tech-tag">Claude Sonnet 4.6</span>
+    <span class="tech-tag">2nth AI Gateway</span>
+    <span class="tech-tag">Nasdaq/Calypso API</span>
+    <span class="tech-tag">FinMechanics</span>
+    <span class="tech-tag">SWIFT</span>
+  </div>
+
+  <!-- GEO FOOTPRINT -->
+  <h2>Geographic footprint</h2>
+  <div class="geo-strip">
+    <span class="geo">&#127480;&#127462; South Africa</span>
+    <span class="geo">&#127468;&#127463; United Kingdom</span>
+    <span class="geo">&#127466;&#127482; Europe</span>
+    <span class="geo">&#127462;&#127482; Australia</span>
+    <span class="geo">&#127470;&#127475; India</span>
+    <span class="geo">&#127462;&#127466; Middle East</span>
+    <span class="geo">&#127475;&#127468; Nigeria</span>
+    <span class="geo">&#127472;&#127466; Kenya</span>
+    <span class="geo">+ 8 more</span>
+  </div>
+  <p style="font-size:13px;color:#71717a;margin-top:8px">Edge deployment via Cloudflare means AI responses stay in-country — meeting data residency requirements across all active markets.</p>
+
+  <!-- TEAM -->
+  <h2>Build partner team</h2>
+  <p style="font-size:13px;color:#71717a;margin:-8px 0 16px">Andile Solutions' 2nth.ai Build Partners. Each has access to the full platform — 8M tokens, Builder plan, edge deployment across 20 African countries.</p>
+
+  <!-- Albert -->
+  <div class="founder-card" style="border-left:4px solid var(--an-green);margin-bottom:12px">
+    <div class="founder-avatar">
+      <svg viewBox="0 0 36 36" fill="none" width="26" height="26"><path d="M18 7 L28 29 M18 7 L8 29" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 22 L24 22" stroke="#7DB02A" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="founder-name">Albert Janse van Vuuren</div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:12px;background:rgba(125,176,42,0.1);border:1px solid rgba(125,176,42,0.3);color:var(--an-green-dim)">BP-AJVV</span>
+      </div>
+      <div class="founder-role">Co-Founder · Capital Markets &amp; Business Development</div>
+      <div class="founder-bio">BSc Business Mathematics &amp; Informatics · Derivatives, trading systems, fintech regulatory. 15+ years delivering to investment banks and central banks across EMEA and APAC.</div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <a href="https://andile.net/contact" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green-dim);text-decoration:none;border-bottom:1px solid rgba(125,176,42,0.3)">andile.net/contact ↗</a>
+        <a href="https://www.linkedin.com/in/albert-janse-van-vuuren-64526649/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-faint,#7A9A6A);text-decoration:none">LinkedIn ↗</a>
+        <a href="https://2nth.ai" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(28,80,20,0.5);text-decoration:none;border-bottom:1px solid rgba(28,80,20,0.15)">Sign in to 2nth.ai ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Neil -->
+  <div class="founder-card" style="border-left:4px solid var(--an-green);margin-bottom:4px">
+    <div class="founder-avatar" style="background:linear-gradient(135deg,var(--an-purple),var(--an-green-dim))">
+      <svg viewBox="0 0 36 36" fill="none" width="26" height="26"><path d="M18 7 L28 29 M18 7 L8 29" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 22 L24 22" stroke="#7DB02A" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="founder-name">Neil Retief</div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:12px;background:rgba(125,176,42,0.1);border:1px solid rgba(125,176,42,0.3);color:var(--an-green-dim)">BP-NEIL</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#15803d">&#9679; New</span>
+      </div>
+      <div class="founder-role">Andile Solutions · Build Partner</div>
+      <div class="founder-bio">Onboarded to 2nth.ai under the Andile Solutions partnership. Builder plan active — 8M tokens allocated. Sign in to set up your username and fast-login code.</div>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <a href="https://andile.net/contact" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green-dim);text-decoration:none;border-bottom:1px solid rgba(125,176,42,0.3)">andile.net/contact ↗</a>
+        <a href="https://2nth.ai" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(28,80,20,0.5);text-decoration:none;border-bottom:1px solid rgba(28,80,20,0.15)">Sign in to 2nth.ai ↗</a>
+        <a href="https://www.linkedin.com/in/neilretief/" target="_blank" rel="noopener" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-faint,#7A9A6A);text-decoration:none">LinkedIn ↗</a>
+        <a href="https://2nth.ai/quick-login" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--an-green-dim);text-decoration:none;border-bottom:1px solid rgba(125,176,42,0.3)">Quick login →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNER MODEL -->
+  <h2>Partnership model</h2>
+  <div class="partner-model">
+    <div class="model-row">
+      <div class="model-who">Andile</div>
+      <div class="model-what">Domain expertise, client relationships, implementation delivery, regulatory context. Owns the bank relationship and the service contract.</div>
+    </div>
+    <div class="model-row">
+      <div class="model-who">2nth.ai</div>
+      <div class="model-what">AI infrastructure, edge deployment, AI Gateway (Llama routing → Claude), D1 persistence, Vectorize RAG, partner billing. Deployed into the client's own Cloudflare account where required.</div>
+    </div>
+    <div class="model-row">
+      <div class="model-who">Client Bank</div>
+      <div class="model-what">Receives AI-enhanced tools within their existing platform environments. Data stays in their jurisdiction. Andile manages the support contract; 2nth.ai provides platform SLA.</div>
+    </div>
+    <div class="model-row">
+      <div class="model-who">Revenue</div>
+      <div class="model-what">Andile prices and bills clients directly. 2nth.ai charges at token cost + platform fee. Partner margin is Andile's to retain.</div>
+    </div>
+  </div>
+
+  <!-- WHY THIS MATTERS: AFRICA -->
+  <div class="dark-band">
+    <h2>Africa-first AI — why Andile matters</h2>
+    <p style="color:rgba(255,255,255,.6);font-size:14px;line-height:1.7;margin-bottom:20px">
+      Andile has been operating in African financial markets since 2008 — before cloud was standard, before AI was possible. Their existing relationships with African central banks and investment banks are the exact distribution channel that makes edge AI deployable, not just buildable.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--an-green)">SARB</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px">SA Reserve Bank</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--an-green)">CBN</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px">Central Bank Nigeria</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--an-green)">POPIA</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px">Data sovereignty</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--an-green)">&lt;20ms</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px">Edge latency JHB</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <a href="https://andile.net" target="_blank" class="btn btn-primary">Visit Andile &rarr;</a>
+    <a href="https://www.linkedin.com/in/albert-janse-van-vuuren-64526649/" target="_blank" class="btn btn-green">Connect with Albert</a>
+    <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a> &middot; <a href="/vision.html">Vision</a> &middot; <a href="/docs.html">Docs</a></p>
+    <p style="margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">Andile &middot; Trusted Partnerships &middot; Solid Solutions &middot; A 42Markets.Group Company</p>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

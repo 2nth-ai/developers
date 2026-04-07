@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Recruitment Intelligence — Paton Personnel × AgileX × 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:      #E04032;
+      --red2:     #B82E25;
+      --navy:     #1A2B4A;
+      --navy2:    #102038;
+      --green:    #059669;
+      --green2:   #047857;
+      --bg:       #FFFFFF;
+      --surface:  #F8F6F4;
+      --border:   #E8E2DC;
+      --border2:  #C8BEB4;
+      --text:     #1A1410;
+      --muted:    #52454A;
+      --faint:    #9A8C94;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    /* ── Layout ── */
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #1A2B4A 0%, #E04032 40%, #FFD60A 75%, #E04032 100%); }
+    nav { background: #1A2B4A; border-bottom: 1px solid rgba(224,64,50,0.3); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .nav-left { display: flex; align-items: center; gap: 14px; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #E04032; }
+    .nav-div { width: 1px; height: 24px; background: rgba(255,255,255,0.15); }
+    .nav-product { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.45); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #E04032; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; border-radius: 6px; text-decoration: none; transition: all .15s; border: none; cursor: pointer; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-red:hover { background: var(--red2); text-decoration: none; }
+    .btn-navy { background: var(--navy); color: #fff; }
+    .btn-navy:hover { background: var(--navy2); text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); text-decoration: none; }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.6); color: #fff; text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero { padding: 72px 0 60px; background: linear-gradient(160deg, #f8f2f0 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(224,64,50,0.08); border: 1px solid rgba(224,64,50,0.25); border-radius: 20px; padding: 4px 14px 4px 8px; margin-bottom: 24px; }
+    .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .hero-badge span { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red2); }
+    .hero-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+    .hero-title { font-family: var(--display); font-size: clamp(42px, 6.5vw, 76px); letter-spacing: 1.5px; line-height: 0.95; color: var(--navy); margin-bottom: 6px; }
+    .hero-title .accent { color: var(--red); }
+    .hero-sub { font-family: var(--display); font-size: clamp(24px, 3.5vw, 40px); letter-spacing: 1px; color: var(--navy); opacity: 0.5; margin-bottom: 28px; line-height: 1; }
+    .hero-desc { font-size: 18px; color: var(--muted); max-width: 620px; line-height: 1.7; margin-bottom: 36px; }
+    .hero-desc strong { color: var(--text); }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── Partner lockup ── */
+    .partner-lockup { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-chip { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; }
+    .partner-chip .chip-logo { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 13px; letter-spacing: 1px; color: #fff; font-weight: 700; }
+    .partner-chip .chip-name { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .partner-chip .chip-role { font-size: 12px; color: var(--text); font-weight: 600; margin-top: 1px; }
+    .lockup-x { font-family: var(--display); font-size: 22px; color: var(--border2); }
+
+    /* ── Impact bar ── */
+    .impact-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 40px 0 0; }
+    .impact-cell { background: #fff; padding: 28px 20px; text-align: center; }
+    .impact-val { font-family: var(--display); font-size: 48px; letter-spacing: 1px; line-height: 1; }
+    .impact-val.red { color: var(--red); }
+    .impact-val.navy { color: var(--navy); }
+    .impact-val.green { color: var(--green); }
+    .impact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-top: 5px; }
+
+    /* ── Problem / solution compare ── */
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+    @media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+    .compare-card { border-radius: 10px; padding: 28px; }
+    .compare-card.before { background: #fff5f5; border: 1px solid #fecaca; }
+    .compare-card.after { background: rgba(224,64,50,0.04); border: 1px solid rgba(224,64,50,0.2); }
+    .compare-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+    .compare-label.before { color: #DC2626; }
+    .compare-label.after { color: var(--red); }
+    .compare-list { list-style: none; }
+    .compare-list li { font-size: 14px; line-height: 1.6; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: flex-start; }
+    .compare-list li:last-child { border-bottom: none; }
+    .compare-list li .icon { flex-shrink: 0; margin-top: 2px; }
+
+    /* ── Pipeline flow ── */
+    .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 32px 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    @media (max-width: 700px) { .pipeline { grid-template-columns: 1fr 1fr; } }
+    .pipe-step { padding: 20px 14px; text-align: center; border-right: 1px solid rgba(255,255,255,0.1); }
+    .pipe-step:last-child { border-right: none; }
+    .pipe-agent { font-family: var(--display); font-size: 22px; letter-spacing: 1px; color: #fff; margin-bottom: 4px; }
+    .pipe-task { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .pipe-paton { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 6px; line-height: 1.4; }
+
+    /* ── Agent cards ── */
+    .agent-row { display: flex; gap: 20px; align-items: flex-start; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 12px; transition: border-color .15s; }
+    .agent-row:hover { border-color: var(--red); }
+    .agent-avatar { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 22px; color: #fff; flex-shrink: 0; }
+    .agent-body { flex: 1; }
+    .agent-name { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .agent-role { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+    .agent-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
+    .agent-paton { font-size: 13px; color: var(--text); background: rgba(26,43,74,0.04); border-left: 3px solid var(--navy); padding: 10px 14px; border-radius: 0 6px 6px 0; line-height: 1.5; }
+    .agent-paton strong { color: var(--navy); }
+    .agent-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .agent-tag { font-family: var(--mono); font-size: 9px; padding: 2px 8px; border-radius: 3px; background: rgba(224,64,50,0.06); border: 1px solid rgba(224,64,50,0.2); color: var(--red2); }
+
+    /* ── Sector grid ── */
+    .sector-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 28px; }
+    .sector-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 20px; border-top: 3px solid var(--navy); transition: border-color .15s; }
+    .sector-card:hover { border-color: var(--navy); box-shadow: 0 2px 10px rgba(26,43,74,0.06); }
+    .sector-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .sector-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin: 0 0 8px; }
+    .sector-card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+    .sector-card .ai-value { margin-top: 10px; font-size: 12px; color: var(--red); font-style: italic; }
+
+    /* ── Dark band ── */
+    .dark-band { background: var(--navy); border-radius: 12px; padding: 40px; margin: 40px 0; color: rgba(255,255,255,0.85); }
+    .dark-band h2 { color: #fff; border: none; margin-top: 0; }
+    .dark-band p { color: rgba(255,255,255,0.6); font-size: 15px; line-height: 1.7; margin-bottom: 24px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .metric { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 18px; text-align: center; }
+    .metric .val { font-family: var(--display); font-size: 32px; color: var(--red); }
+    .metric .lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+    /* ── Compliance ── */
+    .compliance-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+    .badge-pass { background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.3); color: #047857; }
+    .badge-info { background: rgba(26,43,74,0.08); border: 1px solid rgba(26,43,74,0.2); color: var(--navy); }
+    .badge-warn { background: rgba(224,64,50,0.08); border: 1px solid rgba(224,64,50,0.25); color: var(--red2); }
+
+    /* ── Tech stack ── */
+    .tech-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+    .tech { font-family: var(--mono); font-size: 10px; padding: 4px 12px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+
+    /* ── CTA section ── */
+    .cta-section { background: var(--red); border-radius: 16px; padding: 52px 44px; text-align: center; margin: 48px 0; }
+    .cta-section h2 { font-family: var(--display); font-size: clamp(32px, 5vw, 56px); color: #fff; margin-bottom: 16px; letter-spacing: 1px; }
+    .cta-section p { font-size: 17px; color: rgba(255,255,255,0.75); max-width: 520px; margin: 0 auto 32px; line-height: 1.7; }
+    .cta-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--red); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--navy); }
+  </style>
+</head>
+<body>
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+      <div class="nav-div"></div>
+      <span class="nav-product">AgileX Partner Concept</span>
+    </div>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <a href="/partners/agilex.html">AgileX</a>
+      <span class="sep">/</span>
+      <span class="current">Paton Personnel</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Concept · AgileX Partnership</span>
+    </div>
+
+    <div class="partner-lockup">
+      <div class="partner-chip">
+        <div class="chip-logo" style="background:#1A2B4A">PP</div>
+        <div>
+          <div class="chip-name">Client</div>
+          <div class="chip-role">Paton Personnel</div>
+        </div>
+      </div>
+      <div class="lockup-x">×</div>
+      <div class="partner-chip">
+        <div class="chip-logo" style="background:#E04032">AX</div>
+        <div>
+          <div class="chip-name">Build Partner</div>
+          <div class="chip-role">AgileX</div>
+        </div>
+      </div>
+      <div class="lockup-x">×</div>
+      <div class="partner-chip">
+        <div class="chip-logo" style="background:#18181b">2N</div>
+        <div>
+          <div class="chip-name">Infrastructure</div>
+          <div class="chip-role">2nth.ai</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-eyebrow">AI Recruitment Intelligence</div>
+    <h1 class="hero-title">PATON<br><span class="accent">PERSONNEL</span></h1>
+    <div class="hero-sub">AI-AUGMENTED RECRUITMENT</div>
+    <p class="hero-desc">
+      30 years. SA's top banks. 30+ specialists. Paton Personnel places the people who run South Africa's financial system. <strong>AgileX deploys five AI agents</strong> to eliminate the operational overhead — so Paton's consultants spend time on relationships, not admin.
+    </p>
+    <div class="hero-actions">
+      <a href="https://patonpersonnel.co.za" target="_blank" class="btn btn-navy">Visit Paton Personnel →</a>
+      <a href="/partners/agilex.html" class="btn btn-outline">AgileX platform</a>
+    </div>
+
+    <div class="impact-bar">
+      <div class="impact-cell">
+        <div class="impact-val red">30+</div>
+        <div class="impact-label">Years Active</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val navy">30+</div>
+        <div class="impact-label">Specialist Staff</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val red">14</div>
+        <div class="impact-label">Sectors Covered</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val navy">8</div>
+        <div class="impact-label">Top Bank Clients</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val green">5</div>
+        <div class="impact-label">AI Agents Deployed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE PROBLEM ───────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>The consultant's time problem</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      Paton Personnel's competitive edge is sector depth and relationship continuity — consultants who know banking, insurance, and legal cold. But a large share of their day is consumed by tasks that don't require that expertise.
+    </p>
+
+    <div class="compare">
+      <div class="compare-card before">
+        <div class="compare-label before">⏳ Without AgileX</div>
+        <ul class="compare-list">
+          <li><span class="icon">📋</span> Manually reading 40–80 CVs per role, extracting key data by eye</li>
+          <li><span class="icon">📞</span> Phone-screening 12–20 candidates before shortlisting 5</li>
+          <li><span class="icon">📅</span> Coordinating interview slots across candidate, consultant, and hiring manager calendars</li>
+          <li><span class="icon">📊</span> Building Employment Equity compliance reports in spreadsheets</li>
+          <li><span class="icon">📝</span> Writing individual candidate rejection feedback at scale</li>
+          <li><span class="icon">🔍</span> Manually checking accreditations (LPC, FSCA, SAICA) per role</li>
+        </ul>
+      </div>
+      <div class="compare-card after">
+        <div class="compare-label after">⚡ With AgileX</div>
+        <ul class="compare-list">
+          <li><span class="icon">✅</span> Ava parses and ranks every CV — consultant reviews a structured shortlist</li>
+          <li><span class="icon">✅</span> Grant conducts structured AI screening with auditable scorecards</li>
+          <li><span class="icon">✅</span> Leo owns the full scheduling loop, zero back-and-forth for consultants</li>
+          <li><span class="icon">✅</span> Iris generates EE reports automatically per role and per client</li>
+          <li><span class="icon">✅</span> Elle sends empathetic, personalised rejection and offer communications</li>
+          <li><span class="icon">✅</span> Accreditation checks automated at screening — flagged exceptions only</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE PIPELINE ──────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>The AgileX pipeline — mapped to Paton's workflow</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin-bottom:8px">
+      Each of AgileX's five agents slots into a stage of the Paton Personnel recruitment cycle. Consultants stay in the loop at every handoff — the agents handle the volume, humans handle the judgement.
+    </p>
+
+    <div class="pipeline">
+      <div class="pipe-step" style="background:#E04032">
+        <div class="pipe-agent">Ava</div>
+        <div class="pipe-task">Source & Rank</div>
+        <div class="pipe-paton">CV parsing · PII masking · Database match</div>
+      </div>
+      <div class="pipe-step" style="background:#B82E25">
+        <div class="pipe-agent">Grant</div>
+        <div class="pipe-task">Screen & Score</div>
+        <div class="pipe-paton">AI interview · Scorecard · Accreditation check</div>
+      </div>
+      <div class="pipe-step" style="background:#8E1F1A">
+        <div class="pipe-agent">Iris</div>
+        <div class="pipe-task">Analyse & Comply</div>
+        <div class="pipe-paton">EE report · Benchmark · Audit package</div>
+      </div>
+      <div class="pipe-step" style="background:#FFD60A">
+        <div class="pipe-agent" style="color:#1A2B4A">Leo</div>
+        <div class="pipe-task" style="color:rgba(26,43,74,0.7)">Schedule & Chase</div>
+        <div class="pipe-paton" style="color:rgba(26,43,74,0.55)">Interview slots · Reminders · Rescheduling</div>
+      </div>
+      <div class="pipe-step" style="background:#1A2B4A">
+        <div class="pipe-agent">Elle</div>
+        <div class="pipe-task">Offer & Onboard</div>
+        <div class="pipe-paton">Offer letters · Docs · NPS · Feedback</div>
+      </div>
+    </div>
+
+    <!-- Agent detail cards -->
+    <div class="agent-row">
+      <div class="agent-avatar" style="background:#E04032">A</div>
+      <div class="agent-body">
+        <div class="agent-name">Ava — Sourcing Specialist</div>
+        <div class="agent-role">Source &amp; Attract</div>
+        <div class="agent-desc">Scans job boards, parses CVs in any format (PDF, Word, scanned image), normalises job titles and qualifications, enriches candidate profiles, and ranks against role requirements. All PII masked for POPIA compliance before any human review.</div>
+        <div class="agent-paton"><strong>For Paton:</strong> Paton's 30-year database of financial services candidates is searchable by Ava instantly. Every inbound application to patonpersonnel.co.za is auto-parsed, deduplicated against the existing database, and presented as a ranked shortlist — sorted by sector experience and qualification match.</div>
+        <div class="agent-tags"><span class="agent-tag">CV Parsing</span><span class="agent-tag">Database Search</span><span class="agent-tag">PII Masking</span><span class="agent-tag">Role Matching</span><span class="agent-tag">POPIA</span></div>
+      </div>
+    </div>
+
+    <div class="agent-row">
+      <div class="agent-avatar" style="background:#B82E25">G</div>
+      <div class="agent-body">
+        <div class="agent-name">Grant — Interview Conductor</div>
+        <div class="agent-role">Screen &amp; Interview</div>
+        <div class="agent-desc">Conducts structured conversational screening interviews adapted to the role's technical and cultural requirements. Real-time bias monitoring, explainable scoring, multi-language support. Produces full audit-ready scorecards.</div>
+        <div class="agent-paton"><strong>For Paton:</strong> Financial services roles require specific accreditation checks — FSCA licences for insurance, SAICA membership for accounting, LPC enrolment for legal. Grant verifies these at screening and flags exceptions before the consultant ever picks up the phone. Sector-specific question banks for banking operations, risk, and treasury built in.</div>
+        <div class="agent-tags"><span class="agent-tag">AI Screening</span><span class="agent-tag">Accreditation Check</span><span class="agent-tag">Bias Monitoring</span><span class="agent-tag">Scorecards</span></div>
+      </div>
+    </div>
+
+    <div class="agent-row">
+      <div class="agent-avatar" style="background:#8E1F1A">I</div>
+      <div class="agent-body">
+        <div class="agent-name">Iris — Insights Analyst</div>
+        <div class="agent-role">Assess &amp; Decide</div>
+        <div class="agent-desc">Turns hiring data into decisions. Analyses screening results, benchmarks candidates against the market, produces Employment Equity compliance reports, and generates full governance audit packages.</div>
+        <div class="agent-paton"><strong>For Paton:</strong> Paton's bank clients (ABSA, FNB, Nedbank, Standard Bank) have strict EE Act reporting requirements. Iris generates per-role EE compliance reports automatically — reducing a multi-hour manual process to seconds. PMR Africa award submissions can be backed by Iris-generated placement analytics.</div>
+        <div class="agent-tags"><span class="agent-tag">EE Reports</span><span class="agent-tag">Analytics</span><span class="agent-tag">Benchmarking</span><span class="agent-tag">Audit Packages</span></div>
+      </div>
+    </div>
+
+    <div class="agent-row">
+      <div class="agent-avatar" style="background:#FFD60A;color:#1A2B4A">L</div>
+      <div class="agent-body">
+        <div class="agent-name">Leo — Liaison Coordinator</div>
+        <div class="agent-role">Engage &amp; Schedule</div>
+        <div class="agent-desc">Owns all scheduling logistics. Finds mutual availability, sends confirmations and reminders across all parties, handles rescheduling without consultant involvement, and keeps the process moving.</div>
+        <div class="agent-paton"><strong>For Paton:</strong> Coordinating interviews across large banks with multiple hiring managers is a notorious time sink. Leo handles the full scheduling loop — candidate, consultant, and bank's hiring manager — across time zones if needed. Calendar integration with Outlook and Google Calendar.</div>
+        <div class="agent-tags"><span class="agent-tag">Scheduling</span><span class="agent-tag">Reminders</span><span class="agent-tag">Calendar Sync</span><span class="agent-tag">Rescheduling</span></div>
+      </div>
+    </div>
+
+    <div class="agent-row">
+      <div class="agent-avatar" style="background:#1A2B4A">E</div>
+      <div class="agent-body">
+        <div class="agent-name">Elle — Experience Manager</div>
+        <div class="agent-role">Offer &amp; Onboard</div>
+        <div class="agent-desc">Ensures every candidate — placed or not — has a premium experience. Drafts offer communications, manages onboarding documentation, sends empathetic personalised feedback to unsuccessful candidates, and tracks NPS.</div>
+        <div class="agent-paton"><strong>For Paton:</strong> Paton's reputation in the market is built on relationship quality. Elle maintains that standard at scale — every candidate who interviews through Paton receives meaningful feedback, not silence. Offer letters drafted in Paton's voice, onboarding packs sent automatically on placement confirmation.</div>
+        <div class="agent-tags"><span class="agent-tag">Offer Letters</span><span class="agent-tag">Onboarding Docs</span><span class="agent-tag">Rejection Feedback</span><span class="agent-tag">NPS Tracking</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTOR VALUE ───────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>Sector-specific AI value</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      Paton operates across 14 sectors. Each has distinct requirements — accreditations, compliance frameworks, assessment needs. AgileX encodes these as sector-specific question banks and validation rules.
+    </p>
+    <div class="sector-grid">
+      <div class="sector-card">
+        <div class="icon">🏦</div>
+        <h4>Banking &amp; Treasury</h4>
+        <p>Derivatives, FX, fixed income experience scoring. Counter-party credit risk assessment. FRTB/Basel IV familiarity flags.</p>
+        <div class="ai-value">Ava: Calypso / FIS / FinMechanics keyword matching</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">📊</div>
+        <h4>Finance &amp; Accounting</h4>
+        <p>CA(SA), CIMA, ACCA credential verification. SAICA membership check. IFRS and GAAP technical screening.</p>
+        <div class="ai-value">Grant: Technical question bank for IFRS 9, IFRS 17</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">⚖️</div>
+        <h4>Legal &amp; Company Sec</h4>
+        <p>LPC enrolment verification. Admitted attorney status check. Companies Act, JSE Listings Requirements expertise scoring.</p>
+        <div class="ai-value">Grant: LPC number validation via public register</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">🔍</div>
+        <h4>Risk &amp; Compliance</h4>
+        <p>FRM, CISA, CRISC certification checks. FSCA registered person lookup. POPIA, FATF, and AML knowledge assessment.</p>
+        <div class="ai-value">Iris: Risk scorecard benchmarked against role requirements</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">🛡️</div>
+        <h4>Insurance &amp; Actuarial</h4>
+        <p>FSCA licence verification. ASSA membership for actuaries. FSB-regulated role pre-screening. Solvency II awareness.</p>
+        <div class="ai-value">Ava: Pre-screen for FSCA licence before psychometric spend</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">💻</div>
+        <h4>IT &amp; Technology</h4>
+        <p>Stack-specific CV parsing. GitHub / portfolio enrichment. Technical assessment routing for developer and architect roles.</p>
+        <div class="ai-value">Grant: Adaptive technical questions per stack</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">👷</div>
+        <h4>Engineering</h4>
+        <p>ECSA registration lookup. Professional Engineer / Technologist classification. Project complexity and sector-specific scoring.</p>
+        <div class="ai-value">Ava: ECSA number verification at sourcing stage</div>
+      </div>
+      <div class="sector-card">
+        <div class="icon">🧑‍💼</div>
+        <h4>Human Resources</h4>
+        <p>SABPP registration check. EE and BBBEE advisory experience. Labour Relations Act compliance knowledge screening.</p>
+        <div class="ai-value">Iris: Cross-role EE reporting for HR placements at banks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPLIANCE LAYER ──────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <div class="dark-band">
+      <h2>Compliance-first infrastructure</h2>
+      <p>Paton's clients — South Africa's largest banks and insurers — have strict data sovereignty and compliance requirements. Every layer of the AgileX stack is built to meet them.</p>
+
+      <div class="compliance-row">
+        <span class="badge badge-pass">✓ POPIA Compliant</span>
+        <span class="badge badge-pass">✓ Data stays in South Africa</span>
+        <span class="badge badge-pass">✓ B-BBEE Reporting Ready</span>
+        <span class="badge badge-pass">✓ EE Act Automated</span>
+        <span class="badge badge-info">APSO Standards</span>
+        <span class="badge badge-info">PEA Registered</span>
+      </div>
+
+      <div class="metric-grid" style="margin-top:24px">
+        <div class="metric">
+          <div class="val">0ms</div>
+          <div class="lbl">Data leaves SA</div>
+        </div>
+        <div class="metric">
+          <div class="val">100%</div>
+          <div class="lbl">PII Masked</div>
+        </div>
+        <div class="metric">
+          <div class="val">EE Act</div>
+          <div class="lbl">Auto-reporting</div>
+        </div>
+        <div class="metric">
+          <div class="val">Full</div>
+          <div class="lbl">Audit Trail</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);line-height:1.7">
+      All AI inference runs through <strong>Cloudflare's Africa-South-1 region (Johannesburg)</strong> — meaning candidate data and screening results never leave South African borders. This satisfies POPIA data residency requirements and meets the data governance policies of Paton's major bank clients including ABSA, FNB, Nedbank, and Standard Bank.
+    </p>
+
+    <div class="tech-row">
+      <span class="tech">Cloudflare Workers AI</span>
+      <span class="tech">Africa-South-1 Region</span>
+      <span class="tech">D1 SQLite (Edge)</span>
+      <span class="tech">KV Sessions</span>
+      <span class="tech">Vectorize RAG</span>
+      <span class="tech">Claude Sonnet 4.6</span>
+      <span class="tech">2nth AI Gateway</span>
+      <span class="tech">POPIA PII Layer</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>How a placement works</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin-bottom:24px">
+      Consultant creates a role on AgileX. From that moment, the agents take over operational work. Human touchpoints highlighted.
+    </p>
+
+    <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:28px;font-family:var(--mono);font-size:12px;line-height:2;color:var(--muted)">
+      <div><span style="color:var(--red);font-weight:700">Consultant</span> creates role: "Senior Credit Risk Manager — Tier 1 Bank, Cape Town"</div>
+      <div style="padding-left:20px;color:var(--faint)">→ Role requirements, EE targets, seniority band, salary range captured</div>
+      <div style="padding-left:20px"><span style="color:#E04032;font-weight:700">Ava</span> scans inbound applications + searches Paton's 30-year candidate database</div>
+      <div style="padding-left:40px;color:var(--faint)">→ CVs parsed, PII masked, ranked by FRM/CFA/CISA + credit risk experience</div>
+      <div style="padding-left:40px;color:var(--faint)">→ Shortlist of 8 candidates delivered to consultant in 4 minutes</div>
+      <div style="padding-left:20px"><span style="color:var(--red);font-weight:700">★ Consultant</span> reviews shortlist, approves 6 for AI screening</div>
+      <div style="padding-left:20px"><span style="color:#B82E25;font-weight:700">Grant</span> conducts structured screening — Basel IV, IFRS 9, SA regulatory context</div>
+      <div style="padding-left:40px;color:var(--faint)">→ 45-min async interview per candidate, bias-monitored, scorecard generated</div>
+      <div style="padding-left:40px;color:var(--faint)">→ FSCA registration verified, credit risk system experience scored</div>
+      <div style="padding-left:20px"><span style="color:#8E1F1A;font-weight:700">Iris</span> analyses results, builds EE compliance report for bank client</div>
+      <div style="padding-left:40px;color:var(--faint)">→ Top 3 candidates benchmarked, diversity targets assessed</div>
+      <div style="padding-left:20px"><span style="color:var(--red);font-weight:700">★ Consultant</span> reviews Iris summary, selects 3 for client presentation</div>
+      <div style="padding-left:20px"><span style="color:#D4A000;font-weight:700">Leo</span> schedules panel interviews with bank's credit risk head + HR</div>
+      <div style="padding-left:40px;color:var(--faint)">→ Candidates, consultant, and bank hiring team coordinated automatically</div>
+      <div style="padding-left:20px"><span style="color:var(--red);font-weight:700">★ Consultant</span> leads client panel — relationship and judgement call</div>
+      <div style="padding-left:20px"><span style="color:#1A2B4A;font-weight:700">Elle</span> drafts offer letter, sends onboarding pack, handles unsuccessful feedback</div>
+      <div style="padding-left:40px;color:var(--faint)">→ Candidate NPS captured, placement recorded, revenue tracked</div>
+    </div>
+
+    <p style="margin-top:16px;font-size:13px;color:var(--faint);font-family:var(--mono);letter-spacing:.5px">★ = Human consultant touchpoint · Everything else = AgileX agents</p>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────── -->
+<div class="wrap">
+  <div class="cta-section">
+    <h2>READY TO AUGMENT?</h2>
+    <p>
+      This is a concept for how AgileX and 2nth.ai would integrate with Paton Personnel's existing recruitment engine. Contact AgileX to discuss a pilot deployment.
+    </p>
+    <div class="cta-actions">
+      <a href="/partners/agilex.html" class="btn btn-ghost">AgileX platform ↗</a>
+      <a href="https://patonpersonnel.co.za/contact" target="_blank" rel="noopener" class="btn" style="background:#fff;color:var(--red)">Contact Paton Personnel →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI × AGILEX</div>
+      <div class="footer-links">
+        <a href="/partners/agilex.html">AgileX partner page</a>
+        <a href="https://patonpersonnel.co.za" target="_blank">patonpersonnel.co.za</a>
+        <a href="/portal.html">Developer portal</a>
+        <a href="https://agilex.co.za" target="_blank">agilex.co.za</a>
+      </div>
+    </div>
+    <p style="margin-top:10px;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--faint)">Concept page · AgileX Build Partner · Powered by 2nth.ai</p>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

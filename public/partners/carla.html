@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carla de Abreu — 2nth.ai Consulting Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:  #2A1F3D;
+      --primary2: #1C1428;
+      --accent:   #C0405E;
+      --accent2:  #963048;
+      --gold:     #B8860A;
+      --bg:       #FFFFFF;
+      --surface:  #FAF7FB;
+      --border:   #EAE2F0;
+      --border2:  #C8B8D8;
+      --text:     #1A1224;
+      --muted:    #504060;
+      --faint:    #9888A8;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #2A1F3D 0%, #C0405E 45%, #E8A0B0 75%, #2A1F3D 100%); }
+    nav { background: #2A1F3D; border-bottom: 1px solid rgba(192,64,94,0.25); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #C0405E; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #C0405E; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Hero ── */
+    .hero { padding: 68px 0 56px; background: linear-gradient(160deg, #F8F4FC 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .partner-lockup { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #2A1F3D, #C0405E); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--display); font-size: 24px; letter-spacing: 2px; color: #fff; }
+    .partner-name { font-family: var(--display); font-size: clamp(30px, 4.5vw, 52px); letter-spacing: 1.5px; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .partner-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .partner-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .badge-consulting { background: rgba(192,64,94,0.08); border: 1px solid rgba(192,64,94,0.3); color: var(--accent); }
+    .badge-primary { background: rgba(42,31,61,0.07); border: 1px solid rgba(42,31,61,0.2); color: var(--primary); }
+
+    /* ── Stats ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 28px 0; }
+    .stat { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .stat .value { font-family: var(--display); font-size: 28px; color: var(--primary); }
+    .stat .label { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-top: 2px; }
+
+    /* ── Expertise grid ── */
+    .expertise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 24px 0; }
+    .expertise-card { background: var(--primary); border-radius: 10px; padding: 22px; }
+    .expertise-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .expertise-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    .expertise-card p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+
+    /* ── Thought leadership ── */
+    .article-list { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; }
+    .article { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; display: flex; gap: 18px; align-items: flex-start; transition: border-color .15s; }
+    .article:hover { border-color: var(--accent); }
+    .article-date { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); white-space: nowrap; margin-top: 3px; min-width: 70px; }
+    .article-body h4 { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+    .article-body p { font-size: 13px; color: var(--muted); margin: 0 0 6px; line-height: 1.5; }
+    .article-source { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+
+    /* ── Career ── */
+    .career-list { margin: 24px 0; display: flex; flex-direction: column; gap: 0; }
+    .career-row { display: flex; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .career-row:last-child { border-bottom: none; }
+    .career-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+    .career-body { flex: 1; }
+    .career-role { font-size: 15px; font-weight: 700; color: var(--text); }
+    .career-company { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 2px 0 4px; }
+    .career-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Education ── */
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 24px 0; }
+    .edu-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; border-top: 3px solid var(--primary); }
+    .edu-card h4 { font-size: 15px; font-weight: 700; color: var(--text); margin: 0 0 3px; }
+    .edu-card .institution { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .edu-card p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* ── Consulting model ── */
+    .model-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .model-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .model-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .model-who { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .model-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary2); text-decoration: none; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent2); text-decoration: none; }
+    .btn-outline { background: none; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <span class="current">Carla de Abreu</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="partner-lockup">
+      <div class="partner-avatar">CA</div>
+      <div>
+        <div class="partner-name">CARLA DE ABREU</div>
+        <div class="partner-title">BCom · MSc (Edinburgh) · Consulting Partner</div>
+        <div class="partner-meta">
+          <span>Johannesburg, South Africa</span>
+          <span>|</span>
+          <span>Digital Transformation · AI Strategy · Delivery</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-consulting">Consulting Partner</span>
+          <span class="badge badge-primary">Digital Transformation</span>
+          <span class="badge badge-primary">AI Strategy</span>
+          <span class="badge badge-consulting">Thought Leader</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.8">
+      Carla de Abreu advises organisations on how to make technology actually work — not just technically, but commercially and culturally. With a career spanning GRC software, insurance analytics, digital transformation, document intelligence, and enterprise delivery leadership, she brings the rare combination of technical fluency and human-centred consulting practice. Her published thesis: <em>execution is the new frontier of innovation.</em>
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="value">BCom</div>
+        <div class="label">UNISA</div>
+      </div>
+      <div class="stat">
+        <div class="value">MSc</div>
+        <div class="label">Edinburgh</div>
+      </div>
+      <div class="stat">
+        <div class="value">15+</div>
+        <div class="label">Years Exp.</div>
+      </div>
+      <div class="stat">
+        <div class="value">5</div>
+        <div class="label">Sectors</div>
+      </div>
+      <div class="stat">
+        <div class="value">4</div>
+        <div class="label">Publications</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONSULTING EXPERTISE ── -->
+<section>
+  <div class="wrap">
+    <h2>Consulting expertise</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      Carla's practice sits at the intersection of business strategy and technology delivery — with the credibility to advise executives and the operational depth to make it stick.
+    </p>
+    <div class="expertise-grid">
+      <div class="expertise-card">
+        <div class="icon">🔄</div>
+        <h4>Digital Transformation</h4>
+        <p>Strategy through to delivery. Moving organisations from legacy processes to modern, AI-ready platforms — with a consultative approach that brings people along.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🧠</div>
+        <h4>AI Strategy &amp; Readiness</h4>
+        <p>Helping leadership understand where AI creates genuine value in their operations — and where it doesn't. Governance frameworks, use-case prioritisation, and execution planning.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">📋</div>
+        <h4>Portfolio &amp; Delivery</h4>
+        <p>End-to-end delivery governance for technology portfolios. Aligning technical teams with business outcomes, managing complexity, and ensuring innovation actually ships.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">📄</div>
+        <h4>Document Intelligence</h4>
+        <p>Deep expertise in document management, automation, and intelligent document processing. From re-engineering legacy DMS to deploying AI-powered document workflows.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">⚖️</div>
+        <h4>GRC &amp; Compliance Tech</h4>
+        <p>Governance, Risk, and Compliance software from the ground up — assessment tools, reporting automation, and AI-augmented audit workflows for regulated industries.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🤝</div>
+        <h4>Human-Led Partnerships</h4>
+        <p>Technology succeeds when the people using it are brought in early. Carla's consultative model puts human outcomes at the centre — not the technology.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THOUGHT LEADERSHIP ── -->
+<section>
+  <div class="wrap">
+    <h2>Thought leadership</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      Published across South Africa's leading technology media — on consultative tech, human-led partnerships, document management, and AI execution.
+    </p>
+    <div class="article-list">
+      <div class="article">
+        <div class="article-date">Nov 2025</div>
+        <div class="article-body">
+          <h4>Execution Has Become the New Frontier of Innovation</h4>
+          <p>Disciplined execution in AI deployment and governance — why the ability to ship and govern AI is now the real competitive differentiator.</p>
+          <a href="https://it-online.co.za/2025/11/03/execution-has-become-the-new-frontier-of-innovation/" target="_blank" rel="noopener" class="article-source">IT-Online ↗</a>
+        </div>
+      </div>
+      <div class="article">
+        <div class="article-date">May 2025</div>
+        <div class="article-body">
+          <h4>The Case for Human-Led Tech Partnerships</h4>
+          <p>Why tailored, human-centred technology partnerships consistently outperform purely product-led implementations — and what it takes to build them.</p>
+          <a href="https://it-online.co.za/2025/05/29/the-case-for-human-led-tech-partnerships/" target="_blank" rel="noopener" class="article-source">IT-Online ↗</a>
+        </div>
+      </div>
+      <div class="article">
+        <div class="article-date">Nov 2024</div>
+        <div class="article-body">
+          <h4>Why Your Business Needs a Consultative Approach to Technology</h4>
+          <p>The case for outsourcing technology decisions to trusted advisors — covering cost reduction, collaborative development, market responsiveness, and strategic focus.</p>
+          <a href="https://itweb.africa/content/o1Jr5MxPGWOMKdWL" target="_blank" rel="noopener" class="article-source">ITWeb Africa ↗</a>
+        </div>
+      </div>
+      <div class="article">
+        <div class="article-date">Feb 2022</div>
+        <div class="article-body">
+          <h4>Re-engineering the Document Management System</h4>
+          <p>A practitioner's view on modernising legacy document infrastructure — the technical and organisational challenges of DMS transformation.</p>
+          <a href="https://www.bbrief.co.za/2022/02/28/re-engineering-the-document-management-system/" target="_blank" rel="noopener" class="article-source">bbrief ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CAREER ── -->
+<section>
+  <div class="wrap">
+    <h2>Career background</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      A progression from technical analyst to delivery and business development leadership across financial services, insurance, digital transformation, and enterprise software.
+    </p>
+    <div class="career-list">
+      <div class="career-row">
+        <div class="career-dot"></div>
+        <div class="career-body">
+          <div class="career-role">Business Development Manager / Manager of Delivery</div>
+          <div class="career-company">e4 Strategic</div>
+          <div class="career-desc">Led business development and delivery management for digital transformation and document management solutions. Managed business units and delivery teams. Deployed document management platforms — Docfusion, Prosign, Autoverify, Stordoc — and drove proptech initiatives.</div>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="career-dot"></div>
+        <div class="career-body">
+          <div class="career-role">Business Operations &amp; Product Integration</div>
+          <div class="career-company">VAT IT</div>
+          <div class="career-desc">Steered product decisions aligned with sales requirements. Led business development for innovative software solutions and product integration in accounting services technology.</div>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="career-dot"></div>
+        <div class="career-body">
+          <div class="career-role">Senior Business Analyst</div>
+          <div class="career-company">DigiTerra</div>
+          <div class="career-desc">Senior analytical and advisory role across technology implementation engagements.</div>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="career-dot"></div>
+        <div class="career-body">
+          <div class="career-role">Business System Analyst</div>
+          <div class="career-company">Discovery</div>
+          <div class="career-desc">Business systems analysis for one of South Africa's largest insurance and financial services groups — translating business requirements into technology solutions across the insurance domain.</div>
+        </div>
+      </div>
+      <div class="career-row">
+        <div class="career-dot"></div>
+        <div class="career-body">
+          <div class="career-role">Business Analyst — Governance, Risk &amp; Compliance</div>
+          <div class="career-company">Cura Software Solutions</div>
+          <div class="career-desc">Early-career foundation in GRC software — building expertise in governance frameworks, risk management tools, and compliance technology for enterprise clients.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EDUCATION ── -->
+<section>
+  <div class="wrap">
+    <h2>Education</h2>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <h4>Master of Science (MSc)</h4>
+        <div class="institution">University of Edinburgh</div>
+        <p>Dissertation submitted. International postgraduate education combining academic rigour with applied research.</p>
+      </div>
+      <div class="edu-card">
+        <h4>Bachelor of Commerce (BCom)</h4>
+        <div class="institution">University of South Africa (UNISA)</div>
+        <p>Commercial and business foundations underpinning a career in technology consulting and business development.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONSULTING MODEL ── -->
+<section>
+  <div class="wrap">
+    <h2>How the consulting partnership works</h2>
+    <div class="model-box">
+      <div class="model-row">
+        <div class="model-who">Carla</div>
+        <div class="model-what">Client advisory, AI readiness assessments, transformation strategy, delivery governance, and human-centred change management. Owns the consulting relationship and is accountable for outcomes — not just recommendations.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what">AI infrastructure, LLM Gateway (Llama routing → Claude Sonnet 4.6), edge deployment, D1 persistence, Vectorize RAG, document intelligence skills, and the 2nth.ai skills catalog. Platform SLA and AI model costs.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Client</div>
+        <div class="model-what">Receives a strategy-to-deployment consulting engagement — from AI readiness assessment through to live AI tools in their environment. Carla leads the advisory; 2nth.ai provides the platform. Data stays in their jurisdiction.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Sectors</div>
+        <div class="model-what">Financial services, insurance, legal and compliance, enterprise technology, document-intensive industries. Particular depth in regulated environments where governance, auditability, and human oversight are non-negotiable.</div>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="https://www.linkedin.com/in/carla-de-abreu-july1986/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn ↗</a>
+      <a href="https://2nth.ai" class="btn btn-accent">Sign in to 2nth.ai ↗</a>
+      <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI DEVELOPERS</div>
+      <div class="footer-links">
+        <a href="/portal.html">Portal</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://2nth.ai">Platform</a>
+        <a href="https://github.com/2nth-ai">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

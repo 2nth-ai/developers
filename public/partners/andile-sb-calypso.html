@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calypso Training Hub — Standard Bank Africa</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sb:       #003087;
+      --sb2:      #00205C;
+      --sky:      #0077C8;
+      --sky2:     #005EA3;
+      --light:    #E8F0FB;
+      --border:   #C5D7F5;
+      --border2:  #96B5E8;
+      --bg:       #FFFFFF;
+      --surface:  #F0F5FC;
+      --text:     #08172E;
+      --muted:    #3D5278;
+      --faint:    #7A93BD;
+      --green:    #1B7A3C;
+      --green2:   #145E2E;
+      --amber:    #C8970A;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #00205C 0%, #003087 30%, #0077C8 65%, #003087 100%); }
+
+    /* ── Nav ── */
+    nav { background: #003087; border-bottom: 1px solid rgba(0,119,200,0.25); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 980px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .nav-left { display: flex; align-items: center; gap: 14px; }
+    .nav-logo-block { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-wordmark { font-family: var(--body); font-weight: 800; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; line-height: 1.15; }
+    .nav-wordmark em { font-style: normal; color: rgba(255,255,255,0.55); font-weight: 400; font-size: 10px; letter-spacing: 2px; display: block; margin-top: 1px; }
+    .nav-div { width: 1px; height: 26px; background: rgba(255,255,255,0.15); }
+    .nav-product { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-badge { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
+    .nav-signin { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 7px 18px; border-radius: 4px; background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: background .15s; }
+    .nav-signin:hover { background: rgba(255,255,255,0.18); }
+    @media (max-width: 600px) { .nav-badge { display: none; } }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; border-radius: 6px; text-decoration: none; transition: all .15s; border: none; cursor: pointer; }
+    .btn-sb  { background: var(--sb); color: #fff; }
+    .btn-sb:hover { background: var(--sb2); text-decoration: none; }
+    .btn-sky { background: var(--sky); color: #fff; }
+    .btn-sky:hover { background: var(--sky2); text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--sb); color: var(--sb); text-decoration: none; }
+    .btn-white { background: #fff; color: var(--sb); }
+    .btn-white:hover { background: var(--light); text-decoration: none; }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; text-decoration: none; }
+
+    /* ── Section headings ── */
+    .eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--sky); margin-bottom: 10px; }
+    .section-title { font-family: var(--display); font-size: clamp(30px, 4vw, 46px); letter-spacing: 1px; color: var(--sb); margin-bottom: 14px; line-height: 1.05; }
+    .section-body { font-size: 15px; color: var(--muted); max-width: 640px; line-height: 1.7; }
+    .rule { height: 1px; background: var(--border); margin: 36px 0; }
+
+    /* ── Hero ── */
+    .hero { padding: 0; border-bottom: none; overflow: hidden; }
+    .hero-top { padding: 64px 0 0; background: linear-gradient(160deg, #E8F0FB 0%, #F0F6FF 40%, #fff 70%); }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,48,135,0.07); border: 1px solid rgba(0,48,135,0.15); border-radius: 20px; padding: 4px 14px 4px 8px; margin-bottom: 24px; }
+    .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sky); }
+    .hero-badge span { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sky2); }
+    .hero-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--sky); margin-bottom: 12px; }
+    .hero-title { font-family: var(--display); font-size: clamp(50px, 8vw, 92px); letter-spacing: 1.5px; line-height: 0.92; color: var(--sb); margin-bottom: 6px; }
+    .hero-title .slash { color: var(--sky); }
+    .hero-sub-title { font-family: var(--display); font-size: clamp(28px, 4vw, 48px); letter-spacing: 1px; color: var(--sb); opacity: 0.4; margin-bottom: 28px; line-height: 1; }
+    .hero-desc { font-size: 18px; color: var(--muted); max-width: 620px; line-height: 1.7; margin-bottom: 36px; }
+    .hero-desc strong { color: var(--text); }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; }
+
+    /* ── SB bank bar ── */
+    .hero-bar { background: var(--sb); padding: 20px 0; border-top: 1px solid rgba(0,119,200,0.3); }
+    .hero-bar-inner { max-width: 980px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .hero-tagline { font-size: 13px; color: rgba(255,255,255,0.65); font-style: italic; letter-spacing: 0.3px; }
+    .hero-partner-line { display: flex; align-items: center; gap: 8px; }
+    .hero-partner-line span { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+    .hero-partner-pill { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); }
+    .hero-partner-pill .an-mark { display: flex; align-items: center; justify-content: center; }
+    .hero-partner-pill .an-name { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .hero-partner-pill .an-sep { color: rgba(255,255,255,0.2); font-size: 10px; }
+
+    /* ── Impact bar ── */
+    .impact-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 0 0 0; }
+    .impact-cell { background: #fff; padding: 26px 20px; text-align: center; }
+    .impact-val { font-family: var(--display); font-size: 46px; letter-spacing: 1px; line-height: 1; }
+    .impact-val.blue { color: var(--sb); }
+    .impact-val.sky  { color: var(--sky); }
+    .impact-val.grn  { color: var(--green); }
+    .impact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-top: 5px; }
+    .impact-sub { font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.4; }
+
+    /* ── Problem cards ── */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+    @media (max-width: 640px) { .problem-grid { grid-template-columns: 1fr; } }
+    .problem-card { border-radius: 10px; padding: 28px; }
+    .problem-card.before { background: #fff5f5; border: 1px solid #fecaca; }
+    .problem-card.after  { background: rgba(0,48,135,0.03); border: 1px solid rgba(0,48,135,0.15); }
+    .problem-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+    .problem-label.before { color: #DC2626; }
+    .problem-label.after  { color: var(--sky2); }
+    .problem-list { list-style: none; }
+    .problem-list li { font-size: 14px; line-height: 1.6; padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: flex-start; }
+    .problem-list li:last-child { border-bottom: none; }
+
+    /* ── Training paths ── */
+    .path-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 32px; }
+    .path-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 24px; border-top: 4px solid var(--sb); transition: box-shadow .15s, transform .15s; }
+    .path-card:hover { box-shadow: 0 4px 18px rgba(0,48,135,0.10); transform: translateY(-2px); }
+    .path-card.sky-top   { border-top-color: var(--sky); }
+    .path-card.green-top { border-top-color: var(--green); }
+    .path-card.amber-top { border-top-color: var(--amber); }
+    .path-icon { font-size: 28px; margin-bottom: 12px; }
+    .path-role { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--faint); margin-bottom: 6px; }
+    .path-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .path-body  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .path-modules { display: flex; flex-wrap: wrap; gap: 5px; }
+    .path-mod { font-family: var(--mono); font-size: 9px; letter-spacing: .5px; padding: 3px 8px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+
+    /* ── Module catalog ── */
+    .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; margin-top: 32px; }
+    .module-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: box-shadow .15s; }
+    .module-card:hover { box-shadow: 0 4px 16px rgba(0,48,135,0.09); }
+    .module-header { padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .module-num { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--faint); }
+    .module-level { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; }
+    .module-level.core { background: rgba(0,48,135,0.08); border: 1px solid rgba(0,48,135,0.15); color: var(--sb); }
+    .module-level.adv  { background: rgba(0,119,200,0.08); border: 1px solid rgba(0,119,200,0.2); color: var(--sky2); }
+    .module-level.reg  { background: rgba(27,122,60,0.08); border: 1px solid rgba(27,122,60,0.2); color: var(--green2); }
+    .module-body { padding: 18px 20px; }
+    .module-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .module-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .module-topics { display: flex; flex-wrap: wrap; gap: 4px; }
+    .module-topic { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 3px; background: var(--light); border: 1px solid var(--border); color: var(--sky2); }
+
+    /* ── Chat demo ── */
+    .chat-frame { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 32px; box-shadow: 0 2px 20px rgba(0,48,135,0.07); }
+    .chat-top-bar { background: var(--sb); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .chat-top-left { display: flex; align-items: center; gap: 10px; }
+    .chat-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 6px #22d3ee; }
+    .chat-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+    .chat-top-right { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+    .chat-context-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .ctx-pill { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; background: #fff; border: 1px solid var(--border); color: var(--muted); }
+    .ctx-pill.active { background: rgba(0,48,135,0.07); border-color: rgba(0,48,135,0.2); color: var(--sb); }
+    .chat-messages { padding: 24px 20px; display: flex; flex-direction: column; gap: 20px; min-height: 340px; }
+    .msg { display: flex; gap: 12px; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; }
+    .msg-avatar.ai   { background: var(--sb); color: #fff; }
+    .msg-avatar.user { background: var(--sky); color: #fff; }
+    .msg-bubble { max-width: 78%; padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 1.65; }
+    .msg-bubble.ai   { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+    .msg-bubble.user { background: var(--sb); color: rgba(255,255,255,0.9); }
+    .msg-sender { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-bottom: 4px; }
+    .msg.user .msg-sender { text-align: right; }
+    .ai-step { font-family: var(--mono); font-size: 12px; background: #fff; border: 1px solid var(--border); border-radius: 5px; padding: 6px 12px; margin: 8px 0 4px; color: var(--sky2); line-height: 1.5; }
+    .ai-note { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--sky); background: var(--light); border-radius: 0 5px 5px 0; }
+    .ai-tag  { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 9px; letter-spacing: 1px; padding: 2px 8px; border-radius: 10px; margin: 2px; }
+    .ai-tag.sarb  { background: rgba(27,122,60,0.1); border: 1px solid rgba(27,122,60,0.25); color: var(--green2); }
+    .ai-tag.path  { background: rgba(0,48,135,0.07); border: 1px solid rgba(0,48,135,0.15); color: var(--sb); }
+    .ai-tag.warn  { background: rgba(200,151,10,0.1); border: 1px solid rgba(200,151,10,0.25); color: var(--amber); }
+    .chat-input-row { border-top: 1px solid var(--border); padding: 14px 20px; display: flex; gap: 10px; align-items: center; background: #fff; }
+    .chat-input-mock { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 13px; color: var(--muted); font-family: var(--body); }
+    .chat-send { padding: 10px 18px; background: var(--sb); color: #fff; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; border: none; border-radius: 6px; cursor: default; }
+
+    /* ── Regions grid ── */
+    .region-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 32px; }
+    .region-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start; transition: border-color .15s; }
+    .region-card:hover { border-color: var(--sky); }
+    .region-flag { font-size: 22px; flex-shrink: 0; }
+    .region-info { flex: 1; }
+    .region-country { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .region-reg { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; color: var(--faint); margin-bottom: 5px; }
+    .region-status { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 9px; letter-spacing: .5px; padding: 2px 7px; border-radius: 10px; }
+    .region-status.live { background: rgba(27,122,60,0.08); border: 1px solid rgba(27,122,60,0.2); color: var(--green2); }
+    .region-status.q3   { background: rgba(200,151,10,0.08); border: 1px solid rgba(200,151,10,0.2); color: #92680a; }
+    .region-status-dot  { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* ── Architecture pipeline ── */
+    .arch-block { background: var(--sb); border-radius: 12px; padding: 40px; margin-top: 32px; }
+    .arch-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 28px; }
+    .arch-pipeline { display: flex; flex-direction: column; gap: 0; }
+    .arch-step { display: flex; gap: 0; align-items: stretch; }
+    .arch-step-num { width: 40px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+    .arch-step-circle { width: 28px; height: 28px; border-radius: 50%; background: rgba(0,119,200,0.2); border: 1px solid rgba(0,119,200,0.4); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: #7dd3fc; flex-shrink: 0; }
+    .arch-step-line { width: 1px; flex: 1; background: rgba(255,255,255,0.08); margin: 4px auto 0; min-height: 20px; }
+    .arch-step:last-child .arch-step-line { display: none; }
+    .arch-step-body { flex: 1; padding: 0 0 28px 16px; }
+    .arch-step-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #7dd3fc; margin-bottom: 5px; }
+    .arch-step-desc  { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .arch-step-code  { display: inline-block; font-family: var(--mono); font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 2px 8px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+    .arch-andile-credit { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .arch-credit-text { font-size: 12px; color: rgba(255,255,255,0.35); }
+    .arch-credit-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .arch-credit-pill { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.45); }
+
+    /* ── Nasdaq reference ── */
+    .nasdaq-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; margin-top: 32px; display: flex; align-items: flex-start; gap: 20px; }
+    .nasdaq-icon { font-size: 32px; flex-shrink: 0; margin-top: 4px; }
+    .nasdaq-body { flex: 1; }
+    .nasdaq-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--faint); margin-bottom: 6px; }
+    .nasdaq-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .nasdaq-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .nasdaq-link  { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--sb); text-decoration: none; border: 1px solid var(--border2); padding: 7px 16px; border-radius: 5px; transition: all .15s; }
+    .nasdaq-link:hover { background: var(--sb); color: #fff; border-color: var(--sb); }
+    @media (max-width: 560px) { .nasdaq-block { flex-direction: column; gap: 12px; } }
+
+    /* ── CTA ── */
+    .cta-block { background: var(--sb); border-radius: 14px; padding: 56px 48px; text-align: center; margin: 56px 0; }
+    .cta-block h2 { font-family: var(--display); font-size: clamp(36px, 5vw, 56px); letter-spacing: 2px; color: #fff; margin-bottom: 14px; }
+    .cta-block p { font-size: 16px; color: rgba(255,255,255,0.6); max-width: 500px; margin: 0 auto 32px; line-height: 1.7; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    @media (max-width: 600px) { .cta-block { padding: 36px 24px; } }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-left { display: flex; flex-direction: column; gap: 3px; }
+    .footer-sb { font-family: var(--body); font-weight: 700; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sb); }
+    .footer-powered { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; color: var(--faint); }
+    .footer-powered a { color: var(--sky2); text-decoration: none; }
+    .footer-powered a:hover { color: var(--sb); }
+    .footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--sb); }
+  </style>
+</head>
+<body>
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-left">
+      <!-- Standard Bank logo mark -->
+      <a href="#" class="nav-logo-block">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="4" fill="white" fill-opacity="0.12"/>
+          <rect x="1" y="1" width="34" height="34" rx="3" stroke="white" stroke-opacity="0.2"/>
+          <!-- SB mark: two bold horizontal bars -->
+          <rect x="8" y="10" width="20" height="4" rx="1" fill="white"/>
+          <rect x="8" y="16" width="20" height="4" rx="1" fill="white" fill-opacity="0.65"/>
+          <rect x="8" y="22" width="20" height="4" rx="1" fill="white" fill-opacity="0.35"/>
+        </svg>
+        <div class="nav-wordmark">Standard Bank<em>Group · Africa</em></div>
+      </a>
+      <div class="nav-div"></div>
+      <span class="nav-product">Calypso Training Hub</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge">Delivered by Andile Solutions</span>
+      <a href="https://developers.2nth.ai/portal.html" class="nav-signin">Developer Portal ↗</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-top">
+    <div class="wrap">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        <span>AI Training Platform · Powered by 2nth.ai</span>
+      </div>
+      <div class="hero-eyebrow">Standard Bank Group · Capital Markets</div>
+      <h1 class="hero-title">CALYPSO<span class="slash"> /</span></h1>
+      <div class="hero-sub-title">TRAINING HUB AFRICA</div>
+      <p class="hero-desc">
+        An AI-powered training and knowledge platform for <strong>Nasdaq Calypso users across Standard Bank's African footprint</strong> — delivering role-specific learning paths, live AI guidance, and regulatory context tuned to each jurisdiction.
+      </p>
+      <div class="hero-actions">
+        <a href="#training-paths" class="btn btn-sb">Explore training paths</a>
+        <a href="#demo" class="btn btn-sky">Live AI demo</a>
+        <a href="#regions" class="btn btn-outline">↓ African coverage</a>
+      </div>
+
+      <div class="impact-bar" style="margin-bottom: 52px;">
+        <div class="impact-cell">
+          <div class="impact-val blue">20</div>
+          <div class="impact-label">African countries</div>
+          <div class="impact-sub">Standard Bank footprint</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-val sky">4</div>
+          <div class="impact-label">Role tracks</div>
+          <div class="impact-sub">Front / Middle / Back / Tech</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-val blue">1,200<span style="font-size:24px">+</span></div>
+          <div class="impact-label">Calypso users</div>
+          <div class="impact-sub">Across group entities</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-val sky">6</div>
+          <div class="impact-label">Core modules</div>
+          <div class="impact-sub">From blotter to FRTB</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-val grn">24/7</div>
+          <div class="impact-label">AI availability</div>
+          <div class="impact-sub">No helpdesk queue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-bar">
+    <div class="hero-bar-inner">
+      <span class="hero-tagline">"Africa is our home, we drive her growth."</span>
+      <div class="hero-partner-line">
+        <span>Delivered by</span>
+        <div class="hero-partner-pill">
+          <!-- Andile logo mark -->
+          <div class="an-mark">
+            <svg width="18" height="18" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="17" stroke="rgba(125,176,42,0.5)" stroke-width="1.5"/>
+              <path d="M8 28 L8 10 L16 22 L24 10 L28 10 L28 28" stroke="#7DB02A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <span class="an-name">Andile Solutions</span>
+          <span class="an-sep">·</span>
+          <span class="an-name" style="color:rgba(255,255,255,0.35)">Built on 2nth.ai</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHALLENGE ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">The challenge</div>
+    <h2 class="section-title">Calypso is powerful.<br>Training across Africa is not.</h2>
+    <p class="section-body">Standard Bank runs Nasdaq Calypso across 20 African entities — each with different regulatory requirements, local market conventions, and varying levels of Calypso expertise. Traditional training hasn't kept pace.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card before">
+        <div class="problem-label before">Before: Status quo</div>
+        <ul class="problem-list">
+          <li><span>❌</span> PDF user guides last updated three releases ago</li>
+          <li><span>❌</span> Nairobi traders escalate to Johannesburg for answers — hours of lag</li>
+          <li><span>❌</span> No SARB / CBN / CBK regulatory context in generic training materials</li>
+          <li><span>❌</span> New joiners take 3–6 months to be productive on the blotter</li>
+          <li><span>❌</span> Key configuration knowledge lives with 2–3 individuals who can leave</li>
+          <li><span>❌</span> Regression testing relies on tribal memory, not documented test suites</li>
+        </ul>
+      </div>
+      <div class="problem-card after">
+        <div class="problem-label after">After: Calypso Training Hub</div>
+        <ul class="problem-list">
+          <li><span>✅</span> AI assistant answers Calypso questions in real time, in context</li>
+          <li><span>✅</span> Nairobi, Lagos, and Lusaka each get jurisdiction-aware guidance</li>
+          <li><span>✅</span> SARB, CBN, CBK regulatory nuances embedded in every answer</li>
+          <li><span>✅</span> Role-specific learning paths get new hires productive in weeks</li>
+          <li><span>✅</span> Institutional knowledge captured in Vectorize RAG — permanent</li>
+          <li><span>✅</span> AI generates test case suites from release notes and config specs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRAINING PATHS ═══ -->
+<section id="training-paths">
+  <div class="wrap">
+    <div class="eyebrow">Role-based learning</div>
+    <h2 class="section-title">Four tracks. Every Calypso user.</h2>
+    <p class="section-body">Training is scoped to what each person actually does in Calypso — not a one-size-fits-all module dump. Each track has its own AI assistant tuned to the terminology and workflows of that role.</p>
+
+    <div class="path-grid">
+      <div class="path-card">
+        <div class="path-icon">📈</div>
+        <div class="path-role">Track 01 · Front Office</div>
+        <div class="path-title">Traders & Structurers</div>
+        <div class="path-body">Trade entry, blotter navigation, deal structuring, instrument setup. Covers FX, Rates, Credit, and local market conventions for each African jurisdiction.</div>
+        <div class="path-modules">
+          <span class="path-mod">FX Blotter</span>
+          <span class="path-mod">IRS Entry</span>
+          <span class="path-mod">Deal Templates</span>
+          <span class="path-mod">Limits</span>
+          <span class="path-mod">SARB Rules</span>
+        </div>
+      </div>
+      <div class="path-card sky-top">
+        <div class="path-icon">📊</div>
+        <div class="path-role">Track 02 · Middle Office</div>
+        <div class="path-title">Risk & Quants</div>
+        <div class="path-body">Portfolio risk views, sensitivity analysis, VaR runs, margin calls, collateral management workflows, and FRTB IMA / SA attribution reporting.</div>
+        <div class="path-modules">
+          <span class="path-mod">VaR</span>
+          <span class="path-mod">Sensitivities</span>
+          <span class="path-mod">FRTB</span>
+          <span class="path-mod">SA-CCR</span>
+          <span class="path-mod">SIMM</span>
+        </div>
+      </div>
+      <div class="path-card green-top">
+        <div class="path-icon">⚙️</div>
+        <div class="path-role">Track 03 · Back Office</div>
+        <div class="path-title">Operations & Settlement</div>
+        <div class="path-body">Settlement workflow, nostro reconciliation, confirmation matching, SSI management, and CLS/RTGS integration for local settlement systems (SAMOS, KEPSS, RTGS-NG).</div>
+        <div class="path-modules">
+          <span class="path-mod">Settlement</span>
+          <span class="path-mod">Nostro Recon</span>
+          <span class="path-mod">SAMOS</span>
+          <span class="path-mod">SWIFT</span>
+          <span class="path-mod">CLS</span>
+        </div>
+      </div>
+      <div class="path-card amber-top">
+        <div class="path-icon">🔧</div>
+        <div class="path-role">Track 04 · Technology</div>
+        <div class="path-title">Admins & Configurators</div>
+        <div class="path-body">Calypso environment management, product line configuration, workflow engine, static data governance, and upgrade/regression testing methodologies.</div>
+        <div class="path-modules">
+          <span class="path-mod">Env Config</span>
+          <span class="path-mod">Workflows</span>
+          <span class="path-mod">Static Data</span>
+          <span class="path-mod">Release Mgmt</span>
+          <span class="path-mod">UAT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MODULE CATALOG ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Module catalog</div>
+    <h2 class="section-title">Six core Calypso modules.</h2>
+    <p class="section-body">Each module combines structured learning content with an AI assistant that has deep Calypso knowledge — including Standard Bank's specific configuration and the regulatory context of each African entity.</p>
+
+    <div class="module-grid">
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 01</span>
+          <span class="module-level core">Core</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Trade Capture &amp; Blotter</div>
+          <div class="module-desc">End-to-end trade entry for FX Spot/Forward, IRS, Cross-Currency Swaps, Bonds, and Credit instruments. Covers deal templates, counterparty setup, and LEI/UTI requirements.</div>
+          <div class="module-topics">
+            <span class="module-topic">FX Forward</span>
+            <span class="module-topic">IRS</span>
+            <span class="module-topic">CCS</span>
+            <span class="module-topic">Bonds</span>
+            <span class="module-topic">UTI/LEI</span>
+            <span class="module-topic">SARB CFC</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 02</span>
+          <span class="module-level core">Core</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Portfolio Management &amp; Market Risk</div>
+          <div class="module-desc">Portfolio views, P&amp;L attribution, sensitivity greeks, VaR methodologies (historical simulation, parametric), and stress testing against African market scenarios.</div>
+          <div class="module-topics">
+            <span class="module-topic">P&amp;L</span>
+            <span class="module-topic">Delta/Gamma</span>
+            <span class="module-topic">VaR</span>
+            <span class="module-topic">Stress</span>
+            <span class="module-topic">Limits</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 03</span>
+          <span class="module-level adv">Advanced</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Collateral &amp; Margin Management</div>
+          <div class="module-desc">ISDA/CSA agreements, margin call workflows, dispute management, IM calculation via SIMM (ISDA CRIF), and POPIA-compliant data handling for South African entities.</div>
+          <div class="module-topics">
+            <span class="module-topic">ISDA CSA</span>
+            <span class="module-topic">SIMM</span>
+            <span class="module-topic">Disputes</span>
+            <span class="module-topic">IM/VM</span>
+            <span class="module-topic">POPIA</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 04</span>
+          <span class="module-level core">Core</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Treasury &amp; Money Markets</div>
+          <div class="module-desc">Repo, FX swap, call accounts, and short-term funding instruments. SARB RP032 liquidity ratio monitoring, LCR/NSFR integration, and local currency treasury across 20 entities.</div>
+          <div class="module-topics">
+            <span class="module-topic">Repo</span>
+            <span class="module-topic">FX Swap</span>
+            <span class="module-topic">RP032</span>
+            <span class="module-topic">LCR</span>
+            <span class="module-topic">Multi-CCY</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 05</span>
+          <span class="module-level core">Core</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Settlement &amp; Clearing</div>
+          <div class="module-desc">Full settlement lifecycle from trade confirmation to nostro reconciliation. Local RTGS integration: SAMOS (SA), KEPSS (Kenya), RTGS-NG (Nigeria), plus SWIFT MT/MX messaging.</div>
+          <div class="module-topics">
+            <span class="module-topic">SWIFT MT</span>
+            <span class="module-topic">SAMOS</span>
+            <span class="module-topic">KEPSS</span>
+            <span class="module-topic">CLS</span>
+            <span class="module-topic">Recon</span>
+          </div>
+        </div>
+      </div>
+      <div class="module-card">
+        <div class="module-header">
+          <span class="module-num">MODULE 06</span>
+          <span class="module-level reg">Regulatory</span>
+        </div>
+        <div class="module-body">
+          <div class="module-title">Regulatory Reporting (FRTB / SA-CCR)</div>
+          <div class="module-desc">Basel IV capital reporting from Calypso — FRTB IMA back-testing, SA capital attribution, SA-CCR replacement cost, and trade repository reporting for DTCC/Strate/JSE.</div>
+          <div class="module-topics">
+            <span class="module-topic">FRTB IMA</span>
+            <span class="module-topic">SA-CCR</span>
+            <span class="module-topic">DTCC</span>
+            <span class="module-topic">Strate</span>
+            <span class="module-topic">BCBS 457</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nasdaq reference block -->
+    <div class="nasdaq-block">
+      <div class="nasdaq-icon">🔗</div>
+      <div class="nasdaq-body">
+        <div class="nasdaq-label">Platform reference · Nasdaq</div>
+        <div class="nasdaq-title">Nasdaq Calypso — Front Office Suite</div>
+        <div class="nasdaq-desc">This training hub is purpose-built around the Nasdaq Calypso front-office platform — the cross-asset trading, risk, and processing system Standard Bank Group uses across its African capital markets operations. All module content is aligned to the official Calypso product capability set.</div>
+        <a href="https://www.nasdaq.com/solutions/fintech/nasdaq-calypso/front-office" target="_blank" rel="noopener" class="nasdaq-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Nasdaq Calypso Front Office ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LIVE DEMO ═══ -->
+<section id="demo">
+  <div class="wrap">
+    <div class="eyebrow">AI assistant · Live demo</div>
+    <h2 class="section-title">Ask anything. Get a Calypso answer.</h2>
+    <p class="section-body">The training AI knows Calypso navigation paths, configuration patterns, and the regulatory rules of each African jurisdiction. Here's a real example from a Johannesburg treasury trader.</p>
+
+    <div class="chat-frame">
+      <div class="chat-top-bar">
+        <div class="chat-top-left">
+          <div class="chat-status-dot"></div>
+          <span class="chat-title">Calypso Training AI · Standard Bank Africa</span>
+        </div>
+        <span class="chat-top-right">Powered by 2nth.ai · Andile</span>
+      </div>
+      <div class="chat-context-bar">
+        <span class="ctx-pill active">User: Trader · Johannesburg Treasury</span>
+        <span class="ctx-pill active">Region: South Africa · SARB</span>
+        <span class="ctx-pill">Calypso v16.1</span>
+        <span class="ctx-pill">Track: Front Office</span>
+        <span class="ctx-pill active">Module: Trade Capture</span>
+      </div>
+      <div class="chat-messages">
+        <!-- USER MESSAGE 1 -->
+        <div class="msg user">
+          <div class="msg-avatar user">JT</div>
+          <div>
+            <div class="msg-sender">Johannesburg Trader · 09:14 AM</div>
+            <div class="msg-bubble user">
+              I'm trying to capture a 6-month USD/ZAR cross-currency basis swap in Calypso but the counterparty validation is rejecting BankCo ZA. It shows a red flag on the LEI field. How do I fix this?
+            </div>
+          </div>
+        </div>
+
+        <!-- AI RESPONSE 1 -->
+        <div class="msg">
+          <div class="msg-avatar ai">AI</div>
+          <div>
+            <div class="msg-sender">Calypso Training AI · 09:14 AM</div>
+            <div class="msg-bubble ai">
+              That LEI validation error on a ZAR cross-currency basis swap is almost always one of two things. Let me walk you through both:
+
+              <div class="ai-step">📍 Navigate: Static Data → Counterparty → BankCo ZA → Legal Entity</div>
+
+              <strong>1. LEI not populated in counterparty master</strong><br>
+              Under the Legal Entity tab, check that the <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">LEI_CODE</code> field has a 20-character ISO 17442 identifier. South African reporting to DTCC/Strate requires an LEI for all counterparties since SARB FSCA Directive 2/2020.
+
+              <div class="ai-step">📍 Navigate: Static Data → Counterparty → BankCo ZA → Reporting → FSCA Settings</div>
+
+              <strong>2. LEI present but not flagged as active for ZAR derivatives</strong><br>
+              Under FSCA Settings, confirm that <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">REPORTING_ELIGIBLE = Y</code> and the effective date is before today's trade date.
+
+              <div class="ai-note">
+                <strong>SARB context:</strong> For USD/ZAR CCS specifically, SARB Exchange Control (BoP category T04) requires the counterparty to be an Authorised Dealer. Verify BankCo ZA has the <code style="font-family:var(--mono);font-size:11px">AUTH_DEALER = Y</code> flag set under the ZAR FX permissions panel — this is a Standard Bank-specific field added in your 2023 config uplift.
+              </div>
+
+              <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:4px">
+                <span class="ai-tag path">Static Data → Counterparty</span>
+                <span class="ai-tag sarb">SARB BoP T04</span>
+                <span class="ai-tag sarb">FSCA Dir 2/2020</span>
+                <span class="ai-tag warn">LEI · ISO 17442</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USER MESSAGE 2 -->
+        <div class="msg user">
+          <div class="msg-avatar user">JT</div>
+          <div>
+            <div class="msg-sender">Johannesburg Trader · 09:17 AM</div>
+            <div class="msg-bubble user">
+              Found it — AUTH_DEALER was N. Fixed that. Now the trade captured but I'm getting a pricing error: "curve not found for ZAR-JIBAR-3M". Which curve should I use?
+            </div>
+          </div>
+        </div>
+
+        <!-- AI RESPONSE 2 -->
+        <div class="msg">
+          <div class="msg-avatar ai">AI</div>
+          <div>
+            <div class="msg-sender">Calypso Training AI · 09:17 AM</div>
+            <div class="msg-bubble ai">
+              Good catch on the AUTH_DEALER flag. For the curve issue:
+
+              <div class="ai-step">📍 Navigate: Market Data → Curves → Search: "JIBAR"</div>
+
+              Standard Bank's curve naming convention for ZAR is <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">SBG_ZAR_JIBAR_3M_DISC</code>. This is the discounting curve used for ZAR legs on all CCS and IRS products. The Calypso generic name <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">ZAR-JIBAR-3M</code> maps to it via the product template alias — but your CCS template may be referencing the old pre-migration name.
+
+              <div class="ai-step">📍 Navigate: Product Setup → Cross-Currency Swap → ZAR leg → Rate Index → Edit alias</div>
+
+              Update the rate index alias from <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">ZAR-JIBAR-3M</code> to <code style="background:var(--light);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px">SBG_ZAR_JIBAR_3M_DISC</code>.
+
+              <div class="ai-note">
+                <strong>Note:</strong> SARB guidance on the JIBAR transition to ZARONIA (ZAR Overnight Index Average) means new trades from Q2 2025 should prefer <code style="font-family:var(--mono);font-size:11px">SBG_ZAR_ZARONIA_OIS</code> for the ZAR floating leg. Ask your quants desk which curve convention applies to this specific trade.
+              </div>
+
+              <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:4px">
+                <span class="ai-tag path">Market Data → Curves</span>
+                <span class="ai-tag sarb">JIBAR → ZARONIA</span>
+                <span class="ai-tag warn">Template alias mismatch</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <div class="chat-input-mock">Ask about any Calypso workflow, product, or regulatory requirement…</div>
+        <button class="chat-send">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REGIONS ═══ -->
+<section id="regions">
+  <div class="wrap">
+    <div class="eyebrow">African coverage</div>
+    <h2 class="section-title">20 countries. One training platform.</h2>
+    <p class="section-body">Each region gets jurisdiction-aware guidance — local regulatory context (SARB, CBN, CBK, BoG, BdM), settlement system nuances (SAMOS, KEPSS, RTGS-NG), and country-specific Calypso configuration patterns.</p>
+
+    <div class="region-grid">
+      <div class="region-card">
+        <div class="region-flag">🇿🇦</div>
+        <div class="region-info">
+          <div class="region-country">South Africa</div>
+          <div class="region-reg">SARB · FSCA · JSE · Strate</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live — HQ</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇳🇬</div>
+        <div class="region-info">
+          <div class="region-country">Nigeria</div>
+          <div class="region-reg">CBN · FMDQ · NFIU</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇰🇪</div>
+        <div class="region-info">
+          <div class="region-country">Kenya</div>
+          <div class="region-reg">CBK · NSE · KEPSS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇬🇭</div>
+        <div class="region-info">
+          <div class="region-country">Ghana</div>
+          <div class="region-reg">BoG · GSE · GhIPSS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇹🇿</div>
+        <div class="region-info">
+          <div class="region-country">Tanzania</div>
+          <div class="region-reg">BoT · DSE · TISS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇺🇬</div>
+        <div class="region-info">
+          <div class="region-country">Uganda</div>
+          <div class="region-reg">BoU · USE · RTGS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇲🇿</div>
+        <div class="region-info">
+          <div class="region-country">Mozambique</div>
+          <div class="region-reg">BdM · BVM · SIMO</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇿🇲</div>
+        <div class="region-info">
+          <div class="region-country">Zambia</div>
+          <div class="region-reg">BoZ · LuSE · ZAMRTGS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇿🇼</div>
+        <div class="region-info">
+          <div class="region-country">Zimbabwe</div>
+          <div class="region-reg">RBZ · ZSE · RTGS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇧🇼</div>
+        <div class="region-info">
+          <div class="region-country">Botswana</div>
+          <div class="region-reg">BoB · BSE · RTGS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇳🇦</div>
+        <div class="region-info">
+          <div class="region-country">Namibia</div>
+          <div class="region-reg">BoN · NSX · NamPay</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇦🇴</div>
+        <div class="region-info">
+          <div class="region-country">Angola</div>
+          <div class="region-reg">BNA · BODIVA</div>
+          <span class="region-status q3"><span class="region-status-dot"></span>Q3 2025</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇨🇩</div>
+        <div class="region-info">
+          <div class="region-country">DR Congo</div>
+          <div class="region-reg">BCC · BVMAC</div>
+          <span class="region-status q3"><span class="region-status-dot"></span>Q3 2025</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇲🇼</div>
+        <div class="region-info">
+          <div class="region-country">Malawi</div>
+          <div class="region-reg">RBM · MSE · MALSWITCH</div>
+          <span class="region-status q3"><span class="region-status-dot"></span>Q3 2025</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇸🇿</div>
+        <div class="region-info">
+          <div class="region-country">Eswatini</div>
+          <div class="region-reg">CBS · SWIPSS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇱🇸</div>
+        <div class="region-info">
+          <div class="region-country">Lesotho</div>
+          <div class="region-reg">CBL · LESRTS</div>
+          <span class="region-status live"><span class="region-status-dot"></span>Live</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ARCHITECTURE ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Platform architecture</div>
+    <h2 class="section-title">Edge-native. Africa-aware. Always on.</h2>
+    <p class="section-body">Built on Cloudflare's global edge network — requests from Nairobi, Lagos, or Johannesburg are handled within milliseconds, with no data leaving Africa's regional Cloudflare nodes unless necessary.</p>
+
+    <div class="arch-block">
+      <div class="arch-label">Request pipeline — Calypso Training AI</div>
+      <div class="arch-pipeline">
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">1</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">User Query — Cloudflare Edge</div>
+            <div class="arch-step-desc">Standard Bank employee submits a Calypso question. The request hits the nearest Cloudflare PoP (Johannesburg, Nairobi, Lagos, etc.) — sub-50ms to edge globally.</div>
+            <span class="arch-step-code">CF Pages · South Africa / East Africa / West Africa PoPs</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">2</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Region &amp; Role Context Injection — KV</div>
+            <div class="arch-step-desc">Session KV lookup retrieves the user's region (e.g. ZA/SARB, KE/CBK), their Calypso role track, and their module progress. This context is prepended to every AI prompt.</div>
+            <span class="arch-step-code">Cloudflare KV · session:{sid} → role, region, track</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">3</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Intent Classification — Workers AI</div>
+            <div class="arch-step-desc">Llama 3.1 8B classifies query intent at the edge (trade capture / risk / settlement / regulatory / config) and selects the relevant Vectorize namespace for RAG retrieval.</div>
+            <span class="arch-step-code">Workers AI · @cf/meta/llama-3.1-8b-instruct · ~80ms at edge</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">4</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Knowledge Retrieval — Vectorize RAG</div>
+            <div class="arch-step-desc">Semantic search against the Calypso training corpus — Nasdaq documentation, Standard Bank config notes, SARB/CBN/CBK regulatory circulars, and Andile implementation playbooks (120K+ chunks).</div>
+            <span class="arch-step-code">Vectorize · calypso-sbg-training · top-k=8 · threshold=0.72</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">5</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Answer Generation — Claude via AI Gateway</div>
+            <div class="arch-step-desc">Claude Sonnet 4.6 generates the response using retrieved chunks + region/role context. Jurisdiction-specific regulatory flags (SARB, CBN, POPIA, etc.) are automatically included where relevant.</div>
+            <span class="arch-step-code">2nth.ai AI Gateway → Claude Sonnet 4.6 · claude-sonnet-4-6</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">6</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Progress Tracking — D1</div>
+            <div class="arch-step-desc">Every interaction is logged against the user's training record in D1 (SQLite at edge). Module completion, assessment scores, and knowledge gaps feed the adaptive learning path engine.</div>
+            <span class="arch-step-code">D1 · sbg-calypso-training · users / progress / assessments</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="arch-andile-credit">
+        <span class="arch-credit-text">Implementation, knowledge base curation, and ongoing support by Andile Solutions</span>
+        <div class="arch-credit-pills">
+          <span class="arch-credit-pill">Andile Solutions</span>
+          <span class="arch-credit-pill">2nth.ai</span>
+          <span class="arch-credit-pill">Cloudflare Workers</span>
+          <span class="arch-credit-pill">Nasdaq Calypso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<div class="wrap">
+  <div class="cta-block">
+    <h2>READY TO DEPLOY<br>ACROSS AFRICA?</h2>
+    <p>Andile Solutions designs and implements the Calypso Training Hub for Standard Bank entities. Contact Albert's team to scope your deployment — from pilot in one country to full group rollout.</p>
+    <div class="cta-btns">
+      <a href="/partners/andile-sb-calypso-teams.html" class="btn btn-white">Teams integration →</a>
+      <a href="https://andile.net/contact" target="_blank" rel="noopener" class="btn btn-ghost">Contact Andile Solutions</a>
+      <a href="/partners/andile-concept.html" class="btn btn-ghost">← Andile overview</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-sb">Standard Bank Group · Calypso Training Hub</span>
+        <span class="footer-powered">
+          Concept delivered by <a href="/partners/andile.html">Andile Solutions</a> ·
+          Built on <a href="https://2nth.ai" target="_blank" rel="noopener">2nth.ai</a> ·
+          Nasdaq Calypso — <a href="https://www.nasdaq.com/solutions/fintech/nasdaq-calypso/front-office" target="_blank" rel="noopener">Front Office ↗</a>
+        </span>
+      </div>
+      <div class="footer-links">
+        <a href="/partners/andile.html">Andile</a>
+        <a href="/partners/andile-concept.html">Platform overview</a>
+        <a href="/partners/andile-frtb.html">FRTB Engine</a>
+        <a href="/partners/andile-copilot.html">Impl. Copilot</a>
+        <a href="/portal.html">Developer portal</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

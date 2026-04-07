@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2nth.ai — Platform Concept for Andile</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #FFFFFF;
+      --surface:  #F3F7F0;
+      --card:     #FFFFFF;
+      --border:   #D4E4CC;
+      --border2:  #A8C898;
+      --brand:    #7DB02A;
+      --purple:   #1C5014;
+      --gold:     #5a8020;
+      --green:    #7DB02A;
+      --green2:   #5a8020;
+      --text:     #182018;
+      --muted:    #3D5834;
+      --faint:    #7A9A6A;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    /* ── Layout ── */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .wrap-wide { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Nav ── */
+    nav { position: sticky; top: 0; z-index: 50; background: #1C5014; border-bottom: 1px solid rgba(125,176,42,0.25); }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: var(--display); font-size: 22px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .logo span { color: #7DB02A; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: #a8d840; }
+
+    /* ── Hero ── */
+    .hero { padding: 100px 0 80px; border-bottom: 1px solid var(--border); background: linear-gradient(160deg, #f7f4f9 0%, #fff 60%); }
+    .hero-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--brand); margin-bottom: 20px; }
+    .hero-heading { font-family: var(--display); font-size: clamp(52px, 8vw, 90px); letter-spacing: 2px; line-height: 0.95; color: var(--purple); margin-bottom: 24px; }
+    .hero-heading .accent { color: var(--brand); }
+    .hero-heading .gold { color: var(--purple); }
+    .hero-sub { font-size: 18px; color: var(--muted); max-width: 580px; line-height: 1.7; margin-bottom: 40px; }
+    .hero-sub strong { color: var(--text); }
+    .partner-pill { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 40px; padding: 8px 16px 8px 8px; margin-bottom: 32px; box-shadow: 0 1px 4px rgba(61,10,82,0.08); }
+    .partner-avatar { width: 32px; height: 32px; border-radius: 50%; background: #7DB02A; display: flex; align-items: center; justify-content: center; }
+    .partner-name { font-size: 13px; color: var(--text); font-weight: 600; }
+    .partner-sub { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--faint); }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; border-radius: 6px; text-decoration: none; transition: all .15s; cursor: pointer; border: none; }
+    .btn-brand { background: #1C5014; color: #fff; }
+    .btn-brand:hover { background: #144010; text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: #7DB02A; color: #5a8020; text-decoration: none; }
+
+    /* ── Section headings ── */
+    .section-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--brand); margin-bottom: 12px; }
+    .section-heading { font-family: var(--display); font-size: clamp(32px, 5vw, 52px); letter-spacing: 1px; color: var(--purple); margin-bottom: 16px; line-height: 1; }
+    .section-body { font-size: 16px; color: var(--muted); max-width: 620px; line-height: 1.7; margin-bottom: 40px; }
+
+    /* ── Stat row ── */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 40px 0; }
+    .stat-cell { background: #fff; padding: 24px 20px; text-align: center; }
+    .stat-val { font-family: var(--display); font-size: 42px; letter-spacing: 1px; color: var(--purple); line-height: 1; }
+    .stat-val.gold { color: var(--brand); }
+    .stat-val.green { color: var(--brand); }
+    .stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-top: 4px; }
+
+    /* ── Architecture diagram ── */
+    .arch { background: #1C5014; border: 1px solid #144010; border-radius: 12px; padding: 40px; margin: 32px 0; }
+    .arch-title { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 32px; }
+    .arch-flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+    .arch-node { flex: 1; min-width: 120px; text-align: center; position: relative; }
+    .arch-node::after { content: '→'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.25); font-size: 18px; z-index: 1; }
+    .arch-node:last-child::after { display: none; }
+    .arch-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 14px 10px; margin: 0 14px; }
+    .arch-box.highlight { border-color: rgba(125,176,42,0.5); background: rgba(125,176,42,0.1); }
+    .arch-box.gold { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
+    .arch-icon { font-size: 20px; margin-bottom: 6px; }
+    .arch-name { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: #fff; font-weight: 600; }
+    .arch-desc { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; line-height: 1.3; }
+    @media (max-width: 700px) {
+      .arch-flow { flex-direction: column; gap: 8px; }
+      .arch-node::after { content: '↓'; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
+      .arch-node { width: 100%; min-width: unset; }
+    }
+
+    /* ── Use case cards ── */
+    .uc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 32px; }
+    .uc-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 24px; transition: border-color .15s, transform .15s, box-shadow .15s; }
+    .uc-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(61,10,82,0.07); }
+    .uc-card.featured { border-color: rgba(125,176,42,0.4); background: linear-gradient(135deg, rgba(125,176,42,0.04), #fff); }
+    .uc-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--brand); margin-bottom: 10px; }
+    .uc-tag.gold { color: var(--brand); }
+    .uc-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .uc-body { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .uc-stack { display: flex; gap: 6px; flex-wrap: wrap; }
+    .uc-tag-sm { font-family: var(--mono); font-size: 9px; padding: 2px 8px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border); color: var(--faint); }
+
+    /* ── Edge map ── */
+    .edge-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 32px 0; }
+    .edge-cell { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .edge-cell.active { border-color: rgba(125,176,42,0.4); background: rgba(125,176,42,0.04); }
+    .edge-cell.soon { border-color: rgba(61,10,82,0.2); background: rgba(61,10,82,0.02); }
+    .edge-region { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .edge-city { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+    .edge-status { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; }
+    .dot-green { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+    .dot-cyan { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
+
+    /* ── How it works steps ── */
+    .steps { display: flex; flex-direction: column; gap: 0; margin-top: 32px; }
+    .step { display: flex; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-num { font-family: var(--display); font-size: 52px; color: rgba(61,10,82,0.1); line-height: 1; flex-shrink: 0; width: 56px; text-align: right; }
+    .step-content { flex: 1; }
+    .step-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .step-body { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .step-code { display: inline-block; font-family: var(--mono); font-size: 12px; background: rgba(125,176,42,0.08); border: 1px solid rgba(125,176,42,0.25); border-radius: 4px; padding: 2px 8px; color: #5a8020; margin-top: 8px; }
+
+    /* ── Partner model ── */
+    .model-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 28px; }
+    .model-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .model-row:last-child { border-bottom: none; }
+    .model-who { width: 120px; flex-shrink: 0; padding: 16px 20px; background: var(--surface); border-right: 1px solid var(--border); font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); display: flex; align-items: center; }
+    .model-who.gold { color: var(--brand); }
+    .model-what { padding: 16px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; background: #fff; }
+    .model-what strong { color: var(--text); }
+
+    /* ── Pillars ── */
+    .pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 28px; }
+    .pillar { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .pillar-icon { font-size: 24px; margin-bottom: 10px; }
+    .pillar-name { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .pillar-name.design { color: #6D28D9; }
+    .pillar-name.software { color: var(--brand); }
+    .pillar-name.hardware { color: #B45309; }
+    .pillar-name.robotics { color: var(--purple); }
+    .pillar-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── CTA section ── */
+    .cta-section { background: #1C5014; border-radius: 16px; padding: 56px 48px; text-align: center; margin: 56px 0; }
+    .cta-section h2 { font-family: var(--display); font-size: clamp(36px, 5vw, 56px); letter-spacing: 2px; margin-bottom: 16px; color: #fff; }
+    .cta-section p { font-size: 16px; color: rgba(255,255,255,0.6); max-width: 500px; margin: 0 auto 32px; line-height: 1.7; }
+
+    /* ── Footer ── */
+    footer { padding: 32px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 18px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--brand); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--purple); }
+
+    /* ── Divider ── */
+    .rule { height: 1px; background: var(--border); margin: 40px 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero { padding: 60px 0 48px; }
+      .cta-section { padding: 36px 24px; }
+      .step { flex-direction: column; gap: 8px; }
+      .step-num { width: auto; text-align: left; font-size: 36px; }
+      .model-who { width: 90px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Andile brand stripe -->
+<div style="height:5px;background:linear-gradient(90deg,#1A3A1C 0%,#2D7020 40%,#7DB02A 70%,#a8c840 100%)"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="https://2nth.ai" class="logo"><span>2</span>NTH<span style="font-size:13px;color:var(--faint);letter-spacing:2px;margin-left:8px">.AI</span></a>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#edge">Edge network</a>
+      <a href="#get-started">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap">
+    <div class="partner-pill">
+      <div class="partner-avatar"><svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 19 L4 7 L10 15 L16 7 L19 7 L19 19" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div>
+        <div class="partner-name">Albert Janse van Vuuren</div>
+        <div class="partner-sub">Co-Founder · Andile · Build Partner</div>
+      </div>
+    </div>
+
+    <div class="hero-eyebrow">Platform Concept &amp; Explainer</div>
+    <h1 class="hero-heading">
+      AI INFRASTRUCTURE<br>
+      FOR <span class="gold">CAPITAL</span><br>
+      <span class="accent">MARKETS</span>
+    </h1>
+    <p class="hero-sub">
+      2nth.ai is an <strong>edge-first AI platform</strong> built on Cloudflare's global network. It lets you — as a build partner — deploy AI-powered tools for your bank and financial institution clients, faster and at lower latency than any cloud-based alternative.
+    </p>
+
+    <div class="cta-row">
+      <a href="https://developers.2nth.ai" class="btn btn-brand">Open developer portal →</a>
+      <a href="https://2nth.ai/join.html" class="btn btn-outline">Sign in to platform</a>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT IS 2NTH -->
+<section>
+  <div class="wrap">
+    <div class="section-eyebrow">The platform</div>
+    <h2 class="section-heading">ONE PLATFORM. FOUR AI PILLARS.</h2>
+    <p class="section-body">
+      2nth.ai brings together AI agents across design, software, hardware, and robotics — orchestrated by a single edge-deployed platform. For Andile, the relevant pillars are software and design: building intelligent tools that slot into your existing Calypso, FinMechanics, and FIS environments.
+    </p>
+
+    <div class="pillar-grid">
+      <div class="pillar">
+        <div class="pillar-icon">&#9998;</div>
+        <div class="pillar-name design">Design</div>
+        <div class="pillar-desc">UI/UX, dashboards, report layouts, client-facing portals. Branded to your client's identity.</div>
+      </div>
+      <div class="pillar" style="border-color:rgba(125,176,42,0.35);background:rgba(125,176,42,0.04)"
+        <div class="pillar-icon">&#9881;</div>
+        <div class="pillar-name software">Software</div>
+        <div class="pillar-desc">APIs, data pipelines, AI agents, integrations. Full-stack delivery on Cloudflare edge infrastructure.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">&#127760;</div>
+        <div class="pillar-name hardware">Hardware</div>
+        <div class="pillar-desc">Embedded, IoT, MCU. Less relevant for Andile today — available when needed.</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">&#129302;</div>
+        <div class="pillar-name robotics">Robotics</div>
+        <div class="pillar-desc">Edge AI, sensor fusion, autonomous systems. Future-proofing for automated trading infrastructure.</div>
+      </div>
+    </div>
+
+    <div class="stat-row" style="margin-top:40px">
+      <div class="stat-cell">
+        <div class="stat-val">300<span style="font-size:24px">+</span></div>
+        <div class="stat-label">Edge locations</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val gold">16</div>
+        <div class="stat-label">Andile markets</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val green">&lt;20<span style="font-size:20px">ms</span></div>
+        <div class="stat-label">Latency JHB</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val">8<span style="font-size:24px">M</span></div>
+        <div class="stat-label">Partner tokens</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="how-it-works">
+  <div class="wrap">
+    <div class="section-eyebrow">Architecture</div>
+    <h2 class="section-heading">HOW THE PLATFORM ROUTES AI</h2>
+    <p class="section-body">
+      Every request hits a Cloudflare edge node in the client's country. A lightweight Llama model classifies the intent at zero latency. Claude handles the substantive response. Results persist in D1 (SQLite at edge) and can feed into Vectorize for RAG over your document libraries.
+    </p>
+
+    <div class="arch">
+      <div class="arch-title">Request flow — from client query to AI response</div>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-box">
+            <div class="arch-icon">&#127968;</div>
+            <div class="arch-name">Client</div>
+            <div class="arch-desc">Bank trader, ops analyst, risk manager</div>
+          </div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-box highlight">
+            <div class="arch-icon">&#9881;</div>
+            <div class="arch-name">CF Edge</div>
+            <div class="arch-desc">Nearest Cloudflare PoP — JHB, Lagos, London, Sydney</div>
+          </div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-box">
+            <div class="arch-icon">&#9889;</div>
+            <div class="arch-name">Llama 3.1</div>
+            <div class="arch-desc">Intent classification at edge — zero API round-trip</div>
+          </div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-box highlight">
+            <div class="arch-icon">&#129504;</div>
+            <div class="arch-name">Claude 4.6</div>
+            <div class="arch-desc">Domain expert response via AI Gateway</div>
+          </div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-box gold">
+            <div class="arch-icon">&#128200;</div>
+            <div class="arch-name">D1 + RAG</div>
+            <div class="arch-desc">Trade data, docs, positions persisted at edge</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <p style="font-size:14px;color:var(--muted);line-height:1.7">
+      <strong style="color:var(--text)">Why this matters for Andile:</strong> Your bank clients have data residency requirements. Because the platform runs on Cloudflare, you can deploy into a client's own Cloudflare account — data never leaves their jurisdiction. POPIA (South Africa), GDPR (EU), APRA (Australia), and RBI (India) compliance is structural, not bolted on.
+    </p>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="use-cases">
+  <div class="wrap">
+    <div class="section-eyebrow">Use cases</div>
+    <h2 class="section-heading">WHAT YOU CAN BUILD</h2>
+    <p class="section-body">
+      Six immediate AI tools Andile can build and deliver to capital markets clients — using your existing domain expertise and the 2nth.ai platform as infrastructure.
+    </p>
+
+    <div class="uc-grid">
+
+      <div class="uc-card featured">
+        <div class="uc-tag gold">Africa Opportunity ★</div>
+        <div class="uc-title">African Central Bank Reporting Agent</div>
+        <div class="uc-body">Natural-language interface over SARB, CBN, and CBK regulatory reports. AI summarises positions, flags exceptions, drafts commentary — running in-country on CF edge nodes.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">D1 edge</span>
+          <span class="uc-tag-sm">POPIA</span>
+          <span class="uc-tag-sm">SWIFT</span>
+          <span class="uc-tag-sm">Claude 4.6</span>
+        </div>
+      </div>
+
+      <div class="uc-card">
+        <div class="uc-tag">Trade Ops</div>
+        <div class="uc-title">Settlement Exception Triage</div>
+        <div class="uc-body">AI agent monitors failed settlements and reconciliation breaks. Routes to correct desk with a plain-English explanation of the break and recommended resolution.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">Calypso API</span>
+          <span class="uc-tag-sm">Vectorize</span>
+          <span class="uc-tag-sm">Workers AI</span>
+        </div>
+      </div>
+
+      <div class="uc-card">
+        <div class="uc-tag">Knowledge</div>
+        <div class="uc-title">Platform Knowledge Copilot</div>
+        <div class="uc-body">AI-indexed Calypso, FinMechanics, and FIS documentation. Analysts ask questions in natural language — no more digging through vendor PDFs during an implementation sprint.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">Vectorize RAG</span>
+          <span class="uc-tag-sm">FinMechanics</span>
+          <span class="uc-tag-sm">FIS</span>
+        </div>
+      </div>
+
+      <a href="/partners/andile-frtb.html" class="uc-card" style="text-decoration:none;display:block;border-color:rgba(61,10,82,0.25);background:linear-gradient(135deg,rgba(61,10,82,0.03),#fff)">
+        <div class="uc-tag" style="color:var(--purple)">Risk · <span style="color:var(--green2)">Built out ↗</span></div>
+        <div class="uc-title">FRTB / Basel IV Commentary</div>
+        <div class="uc-body">AI reads raw risk outputs and generates human-readable regulatory commentary. Reduces analyst time on reporting packs from hours to minutes.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">FRTB</span>
+          <span class="uc-tag-sm">Basel IV</span>
+          <span class="uc-tag-sm">Claude 4.6</span>
+        </div>
+      </a>
+
+      <a href="/partners/andile-copilot.html" class="uc-card" style="text-decoration:none;display:block;border-color:rgba(61,10,82,0.25);background:linear-gradient(135deg,rgba(61,10,82,0.03),#fff)">
+        <div class="uc-tag">Implementation</div>
+        <div class="uc-title">Implementation Copilot <span style="font-size:11px;font-weight:600;letter-spacing:.04em;background:var(--green);color:#fff;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Built out ↗</span></div>
+        <div class="uc-body">During Calypso or FinMechanics deployments, an AI co-pilot surfaces configuration patterns, flags common pitfalls, and generates test case suites from the spec document.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">Calypso</span>
+          <span class="uc-tag-sm">FinMio</span>
+          <span class="uc-tag-sm">Workers AI</span>
+        </div>
+      </a>
+
+      <a href="/partners/andile-sb-calypso.html" class="uc-card" style="text-decoration:none;display:block;border-color:rgba(0,48,135,0.2);background:linear-gradient(135deg,rgba(0,48,135,0.03),#fff)">
+        <div class="uc-tag">Client Delivery</div>
+        <div class="uc-title">White-label AI Portal for Banks <span style="font-size:11px;font-weight:600;letter-spacing:.04em;background:#003087;color:#fff;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle">Built out ↗</span></div>
+        <div class="uc-body">Andile delivers a branded AI training portal to a bank client — shown here as the Standard Bank Calypso Training Hub for Africa. Built on 2nth.ai, deployed into the bank's Cloudflare account.</div>
+        <div class="uc-stack">
+          <span class="uc-tag-sm">Standard Bank</span>
+          <span class="uc-tag-sm">Calypso</span>
+          <span class="uc-tag-sm">20 countries</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDGE NETWORK -->
+<section id="edge">
+  <div class="wrap">
+    <div class="section-eyebrow">Global edge network</div>
+    <h2 class="section-heading">YOUR CLIENTS' DATA STAYS IN THEIR COUNTRY</h2>
+    <p class="section-body">
+      2nth.ai deploys on Cloudflare's 300+ edge locations. AI inference happens at the nearest PoP to the client — in South Africa, in London, in Sydney, in Mumbai. Andile's existing 16-country footprint maps almost exactly to Cloudflare's African and APAC PoPs.
+    </p>
+
+    <div class="edge-strip">
+      <div class="edge-cell active">
+        <div class="edge-region">🇿🇦 South Africa</div>
+        <div class="edge-city">Johannesburg · Cape Town</div>
+        <div class="edge-status"><div class="dot-green"></div> <span style="color:var(--green)">Live</span></div>
+      </div>
+      <div class="edge-cell active">
+        <div class="edge-region">🇬🇧 United Kingdom</div>
+        <div class="edge-city">London</div>
+        <div class="edge-status"><div class="dot-green"></div> <span style="color:var(--green)">Live</span></div>
+      </div>
+      <div class="edge-cell active">
+        <div class="edge-region">🇦🇺 Australia</div>
+        <div class="edge-city">Sydney · Melbourne</div>
+        <div class="edge-status"><div class="dot-green"></div> <span style="color:var(--green)">Live</span></div>
+      </div>
+      <div class="edge-cell active">
+        <div class="edge-region">🇮🇳 India</div>
+        <div class="edge-city">Mumbai · Bangalore</div>
+        <div class="edge-status"><div class="dot-green"></div> <span style="color:var(--green)">Live</span></div>
+      </div>
+      <div class="edge-cell soon">
+        <div class="edge-region">🇳🇬 Nigeria</div>
+        <div class="edge-city">Lagos</div>
+        <div class="edge-status"><div class="dot-cyan"></div> <span style="color:var(--purple)">2025</span></div>
+      </div>
+      <div class="edge-cell soon">
+        <div class="edge-region">🇰🇪 Kenya</div>
+        <div class="edge-city">Nairobi</div>
+        <div class="edge-status"><div class="dot-cyan"></div> <span style="color:var(--purple)">2025</span></div>
+      </div>
+      <div class="edge-cell soon">
+        <div class="edge-region">🇪🇬 Egypt</div>
+        <div class="edge-city">Cairo</div>
+        <div class="edge-status"><div class="dot-cyan"></div> <span style="color:var(--purple)">2025</span></div>
+      </div>
+      <div class="edge-cell">
+        <div class="edge-region">🇪🇺 Europe</div>
+        <div class="edge-city">Frankfurt · Amsterdam</div>
+        <div class="edge-status"><div class="dot-green"></div> <span style="color:var(--green)">Live</span></div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--faint);margin-top:8px">All 16 Andile markets have Cloudflare PoPs within 50ms. African expansion PoPs are being added in H2 2025 — ahead of regional fintech regulatory timelines.</p>
+  </div>
+</section>
+
+<!-- HOW TO GET STARTED -->
+<section id="get-started">
+  <div class="wrap">
+    <div class="section-eyebrow">Getting started</div>
+    <h2 class="section-heading">FROM BRIEF TO DEPLOYED IN DAYS</h2>
+    <p class="section-body">
+      As a Build Partner with Builder-tier access, you can go from a client requirement to a deployed AI tool in days, not months.
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Sign in to the platform</div>
+          <div class="step-body">Go to 2nth.ai and sign in with <strong style="color:var(--text)">albert@andilesolutions.com</strong>. You'll receive a magic link. Your Builder plan and 8M token balance are already active — no payment needed to start.</div>
+          <span class="step-code">2nth.ai/join.html</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Submit a client brief</div>
+          <div class="step-body">Describe the tool you want to build in plain language. The AI Brief Analyst decomposes it into a scope across relevant pillars — software, design, or both. You'll see a token estimate and full deliverable breakdown before committing anything.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Review the concept and approve</div>
+          <div class="step-body">The platform generates a concept spec: architecture, API contracts, database schema, and UI wireframes depending on scope. You review it, adjust if needed, and approve. Tokens are only spent on generation — transparent pricing throughout.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Deploy to client infrastructure</div>
+          <div class="step-body">Output is deployable code and specs — straight into the client's Cloudflare account, their existing CI/CD pipeline, or hosted on 2nth.ai infrastructure. You choose based on the client's data residency requirements.</div>
+          <span class="step-code">wrangler deploy → client's CF account</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <div class="step-title">Bill the client. Keep the margin.</div>
+          <div class="step-body">Andile prices and invoices the client directly. 2nth.ai charges at token cost plus platform fee. The difference is your margin. Revenue share applies when clients use the deployed AI tools — 5% back to build partners on ongoing usage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNER MODEL -->
+<section>
+  <div class="wrap">
+    <div class="section-eyebrow">Partnership model</div>
+    <h2 class="section-heading">WHO DOES WHAT</h2>
+    <p class="section-body">Clean separation of responsibilities — Andile owns the client relationship; 2nth.ai provides the infrastructure.</p>
+
+    <div class="model-table">
+      <div class="model-row">
+        <div class="model-who">Andile</div>
+        <div class="model-what"><strong>Client relationships, pricing, billing, support.</strong> Domain expertise in capital markets. Project delivery and change management. Owns the bank's trust relationship — and the service contract.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what"><strong>AI infrastructure, edge deployment, AI Gateway, platform templates.</strong> Llama routing at edge → Claude for depth. D1 persistence, Vectorize RAG, token billing. Platform updates and new AI capabilities — automatically available to all partners.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who gold">Client bank</div>
+        <div class="model-what">Receives AI-enhanced tools within their existing environments. <strong>Data stays in their jurisdiction</strong> — deployed into the bank's own Cloudflare account where required. Andile manages the support relationship; 2nth.ai provides platform SLA.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who gold">Revenue</div>
+        <div class="model-what">Andile bills clients directly. 2nth.ai charges token cost + platform fee. <strong>Margin is Andile's</strong>. Ongoing usage revenue share: 5% back to build partner for tools in active production.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="wrap">
+  <div class="cta-section" id="activate">
+    <h2>READY TO BUILD?</h2>
+    <p>Your Builder plan is active. 8M tokens waiting. Sign in with your email and start with a brief for your first client use case.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="https://2nth.ai/join.html" class="btn btn-brand" style="font-size:12px;padding:14px 32px">Sign in to 2nth.ai →</a>
+      <a href="https://developers.2nth.ai" class="btn btn-outline" style="font-size:12px;padding:14px 32px">Developer portal</a>
+    </div>
+    <p style="margin-top:24px;font-size:12px;color:rgba(255,255,255,0.35)">Sign in with albert@andilesolutions.com &middot; Builder plan active</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap-wide">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI</div>
+      <div class="footer-links">
+        <a href="https://2nth.ai">Platform</a>
+        <a href="https://developers.2nth.ai">Developers</a>
+        <a href="https://developers.2nth.ai/partners/andile.html">Andile showcase</a>
+        <a href="https://andile.net/contact" target="_blank" rel="noopener">Contact</a>
+      </div>
+    </div>
+    <p style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--faint)">Andile &middot; Trusted Partnerships &middot; Solid Solutions &middot; A 42Markets.Group Company</p>
+  </div>
+</footer>
+
+</body>
+</html>

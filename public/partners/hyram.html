@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyram Serretta — 2nth.ai Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:  #0F3D5C;
+      --primary2: #082B45;
+      --accent:   #00A8CC;
+      --accent2:  #0085A8;
+      --bg:       #FFFFFF;
+      --surface:  #F4F8FB;
+      --border:   #D8E8F0;
+      --border2:  #A8C8DC;
+      --text:     #0C1E2C;
+      --muted:    #3A5468;
+      --faint:    #7A9AAE;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #082B45 0%, #0F3D5C 30%, #00A8CC 65%, #00D4FF 100%); }
+    nav { background: #0F3D5C; border-bottom: 1px solid rgba(0,168,204,0.25); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #00A8CC; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #00A8CC; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Hero ── */
+    .hero { padding: 68px 0 56px; background: linear-gradient(160deg, #EEF4F9 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .partner-lockup { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .partner-avatar svg { width: 36px; height: 36px; }
+    .partner-name { font-family: var(--display); font-size: clamp(32px, 5vw, 54px); letter-spacing: 1.5px; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .partner-creds { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .partner-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .badge-build { background: rgba(0,168,204,0.1); border: 1px solid rgba(0,168,204,0.3); color: var(--accent2); }
+    .badge-ai { background: rgba(15,61,92,0.08); border: 1px solid rgba(15,61,92,0.2); color: var(--primary); }
+    .badge-sector { background: rgba(15,61,92,0.05); border: 1px solid rgba(15,61,92,0.15); color: var(--muted); }
+
+    /* ── Stats ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 28px 0; }
+    .stat { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .stat .value { font-family: var(--display); font-size: 30px; color: var(--primary); }
+    .stat .label { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-top: 2px; }
+
+    /* ── Domain grid ── */
+    .domain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 24px 0; }
+    .domain-card { background: var(--primary); border-radius: 10px; padding: 22px; }
+    .domain-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .domain-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    .domain-card p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+
+    /* ── Credentials ── */
+    .cred-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 24px 0; }
+    .cred { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+    .cred-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+    .cred-body h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 0 0 2px; }
+    .cred-body p { font-family: var(--mono); font-size: 10px; letter-spacing: .5px; color: var(--faint); margin: 0; }
+
+    /* ── Partner model ── */
+    .model-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .model-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .model-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .model-who { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .model-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Use cases ── */
+    .use-case-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0; }
+    .use-case { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 20px; border-left: 3px solid var(--accent); }
+    .use-case .tag { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .use-case h3 { font-size: 15px; color: var(--text); margin: 0 0 6px; }
+    .use-case p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    /* ── CTA bar ── */
+    .cta-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary2); text-decoration: none; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent2); text-decoration: none; }
+    .btn-outline { background: none; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <span class="current">Hyram Serretta</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="partner-lockup">
+      <div class="partner-avatar">
+        <!-- HS monogram -->
+        <svg viewBox="0 0 36 36" fill="none">
+          <text x="4" y="26" font-family="Barlow,sans-serif" font-weight="800" font-size="20" fill="#fff">HS</text>
+        </svg>
+      </div>
+      <div>
+        <div class="partner-name">HYRAM SERRETTA</div>
+        <div class="partner-creds">MBA · MSc Eng · Head of Growth, DataProphet</div>
+        <div class="partner-meta">
+          <span>Johannesburg, South Africa</span>
+          <span>|</span>
+          <span>AI · Growth · Manufacturing · FinServ</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-build">Build Partner</span>
+          <span class="badge badge-ai">AI / ML</span>
+          <span class="badge badge-sector">Multi-Sector</span>
+          <span class="badge badge-ai">P&amp;L Leader</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:1.05rem;color:var(--muted);max-width:680px;line-height:1.7">
+      Engineer turned growth leader. Hyram bridges the gap between production AI systems and commercial outcomes — with an MSc in neural networks from UCT, an MBA, and hands-on P&amp;L leadership across manufacturing, financial services, food &amp; beverage, and technology. Now Head of Growth at DataProphet, one of South Africa's leading industrial AI companies. On 2nth.ai, he's a Build Partner bringing enterprise AI to clients across his sector network.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="value">MBA</div>
+        <div class="label">Business</div>
+      </div>
+      <div class="stat">
+        <div class="value">MSc</div>
+        <div class="label">Engineering</div>
+      </div>
+      <div class="stat">
+        <div class="value">20+</div>
+        <div class="label">Years Exp.</div>
+      </div>
+      <div class="stat">
+        <div class="value">4</div>
+        <div class="label">Industries</div>
+      </div>
+      <div class="stat">
+        <div class="value">4K+</div>
+        <div class="label">LinkedIn</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOMAIN EXPERTISE ─────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>Domain expertise</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:640px;line-height:1.7">
+      Technical depth + commercial leadership — rare in the same person. Hyram's value to 2nth.ai clients is the ability to architect AI solutions that actually land in a business, not just in a proof of concept.
+    </p>
+    <div class="domain-grid">
+      <div class="domain-card">
+        <div class="icon">🏭</div>
+        <h4>Industrial Manufacturing</h4>
+        <p>Production AI, quality optimisation, predictive maintenance. DataProphet-level experience deploying ML in real manufacturing environments — not demos.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">🏦</div>
+        <h4>Financial Services</h4>
+        <p>AI applications in banking, insurance, and asset management. Risk modelling, analytics translation, and growth strategy for FinServ clients.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">📈</div>
+        <h4>Growth &amp; Go-to-Market</h4>
+        <p>P&amp;L ownership, revenue growth, and enterprise sales for AI products. Bridges the gap between technical AI capability and commercial value delivery.</p>
+      </div>
+      <div class="domain-card">
+        <div class="icon">🧠</div>
+        <h4>AI / ML Architecture</h4>
+        <p>Neural networks, deep learning, signal processing. MSc research in radar target recognition. Certified in ML (Stanford), deep learning (DeepLearning.AI), and generative AI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AI CREDENTIALS ───────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>AI &amp; technical credentials</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:640px;line-height:1.7">
+      Formal training across the full ML stack — from foundational theory to production generative AI.
+    </p>
+    <div class="cred-grid">
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>MSc Engineering — Neural Networks</h4>
+          <p>UCT · Radar Signal Processing &amp; Ship Target Recognition</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>Machine Learning</h4>
+          <p>Stanford Online · Supervised, unsupervised, reinforcement</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>Neural Networks &amp; Deep Learning</h4>
+          <p>DeepLearning.AI · Andrew Ng · Apr 2022</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>Generative AI for Everyone</h4>
+          <p>DeepLearning.AI · Aug 2025</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>RapidMiner ML Master Certification</h4>
+          <p>Production ML workflows · Jan 2020</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>Analytics Translation</h4>
+          <p>APMG International · Bridging AI to business outcomes · Oct 2021</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>Python Programming</h4>
+          <p>University of Michigan · 2021</p>
+        </div>
+      </div>
+      <div class="cred">
+        <div class="cred-dot"></div>
+        <div class="cred-body">
+          <h4>MBA</h4>
+          <p>Business strategy, corporate governance, P&amp;L leadership</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AI USE CASES ─────────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>AI use cases — where 2nth.ai plugs in</h2>
+    <div class="use-case-grid">
+      <div class="use-case">
+        <div class="tag">Manufacturing</div>
+        <h3>Production AI Layer</h3>
+        <p>LLM co-pilots on top of DataProphet-style optimisation systems — operators query production state, get AI-generated shift reports, exception alerts, and root-cause analysis in plain language.</p>
+      </div>
+      <div class="use-case">
+        <div class="tag">Growth</div>
+        <h3>AI-Augmented Sales Intelligence</h3>
+        <p>Enterprise AI tools for growth teams — lead scoring, opportunity analysis, proposal generation, and CRM enrichment via 2nth.ai agents connected to sales data.</p>
+      </div>
+      <div class="use-case">
+        <div class="tag">Financial Services</div>
+        <h3>Executive AI Briefings</h3>
+        <p>Automated intelligence for financial services executives — AI-synthesised market summaries, risk dashboards, and regulatory commentary delivered as natural-language briefings.</p>
+      </div>
+      <div class="use-case">
+        <div class="tag">Corporate Governance</div>
+        <h3>Board Intelligence Tools</h3>
+        <p>AI-assisted board reporting — pack summarisation, ESG metrics, governance compliance monitoring, and board-level Q&amp;A agents trained on the organisation's own documents.</p>
+      </div>
+      <div class="use-case" style="border-left-color:var(--primary)">
+        <div class="tag" style="color:var(--muted)">Cross-Sector ★</div>
+        <h3>Analytics Translation at Scale</h3>
+        <p>Hyram's APMG Analytics Translation credential meets 2nth.ai's LLM infrastructure — turning complex ML model outputs into plain-language recommendations for non-technical decision-makers.</p>
+      </div>
+      <div class="use-case">
+        <div class="tag">Thought Leadership</div>
+        <h3>AI Content &amp; Community</h3>
+        <p>With 4,000+ LinkedIn followers and a track record as an AI panelist, Hyram amplifies 2nth.ai's reach in the South African enterprise AI market.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PARTNER MODEL ─────────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <h2>Partnership model</h2>
+    <div class="model-box">
+      <div class="model-row">
+        <div class="model-who">Hyram</div>
+        <div class="model-what">Sector relationships, client advisory, AI strategy and go-to-market. Technical credibility to engage both C-suite and engineering teams. Owns the client relationship and delivery context.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what">LLM infrastructure, AI Gateway (Llama routing → Claude Sonnet 4.6), edge deployment, D1 persistence, Vectorize RAG, Skills catalog, partner billing. Platform SLA and AI model costs.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Client</div>
+        <div class="model-what">Receives AI-powered tools within their existing environment. Hyram manages advisory; 2nth.ai provides the infrastructure. Data stays in their jurisdiction via Cloudflare's African PoPs.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Revenue</div>
+        <div class="model-what">Hyram prices and retains his client margin. 2nth.ai charges at token cost + platform fee. Build Partner revenue share on skills contributed to the 2nth.ai catalog.</div>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="https://www.linkedin.com/in/hyramserretta/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn ↗</a>
+      <a href="https://2nth.ai" class="btn btn-accent">Sign in to 2nth.ai ↗</a>
+      <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI DEVELOPERS</div>
+      <div class="footer-links">
+        <a href="/portal.html">Portal</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://2nth.ai">Platform</a>
+        <a href="https://github.com/2nth-ai">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

@@ -47,6 +47,9 @@
     .partner-card h3{font-size:16px;font-weight:700;margin:0 0 6px;color:#18181b}
     .partner-card p{font-size:13px;color:#71717a;margin:0 0 12px;line-height:1.5}
     .partner-card .cta{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#0891b2}
+    /* Pending partner cards — hidden until authenticated */
+    .partner-card[data-pending]{display:none}
+    .partner-card[data-pending] .pending-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:10px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#92680a;margin-bottom:8px}
   </style>
 </head>
 <body>
@@ -128,6 +131,22 @@
       <p>Live deployments built on the 2nth.ai platform. Each partner hub is a branded instance of the skills engine.</p>
 
       <div class="partner-grid">
+        <a href="/partners/andile.html" class="partner-card" data-pending="true" style="border-color:#1C5014;background:linear-gradient(135deg,#F3F7F0,#fff)">
+          <div class="pending-badge">&#128274; Partner onboarding — sign in to preview</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <svg width="22" height="22" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="rgba(28,80,20,0.25)" stroke-width="1.5"/><path d="M18 8 L27 28 M18 8 L9 28" stroke="#1C5014" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 21 L23.5 21" stroke="#7DB02A" stroke-width="2" stroke-linecap="round"/></svg>
+            <div class="tag" style="color:#1C5014;margin:0">Capital Markets · Africa · 20 Countries</div>
+          </div>
+          <h3>Andile Solutions <span style="font-size:11px;font-weight:400;color:#7DB02A;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Build Partner</span></h3>
+          <p>Nasdaq Calypso training, FRTB Basel IV commentary, and implementation AI for investment banks and central banks across Africa. Albert · Neil — onboarded.</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(28,80,20,0.07);border:1px solid rgba(28,80,20,0.15);color:#1C5014">Calypso Training</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(125,176,42,0.08);border:1px solid rgba(125,176,42,0.25);color:#5a8020">FRTB Engine</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(28,80,20,0.07);border:1px solid rgba(28,80,20,0.15);color:#1C5014">Impl. Copilot</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(0,48,135,0.07);border:1px solid rgba(0,48,135,0.18);color:#003087">MS Teams</span>
+          </div>
+          <div class="cta" style="color:#1C5014">View partner showcase &rarr;</div>
+        </a>
         <a href="/partners/vibecrafters.html" class="partner-card" style="border-color:#7C3AED;background:linear-gradient(135deg,#faf8ff,#fff)">
           <div class="tag" style="color:#7C3AED">Digital Agency · Production Partner</div>
           <h3>VibeCrafters <span style="font-size:11px;font-weight:400;color:#059669;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Live</span></h3>
@@ -135,10 +154,13 @@
           <div class="cta">View build partner story &rarr;</div>
         </a>
         <a href="/partners/agilex.html" class="partner-card">
-          <div class="tag">PropTech · Project Management</div>
-          <h3>AgilEx</h3>
-          <p>AI-powered project management for construction and property development. Skills for scheduling, compliance, and site reporting.</p>
-          <div class="cta">View hub &rarr;</div>
+          <div class="tag">Recruitment AI · Financial Services</div>
+          <h3>AgileX</h3>
+          <p>5 AI agents that run the full recruitment pipeline — sourcing, screening, scheduling, compliance, and onboarding. From R28/day.</p>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(224,64,50,0.07);border:1px solid rgba(224,64,50,0.2);color:#B82E25">Paton Personnel</span>
+          </div>
+          <div class="cta">View hub →</div>
         </a>
         <a href="/partners/gridlineprop.html" class="partner-card">
           <div class="tag">Real Estate · Analytics</div>
@@ -163,6 +185,24 @@
           <h3>DroneScan</h3>
           <p>Drone survey analysis and automated inspection reporting. AI-powered defect detection and site mapping skills.</p>
           <div class="cta">View hub &rarr;</div>
+        </a>
+        <a href="/partners/carla.html" class="partner-card" style="border-color:#2A1F3D;background:linear-gradient(135deg,#F8F4FC,#fff)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2A1F3D,#C0405E);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:700;flex-shrink:0">CA</div>
+            <div class="tag" style="color:#2A1F3D;margin:0">Digital Transformation · AI Strategy · Delivery</div>
+          </div>
+          <h3>Carla de Abreu <span style="font-size:11px;font-weight:400;color:#C0405E;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Consulting Partner</span></h3>
+          <p>BCom · MSc Edinburgh. Consultant and published thought leader on human-led tech partnerships, AI execution, and digital transformation. 15+ years across financial services, insurance, GRC, and enterprise delivery.</p>
+          <div class="cta" style="color:#2A1F3D">View partner page &rarr;</div>
+        </a>
+        <a href="/partners/hyram.html" class="partner-card" style="border-color:#0F3D5C;background:linear-gradient(135deg,#EEF4F9,#fff)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0F3D5C,#00A8CC);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:700;flex-shrink:0">HS</div>
+            <div class="tag" style="color:#0F3D5C;margin:0">AI · Growth · Manufacturing · FinServ</div>
+          </div>
+          <h3>Hyram Serretta <span style="font-size:11px;font-weight:400;color:#00A8CC;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Build Partner</span></h3>
+          <p>MBA · MSc Engineering (UCT). Head of Growth at DataProphet. P&amp;L leader and AI practitioner bringing enterprise AI across manufacturing, financial services, and technology.</p>
+          <div class="cta" style="color:#0F3D5C">View partner page &rarr;</div>
         </a>
         <a href="/vision.html" class="partner-card" style="border-style:dashed;background:#fafafa">
           <div class="tag">Coming soon</div>
@@ -323,5 +363,46 @@ example here
 
 <script src="/gate.js"></script>
 <script src="/portal.js"></script>
+<script>
+// Show pending partner cards once auth is confirmed
+document.addEventListener('sso:ready', function(e) {
+  var user = e.detail;
+  var cards = document.querySelectorAll('.partner-card[data-pending]');
+
+  // Admin sees all cards unlocked — remove the pending badge lock text
+  var isAdmin = (user.role === 'admin' || user.email === 'craig@2nth.ai' || user.email === 'craigl@2nth.ai');
+
+  cards.forEach(function(card) {
+    card.style.display = 'block';
+    var badge = card.querySelector('.pending-badge');
+    if (badge) {
+      if (isAdmin) {
+        badge.textContent = '🔓 Admin preview — partner onboarding in progress';
+        badge.style.background = 'rgba(5,150,105,0.08)';
+        badge.style.borderColor = 'rgba(5,150,105,0.25)';
+        badge.style.color = '#047857';
+      } else {
+        badge.textContent = '🔒 Partner preview — sign in required';
+      }
+    }
+  });
+});
+
+// Handle access=denied redirect back from middleware
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('access') === 'denied') {
+    var partner = params.get('partner') || 'this partner';
+    var msg = document.createElement('div');
+    msg.style.cssText = 'position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #fecaca;border-radius:8px;padding:14px 20px;font-family:monospace;font-size:12px;color:#dc2626;box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:999;white-space:nowrap';
+    msg.textContent = 'Access to ' + partner + ' pages requires partner registration or a public invite.';
+    document.body.appendChild(msg);
+    setTimeout(function() { msg.remove(); }, 6000);
+    // Clean up URL
+    history.replaceState({}, '', '/portal.html');
+  }
+})();
+</script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
 </body>
 </html>

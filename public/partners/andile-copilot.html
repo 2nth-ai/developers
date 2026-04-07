@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Implementation Copilot — Andile × 2nth.ai</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:   #1C5014;
+      --purple2:  #144010;
+      --green:    #7DB02A;
+      --green2:   #5a8020;
+      --bg:       #FFFFFF;
+      --surface:  #F3F7F0;
+      --border:   #D4E4CC;
+      --border2:  #A8C898;
+      --text:     #182018;
+      --muted:    #3D5834;
+      --faint:    #7A9A6A;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #1A3A1C 0%, #2D7020 40%, #7DB02A 70%, #a8c840 100%); }
+    nav { background: #1C5014; border-bottom: 1px solid rgba(125,176,42,0.2); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #7DB02A; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #a8d840; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; border-radius: 6px; text-decoration: none; transition: all .15s; border: none; cursor: pointer; }
+    .btn-purple { background: var(--purple); color: #fff; }
+    .btn-purple:hover { background: var(--purple2); text-decoration: none; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-green:hover { background: var(--green2); text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--purple); color: var(--purple); text-decoration: none; }
+    .btn-white { background: #fff; color: var(--purple); }
+    .btn-white:hover { background: #f0e8f8; text-decoration: none; }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+    .btn-ghost:hover { border-color: #a8d840; color: #a8d840; text-decoration: none; }
+
+    /* ── Section headings ── */
+    .eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .section-title { font-family: var(--display); font-size: clamp(30px, 4vw, 46px); letter-spacing: 1px; color: var(--purple); margin-bottom: 14px; line-height: 1.05; }
+    .section-body { font-size: 15px; color: var(--muted); max-width: 640px; line-height: 1.7; }
+    .rule { height: 1px; background: var(--border); margin: 36px 0; }
+
+    /* ── Hero ── */
+    .hero { padding: 72px 0 60px; background: linear-gradient(160deg, #f7f4f9 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(125,176,42,0.1); border: 1px solid rgba(125,176,42,0.3); border-radius: 20px; padding: 4px 14px 4px 8px; margin-bottom: 24px; }
+    .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .hero-badge span { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--green2); }
+    .hero-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .hero-title { font-family: var(--display); font-size: clamp(44px, 7vw, 82px); letter-spacing: 1.5px; line-height: 0.95; color: var(--purple); margin-bottom: 8px; }
+    .hero-sub-title { font-family: var(--display); font-size: clamp(26px, 3.5vw, 40px); letter-spacing: 1px; color: var(--purple); opacity: 0.45; margin-bottom: 28px; line-height: 1; }
+    .hero-desc { font-size: 18px; color: var(--muted); max-width: 620px; line-height: 1.7; margin-bottom: 36px; }
+    .hero-desc strong { color: var(--text); }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── Impact bar ── */
+    .impact-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 40px 0 0; }
+    .impact-cell { background: #fff; padding: 26px 20px; text-align: center; }
+    .impact-val { font-family: var(--display); font-size: 46px; letter-spacing: 1px; line-height: 1; }
+    .impact-val.green { color: var(--green); }
+    .impact-val.purple { color: var(--purple); }
+    .impact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-top: 5px; }
+    .impact-sub { font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.4; }
+
+    /* ── Problem cards ── */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+    @media (max-width: 640px) { .problem-grid { grid-template-columns: 1fr; } }
+    .problem-card { border-radius: 10px; padding: 28px; }
+    .problem-card.before { background: #fff5f5; border: 1px solid #fecaca; }
+    .problem-card.after { background: rgba(125,176,42,0.05); border: 1px solid rgba(125,176,42,0.3); }
+    .problem-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+    .problem-label.before { color: #DC2626; }
+    .problem-label.after { color: var(--green2); }
+    .problem-list { list-style: none; }
+    .problem-list li { font-size: 14px; line-height: 1.6; padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 10px; align-items: flex-start; }
+    .problem-list li:last-child { border-bottom: none; }
+    .problem-list li .icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Three-panel demo ── */
+    .demo-panels { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 0; margin-top: 32px; align-items: start; }
+    @media (max-width: 700px) { .demo-panels { grid-template-columns: 1fr; } }
+    .demo-arrow-col { display: flex; align-items: flex-start; justify-content: center; padding-top: 52px; font-size: 24px; color: var(--green); }
+    @media (max-width: 700px) { .demo-arrow-col { padding-top: 0; padding: 10px 0; } }
+    .demo-panel { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    .demo-header { padding: 11px 18px; display: flex; align-items: center; gap: 8px; }
+    .demo-header.dark { background: #1e1e2e; }
+    .demo-header.purple { background: var(--purple); }
+    .demo-header.green { background: rgba(125,176,42,0.12); border-bottom: 1px solid rgba(125,176,42,0.25); }
+    .demo-title { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .demo-title.dark { color: rgba(255,255,255,0.45); }
+    .demo-title.purple { color: rgba(255,255,255,0.6); }
+    .demo-title.green { color: var(--green2); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .demo-body { padding: 20px 18px; }
+    .demo-body.code { background: #1e1e2e; font-family: var(--mono); font-size: 12px; line-height: 1.85; }
+    .demo-body.output { background: var(--surface); font-size: 13px; line-height: 1.7; color: var(--muted); }
+
+    /* Code colours */
+    .c-comment { color: rgba(255,255,255,0.22); }
+    .c-key     { color: #c084fc; }
+    .c-str     { color: #86efac; }
+    .c-num     { color: #7dd3fc; }
+    .c-warn    { color: #fbbf24; }
+    .c-err     { color: #f87171; }
+    .c-ok      { color: #4ade80; }
+
+    /* Output components */
+    .out-section { margin-bottom: 16px; }
+    .out-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+    .out-flag { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+    .out-flag.warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); }
+    .out-flag.err  { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.25); }
+    .out-flag.ok   { background: rgba(125,176,42,0.08); border: 1px solid rgba(125,176,42,0.25); }
+    .out-flag .flag-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .out-flag .flag-text { color: var(--text); line-height: 1.5; }
+    .out-flag .flag-text span { font-family: var(--mono); font-size: 11px; display: block; color: var(--faint); margin-top: 2px; }
+    .test-case { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; margin-bottom: 6px; }
+    .test-id { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--purple); margin-bottom: 4px; }
+    .test-desc { font-size: 13px; color: var(--text); margin-bottom: 4px; font-weight: 600; }
+    .test-steps { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .test-result { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; padding: 2px 8px; border-radius: 10px; background: rgba(125,176,42,0.1); border: 1px solid rgba(125,176,42,0.25); color: var(--green2); }
+
+    /* ── Capabilities grid ── */
+    .cap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
+    .cap-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 24px; border-top: 3px solid var(--purple); transition: box-shadow .15s; }
+    .cap-card:hover { box-shadow: 0 4px 16px rgba(61,10,82,0.08); }
+    .cap-card.green-top { border-top-color: var(--green); }
+    .cap-num { font-family: var(--display); font-size: 40px; color: rgba(61,10,82,0.1); line-height: 1; margin-bottom: 10px; }
+    .cap-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .cap-body { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .cap-example { font-family: var(--mono); font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; color: var(--purple); line-height: 1.6; }
+
+    /* ── Platform context ── */
+    .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 28px; }
+    .platform-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+    .platform-icon { font-size: 20px; margin-bottom: 8px; }
+    .platform-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-bottom: 5px; }
+    .platform-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+    .platform-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Pipeline ── */
+    .arch-block { background: var(--purple); border-radius: 12px; padding: 40px; margin-top: 32px; }
+    .arch-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 28px; }
+    .arch-pipeline { display: flex; flex-direction: column; gap: 0; }
+    .arch-step { display: flex; gap: 0; align-items: stretch; }
+    .arch-step-num { width: 40px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+    .arch-step-circle { width: 28px; height: 28px; border-radius: 50%; background: rgba(125,176,42,0.2); border: 1px solid rgba(125,176,42,0.4); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; font-weight: 700; color: #a8d840; flex-shrink: 0; }
+    .arch-step-line { width: 1px; flex: 1; background: rgba(255,255,255,0.08); margin: 4px auto 0; min-height: 20px; }
+    .arch-step:last-child .arch-step-line { display: none; }
+    .arch-step-body { flex: 1; padding: 0 0 28px 16px; }
+    .arch-step-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #a8d840; margin-bottom: 5px; }
+    .arch-step-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .arch-step-code { display: inline-block; font-family: var(--mono); font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 2px 8px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+
+    /* ── Deployment phases ── */
+    .phase-list { margin-top: 28px; }
+    .phase { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+    .phase:last-child { border-bottom: none; }
+    .phase-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 3px; white-space: nowrap; height: fit-content; margin-top: 2px; }
+    .phase-tag.analysis   { background: rgba(61,10,82,0.08); border: 1px solid rgba(61,10,82,0.2); color: var(--purple); }
+    .phase-tag.config     { background: rgba(125,176,42,0.08); border: 1px solid rgba(125,176,42,0.25); color: var(--green2); }
+    .phase-tag.testing    { background: rgba(14,116,144,0.08); border: 1px solid rgba(14,116,144,0.2); color: #0e7490; }
+    .phase-tag.golive     { background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.2); color: #059669; }
+    .phase-content { flex: 1; }
+    .phase-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+    .phase-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .phase-bullets { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .phase-bullet { font-family: var(--mono); font-size: 10px; padding: 2px 8px; border-radius: 3px; background: var(--surface); border: 1px solid var(--border); color: var(--faint); }
+
+    /* ── Tech tags ── */
+    .tech-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .tech-tag { font-family: var(--mono); font-size: 10px; padding: 5px 12px; border-radius: 4px; background: var(--surface); border: 1px solid var(--border); color: var(--purple); }
+    .tech-tag.green { background: rgba(125,176,42,0.08); border-color: rgba(125,176,42,0.3); color: var(--green2); }
+
+    /* ── CTA ── */
+    .cta-block { background: var(--purple); border-radius: 14px; padding: 56px 48px; text-align: center; margin: 56px 0; }
+    .cta-block h2 { font-family: var(--display); font-size: clamp(36px, 5vw, 54px); letter-spacing: 2px; color: #fff; margin-bottom: 14px; }
+    .cta-block p { font-size: 16px; color: rgba(255,255,255,0.6); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--green); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--purple); }
+
+    @media (max-width: 600px) {
+      .cta-block { padding: 36px 24px; }
+      .phase { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="https://2nth.ai" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <a href="/partners/andile.html">Andile</a>
+      <span class="sep">/</span>
+      <span class="current">Implementation Copilot</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="wrap">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>AI Deployment Tool · Andile × 2nth.ai</span>
+    </div>
+    <div class="hero-eyebrow">Capital Markets Platform AI</div>
+    <h1 class="hero-title">IMPLEMENTATION</h1>
+    <div class="hero-sub-title">COPILOT</div>
+    <p class="hero-desc">
+      An AI co-pilot that rides alongside your consultants during <strong>Calypso and FinMechanics deployments</strong> — surfacing configuration patterns from past projects, flagging known pitfalls before they cost weeks, and generating full test case suites directly from the spec document.
+    </p>
+    <div class="hero-actions">
+      <a href="#capabilities" class="btn btn-purple">See capabilities</a>
+      <a href="#demo" class="btn btn-green">Live demo</a>
+      <a href="/partners/andile-concept.html" class="btn btn-outline">← Andile overview</a>
+    </div>
+
+    <div class="impact-bar">
+      <div class="impact-cell">
+        <div class="impact-val green">60<span style="font-size:26px">%</span></div>
+        <div class="impact-label">Faster test prep</div>
+        <div class="impact-sub">vs manual authoring</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val purple">15+</div>
+        <div class="impact-label">Known pitfall types</div>
+        <div class="impact-sub">Calypso · FinMechanics</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val green">∞</div>
+        <div class="impact-label">Config memory</div>
+        <div class="impact-sub">All past Andile projects</div>
+      </div>
+      <div class="impact-cell">
+        <div class="impact-val purple">4</div>
+        <div class="impact-label">Deployment phases</div>
+        <div class="impact-sub">Analysis to go-live</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ THE PROBLEM ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">The problem</div>
+    <h2 class="section-title">EVERY DEPLOYMENT REINVENTS THE WHEEL</h2>
+    <p class="section-body">Andile's consultants carry years of deployment knowledge in their heads. When a new project starts, that knowledge isn't searchable. The same mistakes get made. The same configurations get looked up from memory.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card before">
+        <div class="problem-label before">Today — tribal knowledge</div>
+        <ul class="problem-list">
+          <li><span class="icon">🧠</span><span>Senior consultant manually recalls configuration patterns from memory — correct, but slow and dependent on who's in the room</span></li>
+          <li><span class="icon">📄</span><span>Test cases written from scratch for each engagement — junior analyst spends 2–3 days authoring what the spec document implicitly defines</span></li>
+          <li><span class="icon">🔥</span><span>Common pitfalls — Calypso netting set misconfiguration, FinMechanics instrument template conflicts — discovered late in UAT, not flagged at design time</span></li>
+          <li><span class="icon">🔁</span><span>Configuration review is manual: senior consultant reads every field of a 400-row product setup worksheet looking for errors</span></li>
+          <li><span class="icon">💸</span><span>A missed configuration in a rates desk Calypso implementation can cost 3–6 weeks of remediation during UAT — at £1,200/day consultant rates</span></li>
+        </ul>
+      </div>
+      <div class="problem-card after">
+        <div class="problem-label after">With Implementation Copilot</div>
+        <ul class="problem-list">
+          <li><span class="icon">⚡</span><span>Every Andile deployment config ever completed is indexed in Vectorize — the copilot surfaces the 3 most similar past setups before the consultant starts work</span></li>
+          <li><span class="icon">📋</span><span>Upload the spec document — the AI generates a structured test case suite in Andile's house format, ready for review in minutes not days</span></li>
+          <li><span class="icon">🛡️</span><span>15+ known pitfall signatures trained into the model — flags misconfigurations at design time with the exact fix, not after UAT fails</span></li>
+          <li><span class="icon">🔍</span><span>AI reviews the product setup worksheet automatically — highlights anomalies, missing fields, and cross-reference conflicts before the consultant touches it</span></li>
+          <li><span class="icon">📈</span><span>Institutional knowledge compounds across every project — the copilot gets smarter with each engagement Andile completes</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DEMO ═══ -->
+<section id="demo">
+  <div class="wrap">
+    <div class="eyebrow">Live example</div>
+    <h2 class="section-title">SPEC IN. TEST CASES + PITFALL FLAGS OUT.</h2>
+    <p class="section-body">A fragment of a Calypso IRS product specification goes in. The copilot returns a pitfall analysis and a ready-to-use test case suite in under 30 seconds.</p>
+
+    <div class="demo-panels">
+
+      <!-- INPUT -->
+      <div class="demo-panel">
+        <div class="demo-header dark">
+          <div class="dot" style="background:#ff5f57"></div>
+          <div class="dot" style="background:#febc2e;margin:0 4px"></div>
+          <div class="dot" style="background:#28c840"></div>
+          <span class="demo-title dark" style="margin-left:10px">IRS_Product_Spec_v2.3.txt</span>
+        </div>
+        <div class="demo-body code">
+<span class="c-comment">## Calypso IRS Product Configuration Spec</span>
+<span class="c-comment">## Desk: Rates — Investment Bank Client</span>
+<span class="c-comment">## Date: 2025-Q1 Implementation</span>
+
+<span class="c-key">PRODUCT_TYPE</span>: <span class="c-str">InterestRateSwap</span>
+<span class="c-key">TEMPLATE</span>: <span class="c-str">IRS_VANILLA_LIBOR</span>
+<span class="c-key">CURRENCY</span>: <span class="c-str">ZAR</span>
+<span class="c-key">INDEX</span>: <span class="c-str">JIBAR_3M</span>
+<span class="c-key">DAY_COUNT</span>: <span class="c-str">ACT/365</span>
+<span class="c-key">RESET_FREQ</span>: <span class="c-num">3M</span>
+<span class="c-key">PAYMENT_FREQ</span>: <span class="c-num">3M</span>
+<span class="c-key">NETTING_SET</span>: <span class="c-str">RATES_ZAR_01</span>
+<span class="c-key">CSA_FLAG</span>: <span class="c-str">TRUE</span>
+<span class="c-key">CSA_THRESHOLD</span>: <span class="c-num">5000000</span>
+<span class="c-key">MTA</span>: <span class="c-num">500000</span>
+<span class="c-key">ROUNDING</span>: <span class="c-str">NONE</span>
+<span class="c-key">SETTLEMENT_TYPE</span>: <span class="c-str">PHYSICAL</span>
+<span class="c-key">BOOKING_ENTITY</span>: <span class="c-str">SA_BANK_JHB</span>
+<span class="c-key">COUNTERPARTY_TYPE</span>: <span class="c-str">FINANCIAL_INSTITUTION</span>
+<span class="c-key">MARGIN_SCHEME</span>: <span class="c-str">UNCLEARED_OTC</span>
+<span class="c-key">IM_MODEL</span>: <span class="c-str">SIMM_V2_5</span>
+        </div>
+      </div>
+
+      <!-- ARROW -->
+      <div class="demo-arrow-col">→</div>
+
+      <!-- OUTPUT -->
+      <div class="demo-panel">
+        <div class="demo-header green">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="margin-right:4px"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#7DB02A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="demo-title green">Copilot Analysis — 3 flags · 4 test cases generated</span>
+        </div>
+        <div class="demo-body output">
+
+          <div class="out-section">
+            <div class="out-label">Pitfall flags</div>
+
+            <div class="out-flag err">
+              <div class="flag-icon">🔴</div>
+              <div class="flag-text">
+                <strong>LIBOR template with JIBAR index — mismatch risk</strong>
+                <span>Template <code>IRS_VANILLA_LIBOR</code> contains LIBOR-specific rate fixing logic incompatible with JIBAR fixing calendar. Use <code>IRS_VANILLA_IBOR_ZAR</code> or override fixing schedule. Seen in 4 of 6 prior ZAR IRS implementations.</span>
+              </div>
+            </div>
+
+            <div class="out-flag warn">
+              <div class="flag-icon">🟡</div>
+              <div class="flag-text">
+                <strong>ROUNDING: NONE on ZAR — SARB compliance flag</strong>
+                <span>SARB reporting requires rounding to 2 decimal places on ZAR-denominated instruments. <code>ROUNDING: NONE</code> will cause BA return reconciliation breaks. Recommended: <code>ROUNDING: 2DP_HALF_UP</code>.</span>
+              </div>
+            </div>
+
+            <div class="out-flag warn">
+              <div class="flag-icon">🟡</div>
+              <div class="flag-text">
+                <strong>SIMM v2.5 IM with 5M ZAR CSA threshold</strong>
+                <span>SIMM v2.5 IM calculation will likely exceed the 5M ZAR CSA threshold on notionals above ~250M ZAR. Verify threshold is denominated in ZAR not USD. Common misconfiguration in cross-currency CSA setups.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="out-section">
+            <div class="out-label">Generated test cases (4 of 14)</div>
+
+            <div class="test-case">
+              <div class="test-id">TC-001 · Product Setup</div>
+              <div class="test-desc">JIBAR 3M fixing calendar validation</div>
+              <div class="test-steps">Book a vanilla JIBAR 3M IRS. Verify fixing date resolves using JSE calendar, not LIBOR ICE fixing. Assert fixing source = <code>JIBAR_OFFICIAL</code>.</div>
+              <div class="test-result">Expected: PASS</div>
+            </div>
+
+            <div class="test-case">
+              <div class="test-id">TC-004 · Collateral</div>
+              <div class="test-desc">CSA threshold breach — margin call trigger</div>
+              <div class="test-steps">Set IM exposure to 5.1M ZAR via notional. Verify margin call is generated same-day to counterparty. Assert MTA of 500K ZAR is respected — call should not fire below 500K excess.</div>
+              <div class="test-result">Expected: PASS</div>
+            </div>
+
+            <div class="test-case">
+              <div class="test-id">TC-007 · Regulatory</div>
+              <div class="test-desc">SARB BA return rounding reconciliation</div>
+              <div class="test-steps">Book 5 trades. Extract BA700 report. Assert all ZAR MTM values are rounded to 2dp. Verify no reconciliation breaks in Calypso ↔ BA return comparison.</div>
+              <div class="test-result">Expected: PASS</div>
+            </div>
+
+            <div class="test-case">
+              <div class="test-id">TC-011 · Netting</div>
+              <div class="test-desc">Netting set RATES_ZAR_01 — cross-product netting</div>
+              <div class="test-steps">Book IRS and IRS swaption in same netting set. Verify net exposure calculation includes both legs. Assert netting set does not bleed into RATES_ZAR_02 set.</div>
+              <div class="test-result">Expected: PASS</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:16px;font-size:12px;color:var(--faint);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;text-align:center">Pitfall flags and test cases generated in &lt;30 seconds — from raw spec text</p>
+  </div>
+</section>
+
+<!-- ═══ CAPABILITIES ═══ -->
+<section id="capabilities">
+  <div class="wrap">
+    <div class="eyebrow">What it does</div>
+    <h2 class="section-title">THREE CORE CAPABILITIES</h2>
+    <p class="section-body">The copilot works across the full implementation lifecycle — from initial design review through UAT sign-off.</p>
+
+    <div class="cap-grid">
+
+      <div class="cap-card green-top">
+        <div class="cap-num">01</div>
+        <div class="cap-title">Configuration Pattern Memory</div>
+        <div class="cap-body">Every Andile deployment config ever completed is indexed in Vectorize. Before a consultant opens a product setup worksheet, the copilot surfaces the 3 most similar past configurations — with notes on what worked, what didn't, and what was changed during UAT.</div>
+        <div class="cap-example">
+          "Showing 3 similar ZAR IRS setups from prior Andile projects.<br>
+          Closest match: SA Bank · Q3 2023 · 2 UAT breaks found — netting set and fixing calendar."
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-num">02</div>
+        <div class="cap-title">Pitfall Detection at Design Time</div>
+        <div class="cap-body">15+ known failure patterns trained from Andile's project history — Calypso netting set bleed, FinMechanics instrument template conflicts, CSA currency mismatches, SA-CCR netting eligibility gaps. The copilot flags them at design time, not when UAT fails at week 8.</div>
+        <div class="cap-example">
+          "⚠ LIBOR template + JIBAR index mismatch detected.<br>
+          This pattern caused a 3-week remediation in Project Ref #A2023-04.<br>
+          Recommended fix: switch to IRS_VANILLA_IBOR_ZAR template."
+        </div>
+      </div>
+
+      <div class="cap-card green-top">
+        <div class="cap-num">03</div>
+        <div class="cap-title">Test Case Generation from Spec</div>
+        <div class="cap-body">Upload the functional specification or product configuration document. The copilot reads every defined behaviour, edge case, and constraint — and produces a structured test case suite in Andile's standard format. What takes a junior analyst 2–3 days takes 30 seconds.</div>
+        <div class="cap-example">
+          "Spec uploaded: IRS Product Config v2.3<br>
+          Generated: 14 test cases across 4 categories<br>
+          — Product setup (4) · Collateral (3) · Regulatory (4) · Netting (3)"
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DEPLOYMENT PHASES ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Where it fits</div>
+    <h2 class="section-title">ACTIVE ACROSS ALL FOUR DEPLOYMENT PHASES</h2>
+    <p class="section-body">The copilot contributes differently at each phase of a typical Calypso or FinMechanics engagement.</p>
+
+    <div class="phase-list">
+      <div class="phase">
+        <div class="phase-tag analysis">Analysis</div>
+        <div class="phase-content">
+          <div class="phase-title">Requirements &amp; Design</div>
+          <div class="phase-desc">Consultant uploads the client's functional requirements. The copilot retrieves the 3 closest prior Andile implementations, surfaces known scope risks for the asset classes in scope, and generates a first-pass configuration checklist.</div>
+          <div class="phase-bullets">
+            <span class="phase-bullet">Prior config retrieval</span>
+            <span class="phase-bullet">Scope risk flags</span>
+            <span class="phase-bullet">Config checklist gen</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag config">Configuration</div>
+        <div class="phase-content">
+          <div class="phase-title">Product &amp; System Build</div>
+          <div class="phase-desc">As consultants complete the product setup worksheets, the copilot reviews each completed section — flagging pitfalls, cross-referencing against the CSA and netting set configuration, and checking regulatory field compliance (BA returns, EMIR, MiFID II).</div>
+          <div class="phase-bullets">
+            <span class="phase-bullet">Worksheet review</span>
+            <span class="phase-bullet">Pitfall detection</span>
+            <span class="phase-bullet">Regulatory cross-check</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag testing">Testing</div>
+        <div class="phase-content">
+          <div class="phase-title">SIT &amp; UAT</div>
+          <div class="phase-desc">The copilot generates the full SIT and UAT test case suites from the agreed functional spec. Test cases are structured, numbered, and ready for the test management tool (HP ALM, Jira Zephyr, or spreadsheet). When a test fails, the copilot suggests root cause and fix based on similar prior failures.</div>
+          <div class="phase-bullets">
+            <span class="phase-bullet">SIT test case gen</span>
+            <span class="phase-bullet">UAT test case gen</span>
+            <span class="phase-bullet">Failure root cause</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-tag golive">Go-live</div>
+        <div class="phase-content">
+          <div class="phase-title">Migration &amp; Cutover</div>
+          <div class="phase-desc">Pre-cutover checklist generated from the specific implementation scope. The copilot cross-references the completed UAT sign-off list against the go-live checklist and flags any items not evidenced. Post go-live, configuration is archived back into the knowledge base for future projects.</div>
+          <div class="phase-bullets">
+            <span class="phase-bullet">Cutover checklist</span>
+            <span class="phase-bullet">Sign-off gap analysis</span>
+            <span class="phase-bullet">Config archiving</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PLATFORM SUPPORT ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Platform coverage</div>
+    <h2 class="section-title">CALYPSO · FINMECHANICS · FIS · AND MORE</h2>
+    <p class="section-body">The copilot is trained on configuration patterns from all platforms Andile deploys. Knowledge compounds across every engagement.</p>
+
+    <div class="platform-grid">
+      <div class="platform-card" style="border-top:3px solid var(--purple)">
+        <div class="platform-icon">⚙️</div>
+        <div class="platform-tag">Primary</div>
+        <div class="platform-name">Nasdaq Calypso</div>
+        <div class="platform-desc">IRS, FX, equity derivatives, repo, bond. Full product template library, netting set patterns, CSA configuration, and SIMM IM setup.</div>
+      </div>
+      <div class="platform-card" style="border-top:3px solid var(--green)">
+        <div class="platform-icon">⚙️</div>
+        <div class="platform-tag">Primary</div>
+        <div class="platform-name">FinMechanics</div>
+        <div class="platform-desc">Credit derivatives, structured products, instrument templates, workflow configuration, and risk calculation parameter setup.</div>
+      </div>
+      <div class="platform-card" style="border-top:3px solid var(--purple)">
+        <div class="platform-icon">⚙️</div>
+        <div class="platform-tag">Supported</div>
+        <div class="platform-name">FIS Kondor+</div>
+        <div class="platform-desc">Fixed income, money markets, FX. Static data setup, trade capture templates, and risk parameter configuration.</div>
+      </div>
+      <div class="platform-card" style="border-top:3px solid var(--green)">
+        <div class="platform-icon">📄</div>
+        <div class="platform-tag">Supported</div>
+        <div class="platform-name">FinMio Platform</div>
+        <div class="platform-desc">Andile's own digital transformation platform. Copilot integrates natively with FinMio workflow and configuration modules.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ARCHITECTURE ═══ -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2 class="section-title">BUILT ON ANDILE'S OWN KNOWLEDGE BASE</h2>
+    <p class="section-body">The copilot is only as good as its memory. Everything runs on Cloudflare edge infrastructure — deployed within Andile's account, not a shared cloud.</p>
+
+    <div class="arch-block">
+      <div class="arch-label">Technical pipeline — deployed in Andile's Cloudflare account</div>
+      <div class="arch-pipeline">
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">1</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Knowledge base ingestion</div>
+            <div class="arch-step-desc">Past Andile project configurations, spec documents, UAT defect logs, and approved test case archives are embedded and stored in Vectorize. Each new completed project automatically updates the knowledge base — the copilot learns from every engagement.</div>
+            <span class="arch-step-code">Cloudflare Vectorize · text-embedding-3-small · R2 archive</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">2</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Spec or config ingested by consultant</div>
+            <div class="arch-step-desc">Consultant uploads a spec document, product setup worksheet, or pastes a configuration section into the copilot UI. A Cloudflare Worker parses the input, detects the platform (Calypso, FinMechanics, etc.), and identifies the asset class and configuration scope.</div>
+            <span class="arch-step-code">Cloudflare Workers · PDF/CSV/TXT parser · R2 storage</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">3</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Pitfall detection via Workers AI</div>
+            <div class="arch-step-desc">Llama 3.1 8B runs at the edge — classifying the configuration fields against a trained pitfall signature library. Sub-100ms, no external API call. Returns severity-rated flags (Red/Amber) with the specific field and recommended fix.</div>
+            <span class="arch-step-code">Workers AI · @cf/meta/llama-3.1-8b-instruct · pitfall classifier</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">4</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">RAG retrieval — similar past projects</div>
+            <div class="arch-step-desc">Vectorize retrieves the 3–5 most similar prior configurations from Andile's indexed project history. These are passed as context — so the AI can reference what was done before, what changed, and what failed during those engagements.</div>
+            <span class="arch-step-code">Cloudflare Vectorize · cosine similarity · top-5 retrieval</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">5</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Claude 4.6 generates test cases and commentary</div>
+            <div class="arch-step-desc">A structured prompt containing the parsed spec, pitfall flags, RAG context from prior projects, and Andile's test case format template is sent to Claude Sonnet 4.6 via the 2nth.ai AI Gateway. Returns a complete, numbered test case suite and natural-language design commentary.</div>
+            <span class="arch-step-code">claude-sonnet-4-6 · 2nth.ai AI Gateway · structured output</span>
+          </div>
+        </div>
+
+        <div class="arch-step">
+          <div class="arch-step-num">
+            <div class="arch-step-circle">6</div>
+            <div class="arch-step-line"></div>
+          </div>
+          <div class="arch-step-body">
+            <div class="arch-step-title">Consultant reviews, approves, and exports</div>
+            <div class="arch-step-desc">Output is surfaced in the copilot UI — a Cloudflare Pages app accessible to the project team. Consultants review pitfall flags, edit or approve generated test cases, and export to their test management tool. Approved outputs feed back into the knowledge base for future projects.</div>
+            <span class="arch-step-code">Cloudflare Pages · D1 versioning · Excel / Jira / HP ALM export</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="rule"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px" class="stack-cols">
+      <div>
+        <p style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-bottom:12px">Compute &amp; storage</p>
+        <div class="tech-row">
+          <span class="tech-tag">Cloudflare Workers</span>
+          <span class="tech-tag">Cloudflare Pages</span>
+          <span class="tech-tag">D1 SQLite</span>
+          <span class="tech-tag">R2 (doc archive)</span>
+          <span class="tech-tag">Vectorize RAG</span>
+        </div>
+      </div>
+      <div>
+        <p style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-bottom:12px">AI models</p>
+        <div class="tech-row">
+          <span class="tech-tag green">Llama 3.1 8B (Workers AI)</span>
+          <span class="tech-tag green">Claude Sonnet 4.6</span>
+          <span class="tech-tag green">text-embedding-3-small</span>
+          <span class="tech-tag green">2nth.ai AI Gateway</span>
+        </div>
+      </div>
+    </div>
+    <style>.stack-cols { } @media (max-width:600px){ .stack-cols{ grid-template-columns:1fr!important; } }</style>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<div class="wrap">
+  <div class="cta-block">
+    <h2>DEPLOY ON YOUR NEXT ENGAGEMENT</h2>
+    <p>Andile implements the copilot before your next Calypso or FinMechanics project kicks off. Your knowledge base starts building from day one.</p>
+    <div class="cta-btns">
+      <a href="https://andile.net/contact" target="_blank" rel="noopener" class="btn btn-white">Talk to Andile →</a>
+      <a href="/partners/andile-frtb.html" class="btn btn-ghost">See FRTB Commentary →</a>
+    </div>
+    <p style="margin-top:24px;font-size:12px;color:rgba(255,255,255,0.3)">Delivered by Andile · Powered by 2nth.ai edge infrastructure</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI × ANDILE</div>
+      <div class="footer-links">
+        <a href="/partners/andile.html">Partner page</a>
+        <a href="/partners/andile-concept.html">Platform concept</a>
+        <a href="/partners/andile-frtb.html">FRTB Commentary</a>
+        <a href="/portal.html">Portal</a>
+      </div>
+    </div>
+    <p style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--faint)">Andile &middot; Trusted Partnerships &middot; Solid Solutions &middot; A 42Markets.Group Company</p>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>
