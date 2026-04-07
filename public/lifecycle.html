@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev → Beta → Production — 2nth.ai Developers</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* ── Pipeline visual ───────────────────────────────────── */
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr 40px 1fr;
+      align-items: start;
+      gap: 0;
+      margin: 32px 0 48px;
+    }
+    .pipe-stage {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #ede9f6;
+    }
+    .pipe-head {
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid #ede9f6;
+    }
+    .pipe-env {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .pipe-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: .04em;
+      line-height: 1;
+      margin-bottom: 4px;
+      color: #18181b;
+    }
+    .pipe-branch {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .pipe-body { padding: 16px 20px; background: #fff; }
+    .pipe-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #a1a1aa;
+      margin-bottom: 14px;
+      word-break: break-all;
+    }
+    .pipe-rules { list-style: none; display: flex; flex-direction: column; gap: 7px; margin: 0; padding: 0; }
+    .pipe-rules li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 13px; color: #52525b; line-height: 1.5;
+    }
+    .pipe-tick { flex-shrink: 0; margin-top: 2px; }
+
+    /* stage colour variants */
+    .stage-dev  .pipe-head { background: #f5f3ff; }
+    .stage-dev  .pipe-env  { color: #7c3aed; }
+    .stage-dev  .pipe-branch { background: rgba(124,58,237,.08); color: #7c3aed; border: 1px solid rgba(124,58,237,.2); }
+    .stage-dev  .pipe-tick { color: #7c3aed; }
+
+    .stage-beta .pipe-head { background: #fffbeb; }
+    .stage-beta .pipe-env  { color: #d97706; }
+    .stage-beta .pipe-branch { background: rgba(217,119,6,.08); color: #d97706; border: 1px solid rgba(217,119,6,.2); }
+    .stage-beta .pipe-tick { color: #d97706; }
+
+    .stage-prod .pipe-head { background: #f0fdf4; }
+    .stage-prod .pipe-env  { color: #059669; }
+    .stage-prod .pipe-branch { background: rgba(5,150,105,.08); color: #059669; border: 1px solid rgba(5,150,105,.2); }
+    .stage-prod .pipe-tick { color: #059669; }
+
+    /* arrows between stages */
+    .pipe-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 32px;
+      gap: 4px;
+    }
+    .pipe-arrow-icon { color: #d4d4d8; font-size: 20px; }
+    .pipe-arrow-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a1a1aa;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* ── Approval flow ─────────────────────────────────────── */
+    .approval-flow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .approval-card {
+      background: #fff;
+      border: 1px solid #ede9f6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .approval-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid #ede9f6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .approval-head-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: .04em;
+      color: #18181b;
+    }
+    .approval-head-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a1a1aa;
+      margin-top: 2px;
+    }
+    .approval-steps { padding: 8px 0; }
+    .approval-step {
+      display: flex;
+      gap: 14px;
+      padding: 10px 20px;
+      border-bottom: 1px solid #faf9fc;
+    }
+    .approval-step:last-child { border-bottom: none; }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f5f3ff; border: 1px solid #ede9f6;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: #7c3aed; flex-shrink: 0; font-weight: 700;
+    }
+    .step-body { font-size: 13px; color: #52525b; line-height: 1.5; }
+    .step-body strong { color: #18181b; display: block; margin-bottom: 2px; font-size: 14px; }
+
+    /* ── Environment banner demo ───────────────────────────── */
+    .banner-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 24px 0;
+    }
+    .banner-sample {
+      border-radius: 6px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+    .banner-sample .b-left { display: flex; align-items: center; gap: 10px; }
+    .banner-sample .b-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .banner-sample .b-env { font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+    .banner-sample .b-url { opacity: .65; }
+    .banner-sample .b-tag { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
+    .banner-dev  { background: rgba(124,58,237,.06); border: 1px solid rgba(124,58,237,.15); color: #7c3aed; }
+    .banner-dev  .b-dot { background: #7c3aed; }
+    .banner-dev  .b-tag { background: rgba(124,58,237,.12); }
+    .banner-beta { background: rgba(217,119,6,.06); border: 1px solid rgba(217,119,6,.15); color: #d97706; }
+    .banner-beta .b-dot { background: #d97706; animation: pulse 2s infinite; }
+    .banner-beta .b-tag { background: rgba(217,119,6,.12); }
+    .banner-prod { background: rgba(5,150,105,.06); border: 1px solid rgba(5,150,105,.15); color: #059669; }
+    .banner-prod .b-dot { background: #059669; }
+    .banner-prod .b-tag { background: rgba(5,150,105,.12); }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+
+    /* ── Git command blocks ───────────────────────────────── */
+    .cmd { background: #1e1e2e; border-radius: 8px; padding: 20px 24px; margin: 16px 0 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 2; }
+    .cmd-comment { color: #6272a4; }
+    .cmd-prompt { color: #6272a4; }
+    .cmd-text { color: #f8f8f2; }
+    .cmd-dev  { color: #bd93f9; }
+    .cmd-beta { color: #ffb86c; }
+    .cmd-prod { color: #50fa7b; }
+    .cmd-flag { color: #8be9fd; }
+
+    /* ── Checks table tweaks ─────────────────────────────── */
+    .gate-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+    @media(max-width:700px){
+      .pipeline { grid-template-columns: 1fr; }
+      .pipe-arrow { padding-top: 0; flex-direction: row; padding: 8px 0; }
+      .pipe-arrow-icon { transform: rotate(90deg); }
+      .approval-flow { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/docs.html" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#3f3f46;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html#skills">Skills</a>
+      <a href="/docs.html#contribute">Contribute</a>
+      <a href="/lifecycle.html" style="color:#7c3aed;font-weight:700">Lifecycle</a>
+      <a href="/docs.html#licensing">Licensing</a>
+      <a href="/docs.html#partners">Partners</a>
+      <a href="https://github.com/2nth-ai/skills">GitHub</a>
+      <a href="/portal.html" style="background:#0891b2;color:#fff;padding:5px 12px;border-radius:3px;font-weight:700">Portal</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <h1>Dev → Beta → Production</h1>
+  <p class="lead">How code moves from a developer's branch to live users — with quality gates, review checkpoints, and a visible environment indicator so nobody is ever confused about where they're working.</p>
+
+  <div class="section-nav">
+    <a href="#pipeline">Pipeline</a>
+    <a href="#approval">Promotion flow</a>
+    <a href="#gates">Quality gates</a>
+    <a href="#banner">Env indicator</a>
+    <a href="#commands">Git commands</a>
+    <a href="#rollback">Rollback</a>
+  </div>
+
+  <!-- ── PIPELINE ─────────────────────────────────────────── -->
+  <h2 id="pipeline">The three-stage pipeline</h2>
+  <p>Every change passes through three environments in order. No direct push to production — ever.</p>
+
+  <div class="pipeline">
+
+    <div class="pipe-stage stage-dev">
+      <div class="pipe-head">
+        <div class="pipe-env">Stage 1</div>
+        <div class="pipe-name">DEV</div>
+        <div class="pipe-branch">branch: dev</div>
+      </div>
+      <div class="pipe-body">
+        <div class="pipe-url">preview.2nth-beta.pages.dev</div>
+        <ul class="pipe-rules">
+          <li><span class="pipe-tick">✦</span>Free-flow feature work</li>
+          <li><span class="pipe-tick">✦</span>CI (lint + typecheck) must pass</li>
+          <li><span class="pipe-tick">✦</span>Auto-deploys to CF preview URL</li>
+          <li><span class="pipe-tick">✦</span>No PR required — direct push allowed</li>
+          <li><span class="pipe-tick">✦</span>Never visible to clients</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pipe-arrow">
+      <div class="pipe-arrow-icon">→</div>
+      <div class="pipe-arrow-label">PR<br>1 approval</div>
+    </div>
+
+    <div class="pipe-stage stage-beta">
+      <div class="pipe-head">
+        <div class="pipe-env">Stage 2</div>
+        <div class="pipe-name">BETA</div>
+        <div class="pipe-branch">branch: beta</div>
+      </div>
+      <div class="pipe-body">
+        <div class="pipe-url">2nth-beta.pages.dev</div>
+        <ul class="pipe-rules">
+          <li><span class="pipe-tick">✦</span>Staging — mirrors production</li>
+          <li><span class="pipe-tick">✦</span>PR required from dev (1 approval)</li>
+          <li><span class="pipe-tick">✦</span>CI must pass before merge</li>
+          <li><span class="pipe-tick">✦</span>Auto-deploys on merge</li>
+          <li><span class="pipe-tick">✦</span>Shared with clients for UAT</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pipe-arrow">
+      <div class="pipe-arrow-icon">→</div>
+      <div class="pipe-arrow-label">PR<br>UAT + 1 approval</div>
+    </div>
+
+    <div class="pipe-stage stage-prod">
+      <div class="pipe-head">
+        <div class="pipe-env">Stage 3</div>
+        <div class="pipe-name">PRODUCTION</div>
+        <div class="pipe-branch">branch: main</div>
+      </div>
+      <div class="pipe-body">
+        <div class="pipe-url">2nth.ai</div>
+        <ul class="pipe-rules">
+          <li><span class="pipe-tick">✦</span>Live — all users</li>
+          <li><span class="pipe-tick">✦</span>PR from beta (1 approval)</li>
+          <li><span class="pipe-tick">✦</span>CI required — no exceptions</li>
+          <li><span class="pipe-tick">✦</span>Stale reviews auto-dismissed</li>
+          <li><span class="pipe-tick">✦</span>Force push disabled forever</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── APPROVAL FLOW ────────────────────────────────────── -->
+  <h2 id="approval">Promotion flow</h2>
+  <p>Two PR promotions move code up the pipeline. Each has a defined checklist.</p>
+
+  <div class="approval-flow">
+
+    <div class="approval-card">
+      <div class="approval-head">
+        <div>
+          <div class="approval-head-title">DEV → BETA</div>
+          <div class="approval-head-sub">dev branch · PR · 1 approval</div>
+        </div>
+      </div>
+      <div class="approval-steps">
+        <div class="approval-step"><div class="step-num">1</div><div class="step-body"><strong>Open PR: dev → beta</strong>Describe what changed and link to the brief or project ticket.</div></div>
+        <div class="approval-step"><div class="step-num">2</div><div class="step-body"><strong>CI runs automatically</strong>Lint + typecheck must be green. Fix on dev if red.</div></div>
+        <div class="approval-step"><div class="step-num">3</div><div class="step-body"><strong>Reviewer checks preview URL</strong>CF Pages auto-creates a preview deploy. Click it. Confirm it works.</div></div>
+        <div class="approval-step"><div class="step-num">4</div><div class="step-body"><strong>Approve and merge</strong>Beta auto-deploys to 2nth-beta.pages.dev within 60s.</div></div>
+      </div>
+    </div>
+
+    <div class="approval-card">
+      <div class="approval-head">
+        <div>
+          <div class="approval-head-title">BETA → MAIN</div>
+          <div class="approval-head-sub">beta branch · PR · UAT + 1 approval</div>
+        </div>
+      </div>
+      <div class="approval-steps">
+        <div class="approval-step"><div class="step-num">1</div><div class="step-body"><strong>UAT on beta</strong>Test on 2nth-beta.pages.dev. Confirm with stakeholder for client-facing changes.</div></div>
+        <div class="approval-step"><div class="step-num">2</div><div class="step-body"><strong>Open PR: beta → main</strong>List all changes since last release. Flag any breaking changes.</div></div>
+        <div class="approval-step"><div class="step-num">3</div><div class="step-body"><strong>CI must pass</strong>New commits after approval dismiss stale reviews — re-approval required.</div></div>
+        <div class="approval-step"><div class="step-num">4</div><div class="step-body"><strong>Merge → production</strong>CF Pages deploys to main (2nth.ai). Watch Cloudflare dashboard for errors.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── QUALITY GATES ─────────────────────────────────────── -->
+  <h2 id="gates">Quality gates</h2>
+  <p>The CI pipeline runs on every push and PR. These checks block merge if they fail.</p>
+
+  <table>
+    <thead>
+      <tr><th>Check</th><th>What it does</th><th>dev</th><th>beta</th><th>main</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>lint</code></td>
+        <td>ESLint — style and obvious errors</td>
+        <td><span class="badge badge-cyan">Required</span></td>
+        <td><span class="badge badge-cyan">Required</span></td>
+        <td><span class="badge badge-cyan">Required</span></td>
+      </tr>
+      <tr>
+        <td><code>type-check</code></td>
+        <td>tsc --noEmit — TypeScript safety</td>
+        <td><span class="badge badge-cyan">Required</span></td>
+        <td><span class="badge badge-cyan">Required</span></td>
+        <td><span class="badge badge-cyan">Required</span></td>
+      </tr>
+      <tr>
+        <td>PR review</td>
+        <td>Human approval before merge</td>
+        <td>—</td>
+        <td><span class="badge badge-amber">1 approval</span></td>
+        <td><span class="badge badge-amber">1 approval</span></td>
+      </tr>
+      <tr>
+        <td>UAT sign-off</td>
+        <td>Tested on beta pages.dev by stakeholder</td>
+        <td>—</td>
+        <td>Recommended</td>
+        <td><span class="badge badge-amber">Required</span></td>
+      </tr>
+      <tr>
+        <td>Deploy</td>
+        <td>wrangler pages deploy — auto on merge</td>
+        <td><span class="badge badge-green">Auto</span></td>
+        <td><span class="badge badge-green">Auto</span></td>
+        <td><span class="badge badge-green">Auto</span></td>
+      </tr>
+      <tr>
+        <td>Force push</td>
+        <td>Rewriting branch history</td>
+        <td>Allowed</td>
+        <td>Blocked</td>
+        <td>Blocked</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── ENV BANNER ────────────────────────────────────────── -->
+  <h2 id="banner">Environment indicator</h2>
+  <p>Every non-production deployment shows a coloured banner so users always know which environment they're in. Drop <code>env-banner.js</code> into any page — it detects the hostname and renders the correct ribbon automatically.</p>
+
+  <div class="banner-demo">
+    <div class="banner-sample banner-dev">
+      <div class="b-left">
+        <div class="b-dot"></div>
+        <span class="b-env">Dev</span>
+        <span class="b-url">preview.2nth-beta.pages.dev</span>
+      </div>
+      <span class="b-tag">Not for clients</span>
+    </div>
+    <div class="banner-sample banner-beta">
+      <div class="b-left">
+        <div class="b-dot"></div>
+        <span class="b-env">Beta</span>
+        <span class="b-url">2nth-beta.pages.dev</span>
+      </div>
+      <span class="b-tag">UAT — may change</span>
+    </div>
+    <div class="banner-sample banner-prod">
+      <div class="b-left">
+        <div class="b-dot"></div>
+        <span class="b-env">Production</span>
+        <span class="b-url">2nth.ai</span>
+      </div>
+      <span class="b-tag">Live</span>
+    </div>
+  </div>
+
+  <p>Install it on any page:</p>
+  <pre><code>&lt;!-- Drop before &lt;/body&gt; on any 2nth subdomain --&gt;
+&lt;script src="https://2nth-beta.pages.dev/env-banner.js"&gt;&lt;/script&gt;</code></pre>
+
+  <p>It reads <code>window.location.hostname</code> and injects a fixed top ribbon. On <code>*.2nth.ai</code> production domains it renders nothing — no visual noise for real users.</p>
+
+  <!-- ── GIT COMMANDS ──────────────────────────────────────── -->
+  <h2 id="commands">Day-to-day git flow</h2>
+
+  <div class="cmd">
+    <div><span class="cmd-comment"># Start a new feature</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git checkout </span><span class="cmd-dev">dev</span><span class="cmd-text"> &amp;&amp; git pull origin </span><span class="cmd-dev">dev</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git checkout -b </span><span class="cmd-flag">feature/my-feature</span></div>
+    <br>
+    <div><span class="cmd-comment"># Work, commit, push</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git commit -m </span><span class="cmd-flag">"feat: describe the change"</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git push origin </span><span class="cmd-flag">feature/my-feature</span></div>
+    <br>
+    <div><span class="cmd-comment"># PR: feature → dev  (no review required)</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">gh pr create --base </span><span class="cmd-dev">dev</span><span class="cmd-text"> --title </span><span class="cmd-flag">"feat: my feature"</span></div>
+    <br>
+    <div><span class="cmd-comment"># PR: dev → beta  (1 approval required)</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">gh pr create --base </span><span class="cmd-beta">beta</span><span class="cmd-text"> --title </span><span class="cmd-flag">"promote: dev → beta vX.Y"</span></div>
+    <br>
+    <div><span class="cmd-comment"># PR: beta → main  (UAT + 1 approval)</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">gh pr create --base </span><span class="cmd-prod">main</span><span class="cmd-text"> --title </span><span class="cmd-flag">"release: v1.x — what changed"</span></div>
+  </div>
+
+  <!-- ── ROLLBACK ──────────────────────────────────────────── -->
+  <h2 id="rollback">Rollback</h2>
+  <p>Force push is disabled on all protected branches. To roll back, create a revert commit — this keeps history clean and triggers the normal deploy pipeline.</p>
+
+  <div class="cmd">
+    <div><span class="cmd-comment"># Revert the last production commit</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git revert HEAD --no-edit</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git push origin </span><span class="cmd-prod">main</span></div>
+    <br>
+    <div><span class="cmd-comment"># Revert a specific commit by hash</span></div>
+    <div><span class="cmd-prompt">$</span> <span class="cmd-text">git revert </span><span class="cmd-flag">abc1234</span><span class="cmd-text"> --no-edit &amp;&amp; git push origin </span><span class="cmd-prod">main</span></div>
+    <br>
+    <div><span class="cmd-comment"># Cloudflare Pages also keeps every deploy — you can instant-rollback</span></div>
+    <div><span class="cmd-comment"># from the CF dashboard without touching git at all</span></div>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <a href="https://2nth.ai">2nth.ai</a> — from thought to motion &nbsp;·&nbsp;
+  <a href="/docs.html">Docs</a> &nbsp;·&nbsp;
+  <a href="/lifecycle.html">Lifecycle</a>
+</footer>
+
+</body>
+</html>

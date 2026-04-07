@@ -54,7 +54,7 @@ export async function onRequestPost(context) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: env.RESEND_FROM || 'noreply@2nth.ai',
+        from: env.RESEND_FROM || '2NTH Developers <hello@2nth.ai>',
         to: email,
         subject: '2nth Developers — your sign-in code',
         html: `
