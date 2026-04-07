@@ -2,65 +2,45 @@
 // Partner page visibility middleware
 // ═══════════════════════════════════════════════════════════════════
 //
-// Visibility tiers (in order of precedence):
-//   1. Admin (craig@2nth.ai or session.role === 'admin') → all pages
-//   2. Page owner (email in PARTNER_OWNERS[key]) → their own pages
-//   3. Other authenticated users → only pages the partner has made public
-//   4. Unauthenticated → redirect to sign-in
+// Access tiers (in order of precedence):
+//   1. Blocked list → hard deny, always
+//   2. Admin (ADMIN_EMAILS or role=admin) → all pages
+//   3. Owner (email in PARTNER_REGISTRY[key].owners) → their own pages
+//   4. Invited (KV: partner_invite:{key}:{email} is active) → that partner's pages
+//   5. Everyone else → denied
 //
-// "Make public" is a KV toggle per partner: partner_public:{key} → "true"
-// Partners can flip this from their profile once that UI is built.
+// KV schema:
+//   partner_invite:{key}:{email}  → JSON { grantedBy, grantedAt, active: true|false }
+//   partner_access:{key}:{email}:{ts} → JSON { path, ts }  (access log)
 // ═══════════════════════════════════════════════════════════════════
 
-// Map page path-prefix → partner key + owner emails
 const PARTNER_REGISTRY = {
-  'andile': {
-    owners: [
-      'albert@andilesolutions.com',
-      'neil@andilesolutions.com',
-      'craigl@andilesolutions.com',
-    ],
-  },
-  'vibecrafters': {
-    owners: ['hello@vibecrafters.co.za'],
-  },
-  'agilex': {
-    owners: ['info@agilex.co.za', 'mike@agilex.co.za'],
-  },
-  'gridlineprop': {
-    owners: ['info@gridlineprop.co.za'],
-  },
-  'scanman': {
-    owners: ['info@scanman.co.za'],
-  },
-  'proximity-green': {
-    owners: ['info@proximity-green.co.za'],
-  },
-  'dronescan': {
-    owners: ['info@dronescan.co.za'],
-  },
-  'hyram': {
-    owners: ['hyramserretta20@gmail.com'],
-  },
-  'carla': {
-    owners: ['carladeabreu@outlook.com'],
-  },
+  'andile':          { owners: ['albert@andilesolutions.com','neil@andilesolutions.com','craigl@andilesolutions.com'] },
+  'vibecrafters':    { owners: ['hello@vibecrafters.co.za','vibecrafterza@gmail.com'] },
+  'agilex':          { owners: ['michael@agilex.co.za'] },
+  'gridlineprop':    { owners: ['info@gridlineprop.co.za'] },
+  'scanman':         { owners: ['info@scanman.co.za'] },
+  'proximity-green': { owners: ['info@proximity-green.co.za'] },
+  'dronescan':       { owners: ['info@dronescan.co.za'] },
+  'hyram':           { owners: ['hyramserretta20@gmail.com'] },
+  'carla':           { owners: ['carladeabreu@outlook.com'] },
+  'nicola':          { owners: ['nicola@gananda.net'] },
+  '20crm':           { owners: ['craig@2nth.ai'] },
 };
 
-// Admin emails — always see everything
-const ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
+const ADMIN_EMAILS  = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
+const BLOCKED_EMAILS = ['leppan.craig@gmail.com'];
 
-// ── Helpers ──────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────
 
 function parseCookie(header, name) {
-  const match = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
-  return match ? match[1] : null;
+  const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+  return m ? m[1] : null;
 }
 
 function b64urlDecode(str) {
   const padded = str.replace(/-/g, '+').replace(/_/g, '/');
-  const binary = atob(padded);
-  return Uint8Array.from(binary, c => c.charCodeAt(0));
+  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
 }
 
 async function getSSOEmail(cookie, secret) {
@@ -82,112 +62,101 @@ async function getSSOEmail(cookie, secret) {
   } catch { return null; }
 }
 
-// Resolve the partner key from the request path
-// e.g. /partners/andile-frtb.html → 'andile'
+// /partners/andile-frtb.html → 'andile'
 function resolvePartnerKey(pathname) {
-  // Strip leading /partners/
   const rest = pathname.replace(/^\/partners\//, '');
-  // Match longest key first (handles 'proximity-green' before 'proximity')
   const keys = Object.keys(PARTNER_REGISTRY).sort((a, b) => b.length - a.length);
   for (const key of keys) {
-    if (rest === key + '.html' || rest.startsWith(key + '-') || rest.startsWith(key + '.')) {
+    if (rest === key + '.html' || rest === key + '/' || rest === '' ||
+        rest.startsWith(key + '-') || rest.startsWith(key + '.')) {
       return key;
     }
   }
   return null;
 }
 
-function denyPage(returnPath) {
+function redirectDeny(partnerKey) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: `/portal.html?access=denied&partner=${encodeURIComponent(partnerKey || 'restricted')}` },
+  });
+}
+
+function redirectSignIn(returnPath) {
   return new Response(null, {
     status: 302,
     headers: { Location: `https://2nth.ai/?return=${encodeURIComponent('https://developers.2nth.ai' + returnPath)}` },
   });
 }
 
-// ── Main middleware ───────────────────────────────────────────────────
+async function logAccess(env, partnerKey, email, path) {
+  if (!env.KV || !partnerKey) return;
+  const ts = new Date().toISOString();
+  const logKey = `partner_access:${partnerKey}:${email}:${Date.now()}`;
+  await env.KV.put(logKey, JSON.stringify({ path, ts, email }), { expirationTtl: 60 * 60 * 24 * 90 }); // 90 days
+}
+
+// ── Main middleware ──────────────────────────────────────────────────
 
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
   const cookies = request.headers.get('Cookie') || '';
 
-  // ── 1. Resolve authenticated user ──────────────────────────────────
+  // ── 1. Resolve session ─────────────────────────────────────────────
   let email = null;
-  let role = null;
+  let role  = null;
 
-  // OTP session (developers portal)
   const sid = parseCookie(cookies, 'sid');
   if (sid && env.KV) {
     const raw = await env.KV.get(`session:${sid}`);
     if (raw) {
-      try {
-        const session = JSON.parse(raw);
-        email = session.email?.toLowerCase();
-        role = session.role; // 'admin' | 'developer'
-      } catch { /* malformed session */ }
+      try { const s = JSON.parse(raw); email = s.email?.toLowerCase(); role = s.role; }
+      catch { /* ignore */ }
     }
   }
 
-  // SSO JWT (2nth.ai main platform) — only if OTP session didn't resolve
   if (!email) {
-    const ssoToken = parseCookie(cookies, '2nth_session');
-    const sso = await getSSOEmail(ssoToken, env.JWT_SECRET);
-    if (sso) {
-      email = sso.email?.toLowerCase();
-      role = sso.role;
-    }
+    const sso = await getSSOEmail(parseCookie(cookies, '2nth_session'), env.JWT_SECRET);
+    if (sso) { email = sso.email?.toLowerCase(); role = sso.role; }
   }
 
-  // Not authenticated at all → send to sign-in
-  if (!email) {
-    return denyPage(url.pathname);
-  }
+  // Unauthenticated → sign-in
+  if (!email) return redirectSignIn(url.pathname);
 
-  // ── 2. Admin check — sees everything ───────────────────────────────
+  // ── 2. Blocked list — hard deny ────────────────────────────────────
+  if (BLOCKED_EMAILS.includes(email)) return redirectDeny('restricted');
+
+  // ── 3. Admin — sees everything ─────────────────────────────────────
   if (role === 'admin' || ADMIN_EMAILS.includes(email)) {
+    await logAccess(env, resolvePartnerKey(url.pathname), email, url.pathname);
     return next();
   }
 
-  // ── 3. Resolve which partner page this is ─────────────────────────
+  // ── 4. Resolve partner key ─────────────────────────────────────────
   const partnerKey = resolvePartnerKey(url.pathname);
+  const partner    = partnerKey ? PARTNER_REGISTRY[partnerKey] : null;
 
-  // No partner key → generic auth-only page, allow any signed-in user
-  if (!partnerKey) {
+  // ── 5. Owner check ─────────────────────────────────────────────────
+  if (partner && partner.owners.includes(email)) {
+    await logAccess(env, partnerKey, email, url.pathname);
     return next();
   }
 
-  const partner = PARTNER_REGISTRY[partnerKey];
-
-  // Unknown partner key → allow authenticated users through
-  if (!partner) {
-    return next();
-  }
-
-  // ── 4. Owner check — partner sees their own pages ─────────────────
-  if (partner.owners.includes(email)) {
-    return next();
-  }
-
-  // ── 5. Public opt-in — check KV flag set by partner ───────────────
-  // Partner can set partner_public:{key}:all → "true"  (visible to all registered users)
-  // Partner can set partner_public:{key}:partners → "true"  (visible to other partners)
-  if (env.KV) {
-    const publicAll = await env.KV.get(`partner_public:${partnerKey}:all`);
-    if (publicAll === 'true') return next();
-
-    // Check if the requesting user is themselves a partner (owns any other page)
-    const isPartner = Object.values(PARTNER_REGISTRY).some(p => p.owners.includes(email));
-    if (isPartner) {
-      const publicToPartners = await env.KV.get(`partner_public:${partnerKey}:partners`);
-      if (publicToPartners === 'true') return next();
+  // ── 6. Invite check ────────────────────────────────────────────────
+  if (partnerKey && env.KV) {
+    const inviteRaw = await env.KV.get(`partner_invite:${partnerKey}:${email}`);
+    if (inviteRaw) {
+      try {
+        const invite = JSON.parse(inviteRaw);
+        if (invite.active === true) {
+          await logAccess(env, partnerKey, email, url.pathname);
+          return next();
+        }
+      } catch { /* malformed invite */ }
     }
   }
 
-  // ── 6. Access denied — authenticated but no permission ────────────
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: `/portal.html?access=denied&partner=${encodeURIComponent(partnerKey)}`,
-    },
-  });
+  // ── 7. Deny ────────────────────────────────────────────────────────
+  return redirectDeny(partnerKey);
 }

@@ -11,3 +11,6 @@ RESEND_FROM         = "2NTH Developers <hello@2nth.ai>"
 [[kv_namespaces]]
 binding = "KV"
 id      = "bfa3357eddfc4b3fa5341d7b60c006b2"
+
+[ai]
+binding = "AI"

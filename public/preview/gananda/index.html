@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Capital Raising — Gananda Connect × 2nth.ai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Montserrat',sans-serif;background:#fff;color:#292929;line-height:1.7;-webkit-font-smoothing:antialiased;font-size:15px}
+
+    :root{
+      --navy:#213a4e;
+      --navy2:#162838;
+      --green:#36654a;
+      --green2:#244432;
+      --green-light:#eef4f0;
+      --green-mid:#c8e0d0;
+      --navy-light:#e8edf2;
+      --surface:#f7f7f5;
+      --border:#e9e9e7;
+      --border2:#d0d0cc;
+      --text:#292929;
+      --muted:#696969;
+      --faint:#a0a0a0;
+      --mono:'JetBrains Mono',monospace;
+    }
+
+    .container{max-width:1080px;margin:0 auto;padding:0 24px}
+    section{padding:60px 0;border-bottom:1px solid var(--border)}
+    section:last-of-type{border-bottom:none}
+
+    /* ── Header ── */
+    header{background:var(--navy);border-bottom:1px solid rgba(54,101,74,0.2);padding:14px 0;position:sticky;top:0;z-index:50}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .brand-icon{width:34px;height:34px;border-radius:8px;background:var(--green2);display:flex;align-items:center;justify-content:center}
+    .brand-icon svg{width:18px;height:18px}
+    .brand-name{font-weight:800;font-size:17px;color:#fff;letter-spacing:-.02em}
+    .brand-sub{font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;margin-left:8px;padding-left:8px;border-left:1px solid rgba(255,255,255,0.12)}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);text-decoration:none;transition:color .15s}
+    nav a:hover{color:#fff}
+    .nav-cta{background:var(--green);color:#fff!important;padding:7px 16px;border-radius:6px;font-weight:600;font-size:12px}
+    .nav-cta:hover{background:var(--green2)!important}
+
+    /* ── Stripe ── */
+    .stripe{height:4px;background:linear-gradient(90deg,#213a4e 0%,#36654a 40%,#7aab8a 70%,#213a4e 100%)}
+
+    /* ── Hero ── */
+    .hero{padding:72px 0 56px;background:linear-gradient(160deg,var(--green-light) 0%,#fff 55%)}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);background:rgba(54,101,74,0.07);border:1px solid rgba(54,101,74,0.2);padding:4px 12px;border-radius:4px;margin-bottom:20px;font-weight:600}
+    .hero h1{font-size:clamp(34px,5vw,56px);font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.1;margin-bottom:20px}
+    .hero h1 em{font-style:normal;color:var(--green)}
+    .hero-lead{font-size:16px;color:var(--muted);max-width:640px;line-height:1.75;margin-bottom:32px}
+    .co-lockup{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+    .co-brand{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+    .co-label{font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:2px}
+    .co-name{font-weight:700;font-size:13px;color:var(--navy)}
+    .co-sep{font-size:20px;color:var(--border2);font-weight:300}
+
+    /* ── Section headings ── */
+    .section-eyebrow{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:8px}
+    .section-h2{font-size:27px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-bottom:12px}
+    .section-lead{font-size:14px;color:var(--muted);max-width:640px;line-height:1.75;margin-bottom:32px}
+
+    /* ── Impact bar ── */
+    .impact{background:var(--navy);padding:40px 0}
+    .impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:rgba(255,255,255,0.06)}
+    .impact-cell{background:var(--navy);padding:28px 20px;text-align:center}
+    .impact-value{font-size:34px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px}
+    .impact-value span{color:#7aab8a}
+    .impact-label{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35)}
+
+    /* ── Process — 3-column ── */
+    .process-grid{display:grid;grid-template-columns:1fr 48px 1fr 48px 1fr;gap:0;margin:32px 0;align-items:start}
+    @media(max-width:860px){.process-grid{grid-template-columns:1fr;gap:12px}.process-arrow{display:none}}
+    .process-col{border-radius:12px;overflow:hidden}
+    .process-col-head{padding:18px 20px;border-bottom:1px solid rgba(0,0,0,0.06)}
+    .process-col-head .col-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+    .process-col-head .col-title{font-size:16px;font-weight:800;color:var(--navy)}
+    .process-col-head .col-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .process-col-body{padding:4px 0}
+    .process-item{display:flex;align-items:flex-start;gap:10px;padding:9px 20px;border-bottom:1px solid rgba(0,0,0,0.05)}
+    .process-item:last-child{border-bottom:none}
+    .process-item-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;font-family:var(--mono);font-weight:700}
+    .process-item-text{font-size:13px;line-height:1.5;color:var(--text)}
+    .process-item-sub{font-size:11px;color:var(--faint);margin-top:1px}
+    /* Client col */
+    .col-client{background:var(--green-light);border:1px solid var(--green-mid)}
+    .col-client .process-col-head{background:rgba(54,101,74,0.06)}
+    .col-client .col-label{color:var(--green)}
+    .col-client .process-item{border-color:rgba(54,101,74,0.1)}
+    .col-client .process-item-icon{background:rgba(54,101,74,0.12);color:var(--green)}
+    /* Barry+AI col */
+    .col-process{background:#fff;border:1px solid var(--border);border-left:3px solid var(--navy)}
+    .col-process .process-col-head{background:var(--surface)}
+    .col-process .col-label{color:var(--navy)}
+    .col-process .process-item-icon{background:var(--navy-light);color:var(--navy)}
+    /* Deliverables col */
+    .col-output{background:var(--navy-light);border:1px solid #c8d8e8}
+    .col-output .process-col-head{background:rgba(33,58,78,0.06)}
+    .col-output .col-label{color:var(--navy)}
+    .col-output .process-item{border-color:rgba(33,58,78,0.08)}
+    .col-output .process-item-icon{background:rgba(33,58,78,0.1);color:var(--navy)}
+    .process-arrow{display:flex;align-items:center;justify-content:center;padding-top:80px}
+    .process-arrow svg{color:var(--border2)}
+    /* Category labels in client col */
+    .process-cat{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--faint);padding:10px 20px 4px;background:rgba(54,101,74,0.04)}
+
+    /* ── IRC Framework ── */
+    .irc-section{background:var(--surface);padding:60px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .irc-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px}
+    .irc-top-left h2{font-size:27px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-bottom:8px}
+    .irc-top-left p{font-size:14px;color:var(--muted);max-width:540px;line-height:1.7}
+    .irc-protected{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);background:rgba(54,101,74,0.07);border:1px solid rgba(54,101,74,0.2);padding:5px 12px;border-radius:4px;margin-top:10px}
+    .irc-legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .irc-legend-label{font-family:var(--mono);font-size:9px;color:var(--faint);letter-spacing:1px;text-transform:uppercase;margin-right:4px}
+    .irc-pill{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:3px;text-transform:uppercase}
+    .irc-pill.high{background:rgba(185,28,28,0.07);color:#b91c1c;border:1px solid rgba(185,28,28,0.15)}
+    .irc-pill.medium{background:rgba(180,83,9,0.07);color:#b45309;border:1px solid rgba(180,83,9,0.15)}
+    .irc-pill.low{background:rgba(54,101,74,0.08);color:var(--green);border:1px solid rgba(54,101,74,0.15)}
+    /* Two panels */
+    .irc-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+    @media(max-width:800px){.irc-panels{grid-template-columns:1fr}}
+    .irc-panel{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+    .irc-panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .irc-panel-header.im{border-top:3px solid var(--navy)}
+    .irc-panel-header.dr{border-top:3px solid var(--green)}
+    .irc-panel-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px}
+    .irc-panel-count{font-family:var(--mono);font-size:9px;letter-spacing:.5px;color:var(--faint)}
+    .irc-panel-badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:3px}
+    .irc-panel-badge.im{background:var(--navy-light);color:var(--navy);border:1px solid #c8d8e8}
+    .irc-panel-badge.dr{background:var(--green-light);color:var(--green);border:1px solid var(--green-mid)}
+    /* Col heads */
+    .irc-col-heads{display:grid;grid-template-columns:32px 1fr 90px;gap:8px;padding:8px 20px 6px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .irc-col-head{font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);font-weight:700}
+    /* Groups */
+    .irc-group-label{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--faint);padding:10px 20px 4px;background:var(--surface);border-bottom:1px solid var(--border)}
+    /* Rows */
+    .irc-row{display:grid;grid-template-columns:32px 1fr 90px;align-items:center;gap:8px;padding:8px 20px;border-bottom:1px solid var(--border);transition:background .1s}
+    .irc-row:hover{background:var(--surface)}
+    .irc-row:last-child{border-bottom:none}
+    .irc-row .irc-pill{justify-self:center;text-align:center}
+    .irc-desc{font-size:12px;color:var(--muted);line-height:1.4}
+    .irc-status{font-family:var(--mono);font-size:8px;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:3px;text-align:center;font-weight:600}
+    .irc-status.available{background:rgba(54,101,74,0.1);color:var(--green);border:1px solid rgba(54,101,74,0.2)}
+    .irc-status.received{background:var(--navy-light);color:var(--navy);border:1px solid #c8d8e8}
+    .irc-status.outstanding{background:rgba(185,28,28,0.07);color:#b91c1c;border:1px solid rgba(185,28,28,0.15)}
+    .irc-status.pending{background:var(--surface);color:var(--faint);border:1px solid var(--border)}
+    /* Completeness bar */
+    .irc-completeness{padding:14px 20px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
+    .irc-comp-label{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+    .irc-comp-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+    .irc-comp-fill{height:100%;background:var(--green);border-radius:3px;width:0%}
+    .irc-comp-pct{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--faint);white-space:nowrap}
+
+    /* ── Deliverables ── */
+    .deliv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:28px 0}
+    .deliv-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .15s}
+    .deliv-card:hover{box-shadow:0 4px 16px rgba(33,58,78,0.08)}
+    .deliv-card-head{padding:20px 24px 16px;border-bottom:1px solid var(--border)}
+    .deliv-card-head.im-type{border-top:3px solid var(--navy)}
+    .deliv-card-head.dr-type{border-top:3px solid var(--green)}
+    .deliv-icon{font-size:22px;margin-bottom:10px}
+    .deliv-card h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px}
+    .deliv-card-desc{font-size:13px;color:var(--muted);line-height:1.5}
+    .deliv-card-body{padding:16px 24px}
+    .deliv-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px}
+    .deliv-list li{font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:7px;line-height:1.4}
+    .deliv-list li::before{content:'›';color:var(--green);font-size:13px;flex-shrink:0;margin-top:-1px}
+    .deliv-card-foot{padding:12px 24px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .deliv-time-before{font-family:var(--mono);font-size:10px;color:var(--faint);text-decoration:line-through}
+    .deliv-time-after{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green)}
+    /* Data room card — full-width */
+    .deliv-card.dr-card{grid-column:1/-1;background:var(--navy);border-color:var(--navy2)}
+    .deliv-card.dr-card .deliv-card-head{border-top:3px solid #7aab8a;border-bottom:1px solid rgba(255,255,255,0.08);background:transparent}
+    .deliv-card.dr-card h3{color:#fff}
+    .deliv-card.dr-card .deliv-card-desc{color:rgba(255,255,255,0.5)}
+    .deliv-card.dr-card .deliv-card-body{background:transparent}
+    .deliv-card.dr-card .deliv-list li{color:rgba(255,255,255,0.55)}
+    .deliv-card.dr-card .deliv-list li::before{color:#7aab8a}
+    .deliv-card.dr-card .deliv-card-foot{background:rgba(0,0,0,0.15);border-top:1px solid rgba(255,255,255,0.06)}
+    .deliv-card.dr-card .deliv-time-before{color:rgba(255,255,255,0.25)}
+    .deliv-card.dr-card .deliv-time-after{color:#7aab8a}
+    .dr-structure{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:4px}
+    .dr-folder{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:12px 14px}
+    .dr-folder-name{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#7aab8a;margin-bottom:6px}
+    .dr-folder ul{list-style:none;padding:0}
+    .dr-folder ul li{font-size:11px;color:rgba(255,255,255,0.4);padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .dr-folder ul li:last-child{border-bottom:none}
+
+    /* ── Barry's refinement ── */
+    .barry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:24px 0}
+    .barry-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px;border-left:3px solid var(--green)}
+    .barry-card h4{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px;font-weight:700}
+    .barry-card p{font-size:13px;color:var(--muted);line-height:1.55}
+
+    /* ── Africa context ── */
+    .africa-band{background:var(--green-light);border-top:1px solid var(--green-mid);border-bottom:1px solid var(--green-mid);padding:52px 0}
+    .funding-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:24px 0}
+    .funding-tag{background:#fff;border:1px solid var(--green-mid);border-radius:8px;padding:14px 16px}
+    .funding-tag h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+    .funding-tag p{font-size:11px;color:var(--faint);line-height:1.4}
+
+    /* ── CTA ── */
+    .cta-section{padding:64px 0;text-align:center;background:var(--navy)}
+    .cta-section h2{font-size:28px;font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:12px}
+    .cta-section p{font-size:15px;color:rgba(255,255,255,0.45);max-width:520px;margin:0 auto 32px;line-height:1.7}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border-radius:7px;font-size:12px;font-weight:600;text-decoration:none;transition:all .15s;font-family:'Montserrat',sans-serif;letter-spacing:.3px}
+    .btn-green{background:var(--green);color:#fff}.btn-green:hover{background:var(--green2);text-decoration:none}
+    .btn-ghost{background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.18)}.btn-ghost:hover{border-color:rgba(255,255,255,0.4);color:#fff;text-decoration:none}
+    .cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .cta-contact{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.25);margin-top:20px;letter-spacing:.5px}
+    .cta-contact a{color:rgba(255,255,255,0.45);text-decoration:none}
+    .cta-contact a:hover{color:#7aab8a}
+
+    /* ── Footer ── */
+    footer{background:var(--navy2);padding:22px 0}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .footer-left{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.2)}
+    .footer-left span{color:#7aab8a}
+    .footer-links{display:flex;gap:20px}
+    .footer-links a{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.22);text-decoration:none}
+    .footer-links a:hover{color:rgba(255,255,255,0.55)}
+  </style>
+</head>
+<body>
+
+<div class="stripe"></div>
+
+<header>
+  <div class="container">
+    <a href="/" class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3C10 7 6 8 5 12C4 16 7 19 12 21C17 19 20 16 19 12C18 8 14 7 12 3Z" fill="rgba(255,255,255,0.85)"/>
+          <path d="M12 10L12 21" stroke="rgba(54,101,74,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Gananda Connect</div>
+      </div>
+      <span class="brand-sub">Powered by 2nth.ai</span>
+    </a>
+    <nav>
+      <a href="https://gananda.net" target="_blank">gananda.net</a>
+      <a href="https://gananda.net/#Contact" target="_blank" class="nav-cta">Get in touch</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero" style="border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="hero-eyebrow">
+      <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3.5" fill="currentColor"/></svg>
+      Smart Capital Raising · Concept
+    </div>
+    <h1>Investor-ready documents.<br><em>Days, not weeks.</em></h1>
+    <p class="hero-lead">Capital raising is document-intensive, time-pressured, and unforgiving of imprecision. Gananda's AI stack generates first-draft business plans, financial models, pitch decks, and funding memoranda from proven templates — then Barry refines every line with 20+ years of deal-side expertise.</p>
+    <div class="co-lockup">
+      <div class="co-brand">
+        <div><span class="co-label">Advisory</span><span class="co-name">Gananda Connect</span></div>
+      </div>
+      <div class="co-sep">×</div>
+      <div class="co-brand">
+        <div><span class="co-label">AI Platform</span><span class="co-name">2nth.ai</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── IMPACT BAR ── -->
+<div class="impact">
+  <div class="container">
+    <div class="impact-grid">
+      <div class="impact-cell"><div class="impact-value">4<span>×</span></div><div class="impact-label">Faster first draft</div></div>
+      <div class="impact-cell"><div class="impact-value"><span>&lt;</span>48h</div><div class="impact-label">Full document set</div></div>
+      <div class="impact-cell"><div class="impact-value">100<span>%</span></div><div class="impact-label">Barry-reviewed</div></div>
+      <div class="impact-cell"><div class="impact-value">5</div><div class="impact-label">Deliverables</div></div>
+      <div class="impact-cell"><div class="impact-value">Pan<span>-AF</span></div><div class="impact-label">Africa coverage</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROCESS — 3 COLUMNS ── -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">The Engagement</div>
+    <h2 class="section-h2">Client inputs. Barry and AI produce. You receive.</h2>
+    <p class="section-lead">Three phases, one engagement. The client collects and provides. Barry and the AI process and produce. The client receives a complete, investor-ready package.</p>
+
+    <div class="process-grid">
+
+      <!-- Phase 1: Client Provides -->
+      <div class="process-col col-client">
+        <div class="process-col-head">
+          <div class="col-label">Phase 1 — Client</div>
+          <div class="col-title">Brings</div>
+          <div class="col-sub">30 IRC items across 3 categories</div>
+        </div>
+        <div class="process-col-body">
+          <div class="process-cat">Financial · 14 items</div>
+          <div class="process-item"><div class="process-item-icon">F</div><div><div class="process-item-text">Audited financials (3 years)</div></div></div>
+          <div class="process-item"><div class="process-item-icon">F</div><div><div class="process-item-text">Financial model with assumptions</div></div></div>
+          <div class="process-item"><div class="process-item-icon">F</div><div><div class="process-item-text">Management accounts (current)</div></div></div>
+          <div class="process-item"><div class="process-item-icon">F</div><div><div class="process-item-text">Capex schedule, liabilities, asset register</div></div></div>
+          <div class="process-item"><div class="process-item-icon">F</div><div><div class="process-item-text">Equity history, offtake agreements</div></div></div>
+          <div class="process-cat">Governance · 10 items</div>
+          <div class="process-item"><div class="process-item-icon">G</div><div><div class="process-item-text">Shareholder structure (current + planned)</div></div></div>
+          <div class="process-item"><div class="process-item-icon">G</div><div><div class="process-item-text">Board, CVs, IP protection, litigation</div></div></div>
+          <div class="process-item"><div class="process-item-icon">G</div><div><div class="process-item-text">Leases, contingent liabilities</div></div></div>
+          <div class="process-cat">Business &amp; Ops · 6 items</div>
+          <div class="process-item"><div class="process-item-icon">B</div><div><div class="process-item-text">Licensing, regulatory approvals</div></div></div>
+          <div class="process-item"><div class="process-item-icon">B</div><div><div class="process-item-text">Jobs, skills transfer plans</div></div></div>
+          <div class="process-item"><div class="process-item-icon">B</div><div><div class="process-item-text">Certifications, policies</div></div></div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="process-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <!-- Phase 2: Barry + AI -->
+      <div class="process-col col-process">
+        <div class="process-col-head">
+          <div class="col-label">Phase 2 — Barry + 2nth.ai</div>
+          <div class="col-title">Produces</div>
+          <div class="col-sub">Advisory + AI in parallel</div>
+        </div>
+        <div class="process-col-body">
+          <div class="process-item" style="border-color:var(--border)"><div class="process-item-icon" style="font-size:9px">01</div><div><div class="process-item-text" style="font-weight:600">IRC Intake Session</div><div class="process-item-sub">Barry + Client · structured conversation, completeness check</div></div></div>
+          <div class="process-item" style="border-color:var(--border)"><div class="process-item-icon" style="font-size:9px">02</div><div><div class="process-item-text" style="font-weight:600">IRC Completeness Gate</div><div class="process-item-sub">High-importance items verified before AI generation begins</div></div></div>
+          <div class="process-item" style="border-color:var(--border)"><div class="process-item-icon" style="font-size:9px">03</div><div><div class="process-item-text" style="font-weight:600">Template Selection</div><div class="process-item-sub">AI matches templates to sector, raise size, investor type</div></div></div>
+          <div class="process-item" style="border-color:var(--border)"><div class="process-item-icon" style="font-size:9px">04</div><div><div class="process-item-text" style="font-weight:600">Parallel AI Drafting</div><div class="process-item-sub">All 5 deliverables generated simultaneously · Claude Sonnet</div></div></div>
+          <div class="process-item" style="border-color:var(--border)"><div class="process-item-icon" style="font-size:9px">05</div><div><div class="process-item-text" style="font-weight:600">Barry's Refinement</div><div class="process-item-sub">Investment thesis, financial stress-test, narrative sharpening</div></div></div>
+          <div class="process-item" style="border-color:var(--border);border-bottom:none"><div class="process-item-icon" style="font-size:9px">06</div><div><div class="process-item-text" style="font-weight:600">Quality Gate + Delivery</div><div class="process-item-sub">Barry signs off · consistent narrative across all documents</div></div></div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="process-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+
+      <!-- Phase 3: Deliverables -->
+      <div class="process-col col-output">
+        <div class="process-col-head">
+          <div class="col-label">Phase 3 — Client</div>
+          <div class="col-title">Receives</div>
+          <div class="col-sub">5 investor-ready deliverables</div>
+        </div>
+        <div class="process-col-body">
+          <div class="process-item"><div class="process-item-icon">IM</div><div><div class="process-item-text" style="font-weight:600">Business Plan</div><div class="process-item-sub">Full narrative · 24–36h</div></div></div>
+          <div class="process-item"><div class="process-item-icon">IM</div><div><div class="process-item-text" style="font-weight:600">Financial Model</div><div class="process-item-sub">3-statement · 3–5 year · 12–24h</div></div></div>
+          <div class="process-item"><div class="process-item-icon">IM</div><div><div class="process-item-text" style="font-weight:600">Pitch Deck</div><div class="process-item-sub">12–15 slides · 6–12h</div></div></div>
+          <div class="process-item"><div class="process-item-icon">IM</div><div><div class="process-item-text" style="font-weight:600">Funding Memorandum</div><div class="process-item-sub">Institutional-grade · 36–48h</div></div></div>
+          <div class="process-item"><div class="process-item-icon" style="background:rgba(54,101,74,0.15);color:var(--green)">DR</div><div><div class="process-item-text" style="font-weight:600">Structured Data Room</div><div class="process-item-sub">Indexed, receipt-tracked, investor-ready</div></div></div>
+          <div class="process-item" style="border-bottom:none"><div class="process-item-icon">+</div><div><div class="process-item-text" style="font-weight:600">Raise Support</div><div class="process-item-sub">Intros, revisions, deal-close</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── IRC FRAMEWORK ── -->
+<!-- FUTURE AUTH GATE: wrap .irc-section contents with auth check — Gananda client sign-in required to view -->
+<div class="irc-section" id="irc">
+  <div class="container">
+    <div class="irc-top">
+      <div class="irc-top-left">
+        <div class="section-eyebrow">Investor Readiness Checklist</div>
+        <h2>30 items. Two destinations.<br>Nothing left to chance.</h2>
+        <p>Barry's IRC maps every required document to its destination and tracks availability in real time. The AI reads completeness as its brief — it will not generate IM sections that depend on missing High-importance items.</p>
+        <div class="irc-protected">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="5" rx="1" fill="currentColor" opacity=".5"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Gananda Proprietary Methodology
+        </div>
+      </div>
+      <div class="irc-legend">
+        <span class="irc-legend-label">Importance</span>
+        <span class="irc-pill high">High</span>
+        <span class="irc-pill medium">Med</span>
+        <span class="irc-pill low">Low</span>
+      </div>
+    </div>
+
+    <div class="irc-panels">
+
+      <!-- IM panel -->
+      <div class="irc-panel">
+        <div class="irc-panel-header im">
+          <div><div class="irc-panel-title">Investment Memorandum</div><div class="irc-panel-count">13 items · drives narrative + financial model</div></div>
+          <span class="irc-panel-badge im">IM</span>
+        </div>
+        <div class="irc-col-heads"><div class="irc-col-head"></div><div class="irc-col-head">Required</div><div class="irc-col-head">Status</div></div>
+        <div class="irc-group-label">Financial</div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Excel model with all assumptions and funding needed</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Equity contributions to date — from whom, cash vs loan</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Usage of equity funds contributed to date</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Capex schedule with timing and quantum</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Details of any liabilities including leases</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Details of any encumbered assets or shares</span><span class="irc-status pending">—</span></div>
+        <div class="irc-group-label">Governance</div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Current shareholder structure</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Planned shareholding structure and steps to achieve it</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">IP protection efforts (patents, trademarks)</span><span class="irc-status pending">—</span></div>
+        <div class="irc-group-label">Business &amp; Operations</div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Jobs created — permanent and temporary, plus projections</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Skills transfer and upliftment plans</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Licensing and regulatory approvals</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Adherence to relevant operational standards</span><span class="irc-status pending">—</span></div>
+        <div class="irc-completeness">
+          <span class="irc-comp-label">Readiness</span>
+          <div class="irc-comp-bar"><div class="irc-comp-fill"></div></div>
+          <span class="irc-comp-pct">0 / 13</span>
+        </div>
+      </div>
+
+      <!-- DR panel -->
+      <div class="irc-panel">
+        <div class="irc-panel-header dr">
+          <div><div class="irc-panel-title">Data Room</div><div class="irc-panel-count">18 items · due diligence &amp; investor access</div></div>
+          <span class="irc-panel-badge dr">DR</span>
+        </div>
+        <div class="irc-col-heads"><div class="irc-col-head"></div><div class="irc-col-head">Required</div><div class="irc-col-head">Status</div></div>
+        <div class="irc-group-label">Financial</div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Last three years audited financials</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Up to date monthly management accounts</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Offtake agreements and customer documentation</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Loan accounts and terms with directors</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Fixed asset register</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Third-party valuations or consultant reports</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Insurance details</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Tax status and proof of good standing</span><span class="irc-status pending">—</span></div>
+        <div class="irc-group-label">Governance</div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Details on each shareholder and ultimate beneficiaries</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill low">L</span><span class="irc-desc">Board of directors and meeting minutes</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Current and future lease details</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Contingent liabilities (if applicable)</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill high">H</span><span class="irc-desc">Any litigation, past or current</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">CVs of all key individuals</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Directors and non-executive directors detail</span><span class="irc-status pending">—</span></div>
+        <div class="irc-group-label">Business &amp; Operations</div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Total sales and details of user base / customers</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Consultant reports, certifications, independent approvals</span><span class="irc-status pending">—</span></div>
+        <div class="irc-row"><span class="irc-pill medium">M</span><span class="irc-desc">Anti-bribery, procurement, and whistleblowing policies</span><span class="irc-status pending">—</span></div>
+        <div class="irc-completeness">
+          <span class="irc-comp-label">Readiness</span>
+          <div class="irc-comp-bar"><div class="irc-comp-fill"></div></div>
+          <span class="irc-comp-pct">0 / 18</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── DELIVERABLES ── -->
+<section>
+  <div class="container">
+    <div class="section-eyebrow">Deliverables</div>
+    <h2 class="section-h2">Five outputs. One consistent story.</h2>
+    <p class="section-lead">The AI ensures every document tells the same story — same numbers, same narrative thread, same investment thesis. Barry ensures the story is one investors believe.</p>
+
+    <div class="deliv-grid">
+      <div class="deliv-card">
+        <div class="deliv-card-head im-type">
+          <div class="deliv-icon">📋</div>
+          <h3>Business Plan</h3>
+          <p class="deliv-card-desc">The full narrative — business model, market, competitive positioning, team, and strategy. Every investor question answered before it's asked.</p>
+        </div>
+        <div class="deliv-card-body">
+          <ul class="deliv-list">
+            <li>Executive summary &amp; investment thesis</li>
+            <li>Market sizing (TAM / SAM / SOM)</li>
+            <li>Business model &amp; revenue streams</li>
+            <li>Go-to-market strategy</li>
+            <li>Competitive landscape</li>
+            <li>Team &amp; governance</li>
+            <li>Use of funds &amp; milestones</li>
+            <li>Risk register &amp; mitigants</li>
+          </ul>
+        </div>
+        <div class="deliv-card-foot"><span class="deliv-time-before">5–10 days</span><span class="deliv-time-after">24–36 hours</span></div>
+      </div>
+
+      <div class="deliv-card">
+        <div class="deliv-card-head im-type">
+          <div class="deliv-icon">📊</div>
+          <h3>Financial Model</h3>
+          <p class="deliv-card-desc">Three-statement integrated model. Built on Gananda's sector templates, calibrated to client actuals, stress-tested across three scenarios.</p>
+        </div>
+        <div class="deliv-card-body">
+          <ul class="deliv-list">
+            <li>Revenue build-up by stream</li>
+            <li>P&amp;L, balance sheet, cash flow</li>
+            <li>3–5 year projections, monthly (yr 1–2)</li>
+            <li>Scenario analysis: base / bull / bear</li>
+            <li>Funding runway &amp; drawdown schedule</li>
+            <li>IRR / EBITDA / MOIC metrics</li>
+            <li>Sensitivity on price, volume, FX</li>
+          </ul>
+        </div>
+        <div class="deliv-card-foot"><span class="deliv-time-before">5–7 days</span><span class="deliv-time-after">12–24 hours</span></div>
+      </div>
+
+      <div class="deliv-card">
+        <div class="deliv-card-head im-type">
+          <div class="deliv-icon">🎯</div>
+          <h3>Pitch Deck</h3>
+          <p class="deliv-card-desc">12–15 slides. Built from the business plan — not a separate document. Structured for attention-limited investor audiences.</p>
+        </div>
+        <div class="deliv-card-body">
+          <ul class="deliv-list">
+            <li>Problem, opportunity, solution</li>
+            <li>Market size &amp; traction</li>
+            <li>Business model slide</li>
+            <li>Financial highlights</li>
+            <li>Team &amp; advisors</li>
+            <li>The ask — amount, use, timeline</li>
+          </ul>
+        </div>
+        <div class="deliv-card-foot"><span class="deliv-time-before">3–5 days</span><span class="deliv-time-after">6–12 hours</span></div>
+      </div>
+
+      <div class="deliv-card">
+        <div class="deliv-card-head im-type">
+          <div class="deliv-icon">📄</div>
+          <h3>Funding Memorandum</h3>
+          <p class="deliv-card-desc">The formal institutional document. Legally precise, structurally rigorous — written for DFIs, family offices, and private equity investment committees.</p>
+        </div>
+        <div class="deliv-card-body">
+          <ul class="deliv-list">
+            <li>Transaction overview &amp; terms</li>
+            <li>Investment rationale</li>
+            <li>Detailed financial analysis</li>
+            <li>Deal structure &amp; return profile</li>
+            <li>Exit strategy &amp; options</li>
+            <li>Due diligence summary</li>
+            <li>Data room index</li>
+          </ul>
+        </div>
+        <div class="deliv-card-foot"><span class="deliv-time-before">7–14 days</span><span class="deliv-time-after">36–48 hours</span></div>
+      </div>
+
+      <!-- Data Room — full width -->
+      <div class="deliv-card dr-card">
+        <div class="deliv-card-head dr-type">
+          <div class="deliv-icon">🗄</div>
+          <h3>Structured Data Room</h3>
+          <p class="deliv-card-desc">Not just a folder of documents — a structured, indexed, investor-navigable data room. Built from the DR column of the IRC, with a live receipt tracker so nothing goes to investors incomplete.</p>
+        </div>
+        <div class="deliv-card-body">
+          <div class="dr-structure">
+            <div class="dr-folder">
+              <div class="dr-folder-name">Financial</div>
+              <ul>
+                <li>Audited financials (3yr)</li>
+                <li>Management accounts</li>
+                <li>Fixed asset register</li>
+                <li>Tax status</li>
+                <li>Insurance</li>
+              </ul>
+            </div>
+            <div class="dr-folder">
+              <div class="dr-folder-name">Commercial</div>
+              <ul>
+                <li>Offtake agreements</li>
+                <li>Customer contracts</li>
+                <li>Sales data</li>
+                <li>Director loan accounts</li>
+              </ul>
+            </div>
+            <div class="dr-folder">
+              <div class="dr-folder-name">Governance</div>
+              <ul>
+                <li>Shareholder register</li>
+                <li>Board minutes</li>
+                <li>Leases</li>
+                <li>Litigation register</li>
+                <li>CVs — key persons</li>
+              </ul>
+            </div>
+            <div class="dr-folder">
+              <div class="dr-folder-name">Compliance</div>
+              <ul>
+                <li>Licences &amp; permits</li>
+                <li>Certifications</li>
+                <li>Anti-bribery policy</li>
+                <li>Procurement policy</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="deliv-card-foot"><span class="deliv-time-before">Built manually · weeks</span><span class="deliv-time-after">AI-structured from IRC · hours</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BARRY'S REFINEMENT LAYER ── -->
+<section style="background:var(--surface)">
+  <div class="container">
+    <div class="section-eyebrow">Barry's Role</div>
+    <h2 class="section-h2">Where the expertise is applied, not replaced.</h2>
+    <p class="section-lead">The AI handles drafting volume and structural consistency. Barry applies 20+ years of deal-side judgement to the output — the part no AI can replicate.</p>
+    <div class="barry-grid">
+      <div class="barry-card">
+        <h4>Investment Thesis</h4>
+        <p>Barry sharpens the core investment argument — why this business, why now, why this amount. The AI structures the narrative; Barry makes it compelling to the specific investor type.</p>
+      </div>
+      <div class="barry-card">
+        <h4>Financial Stress-Test</h4>
+        <p>Every projection is checked against sector reality. Growth curves are calibrated to what the investor will believe, not just what the client hopes. Unit economics validated against comparable deals.</p>
+      </div>
+      <div class="barry-card">
+        <h4>Deal Positioning</h4>
+        <p>DFIs, PE houses, banks, and angels all evaluate deals differently. Barry calibrates the ask, the structure, and the return metrics to match what the target investor pool actually expects.</p>
+      </div>
+      <div class="barry-card">
+        <h4>Narrative Consistency</h4>
+        <p>The business plan, financial model, pitch deck, and funding memorandum must tell exactly the same story. Barry reviews the full set for any inconsistency before delivery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AFRICA CONTEXT ── -->
+<div class="africa-band">
+  <div class="container">
+    <div class="section-eyebrow">Africa-First</div>
+    <h2 class="section-h2">Built for the African capital landscape</h2>
+    <p class="section-lead">Gananda's templates and Barry's expertise are calibrated for the African funding environment — not adapted from Silicon Valley playbooks.</p>
+    <div class="funding-grid">
+      <div class="funding-tag"><h4>DFI Funding</h4><p>IDC, NEF, DBSA, IFC — each has distinct documentation expectations. Gananda knows the format.</p></div>
+      <div class="funding-tag"><h4>Private Equity</h4><p>Pan-African PE houses, growth equity, buyout. Investment committee-ready memoranda.</p></div>
+      <div class="funding-tag"><h4>Venture &amp; Angel</h4><p>Early-stage raises, SAVCA-aligned term sheets, angel network pitch formats.</p></div>
+      <div class="funding-tag"><h4>Bank Finance</h4><p>Commercial banks and asset-backed lenders. Credit committee documentation and covenant structures.</p></div>
+      <div class="funding-tag"><h4>Cross-Border</h4><p>SADC, East Africa, West Africa. Multi-jurisdiction raises with consistent documentation standards.</p></div>
+      <div class="funding-tag"><h4>Impact &amp; ESG</h4><p>Impact investors and ESG-aligned funds increasingly dominating African capital flows. Gananda frames the narrative accordingly.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA ── -->
+<section class="cta-section" style="border-bottom:none">
+  <div class="container">
+    <h2>Ready to raise capital?</h2>
+    <p>The intake session is the hardest part — everything after that moves fast. Tell Barry what you're building and what you need to raise.</p>
+    <div class="cta-actions">
+      <a href="https://gananda.net/#Contact" target="_blank" class="btn btn-green">Enquire at gananda.net ↗</a>
+      <a href="https://gananda.net" target="_blank" class="btn btn-ghost">Learn more ↗</a>
+    </div>
+    <div class="cta-contact">
+      Gananda Connect · Dunkeld, Sandton · <a href="https://gananda.net" target="_blank">gananda.net</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-left"><span>Gananda</span> Connect · Smart Capital Raising · Powered by 2nth.ai</div>
+      <div class="footer-links">
+        <a href="https://gananda.net" target="_blank">Gananda.net</a>
+        <a href="https://2nth.ai" target="_blank">2nth.ai</a>
+        <a href="https://developers.2nth.ai" target="_blank">Developers</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+
+<!-- ── IMPI — Capital Raising Warrior ── -->
+<style>
+  /* Launcher */
+  #impi-launcher{position:fixed;bottom:24px;right:24px;z-index:1000;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--navy);border:1px solid rgba(54,101,74,0.4);border-radius:40px;padding:10px 18px 10px 12px;box-shadow:0 4px 20px rgba(33,58,78,0.25);transition:box-shadow .2s,transform .2s}
+  #impi-launcher:hover{box-shadow:0 6px 28px rgba(33,58,78,0.35);transform:translateY(-1px)}
+  .impi-launcher-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .impi-launcher-icon svg{width:18px;height:18px}
+  .impi-launcher-text{display:flex;flex-direction:column}
+  .impi-launcher-name{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.1}
+  .impi-launcher-role{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#7aab8a;margin-top:1px}
+  .impi-launcher-dot{width:8px;height:8px;border-radius:50%;background:#7aab8a;margin-left:4px;animation:impi-pulse 2s infinite}
+  @keyframes impi-pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  /* Panel */
+  #impi-panel{position:fixed;bottom:88px;right:24px;width:380px;max-width:calc(100vw - 48px);z-index:1000;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 40px rgba(33,58,78,0.18);display:none;flex-direction:column;overflow:hidden;max-height:560px}
+  #impi-panel.open{display:flex}
+
+  /* Panel header */
+  .impi-head{background:var(--navy);padding:16px 18px;display:flex;align-items:center;gap:12px}
+  .impi-head-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--green));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .impi-head-icon svg{width:20px;height:20px}
+  .impi-head-info{flex:1}
+  .impi-head-name{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;color:#fff}
+  .impi-head-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#7aab8a;margin-top:1px}
+  .impi-head-close{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.4);font-size:18px;padding:4px;line-height:1;transition:color .15s}
+  .impi-head-close:hover{color:#fff}
+
+  /* Messages */
+  #impi-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafaf8;min-height:200px}
+  .impi-msg{max-width:88%;display:flex;flex-direction:column;gap:3px}
+  .impi-msg.agent{align-self:flex-start}
+  .impi-msg.user{align-self:flex-end}
+  .impi-msg-bubble{padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.55}
+  .impi-msg.agent .impi-msg-bubble{background:#fff;border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+  .impi-msg.user .impi-msg-bubble{background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+  .impi-msg-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--faint)}
+  .impi-msg.user .impi-msg-label{text-align:right;color:rgba(33,58,78,0.5)}
+  .impi-typing{display:none;align-self:flex-start;padding:10px 14px;background:#fff;border:1px solid var(--border);border-radius:12px;border-bottom-left-radius:4px}
+  .impi-typing.visible{display:block}
+  .impi-typing-dots{display:flex;gap:4px;padding:2px 0}
+  .impi-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--faint);animation:impi-dot 1.2s infinite}
+  .impi-typing-dots span:nth-child(2){animation-delay:.2s}
+  .impi-typing-dots span:nth-child(3){animation-delay:.4s}
+  @keyframes impi-dot{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+  /* Input */
+  .impi-input-area{padding:12px 14px;border-top:1px solid var(--border);background:#fff;display:flex;gap:8px;align-items:flex-end}
+  #impi-input{flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Montserrat',sans-serif;font-size:13px;color:var(--text);resize:none;outline:none;max-height:100px;line-height:1.5;transition:border-color .15s}
+  #impi-input:focus{border-color:var(--green)}
+  #impi-send{background:var(--green);border:none;border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
+  #impi-send:hover{background:var(--green2)}
+  #impi-send svg{width:16px;height:16px;color:#fff}
+  #impi-send:disabled{background:var(--border2);cursor:not-allowed}
+
+  /* Footer */
+  .impi-footer{padding:6px 14px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);background:#fff}
+  .impi-footer span{color:#7aab8a}
+</style>
+
+<!-- Launcher button -->
+<div id="impi-launcher">
+  <div class="impi-launcher-icon">
+    <!-- Spear / warrior icon -->
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2 L16 8 L12 7 L8 8 Z" fill="rgba(255,255,255,0.9)" stroke="none"/>
+      <line x1="12" y1="7" x2="12" y2="22"/>
+      <path d="M9 14 L12 12 L15 14"/>
+    </svg>
+  </div>
+  <div class="impi-launcher-text">
+    <span class="impi-launcher-name">Impi</span>
+    <span class="impi-launcher-role">Capital Raising Warrior</span>
+  </div>
+  <div class="impi-launcher-dot"></div>
+</div>
+
+<!-- Chat panel -->
+<div id="impi-panel">
+  <div class="impi-head">
+    <div class="impi-head-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2 L16 8 L12 7 L8 8 Z" fill="rgba(255,255,255,0.9)" stroke="none"/>
+        <line x1="12" y1="7" x2="12" y2="22"/>
+        <path d="M9 14 L12 12 L15 14"/>
+      </svg>
+    </div>
+    <div class="impi-head-info">
+      <div class="impi-head-name">Impi</div>
+      <div class="impi-head-sub">Gananda · Capital Raising Warrior · 2nth.ai</div>
+    </div>
+    <button class="impi-head-close" id="impi-head-close">✕</button>
+  </div>
+
+  <div id="impi-messages">
+    <div class="impi-msg agent">
+      <div class="impi-msg-label">Impi</div>
+      <div class="impi-msg-bubble">Sawubona. I'm Impi — your capital raising advisor for Gananda Connect.<br><br>I can walk you through the investor readiness checklist, explain what investors look for, help you understand the raise process, or prepare you for your session with Barry.<br><br>What stage are you at — and what are you looking to raise?</div>
+    </div>
+  </div>
+  <div class="impi-typing" id="impi-typing">
+    <div class="impi-typing-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="impi-input-area">
+    <textarea id="impi-input" rows="1" placeholder="Ask Impi anything about raising capital…"></textarea>
+    <button id="impi-send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+  <div class="impi-footer">Powered by <span>2nth.ai</span> · Edge AI · Gananda Connect</div>
+</div>
+
+<script src="/preview/gananda/impi.js"></script>
+</body>
+</html>

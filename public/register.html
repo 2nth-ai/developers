@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Partner — 2nth.ai Developers</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .reg-wrap { max-width: 560px; margin: 48px auto; }
+    .reg-card { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 36px 40px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #71717a; margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 14px; border: 1px solid #e4e4e7; border-radius: 6px;
+      font-family: 'Barlow', sans-serif; font-size: 14px; color: #18181b; background: #fff; outline: none; transition: border-color .15s; box-sizing: border-box;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #0891b2; }
+    .form-group textarea { min-height: 100px; resize: vertical; }
+    .submit-btn { width: 100%; background: #0891b2; color: #fff; border: none; border-radius: 6px; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background .12s; }
+    .submit-btn:hover { background: #0e7490; }
+    .submit-btn:disabled { background: #a1a1aa; cursor: default; }
+    .msg { padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; display: none; }
+    .msg.show { display: block; }
+    .msg-ok  { background: rgba(5,150,105,.06); border: 1px solid rgba(5,150,105,.2); color: #059669; }
+    .msg-err { background: rgba(220,38,38,.06); border: 1px solid rgba(220,38,38,.2); color: #dc2626; }
+    .perks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+    .perk { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #52525b; }
+    .perk-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+    .already-member { text-align: center; margin-top: 20px; font-size: 12px; color: #a1a1aa; font-family: 'JetBrains Mono', monospace; }
+    .already-member a { color: #0891b2; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <div id="user-area"></div>
+  </div>
+</header>
+
+<main>
+<div class="container">
+<div class="reg-wrap">
+
+  <div style="margin-bottom:28px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;margin-bottom:8px">Partner programme</div>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,44px);letter-spacing:.05em;color:#18181b;margin:0 0 10px">BECOME A BUILD PARTNER</h1>
+    <p style="font-size:14px;color:#71717a;line-height:1.6;margin:0">Join the 2nth.ai partner network. Get a private branded developer page and access to the full partner showcase.</p>
+  </div>
+
+  <div class="perks">
+    <div class="perk"><span class="perk-icon">&#128100;</span><span>Private branded partner page on <code>developers.2nth.ai</code></span></div>
+    <div class="perk"><span class="perk-icon">&#9968;</span><span>Access to partner showcase and the full developer portal</span></div>
+    <div class="perk"><span class="perk-icon">&#128200;</span><span>AI agents scoped across Design, Software, Hardware, and Robotics</span></div>
+  </div>
+
+  <div class="reg-card">
+    <div class="msg msg-ok" id="reg-ok">Application submitted — we'll review it and send you a sign-in code within 1–2 business days.</div>
+    <div class="msg msg-err" id="reg-err"></div>
+
+    <form id="reg-form" autocomplete="off">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" id="reg-first" placeholder="Craig" required>
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input type="text" id="reg-last" placeholder="Smith" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Work email</label>
+        <input type="email" id="reg-email" placeholder="you@yourcompany.com" required>
+      </div>
+      <div class="form-group">
+        <label>Company / project name</label>
+        <input type="text" id="reg-company" placeholder="Acme Corp" required>
+      </div>
+      <div class="form-group">
+        <label>Industry / sector</label>
+        <select id="reg-sector">
+          <option value="">Select…</option>
+          <option>Financial Services</option>
+          <option>Manufacturing / Industrial</option>
+          <option>Real Estate / PropTech</option>
+          <option>Recruitment / HR</option>
+          <option>Logistics / Supply Chain</option>
+          <option>Retail / eCommerce</option>
+          <option>Healthcare</option>
+          <option>Technology / SaaS</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>What are you building?</label>
+        <textarea id="reg-brief" placeholder="Brief description of your project or use case…"></textarea>
+      </div>
+      <button class="submit-btn" type="submit" id="reg-submit">Submit application →</button>
+    </form>
+  </div>
+
+  <div class="already-member">
+    Already a partner? <a href="/portal.html">Sign in →</a>
+  </div>
+
+</div>
+</div>
+</main>
+
+<script src="/portal.js"></script>
+<script>
+(function() {
+  // Pre-fill email from session if available
+  document.addEventListener('sso:ready', function(e) {
+    var user = e.detail;
+    if (user && user.email) {
+      var emailInput = document.getElementById('reg-email');
+      if (emailInput) emailInput.value = user.email;
+    }
+  });
+
+  document.getElementById('reg-form').addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var first   = document.getElementById('reg-first').value.trim();
+    var last    = document.getElementById('reg-last').value.trim();
+    var email   = document.getElementById('reg-email').value.trim();
+    var company = document.getElementById('reg-company').value.trim();
+    var sector  = document.getElementById('reg-sector').value;
+    var brief   = document.getElementById('reg-brief').value.trim();
+    var errEl   = document.getElementById('reg-err');
+    var okEl    = document.getElementById('reg-ok');
+
+    if (!first || !last || !email || !company) {
+      errEl.textContent = 'Please fill in all required fields.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    var btn = document.getElementById('reg-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    errEl.classList.remove('show');
+
+    fetch('/api/enquiry', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: first + ' ' + last,
+        company,
+        email,
+        message: (sector ? 'Sector: ' + sector + '\n\n' : '') + brief,
+        type: 'partner-application',
+      }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      document.getElementById('reg-form').style.display = 'none';
+      okEl.classList.add('show');
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = 'Submit application →';
+      errEl.textContent = 'Failed to send. Please email craig@2nth.ai directly.';
+      errEl.classList.add('show');
+    });
+  });
+})();
+</script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>
