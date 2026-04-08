@@ -1,37 +1,34 @@
 // ═══════════════════════════════════════════════════════════════════
-// Partner page visibility middleware
+// /partners/* middleware — per-page partner visibility
 // ═══════════════════════════════════════════════════════════════════
 //
-// Access tiers (in order of precedence):
-//   1. Blocked list → hard deny, always
-//   2. Admin (ADMIN_EMAILS or role=admin) → all pages
-//   3. Owner (email in PARTNER_REGISTRY[key].owners) → their own pages
-//   4. Invited (KV: partner_invite:{key}:{email} is active) → that partner's pages
-//   5. Everyone else → denied
-//
-// KV schema:
-//   partner_invite:{key}:{email}  → JSON { grantedBy, grantedAt, active: true|false }
-//   partner_access:{key}:{email}:{ts} → JSON { path, ts }  (access log)
+// Access tiers (in precedence order):
+//   1. Admin (ADMIN_EMAILS / role=admin)      → all pages
+//   2. SSO session (sid / 2nth_session JWT)   → owner or invited
+//   3. Partner preview session cookie (pps)   → their own page
+//   4. Signed token URL (?token=...)          → their own page, sets pps cookie
+//   5. Audience=all / Audience=partners       → any logged-in partner
+//   Default individual pages: private
+//   Default org pages: visible to all authenticated partners
 // ═══════════════════════════════════════════════════════════════════
 
-const PARTNER_REGISTRY = {
-  'andile':          { owners: ['albert@andilesolutions.com','neil@andilesolutions.com','craigl@andilesolutions.com'] },
-  'vibecrafters':    { owners: ['hello@vibecrafters.co.za','vibecrafterza@gmail.com'] },
-  'agilex':          { owners: ['michael@agilex.co.za'] },
-  'gridlineprop':    { owners: ['info@gridlineprop.co.za'] },
-  'scanman':         { owners: ['info@scanman.co.za'] },
-  'proximity-green': { owners: ['info@proximity-green.co.za'] },
-  'dronescan':       { owners: ['info@dronescan.co.za'] },
-  'hyram':           { owners: ['hyramserretta20@gmail.com'] },
-  'carla':           { owners: ['carladeabreu@outlook.com'] },
-  'nicola':          { owners: ['nicola@gananda.net'] },
-  '20crm':           { owners: ['craig@2nth.ai'] },
-};
+import {
+  PARTNER_REGISTRY,
+  INDIVIDUAL_PARTNERS,
+  ADMIN_EMAILS,
+  BLOCKED_EMAILS,
+  isAdmin,
+  isOwner,
+  resolvePartnerKey,
+} from '../lib/registry.js';
 
-const ADMIN_EMAILS  = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
-const BLOCKED_EMAILS = ['leppan.craig@gmail.com'];
-
-// ── Helpers ─────────────────────────────────────────────────────────
+import {
+  validatePreviewToken,
+  validatePPSession,
+  createPPSession,
+  ppsCookieHeader,
+  PPS_COOKIE,
+} from '../lib/token.js';
 
 function parseCookie(header, name) {
   const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
@@ -62,50 +59,9 @@ async function getSSOEmail(cookie, secret) {
   } catch { return null; }
 }
 
-// /partners/andile-frtb.html → 'andile'
-function resolvePartnerKey(pathname) {
-  const rest = pathname.replace(/^\/partners\//, '');
-  const keys = Object.keys(PARTNER_REGISTRY).sort((a, b) => b.length - a.length);
-  for (const key of keys) {
-    if (rest === key + '.html' || rest === key + '/' || rest === '' ||
-        rest.startsWith(key + '-') || rest.startsWith(key + '.')) {
-      return key;
-    }
-  }
-  return null;
-}
-
-function redirectDeny(partnerKey) {
-  return new Response(null, {
-    status: 302,
-    headers: { Location: `/portal.html?access=denied&partner=${encodeURIComponent(partnerKey || 'restricted')}` },
-  });
-}
-
-function redirectSignIn(returnPath) {
-  return new Response(null, {
-    status: 302,
-    headers: { Location: `https://2nth.ai/?return=${encodeURIComponent('https://developers.2nth.ai' + returnPath)}` },
-  });
-}
-
-async function logAccess(env, partnerKey, email, path) {
-  if (!env.KV || !partnerKey) return;
-  const ts = new Date().toISOString();
-  const logKey = `partner_access:${partnerKey}:${email}:${Date.now()}`;
-  await env.KV.put(logKey, JSON.stringify({ path, ts, email }), { expirationTtl: 60 * 60 * 24 * 90 }); // 90 days
-}
-
-// ── Main middleware ──────────────────────────────────────────────────
-
-export async function onRequest(context) {
-  const { request, env, next } = context;
-  const url = new URL(request.url);
+async function resolveSession(request, env) {
   const cookies = request.headers.get('Cookie') || '';
-
-  // ── 1. Resolve session ─────────────────────────────────────────────
-  let email = null;
-  let role  = null;
+  let email = null, role = null;
 
   const sid = parseCookie(cookies, 'sid');
   if (sid && env.KV) {
@@ -115,48 +71,158 @@ export async function onRequest(context) {
       catch { /* ignore */ }
     }
   }
-
   if (!email) {
     const sso = await getSSOEmail(parseCookie(cookies, '2nth_session'), env.JWT_SECRET);
     if (sso) { email = sso.email?.toLowerCase(); role = sso.role; }
   }
+  return { email, role };
+}
 
-  // Unauthenticated → sign-in
-  if (!email) return redirectSignIn(url.pathname);
+async function logAccess(env, partnerKey, email, path) {
+  if (!env.KV || !partnerKey) return;
+  await env.KV.put(
+    `partner_access:${partnerKey}:${email}:${Date.now()}`,
+    JSON.stringify({ path, ts: new Date().toISOString(), email }),
+    { expirationTtl: 60 * 60 * 24 * 90 }
+  );
+}
 
-  // ── 2. Blocked list — hard deny ────────────────────────────────────
-  if (BLOCKED_EMAILS.includes(email)) return redirectDeny('restricted');
+async function resolveKey(path, env) {
+  const staticKey = resolvePartnerKey(path);
+  if (staticKey) return { key: staticKey, dynamic: false };
 
-  // ── 3. Admin — sees everything ─────────────────────────────────────
-  if (role === 'admin' || ADMIN_EMAILS.includes(email)) {
-    await logAccess(env, resolvePartnerKey(url.pathname), email, url.pathname);
+  const slug = path.replace(/^\/partners\//, '').replace(/\.html$/, '').replace(/\/$/, '');
+  if (!slug || slug === 'index') return { key: null };
+
+  const dynRaw = env.KV ? await env.KV.get(`partner_registry:${slug}`) : null;
+  if (dynRaw) {
+    try {
+      const reg = JSON.parse(dynRaw);
+      if (reg.active !== false) return { key: slug, dynamic: true, reg };
+    } catch { /* ignore */ }
+  }
+  return { key: null };
+}
+
+function deny(partnerKey) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: `/portal.html?access=restricted&partner=${encodeURIComponent(partnerKey || '')}` },
+  });
+}
+
+function signIn(path) {
+  return new Response(null, {
+    status: 302,
+    headers: { Location: `/portal.html?return=${encodeURIComponent(path)}` },
+  });
+}
+
+export async function onRequest(context) {
+  const { request, env, next } = context;
+  const url = new URL(request.url);
+  const cookies = request.headers.get('Cookie') || '';
+
+  const { key: partnerKey, dynamic, reg } = await resolveKey(url.pathname, env);
+  const owners = dynamic ? (reg?.owners || []) : (PARTNER_REGISTRY[partnerKey]?.owners || []);
+  const isIndividual = dynamic
+    ? (reg?.individual === true)
+    : INDIVIDUAL_PARTNERS.has(partnerKey);
+
+  // ── 1. Signed token URL (?token=...) ────────────────────────────
+  // Validate first — no auth required, just a valid HMAC token
+  const tokenParam = url.searchParams.get('token');
+  if (tokenParam && partnerKey && env.JWT_SECRET) {
+    const claim = await validatePreviewToken(tokenParam, env.JWT_SECRET);
+    if (claim && claim.key === partnerKey) {
+      // Valid token for this page — create a PPS cookie session and pass through
+      const sessionId = await createPPSession(env.KV, partnerKey, claim.email);
+      await logAccess(env, partnerKey, claim.email, url.pathname);
+
+      // Strip the token from the URL and redirect with cookie set
+      const cleanUrl = new URL(url.toString());
+      cleanUrl.searchParams.delete('token');
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: cleanUrl.toString(),
+          'Set-Cookie': ppsCookieHeader(sessionId),
+        },
+      });
+    }
+    // Invalid/expired token — fall through to other auth methods
+  }
+
+  // ── 2. Partner preview session cookie (pps) ──────────────────────
+  const ppsId = parseCookie(cookies, PPS_COOKIE);
+  if (ppsId && partnerKey) {
+    const ppsClaim = await validatePPSession(env.KV, ppsId);
+    if (ppsClaim && ppsClaim.key === partnerKey) {
+      await logAccess(env, partnerKey, ppsClaim.email, url.pathname);
+      return next();
+    }
+  }
+
+  // ── 3. SSO session ───────────────────────────────────────────────
+  const { email, role } = await resolveSession(request, env);
+
+  if (BLOCKED_EMAILS.includes(email)) {
+    return new Response(null, { status: 302, headers: { Location: '/register.html?blocked=1' } });
+  }
+
+  // Admin → always pass
+  if (isAdmin(email, role)) {
+    await logAccess(env, partnerKey, email || 'admin', url.pathname);
     return next();
   }
 
-  // ── 4. Resolve partner key ─────────────────────────────────────────
-  const partnerKey = resolvePartnerKey(url.pathname);
-  const partner    = partnerKey ? PARTNER_REGISTRY[partnerKey] : null;
+  // No session at all → show sign-in (but only if no token was present, otherwise deny)
+  if (!email) {
+    if (tokenParam) return deny(partnerKey); // token was invalid
+    return signIn(url.pathname);
+  }
 
-  // ── 5. Owner check ─────────────────────────────────────────────────
-  if (partner && partner.owners.includes(email)) {
+  if (!partnerKey) return next(); // unknown slug, let it 404
+
+  // Owner → allow
+  if (isOwner(email, partnerKey) || owners.includes(email)) {
     await logAccess(env, partnerKey, email, url.pathname);
     return next();
   }
 
-  // ── 6. Invite check ────────────────────────────────────────────────
-  if (partnerKey && env.KV) {
-    const inviteRaw = await env.KV.get(`partner_invite:${partnerKey}:${email}`);
-    if (inviteRaw) {
-      try {
-        const invite = JSON.parse(inviteRaw);
-        if (invite.active === true) {
-          await logAccess(env, partnerKey, email, url.pathname);
-          return next();
-        }
-      } catch { /* malformed invite */ }
+  // ── 4. KV audience setting ───────────────────────────────────────
+  const [audienceAll, audiencePartners] = await Promise.all([
+    env.KV.get(`partner_public:${partnerKey}:all`),
+    env.KV.get(`partner_public:${partnerKey}:partners`),
+  ]);
+
+  if (audienceAll === 'true') return next();
+
+  if (audiencePartners === 'true') {
+    const isAnyPartner = Object.values(PARTNER_REGISTRY).some(p => p.owners.includes(email))
+      || !!(await env.KV.get(`partner_email:${email}`));
+    if (isAnyPartner) { await logAccess(env, partnerKey, email, url.pathname); return next(); }
+  }
+
+  // ── 5. Explicit invite ───────────────────────────────────────────
+  const inviteRaw = await env.KV.get(`partner_invite:${partnerKey}:${email}`);
+  if (inviteRaw) {
+    try {
+      const inv = JSON.parse(inviteRaw);
+      if (inv.active) { await logAccess(env, partnerKey, email, url.pathname); return next(); }
+    } catch { /* ignore */ }
+  }
+
+  // ── 6. Org default: visible to all partners ──────────────────────
+  if (!isIndividual) {
+    const isStaticPartner = Object.values(PARTNER_REGISTRY).some(p => p.owners.includes(email));
+    const dynEmailRaw = await env.KV.get(`partner_email:${email}`);
+    if (isStaticPartner || dynEmailRaw) {
+      await logAccess(env, partnerKey, email, url.pathname);
+      return next();
     }
   }
 
-  // ── 7. Deny ────────────────────────────────────────────────────────
-  return redirectDeny(partnerKey);
+  // Deny
+  return deny(partnerKey);
 }

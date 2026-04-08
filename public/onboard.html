@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Onboarding — 2nth.ai Developers</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .ob-wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    .ob-header { margin-bottom: 36px; }
+    .ob-header .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #0891b2; margin-bottom: 8px; font-weight: 700; }
+    .ob-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 4vw, 44px); letter-spacing: .06em; color: #18181b; margin: 0 0 10px; }
+    .ob-header p { font-size: 14px; color: #71717a; line-height: 1.6; max-width: 520px; }
+
+    .ob-card { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 32px; margin-bottom: 20px; }
+    .ob-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .08em; color: #18181b; margin: 0 0 20px; display: flex; align-items: center; gap: 10px; }
+    .ob-card h2 .step { background: #0891b2; color: #fff; font-size: 11px; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; flex-shrink: 0; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .field-row.full { grid-template-columns: 1fr; }
+    @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #71717a; font-weight: 700; }
+    .field label .opt { color: #a1a1aa; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 10px; margin-left: 4px; }
+    .field input, .field select, .field textarea {
+      padding: 9px 12px; border: 1px solid #e4e4e7; border-radius: 6px;
+      font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; color: #18181b;
+      background: #fafafa; outline: none; transition: border-color .12s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #0891b2; background: #fff; }
+    .field textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+    .field .hint { font-size: 12px; color: #a1a1aa; line-height: 1.5; }
+
+    /* Type toggle */
+    .type-toggle { display: flex; gap: 10px; }
+    .type-btn { flex: 1; padding: 10px; border: 1px solid #e4e4e7; border-radius: 8px; background: #fafafa; cursor: pointer; text-align: center; transition: all .12s; }
+    .type-btn:hover { border-color: #0891b2; }
+    .type-btn.active { border-color: #0891b2; background: rgba(8,145,178,.06); }
+    .type-btn .tb-icon { font-size: 20px; margin-bottom: 4px; }
+    .type-btn .tb-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; color: #18181b; font-weight: 700; }
+    .type-btn .tb-desc { font-size: 11px; color: #71717a; margin-top: 2px; line-height: 1.4; }
+    .type-btn.active .tb-name { color: #0891b2; }
+
+    /* Skills tags */
+    .skills-tags { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; padding: 8px; border: 1px solid #e4e4e7; border-radius: 6px; background: #fafafa; cursor: text; }
+    .skills-tags:focus-within { border-color: #0891b2; background: #fff; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 20px; padding: 3px 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #18181b; }
+    .tag .remove { cursor: pointer; color: #a1a1aa; font-size: 13px; line-height: 1; padding: 0 1px; }
+    .tag .remove:hover { color: #dc2626; }
+    .tag-input { border: none; outline: none; background: transparent; font-family: 'Barlow', system-ui; font-size: 14px; min-width: 120px; color: #18181b; padding: 2px 4px; }
+
+    /* Palette picker */
+    .palette-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .palette-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color .12s, transform .12s; position: relative; }
+    .palette-swatch:hover { transform: scale(1.12); }
+    .palette-swatch.selected { border-color: #18181b; }
+
+    /* Submit */
+    .ob-submit { margin-top: 28px; }
+    .btn-submit { background: #0891b2; color: #fff; border: none; border-radius: 8px; padding: 12px 32px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: background .15s; }
+    .btn-submit:hover { background: #0e7490; }
+    .btn-submit:disabled { background: #a1a1aa; cursor: not-allowed; }
+
+    /* Result card */
+    .ob-result { display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 24px 28px; margin-top: 20px; }
+    .ob-result.visible { display: block; }
+    .ob-result .res-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #059669; font-weight: 700; margin-bottom: 10px; }
+    .ob-result h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .06em; color: #14532d; margin: 0 0 8px; }
+    .ob-result .res-url { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #059669; margin-bottom: 16px; word-break: break-all; }
+    .ob-result .res-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .ob-result a { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; text-decoration: none; transition: all .12s; }
+    .ob-result .btn-view { background: #059669; color: #fff; }
+    .ob-result .btn-view:hover { background: #047857; }
+    .ob-result .btn-portal { background: none; border: 1px solid #86efac; color: #059669; }
+    .ob-result .btn-portal:hover { background: rgba(5,150,105,.08); }
+
+    /* Error */
+    .ob-error { display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px 18px; margin-top: 16px; font-size: 14px; color: #dc2626; }
+    .ob-error.visible { display: block; }
+
+    /* PDF upload zone */
+    .upload-zone { border: 2px dashed #e4e4e7; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: border-color .12s, background .12s; background: #fafafa; }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: #0891b2; background: rgba(8,145,178,.04); }
+    .upload-zone .uz-icon { font-size: 28px; margin-bottom: 6px; }
+    .upload-zone .uz-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #71717a; margin-bottom: 4px; }
+    .upload-zone .uz-hint { font-size: 12px; color: #a1a1aa; }
+    .upload-zone .uz-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; background: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 6px; }
+    .upload-zone.has-file { border-color: #86efac; background: #f0fdf4; }
+    .upload-zone.has-file .uz-label { color: #059669; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/portal.html" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <div id="user-area"></div>
+  </div>
+</header>
+
+<main>
+<div class="ob-wrap">
+
+  <div class="ob-header">
+    <div class="label">Admin · Partner Onboarding</div>
+    <h1>ONBOARD A NEW PARTNER</h1>
+    <p>Fill in the partner's details to generate their profile page, register them on the platform, and send their welcome email automatically.</p>
+  </div>
+
+  <form id="ob-form" autocomplete="off">
+
+    <!-- Step 1: Type -->
+    <div class="ob-card">
+      <h2><span class="step">1</span> Partner type</h2>
+      <div class="type-toggle">
+        <div class="type-btn active" data-type="individual" onclick="setType('individual')">
+          <div class="tb-icon">👤</div>
+          <div class="tb-name">Individual</div>
+          <div class="tb-desc">Graduate, freelancer, or solo consultant. Profile private by default.</div>
+        </div>
+        <div class="type-btn" data-type="org" onclick="setType('org')">
+          <div class="tb-icon">🏢</div>
+          <div class="tb-name">Organisation</div>
+          <div class="tb-desc">Company or team. Profile visible to all partners by default.</div>
+        </div>
+      </div>
+      <input type="hidden" id="type" value="individual">
+    </div>
+
+    <!-- Step 2: Identity -->
+    <div class="ob-card">
+      <h2><span class="step">2</span> Identity</h2>
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" id="firstName" placeholder="James" required>
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" id="lastName" placeholder="Grant" required>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="email" placeholder="james@example.com" required>
+          <span class="hint">Used for platform login and welcome email</span>
+        </div>
+        <div class="field">
+          <label>LinkedIn URL <span class="opt">(optional)</span></label>
+          <input type="url" id="linkedinUrl" placeholder="https://linkedin.com/in/...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Profile content -->
+    <div class="ob-card">
+      <h2><span class="step">3</span> Profile content</h2>
+      <div class="field-row full" style="margin-bottom:16px">
+        <div class="field">
+          <label>Bio / Summary <span class="opt">(optional — paste from LinkedIn or write your own)</span></label>
+          <textarea id="bio" placeholder="Software Engineering graduate with a keen interest in building scalable, intuitive applications..."></textarea>
+        </div>
+      </div>
+      <div class="field">
+        <label>Skills <span class="opt">(type and press Enter or comma)</span></label>
+        <div class="skills-tags" id="skills-tags" onclick="document.getElementById('tag-input').focus()">
+          <input type="text" id="tag-input" class="tag-input" placeholder="e.g. AWS, Cloudflare, TypeScript">
+        </div>
+        <input type="hidden" id="skills">
+      </div>
+    </div>
+
+    <!-- Step 4: CV Upload -->
+    <div class="ob-card">
+      <h2><span class="step">4</span> CV / Experience <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;font-weight:400;margin-left:8px">Optional</span></h2>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('cv-file').click()">
+        <div class="uz-icon">📄</div>
+        <div class="uz-label" id="uz-label">Drop CV / PDF here or click to browse</div>
+        <div class="uz-hint">PDF, max 10 MB</div>
+        <div class="uz-badge">Stored securely · Used to enhance profile in future</div>
+      </div>
+      <input type="file" id="cv-file" accept=".pdf" style="display:none">
+    </div>
+
+    <!-- Step 5: Profile colour -->
+    <div class="ob-card">
+      <h2><span class="step">5</span> Profile colour</h2>
+      <p style="font-size:13px;color:#71717a;margin-bottom:14px">Pick a colour palette for the partner's profile page. Each one is unique.</p>
+      <div class="palette-grid" id="palette-grid"></div>
+      <input type="hidden" id="paletteIndex" value="0">
+    </div>
+
+    <!-- Submit -->
+    <div class="ob-submit">
+      <button type="submit" class="btn-submit" id="submit-btn">Generate profile &amp; send welcome email →</button>
+    </div>
+
+  </form>
+
+  <div class="ob-result" id="ob-result">
+    <div class="res-label">✓ Partner onboarded</div>
+    <h3 id="res-name"></h3>
+    <div class="res-url" id="res-url"></div>
+    <div class="res-actions">
+      <a id="res-view" href="#" target="_blank" class="btn-view">View profile ↗</a>
+      <a href="/partners/index.html" class="btn-portal">Partners index</a>
+      <a href="/onboard.html" class="btn-portal">Onboard another</a>
+    </div>
+  </div>
+
+  <div class="ob-error" id="ob-error"></div>
+
+</div>
+</main>
+
+<script>
+// ── Type toggle ──────────────────────────────────────────────────
+function setType(t) {
+  document.getElementById('type').value = t;
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === t);
+  });
+}
+
+// ── Skills tags ──────────────────────────────────────────────────
+const tagInput = document.getElementById('tag-input');
+const tagsContainer = document.getElementById('skills-tags');
+const skillsHidden = document.getElementById('skills');
+let tags = [];
+
+function renderTags() {
+  // Remove existing tags (not the input)
+  tagsContainer.querySelectorAll('.tag').forEach(t => t.remove());
+  tags.forEach((tag, i) => {
+    const el = document.createElement('span');
+    el.className = 'tag';
+    el.innerHTML = `${tag} <span class="remove" data-i="${i}">×</span>`;
+    tagsContainer.insertBefore(el, tagInput);
+  });
+  tagsContainer.querySelectorAll('.remove').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); tags.splice(+btn.dataset.i, 1); renderTags(); syncSkills(); });
+  });
+  syncSkills();
+}
+
+function addTag(val) {
+  const clean = val.trim().replace(/,+$/, '').trim();
+  if (clean && !tags.includes(clean) && tags.length < 8) {
+    tags.push(clean);
+    renderTags();
+  }
+}
+
+function syncSkills() { skillsHidden.value = tags.join(', '); }
+
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; }
+  if (e.key === 'Backspace' && !tagInput.value && tags.length) { tags.pop(); renderTags(); }
+});
+tagInput.addEventListener('blur', () => { if (tagInput.value.trim()) { addTag(tagInput.value); tagInput.value = ''; } });
+
+// Pre-fill suggested tags for individual partners
+function prefillSuggestedTags() {
+  if (document.getElementById('type').value === 'individual') {
+    // Suggestion row
+  }
+}
+
+// ── Palette picker ───────────────────────────────────────────────
+const PALETTES = [
+  { p: '#1A1040', a: '#7C3AED', label: 'Violet' },
+  { p: '#0C2A1A', a: '#10B981', label: 'Emerald' },
+  { p: '#0D1F2D', a: '#0EA5E9', label: 'Sky' },
+  { p: '#2D1B0E', a: '#C4622D', label: 'Amber' },
+  { p: '#2A1F3D', a: '#C0405E', label: 'Rose' },
+  { p: '#0F2D2D', a: '#0D9488', label: 'Teal' },
+  { p: '#1A1A2E', a: '#3B82F6', label: 'Blue' },
+  { p: '#1C200E', a: '#84CC16', label: 'Lime' },
+];
+
+const grid = document.getElementById('palette-grid');
+const palIdx = document.getElementById('paletteIndex');
+
+PALETTES.forEach((pal, i) => {
+  const sw = document.createElement('div');
+  sw.className = 'palette-swatch' + (i === 0 ? ' selected' : '');
+  sw.title = pal.label;
+  sw.style.cssText = `background: linear-gradient(135deg, ${pal.p} 50%, ${pal.a} 50%)`;
+  sw.addEventListener('click', () => {
+    document.querySelectorAll('.palette-swatch').forEach(s => s.classList.remove('selected'));
+    sw.classList.add('selected');
+    palIdx.value = i;
+  });
+  grid.appendChild(sw);
+});
+
+// ── CV upload ────────────────────────────────────────────────────
+const cvInput = document.getElementById('cv-file');
+const uploadZone = document.getElementById('upload-zone');
+cvInput.addEventListener('change', () => {
+  const f = cvInput.files[0];
+  if (f) {
+    uploadZone.classList.add('has-file');
+    document.getElementById('uz-label').textContent = f.name;
+  }
+});
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') {
+    cvInput.files = e.dataTransfer.files;
+    uploadZone.classList.add('has-file');
+    document.getElementById('uz-label').textContent = f.name;
+  }
+});
+
+// ── Form submit ──────────────────────────────────────────────────
+document.getElementById('ob-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const errEl = document.getElementById('ob-error');
+  const resultEl = document.getElementById('ob-result');
+
+  btn.disabled = true;
+  btn.textContent = 'Generating profile…';
+  errEl.classList.remove('visible');
+  resultEl.classList.remove('visible');
+
+  // Flush any pending tag input
+  if (tagInput.value.trim()) { addTag(tagInput.value); tagInput.value = ''; }
+
+  const payload = {
+    firstName:    document.getElementById('firstName').value.trim(),
+    lastName:     document.getElementById('lastName').value.trim(),
+    email:        document.getElementById('email').value.trim().toLowerCase(),
+    linkedinUrl:  document.getElementById('linkedinUrl').value.trim(),
+    type:         document.getElementById('type').value,
+    bio:          document.getElementById('bio').value.trim(),
+    skills:       skillsHidden.value,
+    paletteIndex: parseInt(palIdx.value, 10),
+  };
+
+  try {
+    const res = await fetch('/api/partner/onboard', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || `HTTP ${res.status}`);
+    }
+
+    document.getElementById('res-name').textContent = `${payload.firstName} ${payload.lastName}`.toUpperCase();
+    document.getElementById('res-url').textContent = data.profileUrl;
+    document.getElementById('res-view').href = data.previewUrl;
+    resultEl.classList.add('visible');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  } catch (err) {
+    errEl.textContent = err.message || 'Something went wrong. Please try again.';
+    errEl.classList.add('visible');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Generate profile & send welcome email →';
+  }
+});
+</script>
+
+<script src="/portal.js"></script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

@@ -1,26 +1,10 @@
-// /api/partner/invite
-//
-// POST  { partnerKey, email }              → grant invite
-// DELETE { partnerKey, email }             → revoke invite
-// GET   ?key=xxx                           → list invites + access log for that partner
+// POST /api/partner/invite — grant access to an email
+// DELETE { partnerKey, email } — revoke access
+// GET   ?key=xxx — list invites + access log for that partner
 //
 // Only the partner's owners or admins can manage invites.
 
-const PARTNER_REGISTRY = {
-  'andile':          { owners: ['albert@andilesolutions.com','neil@andilesolutions.com','craigl@andilesolutions.com'] },
-  'vibecrafters':    { owners: ['hello@vibecrafters.co.za','vibecrafterza@gmail.com'] },
-  'agilex':          { owners: ['michael@agilex.co.za'] },
-  'gridlineprop':    { owners: ['info@gridlineprop.co.za'] },
-  'scanman':         { owners: ['info@scanman.co.za'] },
-  'proximity-green': { owners: ['info@proximity-green.co.za'] },
-  'dronescan':       { owners: ['info@dronescan.co.za'] },
-  'hyram':           { owners: ['hyramserretta20@gmail.com'] },
-  'carla':           { owners: ['carladeabreu@outlook.com'] },
-  'nicola':          { owners: ['nicola@gananda.net'] },
-  '20crm':           { owners: ['craig@2nth.ai'] },
-};
-
-const ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
+import { PARTNER_REGISTRY, ADMIN_EMAILS } from '../../lib/registry.js';
 
 function parseCookie(header, name) {
   const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
@@ -42,11 +26,10 @@ async function resolveSession(request, env) {
 function canManage(session, partnerKey) {
   if (!session) return false;
   if (ADMIN_EMAILS.includes(session.email) || session.role === 'admin') return true;
-  const partner = PARTNER_REGISTRY[partnerKey];
-  return partner && partner.owners.includes(session.email);
+  return PARTNER_REGISTRY[partnerKey]?.owners.includes(session.email) ?? false;
 }
 
-// GET /api/partner/invite?key=xxx — list invites and recent access log
+// GET /api/partner/invite?key=xxx
 export async function onRequestGet(context) {
   const { request, env } = context;
   const session = await resolveSession(request, env);
@@ -55,7 +38,6 @@ export async function onRequestGet(context) {
   if (!key || !PARTNER_REGISTRY[key]) return Response.json({ error: 'Unknown partner key' }, { status: 404 });
   if (!canManage(session, key)) return Response.json({ error: 'Forbidden' }, { status: 403 });
 
-  // List all invites for this partner
   const inviteList = await env.KV.list({ prefix: `partner_invite:${key}:` });
   const invites = await Promise.all(
     inviteList.keys.map(async ({ name }) => {
@@ -64,7 +46,6 @@ export async function onRequestGet(context) {
     })
   );
 
-  // List recent access log entries (last 50)
   const logList = await env.KV.list({ prefix: `partner_access:${key}:` });
   const logs = await Promise.all(
     logList.keys.slice(-50).map(async ({ name }) => {
@@ -80,7 +61,7 @@ export async function onRequestGet(context) {
   });
 }
 
-// POST /api/partner/invite — grant access to an email
+// POST /api/partner/invite
 export async function onRequestPost(context) {
   const { request, env } = context;
   const session = await resolveSession(request, env);
@@ -94,8 +75,6 @@ export async function onRequestPost(context) {
   if (!canManage(session, partnerKey)) return Response.json({ error: 'Forbidden' }, { status: 403 });
 
   const normalEmail = email.toLowerCase().trim();
-  const kvKey = `partner_invite:${partnerKey}:${normalEmail}`;
-
   const invite = {
     partnerKey,
     email: normalEmail,
@@ -104,11 +83,11 @@ export async function onRequestPost(context) {
     active: true,
   };
 
-  await env.KV.put(kvKey, JSON.stringify(invite));
+  await env.KV.put(`partner_invite:${partnerKey}:${normalEmail}`, JSON.stringify(invite));
   return Response.json({ granted: true, invite });
 }
 
-// DELETE /api/partner/invite — revoke access
+// DELETE /api/partner/invite
 export async function onRequestDelete(context) {
   const { request, env } = context;
   const session = await resolveSession(request, env);
@@ -124,14 +103,13 @@ export async function onRequestDelete(context) {
   const normalEmail = email.toLowerCase().trim();
   const kvKey = `partner_invite:${partnerKey}:${normalEmail}`;
 
-  // Mark as revoked (keep record for audit) rather than deleting
   const existing = await env.KV.get(kvKey);
   let invite = {};
   try { invite = existing ? JSON.parse(existing) : {}; } catch { /* ignore */ }
 
-  invite.active     = false;
-  invite.revokedBy  = session.email;
-  invite.revokedAt  = new Date().toISOString();
+  invite.active    = false;
+  invite.revokedBy = session.email;
+  invite.revokedAt = new Date().toISOString();
 
   await env.KV.put(kvKey, JSON.stringify(invite));
   return Response.json({ revoked: true, email: normalEmail });

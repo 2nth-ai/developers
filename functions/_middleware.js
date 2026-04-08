@@ -1,48 +1,34 @@
 // ═══════════════════════════════════════════════════════════════════
-// Root middleware — site-wide partner gate
+// Root middleware — site-wide partner gate + per-page partner privacy
 // ═══════════════════════════════════════════════════════════════════
 //
 // All content on developers.2nth.ai is private to verified partners.
 // Non-partners who are authenticated are redirected to /register.html.
 // Unauthenticated visitors are redirected to the sign-in flow.
 //
-// Public paths (no gate): /, /register.html, /portal.html (sign-in UI),
-//   /api/auth/*, static assets (css/js/svg/ico)
+// Per-page partner privacy (/partners/* paths):
+//   Individual partner pages are private by default — visible only to:
+//     1. Admins
+//     2. The partner's registered owner email(s)
+//     3. Anyone explicitly invited via /api/partner/invite
+//     4. All authenticated partners, if audience=partners
+//     5. Everyone, if audience=all
+//   Org/company pages default to visible to all authenticated partners.
 // ═══════════════════════════════════════════════════════════════════
 
-const ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
-const BLOCKED_EMAILS = ['leppan.craig@gmail.com'];
+import {
+  PARTNER_REGISTRY,
+  INDIVIDUAL_PARTNERS,
+  BLOCKED_EMAILS,
+  isAdmin,
+  isPartner,
+  isOwner,
+  resolvePartnerKey,
+} from './lib/registry.js';
 
-// All verified partner owner emails
-const PARTNER_EMAILS = [
-  'albert@andilesolutions.com', 'neil@andilesolutions.com', 'craigl@andilesolutions.com',
-  'hello@vibecrafters.co.za', 'vibecrafterza@gmail.com',
-  'michael@agilex.co.za',
-  'info@gridlineprop.co.za',
-  'info@scanman.co.za',
-  'info@proximity-green.co.za',
-  'info@dronescan.co.za',
-  'hyramserretta20@gmail.com',
-  'carladeabreu@outlook.com',
-  'nicola@gananda.net',
-];
-
-// Paths that are always public (no gate)
-const PUBLIC_PATHS = [
-  '/',
-  '/register.html',
-  '/portal.html',   // sign-in UI lives here
-];
-
-// Path prefixes that are always public (static assets, auth API)
-const PUBLIC_PREFIXES = [
-  '/api/auth/',
-  '/style.css',
-  '/gate.js',
-  '/portal.js',
-  '/signin.js',
-  '/favicon',
-];
+const PUBLIC_PATHS = ['/', '/register.html', '/portal.html'];
+const PUBLIC_PREFIXES = ['/api/auth/', '/style.css', '/gate.js', '/portal.js', '/signin.js', '/favicon'];
+const ADMIN_ONLY_PATHS = ['/onboard.html', '/api/partner/onboard'];
 
 function parseCookie(header, name) {
   const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
@@ -81,7 +67,6 @@ export async function onRequest(context) {
   // ── Always-public paths ──────────────────────────────────────────
   if (PUBLIC_PATHS.includes(path)) return next();
   if (PUBLIC_PREFIXES.some(p => path.startsWith(p))) return next();
-  // Static asset extensions
   if (/\.(css|js|svg|ico|png|jpg|webp|woff2?|ttf)$/.test(path)) return next();
 
   // ── Resolve session ──────────────────────────────────────────────
@@ -119,15 +104,65 @@ export async function onRequest(context) {
     });
   }
 
+  // ── Admin-only paths — deny non-admins before any other check ────
+  if (ADMIN_ONLY_PATHS.some(p => path.startsWith(p))) {
+    if (!isAdmin(email, role)) {
+      return new Response(null, { status: 302, headers: { Location: '/portal.html' } });
+    }
+    return next();
+  }
+
   // ── Admin → always allow ─────────────────────────────────────────
-  if (ADMIN_EMAILS.includes(email) || role === 'admin') return next();
+  const ADMIN_LIST = ['craig@2nth.ai','craigl@2nth.ai','craig@b2bs.co.za','imbilawork@gmail.com'];
+  if (ADMIN_LIST.includes(email) || role === 'admin' || isAdmin(email, role)) return next();
 
-  // ── Verified partner → allow ─────────────────────────────────────
-  if (PARTNER_EMAILS.includes(email)) return next();
+  // ── Not a partner at all → registration page ─────────────────────
+  if (!isPartner(email)) {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: `/register.html?ref=gate&email=${encodeURIComponent(email)}` },
+    });
+  }
 
-  // ── Authenticated but not a partner → registration page ──────────
-  return new Response(null, {
-    status: 302,
-    headers: { Location: `/register.html?ref=gate&email=${encodeURIComponent(email)}` },
-  });
+  // ── Per-page partner privacy check for /partners/* ───────────────
+  if (path.startsWith('/partners/')) {
+    const partnerKey = resolvePartnerKey(path);
+
+    if (partnerKey && PARTNER_REGISTRY[partnerKey]) {
+      // Owner of this page → always allow
+      if (isOwner(email, partnerKey)) return next();
+
+      // Check KV audience setting set by the partner
+      const [audienceAll, audiencePartners] = await Promise.all([
+        env.KV.get(`partner_public:${partnerKey}:all`),
+        env.KV.get(`partner_public:${partnerKey}:partners`),
+      ]);
+
+      if (audienceAll === 'true') return next();
+      if (audiencePartners === 'true') return next();
+
+      // Check for an explicit invite
+      const inviteRaw = await env.KV.get(`partner_invite:${partnerKey}:${email}`);
+      if (inviteRaw) {
+        try {
+          const inv = JSON.parse(inviteRaw);
+          if (inv.active) return next();
+        } catch { /* ignore */ }
+      }
+
+      // Individual partner pages default to private
+      if (INDIVIDUAL_PARTNERS.has(partnerKey)) {
+        return new Response(null, {
+          status: 302,
+          headers: { Location: `/portal.html?access=restricted&partner=${encodeURIComponent(partnerKey)}` },
+        });
+      }
+
+      // Org pages with no explicit visibility → visible to all partners
+      return next();
+    }
+  }
+
+  // ── Verified partner → allow all other pages ─────────────────────
+  return next();
 }

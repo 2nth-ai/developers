@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robert Fairon — 2nth.ai Technology Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:  #0D1F2D;
+      --primary2: #071218;
+      --accent:   #0EA5E9;
+      --accent2:  #0284C7;
+      --teal:     #14B8A6;
+      --bg:       #FFFFFF;
+      --surface:  #F4F9FC;
+      --border:   #DDE8F0;
+      --border2:  #A8C4D8;
+      --text:     #0A1824;
+      --muted:    #2E4A5E;
+      --faint:    #7A9CB0;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #0D1F2D 0%, #0EA5E9 40%, #14B8A6 70%, #0D1F2D 100%); }
+    nav { background: #0D1F2D; border-bottom: 1px solid rgba(14,165,233,0.2); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #0EA5E9; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #0EA5E9; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Hero ── */
+    .hero { padding: 68px 0 56px; background: linear-gradient(160deg, #EDF6FC 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .partner-lockup { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #0D1F2D, #0EA5E9); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--display); font-size: 24px; letter-spacing: 2px; color: #fff; }
+    .partner-name { font-family: var(--display); font-size: clamp(30px, 4.5vw, 52px); letter-spacing: 1.5px; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .partner-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .partner-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .badge-tech { background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.3); color: var(--accent); }
+    .badge-primary { background: rgba(13,31,45,0.07); border: 1px solid rgba(13,31,45,0.2); color: var(--primary); }
+    .badge-teal { background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.3); color: var(--teal); }
+
+    /* ── Stats ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 28px 0; }
+    .stat { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .stat .value { font-family: var(--display); font-size: 28px; color: var(--primary); }
+    .stat .label { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-top: 2px; }
+
+    /* ── Expertise grid ── */
+    .expertise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 24px 0; }
+    .expertise-card { background: var(--primary); border-radius: 10px; padding: 22px; }
+    .expertise-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .expertise-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    .expertise-card p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+
+    /* ── Partnership value ── */
+    .value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    @media (max-width: 600px) { .value-grid { grid-template-columns: 1fr; } }
+    .value-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+    .value-card h4 { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .value-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+    /* ── Consulting model ── */
+    .model-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .model-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .model-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .model-who { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .model-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Daemon spotlight ── */
+    .daemon-box { background: linear-gradient(135deg, #0D1F2D 0%, #0f2a3d 100%); border-radius: 12px; padding: 32px; margin: 24px 0; display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+    .daemon-logo-area { flex-shrink: 0; }
+    .daemon-wordmark { font-family: var(--display); font-size: 28px; letter-spacing: 4px; color: #fff; margin-bottom: 4px; }
+    .daemon-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); }
+    .daemon-body { flex: 1; min-width: 200px; }
+    .daemon-body p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 12px; }
+    .daemon-award { display: inline-flex; align-items: center; gap: 6px; background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.3); border-radius: 6px; padding: 6px 12px; font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+
+    /* ── CTA ── */
+    .cta-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary2); text-decoration: none; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent2); text-decoration: none; }
+    .btn-outline { background: none; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+    /* ── Concept banner ── */
+    .concept-banner { background: linear-gradient(90deg, rgba(14,165,233,0.08), rgba(20,184,166,0.08)); border: 1px solid rgba(14,165,233,0.2); border-radius: 8px; padding: 14px 20px; margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
+    .concept-banner .label { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+    .concept-banner p { font-size: 13px; color: var(--muted); margin: 0; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+  </style>
+</head>
+<body data-partner="robert-fairon">
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <span class="current">Robert Fairon</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap">
+
+    <div class="concept-banner">
+      <span class="label">Concept</span>
+      <p>This page is a draft partnership proposal. It outlines how Robert Fairon and 2nth.ai could work together to bring edge AI into enterprise technology engagements.</p>
+    </div>
+
+    <div class="partner-lockup">
+      <div class="partner-avatar">RF</div>
+      <div>
+        <div class="partner-name">ROBERT FAIRON</div>
+        <div class="partner-title">Technology Consultant · Daemon · 2nth.ai Technology Partner</div>
+        <div class="partner-meta">
+          <span>Johannesburg, South Africa</span>
+          <span>|</span>
+          <span>Cloud · AI · Software Engineering · Enterprise Tech</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-tech">Technology Partner</span>
+          <span class="badge badge-primary">Cloud &amp; Platforms</span>
+          <span class="badge badge-primary">AI Consulting</span>
+          <span class="badge badge-teal">Enterprise</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.8">
+      Robert Fairon is a technology consultant at Daemon — a leading AI and technology consultancy operating across South Africa, the UK, and beyond. With deep experience in cloud platforms, software engineering, and enterprise AI delivery, Robert brings the implementation muscle that turns AI strategy into working systems. As a 2nth.ai Technology Partner, he bridges the gap between enterprise-grade engineering and the edge-AI capabilities that 2nth.ai delivers.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="value">AWS</div>
+        <div class="label">Certified Partner</div>
+      </div>
+      <div class="stat">
+        <div class="value">3+</div>
+        <div class="label">Sectors Served</div>
+      </div>
+      <div class="stat">
+        <div class="value">JHB</div>
+        <div class="label">Based in SA</div>
+      </div>
+      <div class="stat">
+        <div class="value">AI</div>
+        <div class="label">First Engineering</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DAEMON SPOTLIGHT ── -->
+<section>
+  <div class="wrap">
+    <h2>Daemon</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin:12px 0 24px">
+      Robert operates within Daemon's engineering practice — one of the most recognised technology and AI consultancies in the EMEA region.
+    </p>
+
+    <div class="daemon-box">
+      <div class="daemon-logo-area">
+        <div class="daemon-wordmark">DAEMON</div>
+        <div class="daemon-tag">Technology &amp; AI Consultancy</div>
+      </div>
+      <div class="daemon-body">
+        <p>
+          Daemon delivers software engineering, cloud and platform modernisation, and AI-first solutions to enterprise clients across retail, financial services, and public sector. Headquartered in London with operations in South Africa, Daemon combines deep engineering craft with modern AI capabilities.
+        </p>
+        <span class="daemon-award">&#127942; EMEA AWS Innovation Partner of the Year — 2025</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERTISE ── -->
+<section>
+  <div class="wrap">
+    <h2>Areas of expertise</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin:12px 0 24px">
+      Enterprise technology consulting and delivery, with a focus on cloud-native architecture and practical AI implementation at scale.
+    </p>
+    <div class="expertise-grid">
+      <div class="expertise-card">
+        <div class="icon">☁️</div>
+        <h4>Cloud &amp; Platforms</h4>
+        <p>Cloud-native architecture on AWS and Azure — infrastructure modernisation, platform engineering, and scalable deployment pipelines for enterprise clients.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🤖</div>
+        <h4>AI-First Engineering</h4>
+        <p>Building AI into the engineering workflow — from LLM integration and intelligent automation to ML pipelines and AI-powered product features at production scale.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">⚙️</div>
+        <h4>Software Engineering</h4>
+        <p>Full-stack engineering leadership across modern tech stacks. Rapid prototyping, architecture design, and delivery of complex enterprise software systems.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🌍</div>
+        <h4>Enterprise Delivery</h4>
+        <p>Technology strategy and delivery across retail, financial services, and public sector — managing stakeholders, complexity, and delivery risk in large-scale programmes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PARTNERSHIP VALUE ── -->
+<section>
+  <div class="wrap">
+    <h2>Why this partnership</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin:12px 0 24px">
+      Robert's enterprise engineering background and 2nth.ai's edge-AI platform create a compelling joint offer for clients who need AI that is both strategically sound and technically deliverable.
+    </p>
+
+    <div class="value-grid">
+      <div class="value-card">
+        <h4>Enterprise Credibility</h4>
+        <p>Daemon's client roster and delivery track record gives enterprise buyers the confidence that AI initiatives will be grounded in solid engineering practice — not just demos.</p>
+      </div>
+      <div class="value-card">
+        <h4>Edge AI Infrastructure</h4>
+        <p>2nth.ai brings Cloudflare-native AI infrastructure: Workers AI for real-time classification, Claude via AI Gateway for depth, D1 for persistence, and a growing skills catalog — all at the edge.</p>
+      </div>
+      <div class="value-card">
+        <h4>South Africa Focus</h4>
+        <p>Both parties are present in the South African market — ideally positioned to help local enterprises and public sector clients adopt AI in a way that is practical, affordable, and compliance-aware.</p>
+      </div>
+      <div class="value-card">
+        <h4>Faster Time to Value</h4>
+        <p>2nth.ai's skills catalog and edge deployment model means Robert can take AI capabilities to clients in days, not months — deploying real workflows without heavyweight infrastructure build-outs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONSULTING MODEL ── -->
+<section>
+  <div class="wrap">
+    <h2>How the partnership works</h2>
+    <div class="model-box">
+      <div class="model-row">
+        <div class="model-who">Robert</div>
+        <div class="model-what">Enterprise technology advisory, AI strategy, cloud architecture, and delivery leadership. Owns the client relationship and scopes AI engagements against real business problems. Brings Daemon's engineering depth and sector credibility to every engagement.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what">Edge AI infrastructure (Cloudflare Workers AI → Claude via AI Gateway), the 2nth.ai skills catalog, D1 + KV + Vectorize for data persistence and RAG, and the 2nth developer platform. Platform SLA and AI model cost coverage for joint clients.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Client</div>
+        <div class="model-what">Receives an AI engagement led by an experienced enterprise technologist, with production-ready AI infrastructure underneath. Fast time to value, grounded in engineering rigour. No vendor lock-in — the client's systems of record stay authoritative.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Sectors</div>
+        <div class="model-what">Retail, financial services, public sector, and any enterprise that needs AI embedded into real workflows — not just a chatbot layer. South Africa priority, with the ability to scale across EMEA through Daemon's network.</div>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="https://www.linkedin.com/in/robert-fairon-b663888b/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn ↗</a>
+      <a href="https://www.dae.mn" target="_blank" rel="noopener" class="btn btn-outline">Daemon ↗</a>
+      <a href="https://2nth.ai" class="btn btn-accent">Sign in to 2nth.ai ↗</a>
+      <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI DEVELOPERS</div>
+      <div class="footer-links">
+        <a href="/portal.html">Portal</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://2nth.ai">Platform</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/partner-visibility.js"></script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

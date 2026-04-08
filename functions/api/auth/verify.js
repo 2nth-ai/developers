@@ -1,5 +1,7 @@
 // POST /api/auth/verify — validate OTP code, create session
 
+import { ADMIN_EMAILS } from '../../lib/registry.js';
+
 export async function onRequestPost(context) {
   const { env, request } = context;
 
@@ -32,7 +34,7 @@ export async function onRequestPost(context) {
     id: sid,
     email,
     name: email.split('@')[0],
-    role: email === env.ADMIN_EMAIL ? 'admin' : 'developer',
+    role: ADMIN_EMAILS.includes(email) ? 'admin' : 'developer',
     tier: 'email',
   };
   await env.KV.put(`session:${sid}`, JSON.stringify(user), { expirationTtl: 60 * 60 * 24 * 30 });

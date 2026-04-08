@@ -67,6 +67,15 @@
 
     <h1>Developer Portal</h1>
 
+    <!-- Admin bar — only shown to admins via JS -->
+    <div id="admin-bar" style="display:none;align-items:center;justify-content:space-between;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;font-weight:700">&#128274; Admin</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="/onboard.html" style="display:inline-flex;align-items:center;gap:5px;background:#0891b2;color:#fff;padding:7px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none">&#43; Onboard partner</a>
+        <a href="/partners/index.html" style="display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid rgba(8,145,178,.3);color:#0891b2;padding:7px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none">Partners index</a>
+      </div>
+    </div>
+
     <div class="tab-bar">
       <div class="tab active" data-tab="start">Get started</div>
       <div class="tab" data-tab="showcase">Showcase</div>
@@ -384,8 +393,8 @@ example here
 // Showcase gate — show partner grid only to admins and verified partners
 document.addEventListener('sso:ready', function(e) {
   var user = e.detail;
-  var ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'imbilawork@gmail.com'];
-  // Verified partner emails (mirrors PARTNER_REGISTRY owners)
+  var ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'craig@b2bs.co.za', 'imbilawork@gmail.com'];
+  // Verified partner emails (mirrors PARTNER_REGISTRY owners in functions/lib/registry.js)
   var PARTNER_EMAILS = [
     'albert@andilesolutions.com','neil@andilesolutions.com','craigl@andilesolutions.com',
     'hello@vibecrafters.co.za','vibecrafterza@gmail.com',
@@ -397,11 +406,20 @@ document.addEventListener('sso:ready', function(e) {
     'hyramserretta20@gmail.com',
     'carladeabreu@outlook.com',
     'nicola@gananda.net',
+    'jamesgrant321@proton.me',
+    'robert.fairon@daemon.com',
+    'kath@ctrlfuture.co.za',
   ];
 
   var isAdmin   = ADMIN_EMAILS.includes(user.email) || user.role === 'admin';
   var isPartner = PARTNER_EMAILS.includes(user.email);
   var canView   = isAdmin || isPartner;
+
+  if (isAdmin) {
+    // Show admin onboard button
+    var adminBar = document.getElementById('admin-bar');
+    if (adminBar) adminBar.style.display = 'flex';
+  }
 
   if (canView) {
     // Show partner grid, hide gate
