@@ -1,12 +1,20 @@
-// SSO gate — validates 2nth_session via server, redirects to 2nth.ai if not signed in
-// Include this script in any page that requires authentication.
-// Set window.GATE_RETURN_PATH before including, or it defaults to the current page.
+// Auth gate — validates session, redirects to sign-in if not authenticated.
+// Include in any page that requires authentication.
+// Fires `sso:ready` event with the current user once validated.
 
 (async function () {
-  const signInUrl = '/?return=' + encodeURIComponent(window.location.pathname);
+  const params = new URLSearchParams(window.location.search);
+  const returnTo = params.get('return') || window.location.pathname;
+  const signInUrl = '/?return=' + encodeURIComponent(returnTo);
 
   try {
     const res = await fetch('/api/auth/session', { credentials: 'include' });
+
+    if (!res.ok) {
+      window.location.replace(signInUrl);
+      return;
+    }
+
     const data = await res.json();
 
     if (!data.user) {
