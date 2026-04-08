@@ -39,7 +39,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         from: '2nth.ai <hello@2nth.ai>',
-        to: ['craig@2nth.ai'],
+        to: ['imbilawork@gmail.com'],
         reply_to: email,
         subject: `[2NTH] Enquiry: ${company} — ${interest || 'general'}`,
         html: emailHtml,

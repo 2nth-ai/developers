@@ -22,7 +22,7 @@ export async function onRequestPost(context) {
       brandName: 'Proximity Green',
       brandColor: '#059669',
       portalUrl: 'https://proximity.green',
-      notifyTo: ['craig@proximity.green', 'craig@2nth.ai'],
+      notifyTo: ['craig@proximity.green', 'imbilawork@gmail.com'],
     },
   };
 
@@ -125,7 +125,7 @@ async function forwardTo2nth(env, body) {
     },
     body: JSON.stringify({
       from: '2nth.ai <hello@2nth.ai>',
-      to: ['craig@2nth.ai'],
+      to: ['imbilawork@gmail.com'],
       reply_to: body.email,
       subject: `[Registration] ${body.company} — ${body.partner || 'direct'}`,
       html: `<pre>${JSON.stringify(body, null, 2)}</pre>`,

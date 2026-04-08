@@ -29,7 +29,7 @@ function getKnownUser(email) {
 }
 
 function getReviewers(returnTo) {
-  var reviewers = ['craig@2nth.ai'];
+  var reviewers = ['imbilawork@gmail.com'];
   for (var route in ROUTE_REVIEWERS) {
     if (returnTo.includes(route)) {
       ROUTE_REVIEWERS[route].forEach(function(r) {

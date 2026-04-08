@@ -274,7 +274,7 @@ async function sendWelcomeEmail(env, { email, firstName, lastName, slug }) {
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: '2NTH Developers <hello@2nth.ai>',
-      to: [email, 'craig@b2bs.co.za'],
+      to: [email, 'imbilawork@gmail.com'],
       reply_to: 'craig@2nth.ai',
       subject: `Welcome to 2nth.ai — your build partner profile is ready, ${firstName}`,
       html,
