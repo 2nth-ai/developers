@@ -1,19 +1,13 @@
 // ═══════════════════════════════════════════════════════════════════
-// Root middleware — site-wide partner gate + per-page partner privacy
+// Root middleware — site-wide partner gate
 // ═══════════════════════════════════════════════════════════════════
 //
 // All content on developers.2nth.ai is private to verified partners.
-// Non-partners who are authenticated are redirected to /register.html.
-// Unauthenticated visitors are redirected to the sign-in flow.
-//
-// Per-page partner privacy (/partners/* paths):
-//   Individual partner pages are private by default — visible only to:
-//     1. Admins
-//     2. The partner's registered owner email(s)
-//     3. Anyone explicitly invited via /api/partner/invite
-//     4. All authenticated partners, if audience=partners
-//     5. Everyone, if audience=all
-//   Org/company pages default to visible to all authenticated partners.
+// Access tiers:
+//   1. Admin (ADMIN_EMAILS / role=admin)    → all pages
+//   2. Verified partner (in PARTNER_REGISTRY) → all pages + per-partner rules
+//   3. Authenticated non-partner           → /register.html
+//   4. Unauthenticated                     → sign-in (portal.html)
 // ═══════════════════════════════════════════════════════════════════
 
 import {
@@ -26,38 +20,11 @@ import {
   resolvePartnerKey,
 } from './lib/registry.js';
 
+import { resolveSession } from './lib/session.js';
+
 const PUBLIC_PATHS = ['/', '/register.html', '/portal.html'];
 const PUBLIC_PREFIXES = ['/api/auth/', '/style.css', '/gate.js', '/portal.js', '/signin.js', '/favicon'];
 const ADMIN_ONLY_PATHS = ['/onboard.html', '/api/partner/onboard'];
-
-function parseCookie(header, name) {
-  const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
-  return m ? m[1] : null;
-}
-
-function b64urlDecode(str) {
-  const padded = str.replace(/-/g, '+').replace(/_/g, '/');
-  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
-}
-
-async function getSSOEmail(cookie, secret) {
-  if (!secret || !cookie) return null;
-  const [h, p, s] = cookie.split('.');
-  if (!h || !p || !s) return null;
-  try {
-    const key = await crypto.subtle.importKey(
-      'raw', new TextEncoder().encode(secret),
-      { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
-    );
-    const valid = await crypto.subtle.verify(
-      'HMAC', key, b64urlDecode(s), new TextEncoder().encode(`${h}.${p}`)
-    );
-    if (!valid) return null;
-    const payload = JSON.parse(new TextDecoder().decode(b64urlDecode(p)));
-    if (!payload.sub || payload.exp < Math.floor(Date.now() / 1000)) return null;
-    return { email: payload.email, role: payload.role };
-  } catch { return null; }
-}
 
 export async function onRequest(context) {
   const { request, env, next } = context;
@@ -70,26 +37,13 @@ export async function onRequest(context) {
   if (/\.(css|js|svg|ico|png|jpg|webp|woff2?|ttf)$/.test(path)) return next();
 
   // ── Resolve session ──────────────────────────────────────────────
-  let email = null;
-  let role  = null;
-  const cookies = request.headers.get('Cookie') || '';
+  const { email, role, source } = await resolveSession(request, env);
 
-  const sid = parseCookie(cookies, 'sid');
-  if (sid && env.KV) {
-    const raw = await env.KV.get(`session:${sid}`);
-    if (raw) {
-      try { const s = JSON.parse(raw); email = s.email?.toLowerCase(); role = s.role; }
-      catch { /* ignore */ }
-    }
-  }
-
-  if (!email) {
-    const sso = await getSSOEmail(parseCookie(cookies, '2nth_session'), env.JWT_SECRET);
-    if (sso) { email = sso.email?.toLowerCase(); role = sso.role; }
-  }
+  console.log(`[gate] path=${path} email=${email || 'none'} role=${role || 'none'} source=${source || 'none'}`);
 
   // ── Not authenticated → sign in ──────────────────────────────────
   if (!email) {
+    console.log(`[gate] → redirect to sign-in (no session)`);
     return new Response(null, {
       status: 302,
       headers: { Location: `/portal.html?return=${encodeURIComponent(path)}` },
@@ -98,26 +52,32 @@ export async function onRequest(context) {
 
   // ── Blocked → hard deny ──────────────────────────────────────────
   if (BLOCKED_EMAILS.includes(email)) {
+    console.log(`[gate] → blocked email`);
     return new Response(null, {
       status: 302,
       headers: { Location: '/register.html?blocked=1' },
     });
   }
 
-  // ── Admin-only paths — deny non-admins before any other check ────
+  // ── Admin-only paths ─────────────────────────────────────────────
   if (ADMIN_ONLY_PATHS.some(p => path.startsWith(p))) {
     if (!isAdmin(email, role)) {
+      console.log(`[gate] → admin-only path, denied`);
       return new Response(null, { status: 302, headers: { Location: '/portal.html' } });
     }
+    console.log(`[gate] → admin-only path, allowed`);
     return next();
   }
 
   // ── Admin → always allow ─────────────────────────────────────────
-  const ADMIN_LIST = ['craig@2nth.ai','craigl@2nth.ai','craig@b2bs.co.za','imbilawork@gmail.com'];
-  if (ADMIN_LIST.includes(email) || role === 'admin' || isAdmin(email, role)) return next();
+  if (isAdmin(email, role)) {
+    console.log(`[gate] → admin, allowed`);
+    return next();
+  }
 
   // ── Not a partner at all → registration page ─────────────────────
   if (!isPartner(email)) {
+    console.log(`[gate] → not a partner, denied`);
     return new Response(null, {
       status: 302,
       headers: { Location: `/register.html?ref=gate&email=${encodeURIComponent(email)}` },
@@ -129,10 +89,11 @@ export async function onRequest(context) {
     const partnerKey = resolvePartnerKey(path);
 
     if (partnerKey && PARTNER_REGISTRY[partnerKey]) {
-      // Owner of this page → always allow
-      if (isOwner(email, partnerKey)) return next();
+      if (isOwner(email, partnerKey)) {
+        console.log(`[gate] → owner of ${partnerKey}, allowed`);
+        return next();
+      }
 
-      // Check KV audience setting set by the partner
       const [audienceAll, audiencePartners] = await Promise.all([
         env.KV.get(`partner_public:${partnerKey}:all`),
         env.KV.get(`partner_public:${partnerKey}:partners`),
@@ -141,7 +102,6 @@ export async function onRequest(context) {
       if (audienceAll === 'true') return next();
       if (audiencePartners === 'true') return next();
 
-      // Check for an explicit invite
       const inviteRaw = await env.KV.get(`partner_invite:${partnerKey}:${email}`);
       if (inviteRaw) {
         try {
@@ -150,19 +110,19 @@ export async function onRequest(context) {
         } catch { /* ignore */ }
       }
 
-      // Individual partner pages default to private
       if (INDIVIDUAL_PARTNERS.has(partnerKey)) {
+        console.log(`[gate] → individual partner page, denied`);
         return new Response(null, {
           status: 302,
           headers: { Location: `/portal.html?access=restricted&partner=${encodeURIComponent(partnerKey)}` },
         });
       }
 
-      // Org pages with no explicit visibility → visible to all partners
-      return next();
+      return next(); // Org page default: visible to all partners
     }
   }
 
   // ── Verified partner → allow all other pages ─────────────────────
+  console.log(`[gate] → verified partner, allowed`);
   return next();
 }

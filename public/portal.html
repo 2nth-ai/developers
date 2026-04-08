@@ -390,57 +390,39 @@ example here
 <script src="/gate.js"></script>
 <script src="/portal.js"></script>
 <script>
-// Showcase gate — show partner grid only to admins and verified partners
-document.addEventListener('sso:ready', function(e) {
-  var user = e.detail;
-  var ADMIN_EMAILS = ['craig@2nth.ai', 'craigl@2nth.ai', 'craig@b2bs.co.za', 'imbilawork@gmail.com'];
-  // Verified partner emails (mirrors PARTNER_REGISTRY owners in functions/lib/registry.js)
-  var PARTNER_EMAILS = [
-    'albert@andilesolutions.com','neil@andilesolutions.com','craigl@andilesolutions.com',
-    'hello@vibecrafters.co.za','vibecrafterza@gmail.com',
-    'michael@agilex.co.za',
-    'info@gridlineprop.co.za',
-    'info@scanman.co.za',
-    'info@proximity-green.co.za',
-    'info@dronescan.co.za',
-    'hyramserretta20@gmail.com',
-    'carladeabreu@outlook.com',
-    'nicola@gananda.net',
-    'jamesgrant321@proton.me',
-    'robert.fairon@daemon.com',
-    'kath@ctrlfuture.co.za',
-  ];
+// Showcase gate — uses /api/auth/me (server-side) so no hardcoded email lists here
+document.addEventListener('sso:ready', async function() {
+  try {
+    var meRes = await fetch('/api/auth/me', { credentials: 'include' });
+    var me = meRes.ok ? await meRes.json() : { isAdmin: false, isPartner: false };
 
-  var isAdmin   = ADMIN_EMAILS.includes(user.email) || user.role === 'admin';
-  var isPartner = PARTNER_EMAILS.includes(user.email);
-  var canView   = isAdmin || isPartner;
+    if (me.isAdmin) {
+      var adminBar = document.getElementById('admin-bar');
+      if (adminBar) adminBar.style.display = 'flex';
+    }
 
-  if (isAdmin) {
-    // Show admin onboard button
-    var adminBar = document.getElementById('admin-bar');
-    if (adminBar) adminBar.style.display = 'flex';
-  }
-
-  if (canView) {
-    // Show partner grid, hide gate
-    var grid = document.getElementById('showcase-grid');
-    if (grid) grid.style.display = '';
-    // Move all partner cards into the grid (they're already in it)
-    document.querySelectorAll('.partner-card[data-pending]').forEach(function(c) {
-      c.style.display = 'block';
-      var badge = c.querySelector('.pending-badge');
-      if (badge && isAdmin) {
-        badge.textContent = '\uD83D\uDD13 Admin preview';
-        badge.style.background = 'rgba(5,150,105,0.08)';
-        badge.style.borderColor = 'rgba(5,150,105,0.25)';
-        badge.style.color = '#047857';
-      } else if (badge) {
-        badge.remove();
-      }
-    });
-  } else {
-    // Redirect non-partners to partner registration page
-    window.location.replace('/register.html?ref=showcase');
+    if (me.isAdmin || me.isPartner) {
+      var grid = document.getElementById('showcase-grid');
+      if (grid) grid.style.display = '';
+      document.querySelectorAll('.partner-card[data-pending]').forEach(function(c) {
+        c.style.display = 'block';
+        var badge = c.querySelector('.pending-badge');
+        if (badge && me.isAdmin) {
+          badge.textContent = 'Admin preview';
+          badge.style.background = 'rgba(5,150,105,0.08)';
+          badge.style.borderColor = 'rgba(5,150,105,0.25)';
+          badge.style.color = '#047857';
+        } else if (badge) {
+          badge.remove();
+        }
+      });
+    } else {
+      // Authenticated but not a partner — show the apply form
+      var gate = document.getElementById('showcase-gate');
+      if (gate) gate.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('[showcase] /api/auth/me failed:', err);
   }
 });
 

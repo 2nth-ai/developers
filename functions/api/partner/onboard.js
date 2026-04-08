@@ -7,6 +7,7 @@
 //   paletteIndex (optional, 0-7)
 
 import { ADMIN_EMAILS, PARTNER_REGISTRY } from '../../lib/registry.js';
+import { resolveSession } from '../../lib/session.js';
 
 // 8 curated colour palettes for individual partner pages
 const PALETTES = [
@@ -19,23 +20,6 @@ const PALETTES = [
   { p: '#1A1A2E', a: '#3B82F6', a2: '#2563EB', s: '#F5F7FF', b: '#DDEAFF', b2: '#B0CAFF', f: '#7A9ACC', grad: '#EEF3FF' },
   { p: '#1C200E', a: '#84CC16', a2: '#65A30D', s: '#F7FAF4', b: '#D8ECC0', b2: '#B8D894', f: '#7AAA54', grad: '#EEFAE4' },
 ];
-
-function parseCookie(header, name) {
-  const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
-  return m ? m[1] : null;
-}
-
-async function resolveSession(request, env) {
-  const sid = parseCookie(request.headers.get('Cookie') || '', 'sid');
-  if (sid && env.KV) {
-    const raw = await env.KV.get(`session:${sid}`);
-    if (raw) {
-      try { const s = JSON.parse(raw); return { email: s.email?.toLowerCase(), role: s.role }; }
-      catch { /* ignore */ }
-    }
-  }
-  return null;
-}
 
 function toSlug(first, last) {
   return `${first}-${last}`
@@ -303,7 +287,7 @@ export async function onRequestPost(context) {
 
   // Admin only
   const session = await resolveSession(request, env);
-  if (!session || (!ADMIN_EMAILS.includes(session.email) && session.role !== 'admin')) {
+  if (!session.email || (!ADMIN_EMAILS.includes(session.email) && session.role !== 'admin')) {
     return Response.json({ error: 'Admin access required' }, { status: 403 });
   }
 

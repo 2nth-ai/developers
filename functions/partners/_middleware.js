@@ -15,7 +15,6 @@
 import {
   PARTNER_REGISTRY,
   INDIVIDUAL_PARTNERS,
-  ADMIN_EMAILS,
   BLOCKED_EMAILS,
   isAdmin,
   isOwner,
@@ -30,52 +29,11 @@ import {
   PPS_COOKIE,
 } from '../lib/token.js';
 
+import { resolveSession } from '../lib/session.js';
+
 function parseCookie(header, name) {
   const m = (header || '').match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
   return m ? m[1] : null;
-}
-
-function b64urlDecode(str) {
-  const padded = str.replace(/-/g, '+').replace(/_/g, '/');
-  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
-}
-
-async function getSSOEmail(cookie, secret) {
-  if (!secret || !cookie) return null;
-  const [h, p, s] = cookie.split('.');
-  if (!h || !p || !s) return null;
-  try {
-    const key = await crypto.subtle.importKey(
-      'raw', new TextEncoder().encode(secret),
-      { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
-    );
-    const valid = await crypto.subtle.verify(
-      'HMAC', key, b64urlDecode(s), new TextEncoder().encode(`${h}.${p}`)
-    );
-    if (!valid) return null;
-    const payload = JSON.parse(new TextDecoder().decode(b64urlDecode(p)));
-    if (!payload.sub || payload.exp < Math.floor(Date.now() / 1000)) return null;
-    return { email: payload.email, role: payload.role };
-  } catch { return null; }
-}
-
-async function resolveSession(request, env) {
-  const cookies = request.headers.get('Cookie') || '';
-  let email = null, role = null;
-
-  const sid = parseCookie(cookies, 'sid');
-  if (sid && env.KV) {
-    const raw = await env.KV.get(`session:${sid}`);
-    if (raw) {
-      try { const s = JSON.parse(raw); email = s.email?.toLowerCase(); role = s.role; }
-      catch { /* ignore */ }
-    }
-  }
-  if (!email) {
-    const sso = await getSSOEmail(parseCookie(cookies, '2nth_session'), env.JWT_SECRET);
-    if (sso) { email = sso.email?.toLowerCase(); role = sso.role; }
-  }
-  return { email, role };
 }
 
 async function logAccess(env, partnerKey, email, path) {
