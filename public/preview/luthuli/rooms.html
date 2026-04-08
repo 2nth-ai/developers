@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Rooms — Luthuli Lodge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#faf9f6;color:#44403c;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--earth:#6b5c4d;--earth-dark:#3d3229;--sage:#5a7a5c;--sage-light:#d4e6d5;--text:#292524;--text2:#57534e;--muted:#a8a29e;--border:#e7e5e4;--bg:#faf9f6;--bg2:#fff;--red:#dc2626;--amber:#d97706;--green:#059669;--blue:#2563eb}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px}
+    header{background:var(--earth-dark);padding:12px 0;color:#faf9f6}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#faf9f6;text-decoration:none;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--sage)}
+    nav a{font-size:11px;font-weight:500;color:rgba(250,249,246,.6);text-decoration:none;margin-left:18px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover,nav a.active{color:#faf9f6}
+    h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text);margin-bottom:4px}
+    h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin:28px 0 12px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    .pav-detail{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden}
+    .pav-header{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--border)}
+    .pav-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text)}
+    .pav-status{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:1px}
+    .s-occupied{background:rgba(5,150,105,.08);color:var(--green)}
+    .s-vacant{background:rgba(168,162,158,.08);color:var(--muted)}
+    .s-maint{background:rgba(217,119,6,.08);color:var(--amber)}
+    .pav-body{padding:20px}
+    .pav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .field{margin-bottom:12px}
+    .field-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+    .field-val{font-size:14px;color:var(--text);font-weight:500}
+    .amenity-list{display:flex;gap:6px;flex-wrap:wrap}
+    .amenity{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border-radius:4px;background:var(--sage-light);color:var(--sage);border:1px solid rgba(90,122,92,.15)}
+    .pav-actions{display:flex;gap:8px;padding:16px 20px;border-top:1px solid var(--border);background:#faf9f6}
+    .btn{padding:8px 16px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text2);transition:all .15s}
+    .btn:hover{border-color:var(--sage);color:var(--sage)}
+    .btn-primary{background:var(--sage);color:#fff;border-color:var(--sage)}.btn-primary:hover{background:var(--earth-dark)}
+
+    .checklist{list-style:none;margin:12px 0}
+    .checklist li{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2)}
+    .checklist li:last-child{border:none}
+    .check{width:18px;height:18px;border-radius:4px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;cursor:pointer}
+    .check.done{background:var(--sage);border-color:var(--sage);color:#fff}
+
+    .note{background:rgba(90,122,92,.04);border:1px solid rgba(90,122,92,.12);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--text2);margin-top:12px;line-height:1.5}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--muted);margin-top:40px}
+    footer a{color:var(--sage)}
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="/preview/luthuli/lodge.html" class="brand"><span class="brand-dot"></span> Luthuli Lodge</a>
+    <nav>
+      <a href="/preview/luthuli/lodge.html">Dashboard</a>
+      <a href="/preview/luthuli/bookings.html">Bookings</a>
+      <a href="#" class="active">Rooms</a>
+      <a href="/preview/luthuli/offgrid.html">Off-Grid</a>
+      <a href="/preview/luthuli/">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container" style="padding-top:24px">
+  <h1>Manage Rooms</h1>
+  <div class="sub">3 pavilions &middot; Mkuzi Game Reserve &middot; <span class="mono" style="font-size:11px;color:var(--sage)">pg://luthuli/mkuzi/lodge</span></div>
+
+  <!-- Living Pavilion -->
+  <div class="pav-detail">
+    <div class="pav-header">
+      <div class="pav-name">Living Pavilion</div>
+      <span class="pav-status s-occupied">Occupied</span>
+    </div>
+    <div class="pav-body">
+      <div class="pav-grid">
+        <div>
+          <div class="field"><div class="field-label">Function</div><div class="field-val">Shared living, dining &amp; kitchen</div></div>
+          <div class="field"><div class="field-label">Capacity</div><div class="field-val">8 guests (dining), 6 lounge seating</div></div>
+          <div class="field"><div class="field-label">View</div><div class="field-val">270° panoramic — north waterhole &amp; acacia savannah</div></div>
+          <div class="field"><div class="field-label">Structure</div><div class="field-val">Timber frame, full-height glazing, pitched thatch roof</div></div>
+        </div>
+        <div>
+          <div class="field"><div class="field-label">Interior temp</div><div class="field-val">24°C <span style="color:var(--muted)">(passive cooled, no AC)</span></div></div>
+          <div class="field"><div class="field-label">Last deep clean</div><div class="field-val">1 April 2026</div></div>
+          <div class="field"><div class="field-label">Last serviced</div><div class="field-val">Today 06:30 — breakfast prep</div></div>
+          <div class="field"><div class="field-label">Kitchen stock</div><div class="field-val">Stocked for 4 guests through 8 Apr</div></div>
+        </div>
+      </div>
+      <div class="field"><div class="field-label">Amenities</div>
+        <div class="amenity-list">
+          <span class="amenity">Full kitchen</span><span class="amenity">Gas braai</span><span class="amenity">Fireplace</span><span class="amenity">Bose speaker</span><span class="amenity">Board games</span><span class="amenity">Binoculars</span><span class="amenity">Bird book library</span><span class="amenity">USB charging</span>
+        </div>
+      </div>
+      <h2 style="margin-top:16px;font-size:15px">Today's service checklist</h2>
+      <ul class="checklist">
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check done">✓</span> Morning clean &amp; reset</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check done">✓</span> Breakfast service — eggs, bacon, fruit, coffee</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check done">✓</span> Restock firewood (3 logs)</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Lunch prep — cold platter for 4</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Evening: braai setup, salads, wine service</li>
+      </ul>
+    </div>
+    <div class="pav-actions">
+      <button class="btn">Log maintenance</button>
+      <button class="btn">View history</button>
+      <button class="btn">Restock request</button>
+    </div>
+  </div>
+
+  <!-- Host Family Pavilion -->
+  <div class="pav-detail">
+    <div class="pav-header">
+      <div class="pav-name">Host Family Pavilion</div>
+      <span class="pav-status s-occupied">Occupied</span>
+    </div>
+    <div class="pav-body">
+      <div class="pav-grid">
+        <div>
+          <div class="field"><div class="field-label">Type</div><div class="field-val">Owner's suite — 2 adults + 2 children</div></div>
+          <div class="field"><div class="field-label">Bedding</div><div class="field-val">King bed + 2 single beds (kids' nook)</div></div>
+          <div class="field"><div class="field-label">View</div><div class="field-val">Panoramic north — waterhole, direct sightline to Lebombo ridge</div></div>
+          <div class="field"><div class="field-label">Structure</div><div class="field-val">Timber frame, floor-to-ceiling glass, private deck (48m²)</div></div>
+        </div>
+        <div>
+          <div class="field"><div class="field-label">Current guests</div><div class="field-val" style="color:var(--green)">Hamlin family (4 guests)</div></div>
+          <div class="field"><div class="field-label">Checked in</div><div class="field-val">2 April 2026</div></div>
+          <div class="field"><div class="field-label">Departing</div><div class="field-val">8 April 2026 (4 nights remaining)</div></div>
+          <div class="field"><div class="field-label">Stay type</div><div class="field-val">Owner stay — private</div></div>
+        </div>
+      </div>
+      <div class="field"><div class="field-label">Amenities</div>
+        <div class="amenity-list">
+          <span class="amenity">En-suite (double basin)</span><span class="amenity">Outdoor shower</span><span class="amenity">Private deck</span><span class="amenity">Ceiling fan</span><span class="amenity">Mosquito net</span><span class="amenity">Mini bar fridge</span><span class="amenity">Safe</span><span class="amenity">USB + 220V</span><span class="amenity">Stargazing deck</span>
+        </div>
+      </div>
+      <div class="note">
+        <strong>Guest note:</strong> Hamlin family requested early morning game drive departures (05:00). Coffee thermos at pavilion by 04:45. Kids' binoculars in living pavilion. Leopard sighting logged from deck 3 Apr — guests very happy.
+      </div>
+    </div>
+    <div class="pav-actions">
+      <button class="btn">Guest preferences</button>
+      <button class="btn">Turndown schedule</button>
+      <button class="btn">Log issue</button>
+    </div>
+  </div>
+
+  <!-- Guest Pavilion -->
+  <div class="pav-detail">
+    <div class="pav-header">
+      <div class="pav-name">Guest Pavilion</div>
+      <span class="pav-status s-vacant">Vacant — Prep 5 Apr</span>
+    </div>
+    <div class="pav-body">
+      <div class="pav-grid">
+        <div>
+          <div class="field"><div class="field-label">Type</div><div class="field-val">Guest suite — 2 adults</div></div>
+          <div class="field"><div class="field-label">Bedding</div><div class="field-val">King bed (can split to twin)</div></div>
+          <div class="field"><div class="field-label">View</div><div class="field-val">Intimate — acacia thicket, frequented by nyala &amp; suni</div></div>
+          <div class="field"><div class="field-label">Structure</div><div class="field-val">Timber frame, glazed front wall, stone-clad rear, private deck (28m²)</div></div>
+        </div>
+        <div>
+          <div class="field"><div class="field-label">Next booking</div><div class="field-val" style="color:var(--blue)">Van der Merwe — 6 Apr (R2,800/night)</div></div>
+          <div class="field"><div class="field-label">Turndown prep</div><div class="field-val">Scheduled 5 Apr, 15:00</div></div>
+          <div class="field"><div class="field-label">Last deep clean</div><div class="field-val">3 April 2026</div></div>
+          <div class="field"><div class="field-label">Condition</div><div class="field-val" style="color:var(--green)">Excellent — annual deck inspection 10 Apr</div></div>
+        </div>
+      </div>
+      <div class="field"><div class="field-label">Amenities</div>
+        <div class="amenity-list">
+          <span class="amenity">En-suite (rain shower)</span><span class="amenity">Outdoor shower</span><span class="amenity">Private deck</span><span class="amenity">Ceiling fan</span><span class="amenity">Mosquito net</span><span class="amenity">Mini bar fridge</span><span class="amenity">Safe</span><span class="amenity">Nespresso</span><span class="amenity">USB + 220V</span>
+        </div>
+      </div>
+      <h2 style="margin-top:16px;font-size:15px">Turndown prep checklist — 5 Apr 15:00</h2>
+      <ul class="checklist">
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Fresh linen (king config) — Egyptian cotton</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Restock minibar — water, tonic, local craft beer</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Nespresso pods — lungo + espresso</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Welcome amenities — dried fruit, biltong, local chocolate</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Toiletries — Charlotte Rhys set</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Check mosquito nets — repair any tears</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Test all lighting, fan, USB ports</li>
+        <li onclick="this.querySelector('.check').classList.toggle('done')"><span class="check">✓</span> Place wildlife guide + reserve map on bedside</li>
+      </ul>
+    </div>
+    <div class="pav-actions">
+      <button class="btn btn-primary">Start turndown</button>
+      <button class="btn">View booking</button>
+      <button class="btn">Log maintenance</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="container">Luthuli Lodge &middot; Mkuzi Game Reserve &middot; <a href="/preview/luthuli/">Luthuli</a> &middot; <a href="https://2nth.ai">2nth.ai</a></div></footer>
+</body>
+</html>

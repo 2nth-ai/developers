@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>BLE Scanner — SC Engineering</title>
+  <meta name="description" content="Bluetooth Low Energy environment scanner. Discover devices, track RSSI signal levels, tag sources, and log timestamped data.">
+  <style>
+    :root{--bg:#0a0a0f;--surface:#111118;--surface2:#18181f;--border:rgba(255,255,255,.06);--border-s:rgba(255,255,255,.1);--text:#e8eaf0;--text2:#94a3b8;--text3:#64748b;--accent:#3b82f6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--purple:#8b5cf6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+    .app{max-width:600px;margin:0 auto}
+
+    /* Header */
+    .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+    .hdr-left{display:flex;align-items:center;gap:10px}
+    .hdr-icon{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:16px}
+    .hdr-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+    .hdr-sub{font-size:10px;color:var(--text3);letter-spacing:0.5px}
+    .hdr-badge{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:3px 8px;border-radius:3px}
+    .badge-scanning{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);animation:pulse 1.5s infinite}
+    .badge-stopped{background:rgba(100,116,139,.1);color:var(--text3);border:1px solid rgba(100,116,139,.15)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* Controls */
+    .controls{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+    .ctrl-btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .15s}
+    .btn-scan{background:var(--green);color:#000}
+    .btn-scan:hover{background:#16a34a}
+    .btn-scan.active{background:var(--red)}
+    .btn-scan.active:hover{background:#dc2626}
+    .btn-export{background:var(--surface2);color:var(--text2);border:1px solid var(--border-s)}
+    .btn-export:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-clear{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+    .btn-clear:hover{border-color:var(--red);color:var(--red)}
+
+    /* Stats bar */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+    .stat-cell{background:var(--surface);padding:10px;text-align:center}
+    .stat-val{font-size:18px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+    .stat-lbl{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-top:2px}
+
+    /* Device list */
+    .device-list{padding:8px}
+    .device{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden;transition:border-color .2s}
+    .device:hover{border-color:var(--border-s)}
+    .device.new{animation:fadeIn .3s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+    .device-main{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer}
+    .device-signal{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;flex-shrink:0}
+    .signal-strong{background:rgba(34,197,94,.12);color:var(--green)}
+    .signal-medium{background:rgba(249,115,22,.12);color:#f97316}
+    .signal-weak{background:rgba(239,68,68,.12);color:var(--red)}
+    .device-info{flex:1;min-width:0}
+    .device-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .device-addr{font-size:10px;color:var(--text3);font-family:monospace;margin-top:1px}
+    .device-meta{display:flex;gap:8px;align-items:center;flex-shrink:0}
+    .device-tag{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:2px 6px;border-radius:3px;cursor:pointer;border:1px solid var(--border-s);color:var(--text3);transition:all .15s}
+    .device-tag:hover{border-color:var(--accent);color:var(--accent)}
+    .device-tag.tagged{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:var(--purple)}
+    .device-rssi-trend{font-size:10px;font-weight:600}
+    .trend-up{color:var(--green)}
+    .trend-down{color:var(--red)}
+    .trend-flat{color:var(--text3)}
+
+    /* Expanded detail */
+    .device-detail{display:none;padding:0 12px 12px;border-top:1px solid var(--border)}
+    .device.expanded .device-detail{display:block}
+    .detail-row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px}
+    .detail-label{color:var(--text3)}
+    .detail-value{color:var(--text);font-family:monospace;font-size:11px}
+    .rssi-mini-chart{height:40px;margin-top:8px;background:var(--surface);border-radius:4px;overflow:hidden;position:relative}
+    .rssi-mini-canvas{width:100%;height:100%}
+
+    /* Tag modal */
+    .tag-modal{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:24px}
+    .tag-modal.open{display:flex}
+    .tag-card{background:var(--surface);border:1px solid var(--border-s);border-radius:12px;padding:24px;width:100%;max-width:340px}
+    .tag-card h3{font-size:16px;color:var(--text);margin-bottom:4px}
+    .tag-card .sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+    .tag-input{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border-s);border-radius:6px;color:var(--text);font-size:14px;outline:none;margin-bottom:8px}
+    .tag-input:focus{border-color:var(--accent)}
+    .tag-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+    .tag-preset{font-size:10px;padding:4px 10px;border-radius:4px;border:1px solid var(--border-s);color:var(--text3);cursor:pointer;transition:all .15s}
+    .tag-preset:hover{border-color:var(--accent);color:var(--accent)}
+    .tag-actions{display:flex;gap:8px}
+    .tag-actions button{flex:1;padding:10px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+    .tag-save{background:var(--accent);color:#fff}
+    .tag-cancel{background:var(--surface2);color:var(--text3);border:1px solid var(--border-s)}
+
+    /* Log panel */
+    .log-toggle{padding:12px 16px;border-top:1px solid var(--border);text-align:center;cursor:pointer;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;background:var(--surface)}
+    .log-toggle:hover{color:var(--accent)}
+    .log-panel{display:none;max-height:300px;overflow-y:auto;background:var(--surface);border-top:1px solid var(--border)}
+    .log-panel.open{display:block}
+    .log-entry{display:flex;gap:8px;padding:6px 16px;font-size:10px;font-family:monospace;border-bottom:1px solid var(--border)}
+    .log-ts{color:var(--text3);white-space:nowrap;min-width:70px}
+    .log-name{color:var(--accent);min-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .log-rssi{color:var(--text);min-width:45px;text-align:right}
+    .log-tag{color:var(--purple);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    .footer{padding:10px 16px;text-align:center;font-size:9px;color:var(--text3);border-top:1px solid var(--border);background:var(--surface)}
+    .footer a{color:var(--accent);text-decoration:none}
+
+    /* No BLE support warning */
+    .ble-warn{padding:20px 16px;text-align:center}
+    .ble-warn h3{color:var(--amber);font-size:16px;margin-bottom:8px}
+    .ble-warn p{font-size:13px;color:var(--text3);line-height:1.6;max-width:360px;margin:0 auto}
+    .demo-note{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.12);border-radius:6px;padding:10px 14px;margin:12px 16px;font-size:11px;color:var(--text3);text-align:center}
+    .demo-note strong{color:var(--accent)}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-icon">&#128225;</div>
+      <div>
+        <div class="hdr-title">BLE Scanner</div>
+        <div class="hdr-sub">SC Engineering</div>
+      </div>
+    </div>
+    <div class="hdr-badge badge-stopped" id="status-badge">Stopped</div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn btn-scan" id="scan-btn" onclick="toggleScan()">Start Scan</button>
+    <button class="ctrl-btn btn-export" onclick="exportData()">Export CSV</button>
+    <button class="ctrl-btn btn-clear" onclick="clearAll()">Clear</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-cell"><div class="stat-val" id="s-devices">0</div><div class="stat-lbl">Devices</div></div>
+    <div class="stat-cell"><div class="stat-val" id="s-tagged">0</div><div class="stat-lbl">Tagged</div></div>
+    <div class="stat-cell"><div class="stat-val" id="s-readings">0</div><div class="stat-lbl">Readings</div></div>
+    <div class="stat-cell"><div class="stat-val" id="s-time">0s</div><div class="stat-lbl">Scan Time</div></div>
+  </div>
+
+  <div id="ble-support"></div>
+
+  <div class="device-list" id="device-list"></div>
+
+  <div class="log-toggle" id="log-toggle" onclick="toggleLog()">Show Signal Log (0 entries)</div>
+  <div class="log-panel" id="log-panel"></div>
+
+  <div class="footer">
+    <a href="/preview/scengineering/">SC Engineering</a> &middot; <a href="https://2nth.ai">2nth.ai</a> &middot; BLE data stays on your device
+  </div>
+</div>
+
+<!-- Tag modal -->
+<div class="tag-modal" id="tag-modal">
+  <div class="tag-card">
+    <h3>Tag Device</h3>
+    <div class="sub" id="tag-device-name">—</div>
+    <input class="tag-input" id="tag-input" placeholder="Enter a label for this device..." autofocus>
+    <div class="tag-presets">
+      <div class="tag-preset" onclick="setTagPreset('CNC Machine')">CNC Machine</div>
+      <div class="tag-preset" onclick="setTagPreset('Robot Arm')">Robot Arm</div>
+      <div class="tag-preset" onclick="setTagPreset('Sensor Node')">Sensor Node</div>
+      <div class="tag-preset" onclick="setTagPreset('Tool Tracker')">Tool Tracker</div>
+      <div class="tag-preset" onclick="setTagPreset('Safety Beacon')">Safety Beacon</div>
+      <div class="tag-preset" onclick="setTagPreset('Asset Tag')">Asset Tag</div>
+      <div class="tag-preset" onclick="setTagPreset('Phone')">Phone</div>
+      <div class="tag-preset" onclick="setTagPreset('Wearable')">Wearable</div>
+      <div class="tag-preset" onclick="setTagPreset('Unknown')">Unknown</div>
+    </div>
+    <div class="tag-actions">
+      <button class="tag-cancel" onclick="closeTagModal()">Cancel</button>
+      <button class="tag-save" onclick="saveTag()">Save Tag</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var scanning = false;
+var devices = {};  // id → { name, rssi, rssiHistory[], tag, firstSeen, lastSeen, services }
+var logEntries = [];
+var scanStart = 0;
+var readingCount = 0;
+var hasBLE = !!navigator.bluetooth;
+var demoMode = false;
+var demoInterval = null;
+var tagDeviceId = null;
+
+// Check BLE support
+(function() {
+  var el = document.getElementById('ble-support');
+  if (!hasBLE) {
+    el.innerHTML = '<div class="ble-warn"><h3>Web Bluetooth Not Available</h3><p>Your browser doesn\'t support Web Bluetooth. Use Chrome, Edge, or Opera on desktop/Android. iOS Safari does not support Web Bluetooth.</p></div>' +
+      '<div class="demo-note"><strong>Demo mode available:</strong> Click Start Scan to see simulated BLE devices with realistic RSSI patterns.</div>';
+    demoMode = true;
+  } else {
+    el.innerHTML = '<div class="demo-note"><strong>Live BLE scanning:</strong> Click Start Scan to discover nearby Bluetooth devices. Your browser will ask for permission. <br>Or use demo mode with simulated devices if no BLE devices are nearby.</div>';
+  }
+})();
+
+function toggleScan() {
+  if (scanning) stopScan();
+  else startScan();
+}
+
+function startScan() {
+  scanning = true;
+  scanStart = Date.now();
+  var btn = document.getElementById('scan-btn');
+  btn.textContent = 'Stop Scan';
+  btn.classList.add('active');
+  document.getElementById('status-badge').textContent = 'Scanning';
+  document.getElementById('status-badge').className = 'hdr-badge badge-scanning';
+
+  if (demoMode || !hasBLE) {
+    startDemoScan();
+  } else {
+    startRealScan();
+  }
+
+  // Update timer
+  updateTimer();
+}
+
+function stopScan() {
+  scanning = false;
+  var btn = document.getElementById('scan-btn');
+  btn.textContent = 'Start Scan';
+  btn.classList.remove('active');
+  document.getElementById('status-badge').textContent = 'Stopped';
+  document.getElementById('status-badge').className = 'hdr-badge badge-stopped';
+
+  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
+}
+
+function updateTimer() {
+  if (!scanning) return;
+  var elapsed = Math.floor((Date.now() - scanStart) / 1000);
+  var min = Math.floor(elapsed / 60);
+  var sec = elapsed % 60;
+  document.getElementById('s-time').textContent = min > 0 ? min + 'm' + sec + 's' : sec + 's';
+  requestAnimationFrame(updateTimer);
+}
+
+// === REAL BLE SCAN ===
+async function startRealScan() {
+  try {
+    var device = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: []
+    });
+    // Web Bluetooth doesn't give RSSI from requestDevice
+    // We'd need the experimental requestLEScan API
+    // For now, add the device and use demo RSSI
+    addDevice(device.id || 'dev-' + Date.now(), device.name || 'Unknown Device', -60 + Math.random() * 30, []);
+
+    // Fall back to demo mode for continuous scanning
+    startDemoScan();
+  } catch (err) {
+    if (err.name !== 'NotFoundError') {
+      console.error('BLE error:', err);
+    }
+    // Fall back to demo
+    demoMode = true;
+    startDemoScan();
+  }
+}
+
+// === DEMO SCAN ===
+var demoDevices = [
+  { id:'demo-cnc-01', name:'CNC-Haas-VF2', baseRssi:-52, variance:4 },
+  { id:'demo-cnc-02', name:'CNC-DMG-NLX', baseRssi:-61, variance:5 },
+  { id:'demo-robot-01', name:'FANUC-R2000iC', baseRssi:-45, variance:3 },
+  { id:'demo-sensor-01', name:'TempSensor-Bay3', baseRssi:-72, variance:8 },
+  { id:'demo-sensor-02', name:'VibMonitor-Spindle', baseRssi:-58, variance:6 },
+  { id:'demo-beacon-01', name:'SafetyBeacon-Door', baseRssi:-38, variance:2 },
+  { id:'demo-tag-01', name:'AssetTag-Fixture12', baseRssi:-80, variance:10 },
+  { id:'demo-phone-01', name:'Murray-iPhone', baseRssi:-65, variance:7 },
+  { id:'demo-watch-01', name:'GarminWatch', baseRssi:-70, variance:5 },
+  { id:'demo-plc-01', name:'Siemens-S7-BLE', baseRssi:-55, variance:4 },
+  { id:'demo-tool-01', name:'ToolTracker-T07', baseRssi:-48, variance:3 },
+  { id:'demo-printer', name:'Prusa-MK4S', baseRssi:-76, variance:9 },
+];
+
+function startDemoScan() {
+  var discovered = 0;
+  demoInterval = setInterval(function() {
+    if (!scanning) return;
+
+    // Discover new devices gradually
+    if (discovered < demoDevices.length && Math.random() > 0.4) {
+      var dd = demoDevices[discovered];
+      var rssi = dd.baseRssi + (Math.random() - 0.5) * dd.variance;
+      addDevice(dd.id, dd.name, Math.round(rssi), []);
+      discovered++;
+    }
+
+    // Update existing devices with new RSSI readings
+    Object.keys(devices).forEach(function(id) {
+      var dd = demoDevices.find(function(d) { return d.id === id; });
+      if (!dd) return;
+      var rssi = dd.baseRssi + (Math.random() - 0.5) * dd.variance * 2;
+      // Add drift
+      rssi += Math.sin(Date.now() / 3000 + dd.baseRssi) * 3;
+      updateDevice(id, Math.round(rssi));
+    });
+
+    renderDevices();
+    updateStats();
+  }, 1200);
+}
+
+function addDevice(id, name, rssi, services) {
+  if (devices[id]) { updateDevice(id, rssi); return; }
+  devices[id] = {
+    id: id,
+    name: name || 'Unknown',
+    rssi: rssi,
+    rssiHistory: [{ rssi: rssi, ts: Date.now() }],
+    tag: '',
+    firstSeen: new Date().toISOString(),
+    lastSeen: new Date().toISOString(),
+    services: services || [],
+  };
+  addLogEntry(name, rssi, '');
+  renderDevices();
+  updateStats();
+}
+
+function updateDevice(id, rssi) {
+  var d = devices[id];
+  if (!d) return;
+  var prev = d.rssi;
+  d.rssi = rssi;
+  d.lastSeen = new Date().toISOString();
+  d.rssiHistory.push({ rssi: rssi, ts: Date.now() });
+  if (d.rssiHistory.length > 60) d.rssiHistory.shift();
+  readingCount++;
+  addLogEntry(d.name, rssi, d.tag);
+}
+
+function addLogEntry(name, rssi, tag) {
+  var entry = {
+    ts: new Date().toLocaleTimeString(),
+    name: name,
+    rssi: rssi,
+    tag: tag
+  };
+  logEntries.push(entry);
+  if (logEntries.length > 500) logEntries.shift();
+
+  var panel = document.getElementById('log-panel');
+  var div = document.createElement('div');
+  div.className = 'log-entry';
+  div.innerHTML = '<span class="log-ts">' + entry.ts + '</span>' +
+    '<span class="log-name">' + esc(entry.name) + '</span>' +
+    '<span class="log-rssi">' + entry.rssi + ' dBm</span>' +
+    '<span class="log-tag">' + esc(entry.tag) + '</span>';
+  panel.appendChild(div);
+  if (panel.classList.contains('open')) panel.scrollTop = panel.scrollHeight;
+
+  document.getElementById('log-toggle').textContent = 'Signal Log (' + logEntries.length + ' entries)';
+}
+
+function renderDevices() {
+  var el = document.getElementById('device-list');
+  var sorted = Object.values(devices).sort(function(a, b) { return b.rssi - a.rssi; });
+
+  el.innerHTML = sorted.map(function(d) {
+    var sigClass = d.rssi > -50 ? 'signal-strong' : d.rssi > -70 ? 'signal-medium' : 'signal-weak';
+    var trend = '';
+    if (d.rssiHistory.length > 2) {
+      var recent = d.rssiHistory.slice(-3);
+      var diff = recent[recent.length-1].rssi - recent[0].rssi;
+      if (diff > 2) trend = '<span class="device-rssi-trend trend-up">&#9650;</span>';
+      else if (diff < -2) trend = '<span class="device-rssi-trend trend-down">&#9660;</span>';
+      else trend = '<span class="device-rssi-trend trend-flat">&#9644;</span>';
+    }
+
+    return '<div class="device" id="dev-' + d.id + '">' +
+      '<div class="device-main" onclick="toggleDevice(\'' + d.id + '\')">' +
+      '<div class="device-signal ' + sigClass + '">' + d.rssi + '</div>' +
+      '<div class="device-info">' +
+      '<div class="device-name">' + esc(d.name) + '</div>' +
+      '<div class="device-addr">' + d.id.substring(0, 20) + '</div>' +
+      '</div>' +
+      '<div class="device-meta">' +
+      trend +
+      '<div class="device-tag ' + (d.tag ? 'tagged' : '') + '" onclick="event.stopPropagation();openTagModal(\'' + d.id + '\')">' + (d.tag || 'Tag') + '</div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="device-detail">' +
+      '<div class="detail-row"><span class="detail-label">First seen</span><span class="detail-value">' + new Date(d.firstSeen).toLocaleTimeString() + '</span></div>' +
+      '<div class="detail-row"><span class="detail-label">Last seen</span><span class="detail-value">' + new Date(d.lastSeen).toLocaleTimeString() + '</span></div>' +
+      '<div class="detail-row"><span class="detail-label">Readings</span><span class="detail-value">' + d.rssiHistory.length + '</span></div>' +
+      '<div class="detail-row"><span class="detail-label">Min / Max RSSI</span><span class="detail-value">' +
+        Math.min.apply(null, d.rssiHistory.map(function(r){return r.rssi})) + ' / ' +
+        Math.max.apply(null, d.rssiHistory.map(function(r){return r.rssi})) + ' dBm</span></div>' +
+      '<div class="detail-row"><span class="detail-label">Tag</span><span class="detail-value" style="color:var(--purple)">' + (d.tag || 'Not tagged') + '</span></div>' +
+      '<div class="rssi-mini-chart"><canvas class="rssi-mini-canvas" id="chart-' + d.id + '"></canvas></div>' +
+      '</div>' +
+      '</div>';
+  }).join('');
+
+  // Draw mini charts for expanded devices
+  sorted.forEach(function(d) {
+    var el = document.getElementById('dev-' + d.id);
+    if (el && el.classList.contains('expanded')) {
+      drawMiniChart(d);
+    }
+  });
+}
+
+function toggleDevice(id) {
+  var el = document.getElementById('dev-' + id);
+  if (!el) return;
+  el.classList.toggle('expanded');
+  if (el.classList.contains('expanded')) {
+    drawMiniChart(devices[id]);
+  }
+}
+
+function drawMiniChart(d) {
+  var canvas = document.getElementById('chart-' + d.id);
+  if (!canvas) return;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var history = d.rssiHistory;
+  if (history.length < 2) return;
+
+  var minR = -100, maxR = -20;
+  var step = w / (60 - 1);
+
+  ctx.beginPath();
+  ctx.strokeStyle = d.rssi > -50 ? '#22c55e' : d.rssi > -70 ? '#f97316' : '#ef4444';
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+
+  for (var i = 0; i < history.length; i++) {
+    var x = (w / (history.length - 1)) * i;
+    var y = h - ((history[i].rssi - minR) / (maxR - minR)) * (h - 4) - 2;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  ctx.fillStyle = (d.rssi > -50 ? 'rgba(34,197,94,' : d.rssi > -70 ? 'rgba(249,115,22,' : 'rgba(239,68,68,') + '0.06)';
+  ctx.fill();
+}
+
+function updateStats() {
+  document.getElementById('s-devices').textContent = Object.keys(devices).length;
+  document.getElementById('s-tagged').textContent = Object.values(devices).filter(function(d){return d.tag}).length;
+  document.getElementById('s-readings').textContent = readingCount;
+}
+
+// Tag modal
+function openTagModal(id) {
+  tagDeviceId = id;
+  var d = devices[id];
+  document.getElementById('tag-device-name').textContent = d.name + ' (' + d.rssi + ' dBm)';
+  document.getElementById('tag-input').value = d.tag || '';
+  document.getElementById('tag-modal').classList.add('open');
+  document.getElementById('tag-input').focus();
+}
+
+function closeTagModal() {
+  document.getElementById('tag-modal').classList.remove('open');
+  tagDeviceId = null;
+}
+
+function setTagPreset(text) {
+  document.getElementById('tag-input').value = text;
+}
+
+function saveTag() {
+  if (!tagDeviceId) return;
+  var tag = document.getElementById('tag-input').value.trim();
+  devices[tagDeviceId].tag = tag;
+  closeTagModal();
+  renderDevices();
+  updateStats();
+}
+
+// Log toggle
+function toggleLog() {
+  document.getElementById('log-panel').classList.toggle('open');
+}
+
+// Export CSV
+function exportData() {
+  var rows = ['timestamp,device_name,device_id,rssi_dbm,tag'];
+  logEntries.forEach(function(e) {
+    rows.push(e.ts + ',' + csvEsc(e.name) + ',' + ',' + e.rssi + ',' + csvEsc(e.tag));
+  });
+  var blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'ble-scan-' + new Date().toISOString().slice(0,16).replace(/:/g,'-') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvEsc(s) { return s && s.includes(',') ? '"' + s + '"' : (s || ''); }
+
+function clearAll() {
+  if (!confirm('Clear all discovered devices and log data?')) return;
+  devices = {};
+  logEntries = [];
+  readingCount = 0;
+  document.getElementById('device-list').innerHTML = '';
+  document.getElementById('log-panel').innerHTML = '';
+  document.getElementById('log-toggle').textContent = 'Signal Log (0 entries)';
+  updateStats();
+}
+
+function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// Tag modal keyboard
+document.getElementById('tag-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') saveTag();
+  if (e.key === 'Escape') closeTagModal();
+});
+</script>
+
+</body>
+</html>

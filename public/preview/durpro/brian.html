@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brian — AI Labour Law Advisor | DurPro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:#fafaf8;color:#4a4a56;line-height:1.6;-webkit-font-smoothing:antialiased}
+    :root{--red:#e4373c;--red-dark:#c22e32;--red-light:#fef2f2;--navy:#1e1e24;--charcoal:#2d2d35;--slate:#4a4a56;--warm:#8e8e9a;--silver:#c5c5ce;--ice:#f0f0f4;--bg:#fafaf8;--bg2:#fff;--teal:#2a9d8f;--amber:#e8a838;--border:#e0e0e4}
+    .container{max-width:800px;margin:0 auto;padding:0 24px}
+
+    header{background:var(--navy);padding:14px 0;color:var(--silver)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--silver)}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--red)}
+    .brand-text{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    nav a{font-size:11px;color:var(--warm);text-decoration:none;margin-left:16px;text-transform:uppercase;letter-spacing:1px}
+    nav a:hover{color:#fff}
+
+    .hero{padding:60px 0 40px;text-align:center}
+    .hero-avatar{width:80px;height:80px;border-radius:20px;background:var(--navy);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Instrument Serif',serif;font-size:32px;color:var(--red)}
+    .hero h1{font-family:'Instrument Serif',Georgia,serif;font-size:36px;color:var(--navy);margin-bottom:6px}
+    .hero h1 span{color:var(--red)}
+    .hero .sub{font-size:15px;color:var(--slate);max-width:500px;margin:0 auto 20px}
+    .hero-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+    .htag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 10px;border-radius:3px;background:var(--ice);color:var(--slate);border:1px solid var(--border);letter-spacing:.5px}
+
+    /* Chat */
+    .chat-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:24px 0}
+    .chat-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--ice)}
+    .chat-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .chat-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--navy)}
+    .chat{padding:16px;display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto}
+    .msg{padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6;max-width:88%}
+    .msg-brian{background:var(--ice);color:var(--navy);align-self:flex-start;border-bottom-left-radius:2px}
+    .msg-user{background:var(--red);color:#fff;align-self:flex-end;border-bottom-right-radius:2px}
+    .msg-brian strong{color:var(--red)}
+    .msg-brian em{font-family:'Instrument Serif',serif;font-size:14px;color:var(--slate)}
+    .msg-ref{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;margin-top:8px;color:var(--slate);line-height:1.7}
+    .msg-warn{background:rgba(232,134,12,.06);border:1px solid rgba(232,134,12,.12);border-radius:6px;padding:10px;margin-top:8px;font-size:11px;color:var(--slate)}
+    .chat-input{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border)}
+    .chat-input input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--navy)}
+    .chat-input input:focus{border-color:var(--red)}
+    .chat-input button{padding:10px 18px;background:var(--red);color:#fff;border:none;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+    .chat-input button:hover{background:var(--red-dark)}
+
+    /* Quick questions */
+    .quick{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 16px}
+    .quick-btn{font-family:'JetBrains Mono',monospace;font-size:9px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--slate);cursor:pointer;transition:all .15s;letter-spacing:.5px}
+    .quick-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+
+    /* Topics */
+    .topics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
+    .topic{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .2s;cursor:pointer}
+    .topic:hover{border-color:var(--red)}
+    .topic-icon{font-size:24px;margin-bottom:8px}
+    .topic h3{font-family:'Instrument Serif',serif;font-size:15px;color:var(--navy);margin-bottom:4px}
+    .topic p{font-size:11px;color:var(--warm);margin:0}
+
+    .disclaimer{background:var(--ice);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:24px 0;font-size:11px;color:var(--warm);line-height:1.6}
+    .disclaimer strong{color:var(--slate)}
+
+    footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;font-size:10px;color:var(--warm);margin-top:32px}
+    footer a{color:var(--red);text-decoration:none}
+    @media(max-width:640px){.topics{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/preview/durpro/" class="brand"><span class="brand-dot"></span><span class="brand-text">DurPro</span></a>
+    <nav>
+      <a href="/preview/durpro/">Showcase</a>
+      <a href="/partners/durpro.html">Partner</a>
+      <a href="https://www.durpro.co.za">durpro.co.za</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-avatar">B</div>
+    <h1>Meet <span>Brian</span>.</h1>
+    <div class="sub">Your AI labour law advisor. Ask Brian anything about South African employment law — dismissals, CCMA, contracts, BCEA, EE Act, POPIA in the workplace. Powered by DurPro's 30 years of workforce expertise.</div>
+    <div class="hero-tags">
+      <span class="htag">LRA</span>
+      <span class="htag">BCEA</span>
+      <span class="htag">EE Act</span>
+      <span class="htag">CCMA</span>
+      <span class="htag">POPIA</span>
+      <span class="htag">Section 198</span>
+      <span class="htag">Contracts</span>
+      <span class="htag">Dismissal</span>
+    </div>
+  </div>
+
+  <!-- Topics -->
+  <div class="topics">
+    <div class="topic" onclick="askBrian('What are the steps for a fair dismissal?')">
+      <div class="topic-icon">&#9878;&#65039;</div>
+      <h3>Dismissal &amp; Discipline</h3>
+      <p>Fair procedures, warnings, hearings, Schedule 8 Code of Good Practice</p>
+    </div>
+    <div class="topic" onclick="askBrian('How does Section 198 TES work?')">
+      <div class="topic-icon">&#128221;</div>
+      <h3>TES &amp; Labour Broking</h3>
+      <p>Section 198, deemed employment, client liability, compliance</p>
+    </div>
+    <div class="topic" onclick="askBrian('Draft an employment contract for a warehouse manager')">
+      <div class="topic-icon">&#128196;</div>
+      <h3>Contracts</h3>
+      <p>Fixed-term, permanent, part-time, restraint of trade, probation</p>
+    </div>
+    <div class="topic" onclick="askBrian('What are the CCMA conciliation procedures?')">
+      <div class="topic-icon">&#128587;</div>
+      <h3>CCMA Procedures</h3>
+      <p>Referral, conciliation, arbitration, con-arb, review</p>
+    </div>
+    <div class="topic" onclick="askBrian('Explain BCEA working hours and overtime rules')">
+      <div class="topic-icon">&#128337;</div>
+      <h3>Working Hours &amp; Leave</h3>
+      <p>BCEA hours, overtime, annual leave, sick leave, family responsibility</p>
+    </div>
+    <div class="topic" onclick="askBrian('What POPIA obligations apply to employee data?')">
+      <div class="topic-icon">&#128274;</div>
+      <h3>POPIA &amp; Employee Data</h3>
+      <p>Processing employee personal info, consent, retention, AI compliance</p>
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="chat-wrap">
+    <div class="chat-head"><span class="chat-dot"></span><span class="chat-title">Brian — Labour Law AI</span></div>
+    <div class="chat" id="chat">
+      <div class="msg msg-brian">
+        <strong>Good day.</strong> I'm Brian, DurPro's AI labour law advisor. I'm trained on South African employment legislation — the LRA, BCEA, EE Act, POPIA, and the CCMA Code of Good Practice.
+        <br><br>
+        <em>Ask me anything about employment law, contracts, dismissals, or workforce compliance. I'll cite the relevant sections.</em>
+      </div>
+      <div class="msg msg-user">We want to dismiss an employee for poor performance. What's the correct process?</div>
+      <div class="msg msg-brian">
+        <strong>Poor performance dismissal</strong> follows the LRA Schedule 8 — Code of Good Practice: Dismissal, specifically items 8 and 9.
+        <div class="msg-ref">
+REQUIRED STEPS:
+
+1. ASSESS — Is the performance standard reasonable?
+   Were they trained? Do they have the tools? (Item 8(1))
+
+2. COUNSEL — Inform employee of the performance gap.
+   Set clear targets + timeline. Document the conversation.
+
+3. SUPPORT — Provide training, mentoring, or assistance.
+   Give reasonable time to improve (typically 4-12 weeks).
+
+4. REVIEW — Measure against the agreed targets.
+   Document results. If still below standard, proceed.
+
+5. HEARING — Formal incapacity hearing (not misconduct).
+   Employee may bring a representative (s18(2) LRA).
+   Consider: transfer, demotion, further training.
+
+6. DECISION — If no viable alternative, dismiss with
+   notice per BCEA s37 (1 week per year of service,
+   minimum 1 week, maximum 4 weeks).
+
+REFERENCES:
+  • LRA Schedule 8, Items 8-9 (Incapacity: Poor Performance)
+  • BCEA s37 (Notice periods)
+  • LRA s188 (Fair reason + fair procedure required)
+        </div>
+        <div class="msg-warn">&#9888; <strong>Critical:</strong> Poor performance is <em>incapacity</em>, not misconduct. Do NOT use a disciplinary hearing format. The process must be supportive and developmental before becoming dismissive. Getting this wrong is the #1 reason employers lose at the CCMA.</div>
+      </div>
+      <div class="msg msg-user">What about a TES employee who's been on site for 4 months?</div>
+      <div class="msg msg-brian">
+        <strong>Section 198A kicks in here.</strong> This is critical for DurPro's TES operations:
+        <div class="msg-ref">
+SECTION 198A — DEEMED EMPLOYMENT
+
+After 3 months of continuous service, a TES employee
+earning below the BCEA threshold (currently R254,371.67/yr)
+is DEEMED to be the employee of the CLIENT, not the TES.
+
+YOUR SITUATION:
+  Employee: 4 months on site = past the 3-month trigger
+  If earning below threshold → deemed client employee
+
+IMPLICATIONS FOR THE CLIENT:
+  • Client is now the employer for unfair dismissal purposes
+  • Client must comply with s197 if restructuring
+  • TES remains employer for:
+    - Payment of wages
+    - Statutory deductions (UIF, SDL, PAYE)
+    - Administrative compliance
+
+WHAT DURPRO ADVISES:
+  1. Check if employee earns above/below threshold
+  2. If below: inform client of deemed employment status
+  3. Ensure client's policies apply to the employee
+  4. Document the arrangement clearly
+  5. Don't terminate to "reset the clock" — this is
+     specifically prohibited (s198A(5))
+
+REFERENCE: LRA s198A (inserted by Labour Relations
+Amendment Act 6 of 2014, effective 1 January 2015)
+        </div>
+      </div>
+      <div class="msg msg-user">Draft a basic fixed-term contract clause for seasonal packhouse work</div>
+      <div class="msg msg-brian">
+        Running <code>leg/employment/contracts</code>...
+        <div class="msg-ref">
+FIXED-TERM CONTRACT — SEASONAL WORK CLAUSE
+
+1. NATURE OF EMPLOYMENT
+   1.1 The Employee is employed on a fixed-term basis
+       as defined in Section 198B of the LRA.
+   1.2 This contract is for the duration of the
+       [citrus/mango] packing season, commencing on
+       [DATE] and terminating on [DATE] or upon
+       completion of the season's packing operations,
+       whichever occurs first.
+
+2. JUSTIFICATION (s198B(3))
+   The fixed-term nature of this contract is justified
+   by the seasonal nature of the work — packing
+   operations are dependent on harvest timing and
+   cannot be performed outside of the packing season.
+
+3. EQUAL TREATMENT (s198B(8))
+   The Employee shall not be treated less favourably
+   than comparable permanent employees unless there
+   is a justifiable reason for different treatment.
+
+4. RENEWAL EXPECTATION (s198B(5))
+   The Employee may reasonably expect renewal if:
+   - They are employed for longer than 3 months; AND
+   - The employer does not give a justifiable reason
+     for non-renewal.
+   In such case, non-renewal is treated as a dismissal
+   and must be procedurally and substantively fair.
+
+5. NOTICE
+   Per BCEA s37: 1 week notice if employed less than
+   6 months; 2 weeks if employed 6 months to 1 year.
+
+⚠ NOTE: If the employee has been employed on successive
+fixed-term contracts for the same seasonal work for
+more than 2 consecutive seasons, consider whether
+permanent employment with seasonal layoff (s189) is
+more appropriate. The CCMA is increasingly skeptical
+of rolling seasonal fixed-terms.
+        </div>
+      </div>
+    </div>
+
+    <div class="quick">
+      <button class="quick-btn" onclick="askBrian('What is a CCMA con-arb?')">CCMA con-arb</button>
+      <button class="quick-btn" onclick="askBrian('Calculate overtime for a shift worker')">Overtime calculation</button>
+      <button class="quick-btn" onclick="askBrian('EE Act reporting requirements')">EE reporting</button>
+      <button class="quick-btn" onclick="askBrian('Retrenchment procedure s189')">Retrenchment s189</button>
+      <button class="quick-btn" onclick="askBrian('AI and POPIA in recruitment')">POPIA + AI</button>
+      <button class="quick-btn" onclick="askBrian('Restraint of trade enforceability')">Restraint of trade</button>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="chat-in" placeholder="Ask Brian about South African labour law..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">Ask Brian</button>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> Brian is an AI assistant providing general information about South African employment law. This is not legal advice. For specific cases, consult a qualified labour attorney. DurPro provides IR services and CCMA representation — <a href="https://www.durpro.co.za" style="color:var(--red)">contact us</a> for professional support.
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    Brian — AI Labour Law Advisor &middot; <a href="/preview/durpro/">DurPro Workforce Solutions</a> &middot; <a href="https://2nth.ai">Powered by 2nth.ai</a>
+  </div>
+</footer>
+
+<script>
+var chat = document.getElementById('chat');
+
+function addMsg(text, cls) {
+  var div = document.createElement('div');
+  div.className = 'msg ' + cls;
+  div.innerHTML = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function askBrian(q) {
+  addMsg(q, 'msg-user');
+  setTimeout(function() {
+    addMsg('<strong>Researching...</strong> Querying <code>leg/employment</code> skills against the LRA, BCEA, and CCMA Code of Good Practice. In production, Brian would provide a detailed, section-referenced response with practical guidance specific to your question.', 'msg-brian');
+  }, 1000);
+}
+
+function sendMsg() {
+  var inp = document.getElementById('chat-in');
+  var text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  askBrian(text);
+}
+</script>
+</body>
+</html>

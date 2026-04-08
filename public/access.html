@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — 2nth.ai Partner Portal</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .access-wrap{max-width:420px;margin:60px auto 0;padding:0 24px}
+    .lock-icon{width:56px;height:56px;border-radius:14px;background:#7c3aed;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+    .card{background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:24px;margin-top:16px}
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e4e4e7}
+    label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#71717a;margin-bottom:6px}
+    input,textarea{width:100%;padding:10px 14px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;color:#18181b;outline:none;margin-bottom:14px;background:#fff}
+    textarea{resize:vertical}
+    .btn{width:100%;padding:12px;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;cursor:pointer;background:#7c3aed;color:#fff}
+    .btn:hover{background:#6d28d9}
+    .msg{padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:14px}
+    .msg-ok{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);color:#059669}
+    .msg-err{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);color:#ef4444}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="access-wrap">
+
+  <div class="lock-icon">
+    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  </div>
+
+  <h1 style="text-align:center;font-size:22px;color:#18181b;margin-bottom:4px">Partner Portal</h1>
+  <p style="text-align:center;font-size:13px;color:#71717a;margin-bottom:0">Sign in with your partner ID and access code.</p>
+
+  <div class="msg msg-err hidden" id="msg"></div>
+
+  <!-- Sign in with ID + code (no partner list shown) -->
+  <div class="card" id="signin-card">
+    <label>Partner ID</label>
+    <input type="text" id="partner-id" placeholder="Your partner ID" autocomplete="username">
+    <label>Access Code</label>
+    <input type="password" id="access-code" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" placeholder="4-digit code" autocomplete="current-password" style="font-family:'JetBrains Mono',monospace;font-size:18px;text-align:center;letter-spacing:6px">
+    <button class="btn" onclick="submitSignin()">Sign In</button>
+    <div id="signin-err" class="hidden" style="margin-top:8px;font-size:12px;color:#ef4444"></div>
+  </div>
+
+  <div class="divider">or request access</div>
+
+  <!-- Request form for unknown users -->
+  <div class="card">
+    <label>Full name</label>
+    <input type="text" id="r-name" placeholder="Your name">
+    <label>Email</label>
+    <input type="email" id="r-email" placeholder="you@company.com">
+    <label>Company</label>
+    <input type="text" id="r-company" placeholder="Company name">
+    <label>Why do you need access?</label>
+    <textarea id="r-reason" rows="2" placeholder="e.g. reviewing partnership materials..."></textarea>
+    <button class="btn" onclick="requestAccess()">Request Access</button>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var returnTo = params.get('return') || '/hub.html';
+
+if (params.get('error') === 'scope') {
+  var msg = document.getElementById('msg');
+  msg.textContent = 'You don\'t have access to that section. Contact craig@2nth.ai for permissions.';
+  msg.classList.remove('hidden');
+}
+
+// Auto-submit on 4 digits
+document.getElementById('access-code').addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length === 4 && document.getElementById('partner-id').value.trim()) {
+    submitSignin();
+  }
+});
+
+document.getElementById('access-code').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitSignin();
+});
+document.getElementById('partner-id').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('access-code').focus();
+});
+
+function submitSignin() {
+  var id = document.getElementById('partner-id').value.trim().toLowerCase();
+  var code = document.getElementById('access-code').value;
+  var err = document.getElementById('signin-err');
+  err.classList.add('hidden');
+
+  if (!id) { err.textContent = 'Enter your partner ID'; err.classList.remove('hidden'); return; }
+  if (!code || code.length !== 4) { err.textContent = 'Enter your 4-digit code'; err.classList.remove('hidden'); return; }
+
+  // POST instead of GET to avoid code in URL/logs
+  fetch('/api/access-signin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: id, code: code }),
+  }).then(function(res) {
+    if (res.redirected) {
+      window.location.href = res.url;
+    } else {
+      return res.json().then(function(data) {
+        if (data.error) {
+          err.textContent = data.error;
+          err.classList.remove('hidden');
+          document.getElementById('access-code').value = '';
+          document.getElementById('access-code').focus();
+        }
+      });
+    }
+  }).catch(function() {
+    err.textContent = 'Network error. Try again.';
+    err.classList.remove('hidden');
+  });
+}
+
+async function requestAccess() {
+  var name = document.getElementById('r-name').value.trim();
+  var email = document.getElementById('r-email').value.trim();
+  var msg = document.getElementById('msg');
+  msg.classList.add('hidden');
+  if (!name || !email) { msg.textContent = 'Name and email required.'; msg.classList.remove('hidden'); msg.className = 'msg msg-err'; return; }
+  try {
+    var res = await fetch('/api/access-request', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email:email, name:name, company:document.getElementById('r-company').value.trim(), reason:document.getElementById('r-reason').value.trim(), returnTo:returnTo }),
+    });
+    var data = await res.json();
+    if (data.approved) { window.location.href = returnTo; }
+    else if (data.success) {
+      msg.className = 'msg msg-ok'; msg.innerHTML = '<strong>Request sent!</strong> You\'ll get a sign-in link by email once approved.'; msg.classList.remove('hidden');
+    }
+  } catch(e) { msg.textContent = 'Error. Email craig@2nth.ai directly.'; msg.className = 'msg msg-err'; msg.classList.remove('hidden'); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ctrlfuture — AI-Powered Sales Engines &amp; B2B Growth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#0b1120;color:#94a3b8;line-height:1.6;-webkit-font-smoothing:antialiased}
+    ::selection{background:rgba(20,184,166,.3)}
+
+    :root{--teal:#14b8a6;--teal-dark:#0d9488;--teal-light:#ccfbf1;--navy:#0b1120;--navy-mid:#131c31;--navy-light:#1e293b;--text:#f1f5f9;--text2:#94a3b8;--muted:#475569;--border:#1e293b;--bg:#0b1120;--bg2:#131c31;--bg3:#1e293b}
+    html.light{--teal:#0d9488;--teal-dark:#0f766e;--teal-light:#f0fdfa;--navy:#f8fafc;--navy-mid:#ffffff;--navy-light:#f1f5f9;--text:#0f172a;--text2:#475569;--muted:#94a3b8;--border:#e2e8f0;--bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9}
+    html.light body{background:var(--bg);color:var(--text2)}
+    html.light header{background:rgba(248,250,252,.92)}
+    html.light .hero::before{background:radial-gradient(circle,rgba(13,148,136,.06),transparent 70%)}
+    html.light .d-user{color:#fff}
+    html.light .nav-cta{color:#fff!important}
+    html.light .btn-teal{color:#fff}
+    html.light .cta-section{border-color:var(--teal);background:rgba(13,148,136,.03)}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+    header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(11,17,32,.92);backdrop-filter:blur(12px)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:-.02em}
+    .logo span{color:var(--teal)}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--text2);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--teal)}
+    .nav-cta{background:var(--teal);color:#0b1120!important;padding:7px 18px;border-radius:6px;font-weight:700}
+    .nav-cta:hover{background:var(--teal-dark)}
+
+    .hero{padding:80px 0 48px;position:relative}
+    .hero::before{content:'';position:absolute;top:-200px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(20,184,166,.08),transparent 70%);pointer-events:none}
+    .hero-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:20px}
+    .hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,6vw,56px);font-weight:700;color:var(--text);line-height:1.08;margin-bottom:24px;letter-spacing:-.03em}
+    .hero h1 span{color:var(--teal)}
+    .hero-intro{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start;margin-bottom:32px}
+    .hero-photo{width:140px;height:140px;border-radius:12px;background:var(--bg2);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .hero-photo-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--navy-mid),var(--navy-light));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;color:var(--teal);opacity:.3}
+    .hero p{font-size:17px;color:var(--text2);line-height:1.65}
+    .hero-stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:24px}
+    .hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--text)}
+    .hero-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    .section{padding:64px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:var(--text);line-height:1.15;margin-bottom:14px}
+
+    /* Services */
+    .services{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:28px 0}
+    .service{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .2s;position:relative;overflow:hidden}
+    .service:hover{border-color:var(--teal);transform:translateY(-2px)}
+    .service::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);opacity:0;transition:opacity .2s}
+    .service:hover::before{opacity:1}
+    .service-icon{font-size:28px;margin-bottom:12px}
+    .service h3{font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--text);margin-bottom:6px}
+    .service p{font-size:13px;color:var(--text2);margin-bottom:12px}
+    .service-output{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.12);padding:8px 12px;border-radius:6px}
+
+    /* AI demo */
+    .demo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0}
+    .demo-header{background:var(--bg3);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .demo-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .demo-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);font-weight:600}
+    .demo-body{padding:20px;display:flex;flex-direction:column;gap:12px}
+    .d-msg{padding:12px 16px;border-radius:10px;font-size:13px;line-height:1.5;max-width:88%}
+    .d-user{background:var(--teal);color:#0b1120;font-weight:500;align-self:flex-end;border-bottom-right-radius:2px}
+    .d-ai{background:var(--bg3);color:var(--text);align-self:flex-start;border-bottom-left-radius:2px}
+    .d-ai strong{color:var(--teal)}
+    .d-data{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);line-height:1.7}
+
+    /* Pipeline viz */
+    .pipeline{display:flex;gap:0;margin:24px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .pipe-stage{flex:1;padding:20px 14px;text-align:center;border-right:1px solid var(--border);transition:background .2s}
+    .pipe-stage:last-child{border:none}
+    .pipe-stage:hover{background:rgba(20,184,166,.06)}
+    .pipe-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--teal)}
+    .pipe-label{font-size:10px;color:var(--muted);margin-top:2px}
+    .pipe-name{font-size:12px;font-weight:600;color:var(--text);margin-top:4px}
+
+    /* Skills */
+    .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin:24px 0}
+    .skill{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s}
+    .skill:hover{border-color:var(--teal)}
+    .skill-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:8px;color:var(--teal);background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.15)}
+    .skill h3{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--text);margin-bottom:4px}
+    .skill p{font-size:12px;color:var(--text2);margin:0 0 8px}
+    .skill-ask{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-style:italic;background:rgba(20,184,166,.04);padding:8px 12px;border-radius:6px;margin-top:8px}
+
+    /* CTA */
+    .cta-section{border:2px solid var(--teal);border-radius:16px;padding:56px;text-align:center;margin:40px 0}
+    .cta-section h2{color:var(--text);margin-bottom:8px}
+    .cta-section p{color:var(--text2);margin-bottom:24px;font-size:16px}
+    .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-teal{background:var(--teal);color:#0b1120}.btn-teal:hover{background:var(--teal-dark)}
+    .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);margin-left:12px}.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+    footer{border-top:1px solid var(--border);padding:20px 0}
+    footer .container{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--teal);text-decoration:none}
+
+    @media(max-width:768px){.services{grid-template-columns:1fr}.hero-intro{grid-template-columns:1fr}.pipeline{flex-direction:column}.pipe-stage{border-right:none;border-bottom:1px solid var(--border)}nav{display:none}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="logo"><span>ctrl</span>future</a>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#demo">AI Demo</a>
+      <a href="#skills">Skills</a>
+      <a href="https://www.ctrlfuture.co.za" class="nav-cta">Let's Connect</a>
+      <button onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 8px;cursor:pointer;color:var(--text2);font-size:14px;line-height:1" title="Toggle light/dark" id="theme-btn">&#9788;</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Scale your vision</div>
+    <h1>Building Sales Engines.<br><span>Predictable B2B Growth.</span></h1>
+
+    <div class="hero-intro">
+      <div class="hero-photo"><div class="hero-photo-placeholder">KJ</div></div>
+      <div>
+        <p>I engineer revenue growth for B2B technology companies as a hands-on, fractional Chief Revenue Officer (CRO). As a co-founder and experienced CRO who has built businesses alongside other talented founders, I know how to build sales engines that produce predictable revenue results. I become an integral part of your leadership team, take accountability and deliver results.</p>
+        <p style="margin-top:12px;font-size:14px"><strong style="color:var(--text)">Katherine Janisch</strong> &mdash; Fractional CRO &amp; B2B Growth Advisor</p>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">CRO</div><div class="lbl">Fractional leadership</div></div>
+      <div class="hero-stat"><div class="num">1M</div><div class="lbl">AI tokens to build</div></div>
+      <div class="hero-stat"><div class="num">300+</div><div class="lbl">Platform skills</div></div>
+      <div class="hero-stat"><div class="num">Build</div><div class="lbl">2nth.ai partner</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="sec-label">What Kath builds</div>
+    <h2>Sales engines powered by AI</h2>
+    <p style="max-width:580px;margin-bottom:8px;color:var(--text2)">The same revenue engineering expertise — now supercharged with AI agents that analyse pipelines, score leads, generate playbooks, and forecast revenue. Human strategy + machine execution.</p>
+
+    <div class="services">
+      <div class="service">
+        <div class="service-icon">&#128200;</div>
+        <h3>Sales Engine Architecture</h3>
+        <p>Design and build the complete revenue machine: pipeline stages, lead scoring, CRM workflow, playbooks, forecasting models. From zero to predictable revenue.</p>
+        <div class="service-output">Deliverable: Pipeline blueprint + CRM config + sales playbook + forecast model</div>
+      </div>
+      <div class="service">
+        <div class="service-icon">&#127919;</div>
+        <h3>Go-to-Market Strategy</h3>
+        <p>Positioning, ICP definition, pricing, competitive analysis, channel strategy. A clear, practical path to revenue growth — not a 60-page deck you'll never read.</p>
+        <div class="service-output">Deliverable: GTM plan + ICP matrix + pricing framework + competitive map</div>
+      </div>
+      <div class="service">
+        <div class="service-icon">&#129302;</div>
+        <h3>AI-Powered Revenue Intelligence</h3>
+        <p>AI agents that analyse your pipeline in real-time: deal velocity, risk scoring, next-best-action for every opportunity. Know what's closing and what's stalling.</p>
+        <div class="service-output">Deliverable: Revenue dashboard + AI deal scoring + weekly pipeline brief</div>
+      </div>
+      <div class="service">
+        <div class="service-icon">&#128170;</div>
+        <h3>Fractional CRO</h3>
+        <p>Embedded part-time in your leadership team. Accountability for revenue outcomes. Weekly cadence, quarterly targets, board-ready reporting. Your CRO, without the full-time cost.</p>
+        <div class="service-output">Deliverable: Monthly revenue report + pipeline review + team coaching</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Demo -->
+<section class="section" id="demo">
+  <div class="container">
+    <div class="sec-label">AI in action</div>
+    <h2>What predictable looks like</h2>
+
+    <!-- Pipeline viz -->
+    <div class="pipeline">
+      <div class="pipe-stage"><div class="pipe-num">247</div><div class="pipe-label">Leads</div><div class="pipe-name">Top of funnel</div></div>
+      <div class="pipe-stage"><div class="pipe-num">84</div><div class="pipe-label">Qualified</div><div class="pipe-name">ICP match</div></div>
+      <div class="pipe-stage"><div class="pipe-num">31</div><div class="pipe-label">Discovery</div><div class="pipe-name">In conversation</div></div>
+      <div class="pipe-stage"><div class="pipe-num">12</div><div class="pipe-label">Proposal</div><div class="pipe-name">Deal stage</div></div>
+      <div class="pipe-stage"><div class="pipe-num">6</div><div class="pipe-label">Closing</div><div class="pipe-name">R2.4M value</div></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-header"><span class="demo-dot"></span><span class="demo-title">ctrlfuture AI — Pipeline Intelligence</span></div>
+      <div class="demo-body">
+        <div class="d-msg d-user">Give me this week's pipeline brief for TechCo SA</div>
+        <div class="d-msg d-ai">
+          <strong>Weekly Pipeline Brief — TechCo SA</strong>
+          <div class="d-data">
+PIPELINE HEALTH: &#9679; GOOD (score: 78/100)
+Weighted pipeline: R2.4M | Target: R3.2M | Gap: R800K
+
+CLOSING THIS MONTH (6 deals):
+  &#9679; Acme Corp — R480K — 90% probability — Sign by 10 Apr
+  &#9679; DataFlow — R320K — 85% — Awaiting procurement
+  &#9679; Nexus Group — R210K — 75% — Final presentation 8 Apr
+  &#9679; CloudBridge — R180K — 70% — Price negotiation
+  &#9679; FinEdge — R150K — 60% — Champion went quiet ⚠
+  &#9679; RetailMax — R120K — 55% — Multi-threading needed ⚠
+
+AT RISK:
+  ⚠ FinEdge — No activity 8 days. Champion last responded 27 Mar.
+    → Recommend: Exec sponsor outreach + value reframe email
+  ⚠ RetailMax — Single-threaded. Only talking to mid-manager.
+    → Recommend: Map buying committee, request intro to VP Ops
+          </div>
+        </div>
+        <div class="d-msg d-user">What do I need to close the R800K gap?</div>
+        <div class="d-msg d-ai">
+          <strong>Gap analysis:</strong> You need R800K in additional weighted pipeline.
+          <div class="d-data">
+OPTION 1: Accelerate existing deals
+  Move 3 discovery deals to proposal stage this week:
+  → InnovateSA (R220K) — ready, needs proposal
+  → GreenTech (R180K) — strong fit, book demo
+  → LogiPro (R160K) — warm, needs business case
+  Total if closed: R560K weighted at 50% = R280K
+
+OPTION 2: Reactivate dormant pipeline
+  14 deals went dark in Q1. AI scored 5 as recoverable:
+  → 3 budget-timing issues (now resolved per fiscal year)
+  → 2 champion changes (new contacts identified)
+  Total if reactivated: R640K weighted at 30% = R192K
+
+OPTION 3: New outbound sprint
+  ICP analysis shows 47 unworked accounts matching your
+  best-customer profile. Sequence: 3 emails + LinkedIn + call.
+  Historical conversion: 8-12% to qualified meeting.
+  → 47 accounts × 10% × R180K avg deal = R846K pipeline
+
+RECOMMENDATION: All three. Run simultaneously.
+Sprint plan generated. Want me to draft the outbound sequences?
+          </div>
+        </div>
+        <div class="d-msg d-user">Yes, and score my current leads by ICP fit</div>
+        <div class="d-msg d-ai">
+          Running <code>biz/sales/qualification</code> against 247 leads...
+          <div class="d-data">
+ICP SCORING COMPLETE (top 20 of 247):
+
+Lead                | Score | Industry    | Size  | Signal
+────────────────────────────────────────────────────────────
+Meridian Tech       | 94    | SaaS        | 200   | Hiring CRO &#x1f525;
+DataVault SA        | 91    | FinTech     | 150   | Series B closed
+CloudFirst          | 89    | Cloud       | 80    | Evaluated competitor
+NovaPay             | 87    | Payments    | 120   | New CEO appointed
+SecureStack         | 85    | CyberSec   | 60    | Growing 40% YoY
+...
+
+HIGH-FIT LEADS (score > 80): 23 of 247 (9%)
+MEDIUM-FIT (60-80): 68 of 247 (28%)
+LOW-FIT (< 60): 156 of 247 (63%)
+
+&#x1f525; HOT SIGNAL: Meridian Tech is hiring a CRO.
+They're building what you sell. Outreach NOW.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="container">
+    <div class="sec-label">AI Skills</div>
+    <h2>The skills behind the engine</h2>
+
+    <div class="skills">
+      <div class="skill">
+        <span class="skill-tag">Building</span>
+        <h3>Pipeline Intelligence</h3>
+        <p>Real-time pipeline health scoring, deal risk detection, velocity tracking, and weekly briefs. Turns CRM data into revenue predictions.</p>
+        <div class="skill-ask">"Which deals are at risk of slipping this quarter?"</div>
+      </div>
+      <div class="skill">
+        <span class="skill-tag">Building</span>
+        <h3>ICP Lead Scoring</h3>
+        <p>Score inbound and outbound leads against your ideal customer profile. Firmographic, technographic, and intent signals. Prioritise what matters.</p>
+        <div class="skill-ask">"Score my top 50 leads by ICP fit and buying signals."</div>
+      </div>
+      <div class="skill">
+        <span class="skill-tag">Planned</span>
+        <h3>Sales Playbook Generator</h3>
+        <p>Generates sales playbooks from your best deals: discovery questions, objection handling, competitive positioning, email templates, call scripts.</p>
+        <div class="skill-ask">"Build a playbook for selling to CFOs in fintech."</div>
+      </div>
+      <div class="skill">
+        <span class="skill-tag">Planned</span>
+        <h3>Revenue Forecast</h3>
+        <p>AI-powered revenue forecasting using pipeline data, historical conversion rates, seasonality, and deal velocity. Board-ready projections.</p>
+        <div class="skill-ask">"What's our likely revenue for Q3 based on current pipeline?"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h2>Ready to build your engine?</h2>
+    <p>Predictable revenue starts with a conversation.</p>
+    <a href="https://www.ctrlfuture.co.za" class="btn btn-teal">Let's Connect</a>
+    <a href="/partners/ctrl-future.html" class="btn btn-ghost">View 2nth.ai partnership</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p><span style="color:var(--teal)">ctrl</span>future &mdash; Scale your vision. <a href="/partners/ctrl-future.html">2nth.ai Build Partner</a></p>
+    <p>Katherine Janisch &middot; Fractional CRO &middot; <a href="https://www.ctrlfuture.co.za">ctrlfuture.co.za</a></p>
+  </div>
+</footer>
+
+<script>
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  var isLight = document.documentElement.classList.contains('light');
+  localStorage.setItem('cf-theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '\u263E' : '\u2606';
+}
+(function(){
+  var t = localStorage.getItem('cf-theme');
+  if(t === 'light') { document.documentElement.classList.add('light'); document.addEventListener('DOMContentLoaded',function(){document.getElementById('theme-btn').textContent='\u263E'}); }
+})();
+</script>
+</body>
+</html>

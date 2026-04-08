@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Boris — Abalone Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0c2d48;--navy-light:#14425a;--ocean:#1a6985;--teal:#2196a6;--teal-light:#e0f7fa;--gold:#c9a84c;--gold-dim:rgba(201,168,76,.08);--text:#0f172a;--text2:#475569;--text3:#64748b;--muted:#94a3b8;--border:#e2e8f0;--bg:#f1f5f9;--white:#fff;--green:#059669;--red:#dc2626;--amber:#d97706}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased}
+
+    .app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--white);display:flex;flex-direction:column}
+
+    /* Header */
+    .hdr{background:linear-gradient(135deg,var(--navy),var(--ocean));color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+    .hdr-left{display:flex;align-items:center;gap:12px}
+    .hdr-avatar{width:40px;height:40px;border-radius:12px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px}
+    .hdr-name{font-size:18px;font-weight:700;letter-spacing:-0.3px}
+    .hdr-sub{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:0.5px}
+    .hdr-status{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+
+    /* Tabs */
+    .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:5}
+    .tab{flex:1;padding:12px;text-align:center;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+    .tab.active{color:var(--ocean);border-bottom-color:var(--ocean)}
+    .tab:hover{color:var(--text2)}
+
+    /* Panels */
+    .panel{display:none;flex:1;overflow-y:auto}
+    .panel.active{display:block}
+    .panel-pad{padding:16px 20px}
+
+    /* Market overview */
+    .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .price-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .price-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+    .price-val{font-size:22px;font-weight:700;color:var(--text)}
+    .price-change{font-size:11px;font-weight:600;margin-top:2px}
+    .up{color:var(--green)}
+    .down{color:var(--red)}
+    .flat{color:var(--muted)}
+
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+    .mini-stat{text-align:center;padding:10px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+    .mini-stat .val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text)}
+    .mini-stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+
+    /* News feed */
+    .news-item{padding:14px 0;border-bottom:1px solid var(--border)}
+    .news-item:last-child{border-bottom:none}
+    .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+    .news-source{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ocean)}
+    .news-time{font-size:10px;color:var(--muted)}
+    .news-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4}
+    .news-body{font-size:13px;color:var(--text3);line-height:1.6}
+    .news-tag{display:inline-block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:2px 8px;border-radius:3px;margin-top:6px}
+    .tag-price{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+    .tag-supply{background:rgba(33,150,166,.06);color:var(--teal);border:1px solid rgba(33,150,166,.2)}
+    .tag-regulation{background:rgba(220,38,38,.06);color:var(--red);border:1px solid rgba(220,38,38,.15)}
+    .tag-demand{background:rgba(5,150,105,.06);color:var(--green);border:1px solid rgba(5,150,105,.2)}
+
+    /* Buyers/Sellers */
+    .contact-card{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:border-color .15s}
+    .contact-card:hover{border-color:var(--ocean)}
+    .contact-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+    .contact-info{flex:1}
+    .contact-name{font-size:13px;font-weight:700;color:var(--text)}
+    .contact-detail{font-size:11px;color:var(--text3)}
+    .contact-type{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:3px}
+    .type-buyer{background:rgba(5,150,105,.06);color:var(--green);border:1px solid rgba(5,150,105,.15)}
+    .type-seller{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+
+    /* Chat */
+    .chat-area{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+    .msg{max-width:85%;padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6}
+    .msg-bot{background:var(--bg);border:1px solid var(--border);color:var(--text2);align-self:flex-start;border-bottom-left-radius:4px}
+    .msg-user{background:var(--ocean);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+    .msg-bot .sender{font-size:10px;font-weight:700;color:var(--ocean);margin-bottom:4px}
+    .chat-input{display:flex;gap:8px;padding:12px 20px;border-top:1px solid var(--border);background:var(--white)}
+    .chat-input input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:20px;font-family:inherit;font-size:13px;outline:none}
+    .chat-input input:focus{border-color:var(--ocean)}
+    .chat-input button{width:40px;height:40px;border-radius:50%;background:var(--ocean);border:none;color:#fff;font-size:16px;cursor:pointer;transition:background .15s;flex-shrink:0}
+    .chat-input button:hover{background:var(--navy)}
+
+    .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+    .footer{padding:10px 20px;border-top:1px solid var(--border);text-align:center;font-size:10px;color:var(--muted)}
+    .footer a{color:var(--ocean)}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-avatar">&#129438;</div>
+      <div>
+        <div class="hdr-name">Boris</div>
+        <div class="hdr-sub">Abalone Market Intelligence</div>
+      </div>
+    </div>
+    <div class="hdr-status">Live</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showPanel('market')">Market</div>
+    <div class="tab" onclick="showPanel('intel')">Intel</div>
+    <div class="tab" onclick="showPanel('network')">Network</div>
+    <div class="tab" onclick="showPanel('chat')">Ask Boris</div>
+  </div>
+
+  <!-- Market Panel -->
+  <div class="panel active" id="panel-market">
+    <div class="panel-pad">
+      <div class="price-grid">
+        <div class="price-card">
+          <div class="price-label">SA Dried (per kg)</div>
+          <div class="price-val">$78.50</div>
+          <div class="price-change up">+3.2% this month</div>
+        </div>
+        <div class="price-card">
+          <div class="price-label">SA Live (per kg)</div>
+          <div class="price-val">$42.80</div>
+          <div class="price-change up">+1.8% this month</div>
+        </div>
+        <div class="price-card">
+          <div class="price-label">SA Canned (per kg)</div>
+          <div class="price-val">$35.20</div>
+          <div class="price-change flat">Flat</div>
+        </div>
+        <div class="price-card">
+          <div class="price-label">Aus Greenlip (per kg)</div>
+          <div class="price-val">$62.40</div>
+          <div class="price-change down">-1.4% this month</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="mini-stat">
+          <div class="val">2,847t</div>
+          <div class="lbl">SA Annual TAC</div>
+        </div>
+        <div class="mini-stat">
+          <div class="val">68%</div>
+          <div class="lbl">Farmed share</div>
+        </div>
+        <div class="mini-stat">
+          <div class="val">$182M</div>
+          <div class="lbl">SA Export value</div>
+        </div>
+      </div>
+
+      <div class="section-label">Key Markets (by volume)</div>
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="mini-stat"><div class="val">42%</div><div class="lbl">Hong Kong</div></div>
+        <div class="mini-stat"><div class="val">28%</div><div class="lbl">Japan</div></div>
+        <div class="mini-stat"><div class="val">15%</div><div class="lbl">China</div></div>
+        <div class="mini-stat"><div class="val">15%</div><div class="lbl">Other Asia</div></div>
+      </div>
+
+      <div class="section-label">Supply Regions</div>
+      <div class="stat-row">
+        <div class="mini-stat"><div class="val">SA</div><div class="lbl">Wild + Farmed</div></div>
+        <div class="mini-stat"><div class="val">AUS</div><div class="lbl">Tasmania, SA</div></div>
+        <div class="mini-stat"><div class="val">NZ</div><div class="lbl">Paua</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intel Panel -->
+  <div class="panel" id="panel-intel">
+    <div class="panel-pad">
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">DFFE</span><span class="news-time">2 hours ago</span></div>
+        <div class="news-title">SA Abalone TAC for 2026/27 set at 2,847 tonnes</div>
+        <div class="news-body">The Department of Forestry, Fisheries and Environment confirmed the Total Allowable Catch for abalone remains flat year-on-year, with 96% allocated to existing rights holders. Poaching enforcement budgets increased 12%.</div>
+        <span class="news-tag tag-regulation">Regulation</span>
+      </div>
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">HK Market</span><span class="news-time">6 hours ago</span></div>
+        <div class="news-title">Hong Kong dried abalone prices firm ahead of Mid-Autumn Festival orders</div>
+        <div class="news-body">Premium SA dried abalone (40-50 heads per catty) trading at HK$4,200/catty, up 8% from last quarter. Japanese importers signalling increased interest in SA product due to Australian supply constraints.</div>
+        <span class="news-tag tag-price">Price</span>
+      </div>
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">Aqunion</span><span class="news-time">1 day ago</span></div>
+        <div class="news-title">Aqunion Hermanus farm reaches 450t annual capacity</div>
+        <div class="news-body">Sea Harvest subsidiary Aqunion reports its Hermanus abalone farm has achieved full capacity at 450 tonnes per annum. New raceway systems improved feed conversion ratios by 15%.</div>
+        <span class="news-tag tag-supply">Supply</span>
+      </div>
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">China Trade</span><span class="news-time">2 days ago</span></div>
+        <div class="news-title">Mainland China abalone import duties reduced under RCEP provisions</div>
+        <div class="news-body">China signals reduced import tariffs on processed abalone from RCEP member states. SA not directly affected but may face competitive pressure from Australian exporters gaining tariff advantages.</div>
+        <span class="news-tag tag-demand">Demand</span>
+      </div>
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">DAFF</span><span class="news-time">3 days ago</span></div>
+        <div class="news-title">SAPS seizes 14 tonnes of poached abalone in Western Cape</div>
+        <div class="news-body">Joint SAPS/DFFE operation in Hawston and Kleinmond yields the largest abalone seizure this year. Estimated black market value R28M. Five arrests made with links to transnational syndicate.</div>
+        <span class="news-tag tag-regulation">Regulation</span>
+      </div>
+      <div class="news-item">
+        <div class="news-meta"><span class="news-source">Harvest CEO Council</span><span class="news-time">4 days ago</span></div>
+        <div class="news-title">Global abalone production forecast to reach 250,000t by 2028</div>
+        <div class="news-body">The Harvest CEO Council, chaired by Jonty Jankovich-Besan, projects global farmed abalone production growth of 6% CAGR, driven primarily by Chinese farm expansion. Wild catch continues to decline globally.</div>
+        <span class="news-tag tag-supply">Supply</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Panel -->
+  <div class="panel" id="panel-network">
+    <div class="panel-pad">
+      <div class="section-label">Expert Contact</div>
+      <div class="contact-card" style="border-color:var(--gold)">
+        <div class="contact-avatar" style="background:var(--navy)">JJB</div>
+        <div class="contact-info">
+          <div class="contact-name">Jonty Jankovich-Besan</div>
+          <div class="contact-detail">MD Aqunion (Sea Harvest) &middot; Chairman, Harvest CEO Council &middot; CA(SA)</div>
+        </div>
+        <span class="contact-type" style="background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,.3)">Expert</span>
+      </div>
+
+      <div class="section-label">Buyers</div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--green)">WL</div>
+        <div class="contact-info">
+          <div class="contact-name">Wing Lee Trading</div>
+          <div class="contact-detail">Hong Kong &middot; Dried &amp; canned &middot; 120t/year</div>
+        </div>
+        <span class="contact-type type-buyer">Buyer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--green)">MT</div>
+        <div class="contact-info">
+          <div class="contact-name">Marubeni Seafoods</div>
+          <div class="contact-detail">Tokyo &middot; Live &amp; dried &middot; 80t/year</div>
+        </div>
+        <span class="contact-type type-buyer">Buyer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--green)">CF</div>
+        <div class="contact-info">
+          <div class="contact-name">China Foods Import Co.</div>
+          <div class="contact-detail">Shanghai &middot; Canned &amp; frozen &middot; 200t/year</div>
+        </div>
+        <span class="contact-type type-buyer">Buyer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--green)">PS</div>
+        <div class="contact-info">
+          <div class="contact-name">Pacific Star Seafood</div>
+          <div class="contact-detail">Singapore &middot; Live premium &middot; 45t/year</div>
+        </div>
+        <span class="contact-type type-buyer">Buyer</span>
+      </div>
+
+      <div class="section-label">Sellers / Producers</div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--gold)">AQ</div>
+        <div class="contact-info">
+          <div class="contact-name">Aqunion (Sea Harvest)</div>
+          <div class="contact-detail">Hermanus &middot; Farmed &middot; 450t capacity</div>
+        </div>
+        <span class="contact-type type-seller">Producer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--gold)">HA</div>
+        <div class="contact-info">
+          <div class="contact-name">HIK Abalone</div>
+          <div class="contact-detail">Hermanus &middot; Farmed &middot; 280t capacity</div>
+        </div>
+        <span class="contact-type type-seller">Producer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--gold)">RD</div>
+        <div class="contact-info">
+          <div class="contact-name">Roman Bay Sea Farm</div>
+          <div class="contact-detail">Gansbaai &middot; Farmed &middot; 160t capacity</div>
+        </div>
+        <span class="contact-type type-seller">Producer</span>
+      </div>
+      <div class="contact-card">
+        <div class="contact-avatar" style="background:var(--gold)">AB</div>
+        <div class="contact-info">
+          <div class="contact-name">Abagold</div>
+          <div class="contact-detail">Hermanus &middot; Farmed &amp; processing &middot; 200t capacity</div>
+        </div>
+        <span class="contact-type type-seller">Producer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div class="panel" id="panel-chat" style="display:none;flex-direction:column">
+    <div class="chat-area" id="chat-messages">
+      <div class="msg msg-bot">
+        <div class="sender">Boris</div>
+        I'm your abalone market intelligence agent. Ask me about prices, buyers, supply forecasts, regulations, or anything in the global abalone trade. I work closely with Jonty Jankovich-Besan at Aqunion.
+      </div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chat-in" placeholder="Ask Boris anything about abalone..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">&#9654;</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://developers.2nth.ai/partners/jankovich-consulting.html">Jonty Jankovich-Besan</a> &middot; Powered by <a href="https://2nth.ai">2nth.ai</a>
+  </div>
+
+</div>
+
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); p.style.display = 'none'; });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+
+  var panel = document.getElementById('panel-' + name);
+  panel.classList.add('active');
+  panel.style.display = name === 'chat' ? 'flex' : 'block';
+
+  event.target.classList.add('active');
+}
+
+var borisResponses = {
+  'price': "SA dried abalone is currently trading at $78.50/kg, up 3.2% this month. Hong Kong remains the premium market with dried product at HK$4,200/catty for 40-50 heads. Live SA abalone is at $42.80/kg. Australian greenlip is slightly softer at $62.40/kg due to increased farm output in Tasmania.",
+  'buyer': "The top buyers for SA abalone are Wing Lee Trading (HK, 120t/yr), Marubeni Seafoods (Tokyo, 80t/yr), China Foods Import (Shanghai, 200t/yr), and Pacific Star (Singapore, 45t/yr). Hong Kong takes 42% of SA exports by volume. Want me to connect you with Jonty for introductions?",
+  'supply': "SA abalone TAC is set at 2,847t for 2026/27. Farmed production now accounts for ~68% of legal SA supply. Aqunion (Jonty's operation) is at 450t capacity in Hermanus. Global farmed production is forecast to hit 250,000t by 2028, with Chinese farms driving most growth.",
+  'poach': "Poaching remains the biggest threat to the SA abalone industry. SAPS seized 14 tonnes in the Western Cape this month alone (est. black market value R28M). DFFE enforcement budgets are up 12% but industry estimates illegal harvest still exceeds the legal TAC. This depresses prices and undermines sustainability.",
+  'china': "China is the world's largest abalone producer (>90% of global farmed output) and consumer. RCEP tariff reductions may give Australian exporters an advantage over SA in the Chinese market. However, SA dried abalone commands a premium in Hong Kong due to perceived quality. Jonty can brief you on the competitive dynamics.",
+  'jonty': "Jonty Jankovich-Besan is MD of Aqunion (Sea Harvest Group) and Chairman of the Harvest CEO Council. He led I&J as MD for 11 years and oversaw the expansion of their abalone operations. He's the go-to person for strategic questions about SA abalone. Shall I arrange a briefing?"
+};
+
+function sendMsg() {
+  var input = document.getElementById('chat-in');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  var area = document.getElementById('chat-messages');
+  var userMsg = document.createElement('div');
+  userMsg.className = 'msg msg-user';
+  userMsg.textContent = text;
+  area.appendChild(userMsg);
+
+  setTimeout(function() {
+    var reply = getReply(text);
+    var botMsg = document.createElement('div');
+    botMsg.className = 'msg msg-bot';
+    botMsg.innerHTML = '<div class="sender">Boris</div>' + reply;
+    area.appendChild(botMsg);
+    area.scrollTop = area.scrollHeight;
+  }, 800);
+
+  area.scrollTop = area.scrollHeight;
+}
+
+function getReply(text) {
+  var t = text.toLowerCase();
+  if (t.includes('price') || t.includes('cost') || t.includes('trading')) return borisResponses.price;
+  if (t.includes('buy') || t.includes('customer') || t.includes('import')) return borisResponses.buyer;
+  if (t.includes('supply') || t.includes('farm') || t.includes('production') || t.includes('tac') || t.includes('capacity')) return borisResponses.supply;
+  if (t.includes('poach') || t.includes('illegal') || t.includes('seiz')) return borisResponses.poach;
+  if (t.includes('china') || t.includes('chinese') || t.includes('rcep') || t.includes('tariff')) return borisResponses.china;
+  if (t.includes('jonty') || t.includes('jankovich') || t.includes('aqunion') || t.includes('sea harvest')) return borisResponses.jonty;
+  return "I can help with abalone market prices, buyer/seller networks, supply forecasts, SA regulations, poaching intelligence, and global trade dynamics. Try asking about current prices, who's buying, or the supply outlook. I can also connect you with Jonty Jankovich-Besan at Aqunion for strategic briefings.";
+}
+</script>
+
+</body>
+</html>

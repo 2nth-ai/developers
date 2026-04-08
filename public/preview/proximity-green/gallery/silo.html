@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Silo Gallery — Proximity Green</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+    body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#0a0a0a;color:#fafafa;overflow-x:hidden;cursor:crosshair}
+    ::selection{background:rgba(5,150,105,.4)}
+
+    /* Gallery shell */
+    .gallery{width:100%;min-height:100vh}
+
+    /* Each room is a full-viewport section */
+    .room{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;scroll-snap-align:start;overflow:hidden}
+
+    /* Wall textures */
+    .wall-white{background:#f5f5f0}
+    .wall-concrete{background:#e8e4df}
+    .wall-dark{background:#1a1a1a}
+    .wall-green{background:#0a1f1a}
+    .wall-slate{background:#1e293b}
+
+    /* Artwork frame */
+    .artwork{position:relative;max-width:min(80vw,900px);width:100%}
+    .artwork-frame{background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 60px rgba(0,0,0,.12);padding:40px;position:relative}
+    .wall-dark .artwork-frame,.wall-green .artwork-frame,.wall-slate .artwork-frame{background:#111;border-color:rgba(255,255,255,.06);box-shadow:0 4px 60px rgba(0,0,0,.5)}
+
+    /* Placard */
+    .placard{position:absolute;bottom:-80px;left:0;max-width:400px}
+    .placard-title{font-size:14px;font-weight:700;letter-spacing:.5px;margin-bottom:2px}
+    .placard-meta{font-size:11px;color:#888;line-height:1.5}
+    .wall-white .placard,.wall-concrete .placard{color:#1a1a1a}
+    .wall-white .placard-meta,.wall-concrete .placard-meta{color:#666}
+
+    /* Room number */
+    .room-num{position:absolute;top:40px;right:40px;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:.3}
+
+    /* ── Piece styles ── */
+
+    /* 1. Title piece — large typography */
+    .piece-title{text-align:center;padding:60px 40px}
+    .piece-title h1{font-size:clamp(48px,10vw,120px);font-weight:800;letter-spacing:-.04em;line-height:.9;color:#0a0a0a}
+    .piece-title h1 span{color:#059669}
+    .piece-title .sub{font-size:clamp(14px,2vw,20px);font-weight:300;letter-spacing:.15em;text-transform:uppercase;color:#888;margin-top:20px}
+
+    /* 2. Spatial address — code as art */
+    .piece-uri{font-family:'Courier New',monospace;padding:60px}
+    .uri-line{font-size:clamp(16px,3vw,36px);font-weight:700;line-height:1.8;color:#059669;opacity:.2;transition:opacity .6s}
+    .uri-line.lit{opacity:1}
+    .uri-line .dim{color:#333}
+    .wall-white .uri-line .dim{color:#ccc}
+
+    /* 3. Zone map — abstract grid */
+    .piece-zones{padding:40px}
+    .zone-grid{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:40px;gap:4px;max-width:800px;margin:0 auto}
+    .zone-cell{border-radius:3px;transition:all .8s ease;opacity:.12;min-height:40px}
+    .zone-cell.active{opacity:.85}
+    .zone-cell.active{opacity:1}
+    .zone-cell:hover{opacity:1;transform:scale(1.1)}
+
+    /* 4. Signal artwork — animated waves */
+    .piece-signals{display:flex;align-items:center;justify-content:center;gap:40px;padding:60px}
+    .signal-col{display:flex;flex-direction:column;align-items:center;gap:8px}
+    .signal-bar{width:4px;border-radius:2px;background:#059669;animation:signalPulse 2s ease-in-out infinite}
+    .signal-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-top:8px}
+    @keyframes signalPulse{0%,100%{height:20px;opacity:.3}50%{height:80px;opacity:1}}
+
+    /* 5. Presence record — data as art */
+    .piece-presence{font-family:'Courier New',monospace;padding:48px;line-height:2.2}
+    .pres-line{font-size:clamp(11px,1.5vw,16px);transition:color .4s}
+    .pres-key{color:#059669}
+    .pres-val{color:#fafafa}
+    .pres-punct{color:#333}
+    .wall-white .pres-val{color:#1a1a1a}
+    .wall-white .pres-punct{color:#ccc}
+
+    /* 6. Tiers — three panels */
+    .piece-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:0;width:100%}
+    .tier-panel{aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;transition:all .4s}
+    .tier-panel:hover{transform:scale(1.02)}
+    .tier-num{font-size:clamp(60px,10vw,100px);font-weight:800;line-height:1;opacity:.15}
+    .tier-word{font-size:clamp(14px,2vw,22px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-top:12px}
+    .tier-desc{font-size:12px;color:#888;margin-top:8px;max-width:200px}
+    .tier-listed{background:#f0fdf4;color:#059669}
+    .tier-verified{background:#f5f3ff;color:#7c3aed}
+    .tier-certified{background:#fffbeb;color:#d97706}
+
+    /* 7. Floor plan — abstract architectural drawing */
+    .piece-floorplan{padding:40px}
+    .fp-art{display:grid;grid-template-columns:repeat(16,1fr);grid-template-rows:repeat(8,1fr);gap:2px;aspect-ratio:2/1;max-width:800px;margin:0 auto}
+    .fp-unit{border-radius:1px;transition:all 1.2s ease}
+
+    /* Generated artwork */
+    .piece-photo{padding:0;line-height:0}
+    .gen-art{width:100%;min-height:400px;aspect-ratio:3/2;position:relative;overflow:hidden}
+
+    /* Art 1: Silo tubes — concentric circles */
+    .art-silo{background:radial-gradient(circle at 30% 40%,#d4d0c8 0%,#b8b0a4 20%,transparent 21%),radial-gradient(circle at 50% 50%,#d4d0c8 0%,#b8b0a4 18%,transparent 19%),radial-gradient(circle at 70% 40%,#d4d0c8 0%,#b8b0a4 20%,transparent 21%),radial-gradient(circle at 40% 65%,#d4d0c8 0%,#b8b0a4 16%,transparent 17%),radial-gradient(circle at 60% 65%,#d4d0c8 0%,#b8b0a4 16%,transparent 17%),radial-gradient(circle at 20% 55%,#d4d0c8 0%,#b8b0a4 14%,transparent 15%),radial-gradient(circle at 80% 55%,#d4d0c8 0%,#b8b0a4 14%,transparent 15%);background-color:#e8e4df}
+
+    /* Art 2: Light through geometry */
+    .art-light{background:linear-gradient(135deg,#0a0a0a 0%,#0a0a0a 40%,transparent 40.5%),linear-gradient(135deg,transparent 59.5%,#059669 60%,#059669 61%,transparent 61.5%),linear-gradient(135deg,transparent 44.5%,rgba(5,150,105,.3) 45%,rgba(5,150,105,.3) 46%,transparent 46.5%),linear-gradient(45deg,transparent 49%,rgba(5,150,105,.1) 49.5%,rgba(5,150,105,.1) 50.5%,transparent 51%);background-color:#111}
+    .art-light::before{content:'';position:absolute;top:0;left:40%;width:20%;height:100%;background:linear-gradient(180deg,rgba(5,150,105,.15),rgba(5,150,105,.02));filter:blur(40px)}
+
+    /* Art 3: Network topology */
+    .art-topology{background-color:#fafaf5}
+
+    /* Art 4: Frequency spectrum */
+    .art-freq{background:linear-gradient(90deg,#059669 0%,#059669 8%,transparent 8.5%,transparent 12%,#7c3aed 12%,#7c3aed 18%,transparent 18.5%,transparent 24%,#06b6d4 24%,#06b6d4 28%,transparent 28.5%,transparent 36%,#f59e0b 36%,#f59e0b 40%,transparent 40.5%,transparent 50%,#ef4444 50%,#ef4444 53%,transparent 53.5%,transparent 62%,#059669 62%,#059669 66%,transparent 66.5%,transparent 74%,#7c3aed 74%,#7c3aed 78%,transparent 78.5%,transparent 86%,#06b6d4 86%,#06b6d4 90%,transparent 90.5%);background-color:#0a0a0a}
+    .art-freq::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.8) 0%,transparent 30%,transparent 70%,rgba(10,10,10,.8) 100%)}
+
+    /* Art 5: Hash pattern */
+    .art-hash{background-color:#111}
+
+    /* Art 6: Three doors */
+    .art-trust{background-color:#fafaf5}
+
+    /* Art 7: Upward perspective */
+    .art-breathe{background:conic-gradient(from 0deg at 50% 100%,#0a1f1a 0deg,#059669 30deg,#0a1f1a 60deg,#065f46 90deg,#0a1f1a 120deg,#059669 150deg,#0a1f1a 180deg,#065f46 210deg,#0a1f1a 240deg,#059669 270deg,#0a1f1a 300deg,#065f46 330deg,#0a1f1a 360deg)}
+
+    /* 8. Closing piece */
+    .piece-closing{text-align:center;padding:80px 40px}
+    .piece-closing h2{font-size:clamp(32px,6vw,72px);font-weight:800;letter-spacing:-.03em;line-height:1;color:#fafafa}
+    .piece-closing h2 span{color:#059669}
+    .piece-closing .credit{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-top:24px}
+    .piece-closing .credit a{color:#059669;text-decoration:none}
+
+    /* Nav dots */
+    .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:100}
+    .nav-dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:transparent;cursor:pointer;transition:all .3s}
+    .nav-dot:hover,.nav-dot.active{background:#059669;border-color:#059669}
+    .wall-white .nav-dot,.wall-concrete .nav-dot{border-color:rgba(0,0,0,.2)}
+
+    /* Progress */
+    .progress{position:fixed;top:0;left:0;height:2px;background:#059669;z-index:200;transition:width .1s}
+
+    @media(max-width:640px){
+      .artwork-frame{padding:24px}
+      .placard{position:relative;bottom:auto;margin-top:20px}
+      .piece-tiers{grid-template-columns:1fr}
+      .piece-signals{flex-wrap:wrap;gap:20px}
+      .nav-dots{right:12px;gap:8px}
+      .nav-dot{width:6px;height:6px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav-dots" id="nav-dots"></nav>
+
+<div class="gallery">
+
+  <!-- Room 1: Title -->
+  <section class="room wall-dark" id="room-1">
+    <div class="room-num">I</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-title">
+          <h1>THE <span>SILO</span><br>GALLERY</h1>
+          <div class="sub">Spatial intelligence for shared spaces</div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Exhibition: Proof of Presence</div>
+        <div class="placard-meta">Proximity Green &times; 2nth.ai &times; FOAM Protocol<br>Cape Town, April 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Silo architecture -->
+  <section class="room wall-concrete" id="art-1">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-silo"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Grain Elevator Study No. 1</div>
+        <div class="placard-meta">The original grain silo — 42 cylindrical tubes rising<br>six storeys from the harbour floor. Now Zeitz MOCAA.<br>The geometry that inspired the spatial index.<br>Photography, V&amp;A Waterfront</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 2: Spatial Address -->
+  <section class="room wall-white" id="room-2">
+    <div class="room-num" style="color:#1a1a1a">II</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-uri" id="uri-piece">
+          <div class="uri-line"><span class="dim">pg://</span>workshop17</div>
+          <div class="uri-line"><span class="dim">pg://workshop17/</span>cape-town</div>
+          <div class="uri-line"><span class="dim">pg://workshop17/cape-town/</span>silo</div>
+          <div class="uri-line"><span class="dim">pg://workshop17/cape-town/silo/</span>floor-2</div>
+          <div class="uri-line lit"><span class="dim">pg://workshop17/cape-town/silo/floor-2/</span>room-204</div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Every Space Has an Address</div>
+        <div class="placard-meta">Hierarchical URI scheme. Shorter addresses aggregate.<br>Longer addresses resolve. Stable across renames.<br>After FOAM's Crypto-Spatial Coordinates, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Light through structure -->
+  <section class="room wall-dark" id="art-2">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-light"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Address Resolution</div>
+        <div class="placard-meta">Light moves through structure the way a URI<br>resolves through hierarchy. Each layer narrows.<br>Each opening reveals what's inside.<br>Photography, architectural study</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 3: Zone Map -->
+  <section class="room wall-concrete" id="room-3">
+    <div class="room-num" style="color:#1a1a1a">III</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-zones">
+          <div class="zone-grid" id="zone-grid"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Zones</div>
+        <div class="placard-meta">Each colour is an operator. Each cell is a space.<br>Bright cells are occupied right now. Zones are governance<br>boundaries — commercial rules live here.<br>After FOAM Zone Anchors, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Network / connections -->
+  <section class="room wall-white" id="art-3">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-topology" id="art-topology"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Topology of Presence</div>
+        <div class="placard-meta">Every occupant creates connections. Between spaces,<br>between signals, between moments. The zone map<br>is a portrait of a building thinking.<br>Abstract study, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 4: Signals -->
+  <section class="room wall-dark" id="room-4">
+    <div class="room-num">IV</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-signals">
+          <div class="signal-col">
+            <div class="signal-bar" style="animation-delay:0s"></div>
+            <div class="signal-bar" style="animation-delay:.2s"></div>
+            <div class="signal-bar" style="animation-delay:.4s"></div>
+            <div class="signal-bar" style="animation-delay:.6s"></div>
+            <div class="signal-bar" style="animation-delay:.8s"></div>
+            <div class="signal-label">Salto</div>
+          </div>
+          <div class="signal-col">
+            <div class="signal-bar" style="animation-delay:.1s;background:#7c3aed"></div>
+            <div class="signal-bar" style="animation-delay:.3s;background:#7c3aed"></div>
+            <div class="signal-bar" style="animation-delay:.5s;background:#7c3aed"></div>
+            <div class="signal-bar" style="animation-delay:.7s;background:#7c3aed"></div>
+            <div class="signal-bar" style="animation-delay:.9s;background:#7c3aed"></div>
+            <div class="signal-label">Sensor</div>
+          </div>
+          <div class="signal-col">
+            <div class="signal-bar" style="animation-delay:.15s;background:#06b6d4"></div>
+            <div class="signal-bar" style="animation-delay:.35s;background:#06b6d4"></div>
+            <div class="signal-bar" style="animation-delay:.55s;background:#06b6d4"></div>
+            <div class="signal-bar" style="animation-delay:.75s;background:#06b6d4"></div>
+            <div class="signal-bar" style="animation-delay:.95s;background:#06b6d4"></div>
+            <div class="signal-label">Kisi</div>
+          </div>
+          <div class="signal-col">
+            <div class="signal-bar" style="animation-delay:.05s;background:#f59e0b"></div>
+            <div class="signal-bar" style="animation-delay:.25s;background:#f59e0b"></div>
+            <div class="signal-bar" style="animation-delay:.45s;background:#f59e0b"></div>
+            <div class="signal-bar" style="animation-delay:.65s;background:#f59e0b"></div>
+            <div class="signal-bar" style="animation-delay:.85s;background:#f59e0b"></div>
+            <div class="signal-label">Wi-Fi</div>
+          </div>
+          <div class="signal-col">
+            <div class="signal-bar" style="animation-delay:.12s;background:#ef4444"></div>
+            <div class="signal-bar" style="animation-delay:.32s;background:#ef4444"></div>
+            <div class="signal-bar" style="animation-delay:.52s;background:#ef4444"></div>
+            <div class="signal-bar" style="animation-delay:.72s;background:#ef4444"></div>
+            <div class="signal-bar" style="animation-delay:.92s;background:#ef4444"></div>
+            <div class="signal-label">Booking</div>
+          </div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Five Signals, One Truth</div>
+        <div class="placard-meta">FOAM used radio beacons for proof of location.<br>We use access hardware, occupancy sensors, Wi-Fi probes,<br>and booking systems. Multiple signals. Confidence-scored.<br>Generative installation, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Rhythm / frequency -->
+  <section class="room wall-concrete" id="art-4">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-freq"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Five Frequencies</div>
+        <div class="placard-meta">Salto, sensor, Kisi, Wi-Fi, booking — each signal<br>has its own frequency. Together they produce<br>a confidence score. Presence is polyphonic.<br>Light study, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 5: Presence Record -->
+  <section class="room wall-slate" id="room-5">
+    <div class="room-num">V</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-presence">
+          <div class="pres-line"><span class="pres-punct">{</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"space"</span><span class="pres-punct">:</span> <span class="pres-val">"pg://workshop17/cpt/silo/floor-2/room-204"</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"entered"</span><span class="pres-punct">:</span> <span class="pres-val">"09:15:00"</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"exited"</span><span class="pres-punct">:</span> <span class="pres-val">"11:32:00"</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"duration"</span><span class="pres-punct">:</span> <span class="pres-val">"137 minutes"</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"signals"</span><span class="pres-punct">:</span> <span class="pres-val">4</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"confidence"</span><span class="pres-punct">:</span> <span class="pres-val" style="color:#059669;font-size:1.4em;font-weight:700">0.98</span></div>
+          <div class="pres-line">&nbsp;&nbsp;<span class="pres-key">"hash"</span><span class="pres-punct">:</span> <span class="pres-val" style="opacity:.4">"sha256:e3b0c44298fc1c14..."</span></div>
+          <div class="pres-line"><span class="pres-punct">}</span></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Presence Claim No. 4,271</div>
+        <div class="placard-meta">A tamper-evident record that someone was here.<br>Not who — just that the space was used, for how long,<br>with what confidence. Billing, disputes, compliance.<br>After FOAM Presence Claims, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Data as material -->
+  <section class="room wall-dark" id="art-5">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-hash" id="art-hash"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Record No. 4,271 (Material Study)</div>
+        <div class="placard-meta">Data is a material. A presence record is not<br>a log entry — it's a proof. Hashed, chained,<br>immutable. The ledger remembers what walls forget.<br>Mixed media, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 6: Tiers -->
+  <section class="room wall-white" id="room-6">
+    <div class="room-num" style="color:#1a1a1a">VI</div>
+    <div class="artwork" style="max-width:min(90vw,960px)">
+      <div class="piece-tiers">
+        <div class="tier-panel tier-listed">
+          <div class="tier-num">I</div>
+          <div class="tier-word">Listed</div>
+          <div class="tier-desc">Photos and rates. The space exists. Trust is declared.</div>
+        </div>
+        <div class="tier-panel tier-verified">
+          <div class="tier-num">II</div>
+          <div class="tier-word">Verified</div>
+          <div class="tier-desc">Hardware connected. Live signals. Trust is measured.</div>
+        </div>
+        <div class="tier-panel tier-certified">
+          <div class="tier-num">III</div>
+          <div class="tier-word">Certified</div>
+          <div class="tier-desc">90-day track record. Audited. Trust is earned.</div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Three States of Trust</div>
+        <div class="placard-meta">FOAM used token staking to curate quality. We use data.<br>Operators progress through tiers by connecting hardware,<br>maintaining accuracy, and resolving disputes.<br>Triptych, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: Space and light -->
+  <section class="room wall-white" id="art-6">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-trust" id="art-trust"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Trust Architecture</div>
+        <div class="placard-meta">Listed is a doorway. Verified is a room with windows.<br>Certified is a building you'd put your name on.<br>Trust is architecture — it's built, not declared.<br>Architectural photography, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 7: Floor Plan -->
+  <section class="room wall-green" id="room-7">
+    <div class="room-num">VII</div>
+    <div class="artwork">
+      <div class="artwork-frame">
+        <div class="piece-floorplan">
+          <div class="fp-art" id="fp-art"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">Floor 2, 11:32 AM</div>
+        <div class="placard-meta">A living architectural drawing. Each cell is a space.<br>Colour is presence. The plan breathes with the building.<br>Data as material, occupancy as pigment.<br>Generative floor study, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Art: The building breathes -->
+  <section class="room wall-green" id="art-7">
+    <div class="artwork">
+      <div class="artwork-frame" style="padding:0;overflow:hidden">
+        <div class="piece-photo">
+          <div class="gen-art art-breathe"></div>
+        </div>
+      </div>
+      <div class="placard">
+        <div class="placard-title">The Building Breathes</div>
+        <div class="placard-meta">A floor plan is not static. It changes every minute.<br>People arrive, leave, cluster, disperse. Occupancy<br>is not a number — it's a rhythm.<br>Architectural study, looking up</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Room 8: Closing -->
+  <section class="room wall-dark" id="room-8">
+    <div class="room-num">VIII</div>
+    <div class="artwork" style="max-width:700px">
+      <div class="piece-closing">
+        <h2>SPACE IS <span>DATA</span>.<br>PRESENCE IS <span>PROOF</span>.</h2>
+        <div class="credit">
+          Proximity Green &times; 2nth.ai<br>
+          Architecture after <a href="https://foam.space">FOAM.org</a><br><br>
+          <a href="https://developers.2nth.ai/partners/proximity-green.html">View partnership &rarr;</a>&nbsp;&nbsp;
+          <a href="https://dev.2nth-skills.pages.dev/biz/spatial-gallery.html">biz/spatial-gallery &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// Build nav dots
+var rooms = document.querySelectorAll('.room');
+var dotsNav = document.getElementById('nav-dots');
+rooms.forEach(function(r, i) {
+  var dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.onclick = function() { r.scrollIntoView({behavior:'smooth'}); };
+  dotsNav.appendChild(dot);
+});
+
+// Progress bar + active dot
+window.addEventListener('scroll', function() {
+  var h = document.documentElement.scrollHeight - window.innerHeight;
+  var pct = (window.scrollY / h) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+
+  var dots = document.querySelectorAll('.nav-dot');
+  rooms.forEach(function(r, i) {
+    var rect = r.getBoundingClientRect();
+    if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+      dots.forEach(function(d) { d.classList.remove('active'); });
+      dots[i].classList.add('active');
+    }
+  });
+});
+
+// URI piece — progressive reveal on scroll
+var uriObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      var lines = e.target.querySelectorAll('.uri-line');
+      lines.forEach(function(l, i) {
+        setTimeout(function() { l.classList.add('lit'); }, i * 400);
+      });
+    }
+  });
+}, {threshold: 0.5});
+uriObserver.observe(document.getElementById('uri-piece'));
+
+// Zone grid — generative
+var zoneGrid = document.getElementById('zone-grid');
+var operators = ['#059669','#059669','#059669','#7c3aed','#7c3aed','#06b6d4','#f59e0b','#ef4444'];
+for (var i = 0; i < 96; i++) {
+  var cell = document.createElement('div');
+  cell.className = 'zone-cell';
+  var op = operators[Math.floor(Math.random() * operators.length)];
+  cell.style.background = op;
+  if (Math.random() > 0.65) cell.classList.add('active');
+  zoneGrid.appendChild(cell);
+}
+// Animate zone cells
+setInterval(function() {
+  var cells = zoneGrid.querySelectorAll('.zone-cell');
+  var idx = Math.floor(Math.random() * cells.length);
+  cells[idx].classList.toggle('active');
+}, 800);
+
+// Floor plan — generative architectural grid
+var fpArt = document.getElementById('fp-art');
+var fpLayout = [
+  1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,
+  1,3,3,2,1,0,0,1,2,2,1,0,0,1,3,1,
+  1,3,2,2,0,0,0,0,0,0,0,0,0,1,2,1,
+  1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,
+  1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,
+  1,2,3,2,0,0,0,0,0,0,0,0,0,1,3,1,
+  1,2,2,2,1,0,0,1,3,2,1,0,0,1,2,1,
+  1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1
+];
+var fpColors = {0:'rgba(255,255,255,.02)',1:'rgba(255,255,255,.08)',2:'#059669',3:'rgba(239,68,68,.7)'};
+fpLayout.forEach(function(v) {
+  var cell = document.createElement('div');
+  cell.className = 'fp-unit';
+  cell.style.background = fpColors[v];
+  if (v === 2 || v === 3) cell.style.borderRadius = '2px';
+  fpArt.appendChild(cell);
+});
+// Topology art — SVG network graph
+setTimeout(function() {
+  var el = document.getElementById('art-topology');
+  if (!el) return;
+  var w = 900, h = 600;
+  var svg = '<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;top:0;left:0">';
+  var nodes = [];
+  var pad = 60;
+  for (var i = 0; i < 60; i++) {
+    nodes.push({x: pad+Math.random()*(w-pad*2), y: pad+Math.random()*(h-pad*2), r: 4+Math.random()*8});
+  }
+  var colors = ['#059669','#7c3aed','#06b6d4','#f59e0b'];
+  for (var i = 0; i < nodes.length; i++) {
+    for (var j = i+1; j < nodes.length; j++) {
+      var dx = nodes[i].x-nodes[j].x, dy = nodes[i].y-nodes[j].y;
+      var dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < 200) {
+        var op = ((1 - dist/200) * 0.5).toFixed(2);
+        var c = colors[(i+j)%colors.length];
+        svg += '<line x1="'+nodes[i].x.toFixed(1)+'" y1="'+nodes[i].y.toFixed(1)+'" x2="'+nodes[j].x.toFixed(1)+'" y2="'+nodes[j].y.toFixed(1)+'" stroke="'+c+'" stroke-width="1.5" opacity="'+op+'"/>';
+      }
+    }
+  }
+  nodes.forEach(function(n,i) {
+    var c = colors[i%colors.length];
+    svg += '<circle cx="'+n.x.toFixed(1)+'" cy="'+n.y.toFixed(1)+'" r="'+n.r.toFixed(1)+'" fill="'+c+'" opacity="0.8"/>';
+    svg += '<circle cx="'+n.x.toFixed(1)+'" cy="'+n.y.toFixed(1)+'" r="'+(n.r*2.5).toFixed(1)+'" fill="'+c+'" opacity="0.08"/>';
+  });
+  svg += '</svg>';
+  el.innerHTML = svg;
+}, 100);
+
+// Hash art — grid of hex characters
+setTimeout(function() {
+  var el = document.getElementById('art-hash');
+  if (!el) return;
+  var hex = '0123456789abcdef';
+  var html = '<div style="display:grid;grid-template-columns:repeat(24,1fr);gap:2px;padding:24px;position:absolute;inset:0;align-content:center">';
+  for (var i = 0; i < 384; i++) {
+    var ch = hex[Math.floor(Math.random()*16)];
+    var bright = Math.random();
+    var color = bright > 0.9 ? '#059669' : bright > 0.82 ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.06)';
+    var size = bright > 0.9 ? '14px' : '11px';
+    var weight = bright > 0.9 ? '700' : '400';
+    html += '<div style="font-family:\'Courier New\',monospace;font-size:'+size+';font-weight:'+weight+';text-align:center;color:'+color+';line-height:2">'+ch+'</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}, 100);
+
+// Trust art — three architectural arches
+setTimeout(function() {
+  var el = document.getElementById('art-trust');
+  if (!el) return;
+  var html = '<div style="display:flex;position:absolute;inset:0;align-items:flex-end;justify-content:center;gap:48px;padding:0 60px 0">';
+  var doors = [
+    {h:'45%',w:'100px',color:'#059669',label:'I',name:'LISTED'},
+    {h:'65%',w:'120px',color:'#7c3aed',label:'II',name:'VERIFIED'},
+    {h:'90%',w:'140px',color:'#d97706',label:'III',name:'CERTIFIED'}
+  ];
+  doors.forEach(function(d) {
+    html += '<div style="display:flex;flex-direction:column;align-items:center;width:'+d.w+'">';
+    html += '<div style="width:100%;height:'+d.h+';background:'+d.color+';border-radius:'+d.w+' '+d.w+' 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">';
+    html += '<span style="font-size:36px;font-weight:800;color:rgba(255,255,255,.15)">'+d.label+'</span>';
+    html += '<span style="font-size:8px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.3)">'+d.name+'</span>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}, 100);
+
+// Breathe the floor plan
+setInterval(function() {
+  var units = fpArt.querySelectorAll('.fp-unit');
+  fpLayout.forEach(function(v, i) {
+    if (v === 2 || v === 3) {
+      if (Math.random() > 0.7) {
+        var isOcc = Math.random() > 0.45;
+        units[i].style.background = isOcc ? 'rgba(239,68,68,.7)' : '#059669';
+      }
+    }
+  });
+}, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ScanMan — Warehouse Barcode Scanner Technology Demonstrator</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#fafaf9;color:#57534e;-webkit-font-smoothing:antialiased}
+    ::selection{background:rgba(34,139,34,.15)}
+    :root{--green:#22873a;--green-dark:#1a6b2e;--green-light:#f0fdf4;--green-mid:#4ead5b;--leaf:#6cc04a;--orange:#ea580c;--red:#dc2626;--text:#1c1917;--text2:#57534e;--muted:#a8a29e;--border:#e2e8e4;--bg:#f9faf9;--bg2:#ffffff;--bg3:#f3f5f3}
+
+    header{padding:14px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(250,250,249,.92);backdrop-filter:blur(12px)}
+    header .container{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:10px}
+    .logo-mark{width:32px;height:32px;position:relative;flex-shrink:0}
+    .logo-sq{position:absolute;border-radius:4px}
+    .logo-sq-1{width:18px;height:18px;background:#4ead5b;top:8px;left:0;opacity:.5}
+    .logo-sq-2{width:18px;height:18px;background:#22873a;top:2px;left:6px;opacity:.7}
+    .logo-sq-3{width:18px;height:18px;background:#6cc04a;top:12px;left:12px;opacity:.6}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--green)}
+    .nav-cta{background:#22873a;color:#fff!important;padding:7px 18px;border-radius:6px;font-weight:600}
+    .nav-cta:hover{background:#1a6b2e}
+
+    .page-container{max-width:1100px;margin:0 auto;padding:0 24px}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:16px 0 0}
+    .breadcrumb a{color:var(--muted);text-decoration:none}
+    .breadcrumb a:hover{color:var(--green)}
+
+    .hero-section{padding:40px 0 32px;border-bottom:1px solid var(--border)}
+    .hero-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .hero-tag .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero-section h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:700;color:var(--text);line-height:1.1;margin-bottom:14px;letter-spacing:-.02em}
+    .hero-section h1 span{color:var(--green)}
+    .hero-section p{font-size:16px;color:var(--text2);max-width:600px;line-height:1.6;margin-bottom:24px}
+
+    .section{padding:48px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3.5vw,32px);font-weight:700;color:var(--text);line-height:1.1;margin-bottom:14px;letter-spacing:-.02em}
+    h3{font-family:'Space Grotesk',sans-serif}
+
+    /* Skill paths */
+    .paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin:24px 0}
+    .path-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s;position:relative;overflow:hidden}
+    .path-card:hover{border-color:var(--green)}
+    .path-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
+    .path-card:hover::before{opacity:1}
+    .path-icon{font-size:24px;margin-bottom:8px}
+    .path-card h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .path-card p{font-size:12px;color:var(--text2);margin:0 0 10px}
+    .path-barcodes{display:flex;gap:4px;flex-wrap:wrap}
+    .path-bc{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;padding:2px 8px;border-radius:3px;background:var(--bg3);border:1px solid var(--border);color:var(--muted)}
+
+    /* Barcode matrix */
+    .matrix{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:24px 0}
+    .matrix table{width:100%;border-collapse:collapse;font-size:12px}
+    .matrix th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:center;padding:10px 8px;border-bottom:1px solid var(--border);background:var(--bg3)}
+    .matrix th:first-child{text-align:left;padding-left:16px}
+    .matrix td{padding:8px;text-align:center;border-bottom:1px solid var(--bg3)}
+    .matrix td:first-child{text-align:left;font-weight:600;color:var(--text);padding-left:16px}
+    .matrix tr:last-child td{border:none}
+    .dot-on{color:var(--green);font-size:14px}
+    .dot-off{color:#e2e8e4;font-size:14px}
+
+    /* How it works */
+    .how-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:24px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .how-step{padding:20px 14px;text-align:center;border-right:1px solid var(--border);transition:background .2s}
+    .how-step:last-child{border:none}
+    .how-step:hover{background:var(--green-light)}
+    .how-num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--green);opacity:.3;margin-bottom:4px}
+    .how-step h3{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .how-step p{font-size:10px;color:var(--muted);margin:0}
+
+    /* Architecture */
+    .arch{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;overflow-x:auto}
+    .arch pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#57534e;line-height:1.8;margin:0}
+    .arch .hl{color:var(--green);font-weight:600}
+
+    /* Barcode types */
+    .bc-types{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:24px 0}
+    .bc-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;transition:border-color .15s}
+    .bc-card:hover{border-color:var(--green)}
+    .bc-card h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .bc-dim{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;font-weight:700;display:inline-block;margin-bottom:6px}
+    .dim-1d{background:rgba(37,99,235,.06);color:#2563eb;border:1px solid rgba(37,99,235,.15)}
+    .dim-2d{background:rgba(124,58,237,.06);color:#7c3aed;border:1px solid rgba(124,58,237,.15)}
+    .bc-vis{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--muted);letter-spacing:2px;text-align:center;background:var(--bg3);padding:6px;border-radius:4px;margin-bottom:8px;white-space:pre;line-height:1.4}
+    .bc-card .use{font-size:11px;color:var(--text2);margin-bottom:2px}
+    .bc-card .enc{font-size:11px;color:var(--muted)}
+
+    /* Demo container */
+    .demo-frame{border:2px solid var(--border);border-radius:16px;overflow:hidden;margin:24px 0;background:#0a0e17;max-width:500px;margin-left:auto;margin-right:auto}
+    .demo-frame-header{background:var(--bg3);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+    .demo-dot{width:8px;height:8px;border-radius:50%}
+
+    /* SA context */
+    .sa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:24px 0}
+    .sa-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px}
+    .sa-card h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .sa-card p{font-size:11px;color:var(--muted);margin:0}
+    .sa-val{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:4px}
+
+    /* GS1 AI reference */
+    .ai-table{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:24px 0}
+    .ai-table table{width:100%;border-collapse:collapse}
+    .ai-table th{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg3)}
+    .ai-table td{padding:6px 12px;border-bottom:1px solid var(--bg3);font-size:11px;color:var(--text2)}
+    .ai-table tr:last-child td{border:none}
+    .ai-code{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--orange)}
+
+    /* CTA */
+    .cta-section{text-align:center;padding:48px 0;border-top:1px solid var(--border)}
+    .btn{display:inline-block;padding:12px 24px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-green{background:#22873a;color:#fff}.btn-green:hover{background:#1a6b2e}
+    .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);margin-left:12px}.btn-ghost:hover{border-color:#22873a;color:#22873a}
+    .btn-dark{background:#1e293b;color:#fff;margin-left:12px}.btn-dark:hover{background:#0f172a}
+
+    footer{border-top:1px solid var(--border);padding:20px 0}
+    footer .container{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--green);text-decoration:none}
+
+    @media(max-width:768px){
+      .how-flow{grid-template-columns:1fr}
+      .how-step{border-right:none;border-bottom:1px solid var(--border)}
+      nav{display:none}
+      .paths,.bc-types{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/preview/scanman/" class="logo">
+      <div class="logo-mark"><div class="logo-sq logo-sq-1"></div><div class="logo-sq logo-sq-2"></div><div class="logo-sq logo-sq-3"></div></div>
+      <span style="font-weight:700;letter-spacing:-.02em">SCAN</span><span style="font-weight:300;color:var(--muted)">MAN</span>
+    </a>
+    <nav>
+      <a href="/preview/scanman/">AI Showcase</a>
+      <a href="/preview/scanman/warehouse.html">Warehouse Sim</a>
+      <a href="/preview/scanman/barcode-scanner.html" style="color:var(--green);font-weight:600">Barcode Scanner</a>
+      <a href="/partners/scanman.html">Partnership</a>
+      <a href="https://www.scanman.co.za" class="nav-cta">scanman.co.za</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-container">
+
+  <div class="breadcrumb">
+    <a href="/partners/scanman.html">ScanMan</a> &rarr; <a href="/preview/scanman/">Demos</a> &rarr; Barcode Scanner
+  </div>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-tag"><span class="pulse"></span> Technology demonstrator</div>
+    <h1>Every barcode<br>tells a <span>story</span>.</h1>
+    <p>A complete barcode scanning skill for warehouse operations. Parses GS1-128, validates GTINs, decodes Application Identifiers, and drives six warehouse workflows &mdash; from receiving dock to dispatch door.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <a href="#live-demo" class="btn btn-green">Try live scanner</a>
+      <a href="#skill-paths" class="btn btn-ghost">View skill paths</a>
+      <a href="#how-it-works" class="btn btn-ghost">How it works</a>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section" id="how-it-works">
+    <div class="sec-label">How it works</div>
+    <h2>Scan &rarr; Parse &rarr; Validate &rarr; Route &rarr; Act</h2>
+    <p style="max-width:600px;margin-bottom:8px">Every barcode follows the same pipeline, regardless of symbology or warehouse operation.</p>
+
+    <div class="how-flow">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <h3>Capture</h3>
+        <p>Camera, hardware scanner, or manual entry. Supports GS1-128, EAN-13, DataMatrix, QR, Code 128, ITF-14, PDF417</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <h3>Detect</h3>
+        <p>Auto-detect symbology and type. Strip FNC1 prefix (]C1, ]d2, ]e0, ]Q3). Identify Application Identifiers</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <h3>Parse</h3>
+        <p>Walk AI codes (2/3/4-digit). Extract GTIN, SSCC, batch, expiry, serial, weight. Handle fixed &amp; variable length AIs</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">04</div>
+        <h3>Validate</h3>
+        <p>Mod-10 check digit for GTIN-8/12/13/14 and SSCC-18. Date validation for YYMMDD AIs. Structure checks</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">05</div>
+        <h3>Route</h3>
+        <p>Match to current mode: receiving checks PO, picking validates pick list, shipping confirms manifest. Audio + haptic feedback</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skill paths -->
+  <section class="section" id="skill-paths">
+    <div class="sec-label">Scanning skill paths</div>
+    <h2>Six workflows, one scanner</h2>
+    <p style="max-width:600px;margin-bottom:8px">Each warehouse operation has specific barcode expectations and validation rules. The scanner adapts its parsing, validation, and feedback to the active workflow.</p>
+
+    <div class="paths">
+      <div class="path-card" style="border-left:3px solid #2563eb">
+        <div class="path-icon">&#128230;</div>
+        <h3>Inbound Receiving</h3>
+        <p>Scan GS1-128 or ITF-14 on incoming cartons and pallets. Parse SSCC from ASN labels. Extract GTIN, batch/lot, expiry, and quantity. Match against Purchase Order.</p>
+        <div class="path-barcodes">
+          <span class="path-bc">GS1-128</span>
+          <span class="path-bc">ITF-14</span>
+          <span class="path-bc">EAN-13</span>
+          <span class="path-bc">DataMatrix</span>
+        </div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #7c3aed">
+        <div class="path-icon">&#127959;&#65039;</div>
+        <h3>Put-Away &amp; Storage</h3>
+        <p>Scan item barcode for product confirmation, then scan Code 128 location label for bin assignment. Record zone placement in WMS. Enforce FIFO and zone rules.</p>
+        <div class="path-barcodes">
+          <span class="path-bc">Code 128</span>
+          <span class="path-bc">Code 39</span>
+          <span class="path-bc">EAN-13</span>
+        </div>
+      </div>
+      <div class="path-card" style="border-left:3px solid var(--green)">
+        <div class="path-icon">&#128722;</div>
+        <h3>Order Picking</h3>
+        <p>Scan location first to confirm correct aisle/bin. Then scan item GTIN to validate against pick list. Supports wave picking, batch picking, and zone-based picking.</p>
+        <div class="path-barcodes">
+          <span class="path-bc">Code 128</span>
+          <span class="path-bc">EAN-13</span>
+          <span class="path-bc">UPC-A</span>
+          <span class="path-bc">DataMatrix</span>
+        </div>
+      </div>
+      <div class="path-card" style="border-left:3px solid var(--orange)">
+        <div class="path-icon">&#128203;</div>
+        <h3>Packing &amp; Cartonisation</h3>
+        <p>Scan items into shipping carton. Generate and scan SSCC for outbound carton. Link carton contents to SSCC for traceability. Capture weight via AI (310n).</p>
+        <div class="path-barcodes">
+          <span class="path-bc">EAN-13</span>
+          <span class="path-bc">GS1-128</span>
+          <span class="path-bc">Code 128</span>
+        </div>
+      </div>
+      <div class="path-card" style="border-left:3px solid var(--red)">
+        <div class="path-icon">&#128667;</div>
+        <h3>Shipping &amp; Dispatch</h3>
+        <p>Scan SSCC on each pallet/carton being loaded. Validate against shipment manifest. Record trailer assignment. Read carrier labels (MaxiCode for UPS, PDF417 for BOL).</p>
+        <div class="path-barcodes">
+          <span class="path-bc">GS1-128</span>
+          <span class="path-bc">PDF417</span>
+          <span class="path-bc">MaxiCode</span>
+        </div>
+      </div>
+      <div class="path-card" style="border-left:3px solid #0891b2">
+        <div class="path-icon">&#128202;</div>
+        <h3>Cycle Counting</h3>
+        <p>Scan location barcode to begin count. Scan each item at location. Record quantities, flag discrepancies against WMS records. Support blind counts and guided counts.</p>
+        <div class="path-barcodes">
+          <span class="path-bc">Code 128</span>
+          <span class="path-bc">EAN-13</span>
+          <span class="path-bc">UPC-A</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Barcode support matrix -->
+  <section class="section" id="barcode-matrix">
+    <div class="sec-label">Barcode support matrix</div>
+    <h2>Which barcodes, where</h2>
+    <p style="max-width:600px;margin-bottom:8px">Every symbology mapped to the warehouse operations that use it. Primary use shown as filled, secondary/occasional as outlined.</p>
+
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px">Symbology</th>
+            <th>Dim</th>
+            <th>Receive</th>
+            <th>Put-Away</th>
+            <th>Pick</th>
+            <th>Pack</th>
+            <th>Ship</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>GS1-128</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>ITF-14</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>Code 128</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td></tr>
+          <tr><td>Code 39</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>EAN-13 / UPC-A</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td></tr>
+          <tr><td>GS1 DataMatrix</td><td><span class="bc-dim dim-2d" style="font-size:8px;padding:1px 4px">2D</span></td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td></tr>
+          <tr><td>QR / GS1 QR</td><td><span class="bc-dim dim-2d" style="font-size:8px;padding:1px 4px">2D</span></td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>PDF417</td><td><span class="bc-dim dim-2d" style="font-size:8px;padding:1px 4px">2D</span></td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>MaxiCode</td><td><span class="bc-dim dim-2d" style="font-size:8px;padding:1px 4px">2D</span></td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td></tr>
+          <tr><td>GS1 DataBar</td><td><span class="bc-dim dim-1d" style="font-size:8px;padding:1px 4px">1D</span></td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-on">&#9679;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td><td class="dot-off">&#9675;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- GS1 AI Reference -->
+  <section class="section" id="gs1-reference">
+    <div class="sec-label">GS1 Application Identifiers</div>
+    <h2>The data inside the barcode</h2>
+    <p style="max-width:600px;margin-bottom:8px">GS1-128 and GS1 DataMatrix barcodes use Application Identifiers to structure data. The scanner parses all warehouse-relevant AIs automatically.</p>
+
+    <div class="ai-table">
+      <table>
+        <thead><tr><th style="width:60px">AI</th><th style="width:120px">Name</th><th style="width:80px">Format</th><th>Description</th><th style="width:80px">Length</th></tr></thead>
+        <tbody>
+          <tr><td class="ai-code">(00)</td><td>SSCC</td><td>N18</td><td>Serial Shipping Container Code &mdash; unique pallet/carton identifier</td><td>Fixed 18</td></tr>
+          <tr><td class="ai-code">(01)</td><td>GTIN</td><td>N14</td><td>Global Trade Item Number &mdash; product identifier</td><td>Fixed 14</td></tr>
+          <tr><td class="ai-code">(02)</td><td>Content GTIN</td><td>N14</td><td>GTIN of contained trade items</td><td>Fixed 14</td></tr>
+          <tr><td class="ai-code">(10)</td><td>Batch/Lot</td><td>X..20</td><td>Batch or lot number &mdash; variable length, GS-delimited</td><td>Var &le;20</td></tr>
+          <tr><td class="ai-code">(11)</td><td>Production Date</td><td>YYMMDD</td><td>Date of manufacture</td><td>Fixed 6</td></tr>
+          <tr><td class="ai-code">(15)</td><td>Best Before</td><td>YYMMDD</td><td>Use-by / best-before date</td><td>Fixed 6</td></tr>
+          <tr><td class="ai-code">(17)</td><td>Expiry Date</td><td>YYMMDD</td><td>Hard expiry date</td><td>Fixed 6</td></tr>
+          <tr><td class="ai-code">(21)</td><td>Serial Number</td><td>X..20</td><td>Unique serial identifier &mdash; variable length, GS-delimited</td><td>Var &le;20</td></tr>
+          <tr><td class="ai-code">(30)</td><td>Count</td><td>N..8</td><td>Variable count of items</td><td>Var &le;8</td></tr>
+          <tr><td class="ai-code">(37)</td><td>Trade Items</td><td>N..8</td><td>Count of trade items in container</td><td>Var &le;8</td></tr>
+          <tr><td class="ai-code">(310n)</td><td>Net Weight kg</td><td>N6</td><td>Weight in kg &mdash; n = decimal places (0-9)</td><td>Fixed 6</td></tr>
+          <tr><td class="ai-code">(320n)</td><td>Net Weight lb</td><td>N6</td><td>Weight in lbs &mdash; n = decimal places (0-9)</td><td>Fixed 6</td></tr>
+          <tr><td class="ai-code">(400)</td><td>Customer PO</td><td>X..30</td><td>Purchase order number</td><td>Var &le;30</td></tr>
+          <tr><td class="ai-code">(410)</td><td>Ship To GLN</td><td>N13</td><td>Destination location code (GLN)</td><td>Fixed 13</td></tr>
+          <tr><td class="ai-code">(420)</td><td>Ship To Postal</td><td>X..20</td><td>Destination postal code</td><td>Var &le;20</td></tr>
+          <tr><td class="ai-code">(422)</td><td>Country of Origin</td><td>N3</td><td>ISO 3166 country code</td><td>Fixed 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Barcode types encyclopaedia -->
+  <section class="section" id="barcode-types">
+    <div class="sec-label">Barcode encyclopaedia</div>
+    <h2>Every barcode in the warehouse</h2>
+
+    <div class="bc-types">
+      <div class="bc-card"><span class="bc-dim dim-1d">1D</span><h4>GS1-128</h4><div class="bc-vis">&#9473;&#9473;&#9475;&#9475;&#9473;&#9475;&#9473;&#9473;&#9475;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9475;</div><div class="use"><strong>Use:</strong> Shipping labels, pallet labels, carton labels</div><div class="enc"><strong>Encodes:</strong> GTIN + batch, expiry, serial, SSCC, weight</div></div>
+      <div class="bc-card"><span class="bc-dim dim-1d">1D</span><h4>ITF-14</h4><div class="bc-vis">&#9475;&#9473;&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;</div><div class="use"><strong>Use:</strong> Outer case/carton identification</div><div class="enc"><strong>Encodes:</strong> GTIN-14 only (packaging indicator + GTIN)</div></div>
+      <div class="bc-card"><span class="bc-dim dim-1d">1D</span><h4>Code 128</h4><div class="bc-vis">&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9473;&#9475;</div><div class="use"><strong>Use:</strong> Location labels, bin labels, internal IDs</div><div class="enc"><strong>Encodes:</strong> Any ASCII text (A-03-B-12 format)</div></div>
+      <div class="bc-card"><span class="bc-dim dim-1d">1D</span><h4>EAN-13 / UPC-A</h4><div class="bc-vis">&#9475;&#9473;&#9475;&#9473;&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9475;&#9473;&#9475;&#9473;</div><div class="use"><strong>Use:</strong> Item identification (retail/inner pack)</div><div class="enc"><strong>Encodes:</strong> 13-digit or 12-digit GTIN</div></div>
+      <div class="bc-card"><span class="bc-dim dim-2d">2D</span><h4>GS1 DataMatrix</h4><div class="bc-vis">&#9619;&#9618;&#9617;&#9619;&#9618;
+&#9618;&#9619;&#9618;&#9617;&#9619;
+&#9617;&#9618;&#9619;&#9618;&#9617;</div><div class="use"><strong>Use:</strong> Pharma, healthcare, small items, DPM</div><div class="enc"><strong>Encodes:</strong> GTIN + full GS1 AI data (compact)</div></div>
+      <div class="bc-card"><span class="bc-dim dim-2d">2D</span><h4>QR Code</h4><div class="bc-vis">&#9619;&#9619;&#9619;&#9617;&#9619;
+&#9619;&#9617;&#9619;&#9617;&#9619;
+&#9619;&#9619;&#9619;&#9617;&#9617;</div><div class="use"><strong>Use:</strong> Digital links, hybrid consumer/logistics</div><div class="enc"><strong>Encodes:</strong> URL, GTIN, GS1 Digital Link URI</div></div>
+      <div class="bc-card"><span class="bc-dim dim-2d">2D</span><h4>PDF417</h4><div class="bc-vis">&#9473;&#9473;&#9475;&#9475;&#9473;
+&#9473;&#9475;&#9473;&#9475;&#9473;
+&#9475;&#9473;&#9473;&#9475;&#9475;</div><div class="use"><strong>Use:</strong> BOL, shipping manifests, documents</div><div class="enc"><strong>Encodes:</strong> Large text/binary payloads (1,850 chars)</div></div>
+      <div class="bc-card"><span class="bc-dim dim-1d">1D</span><h4>GS1 DataBar</h4><div class="bc-vis">&#9475;&#9473;&#9475;&#9473;&#9475;&#9473;&#9473;&#9475;&#9475;&#9473;&#9473;&#9475;&#9473;&#9475;</div><div class="use"><strong>Use:</strong> Fresh food, variable weight, produce</div><div class="enc"><strong>Encodes:</strong> GTIN + weight, date, price</div></div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="section" id="architecture">
+    <div class="sec-label">Architecture</div>
+    <h2>Scan to insight</h2>
+
+    <div class="arch">
+      <pre><code><span class="hl">CAPTURE LAYER</span>                    <span class="hl">PARSING ENGINE</span>                   <span class="hl">WORKFLOW ENGINE</span>
+
+&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; html5-qrcode      &#9474;              &#9474; Symbology Detection    &#9474;          &#9474; Mode-Aware Router &#9474;
+&#9474; (camera scanning)  &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; ]C1 ]d2 ]e0 ]Q3        &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; Receive &#8594; PO Match  &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;              &#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;          &#9474; Put-Away &#8594; Location &#9474;
+&#9474; Hardware scanner   &#9474;              &#9474; GS1 AI Parser          &#9474;          &#9474; Pick    &#8594; Pick List&#9474;
+&#9474; (Zebra, Honeywell) &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; Fixed + Variable length &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; Pack    &#8594; Carton   &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;              &#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;          &#9474; Ship    &#8594; Manifest &#9474;
+&#9474; Manual entry       &#9474;              &#9474; GTIN/SSCC Validator    &#9474;          &#9474; Count   &#8594; Variance &#9474;
+&#9474; (keyboard/paste)   &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; Mod-10 check digit     &#9474;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;                   &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;          &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                                                                             &#9474;
+                                                                             &#9660;
+<span class="hl">FEEDBACK LAYER</span>                   <span class="hl">INTEGRATION LAYER</span>                <span class="hl">PERSISTENCE</span>
+
+&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;              &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;          &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; Web Audio API      &#9474;              &#9474; ScanMan WMS API        &#9474;          &#9474; Offline scan queue&#9474;
+&#9474; (beep/buzz tones)  &#9474;              &#9474; onScan / onValidated   &#9474;          &#9474; localStorage sync &#9474;
+&#9474; Navigator.vibrate  &#9474;              &#9474; onError / onBatch      &#9474;          &#9474; Online/offline    &#9474;
+&#9474; Visual flash        &#9474;              &#9474; 2nth.ai AI skills      &#9474;          &#9474; status detection  &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;              &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;          &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</code></pre>
+    </div>
+  </section>
+
+  <!-- SA Context -->
+  <section class="section" id="sa-context">
+    <div class="sec-label">South African context</div>
+    <h2>Built for SA warehouses</h2>
+
+    <div class="sa-grid">
+      <div class="sa-card">
+        <div class="sa-val">600-601</div>
+        <h4>GS1 SA Prefix</h4>
+        <p>South African GTIN allocation managed by GS1 South Africa (gs1za.org)</p>
+      </div>
+      <div class="sa-card">
+        <div class="sa-val">Offline</div>
+        <h4>Load Shedding Ready</h4>
+        <p>Local scan queue with auto-sync. Operates without connectivity during power outages</p>
+      </div>
+      <div class="sa-card">
+        <div class="sa-val">ZAR/kg</div>
+        <h4>Weight Pricing</h4>
+        <p>ZAR-denominated weight pricing for fresh produce via GS1 DataBar Expanded</p>
+      </div>
+      <div class="sa-card">
+        <div class="sa-val">Retail DC</div>
+        <h4>Distribution Networks</h4>
+        <p>Boxer, Shoprite, Pick n Pay, Woolworths distribution centre integration ready</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Stack -->
+  <section class="section" id="tech-stack">
+    <div class="sec-label">Technology stack</div>
+    <h2>What powers the scanner</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:24px 0">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">html5-qrcode</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">Primary scanning library (ZXing-js wrapper). All 1D + 2D formats. Camera + file input. CDN-loaded.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Quagga2</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">Alternative for 1D-only. Better rotation invariance for angled/curved barcode surfaces on corrugated cardboard.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">BarcodeDetector API</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">Native browser API (Chrome/Edge 83+). Zero dependencies for managed Android warehouse devices.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Web Audio API</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">Synthesised beep/buzz feedback tones. No audio files required. Distinct sounds for success, error, duplicate.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">React 18</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">Component architecture. useRef for scanner lifecycle. useCallback for stable scan handlers. CDN-loaded.</p>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">GS1 Digital Link</h4>
+        <p style="font-size:11px;color:var(--muted);margin:0">URL-encoded product data in QR codes. Sunset 2027 transition support for dual 1D + 2D barcodes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Demo -->
+  <section class="section" id="live-demo">
+    <div class="sec-label">Live demonstration</div>
+    <h2>Try it now</h2>
+    <p style="max-width:600px;margin-bottom:8px">Interactive scanner with simulated warehouse data. Tap sample barcodes to see GS1 parsing, GTIN validation, and workflow routing in action. Switch modes to see how the same barcode produces different workflow actions.</p>
+  </section>
+</div>
+
+<!-- Embedded scanner app -->
+<div id="scanner-root" style="max-width:500px;margin:0 auto 40px;border:2px solid var(--border);border-radius:16px;overflow:hidden"></div>
+
+<div class="page-container">
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>See more ScanMan demos</h2>
+    <p style="color:var(--text2);margin-bottom:24px;font-size:15px">Barcode scanning is one piece of the ScanMan AI warehouse platform.</p>
+    <a href="/preview/scanman/" class="btn btn-green">AI Showcase</a>
+    <a href="/preview/scanman/warehouse.html" class="btn btn-dark">Warehouse Simulation</a>
+    <a href="/partners/scanman.html" class="btn btn-ghost">Partnership Details</a>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <p>ScanMan &mdash; AI-powered warehouse intelligence. <a href="/partners/scanman.html">2nth.ai Early Access Partner</a></p>
+    <p>Durban, South Africa &middot; <a href="https://www.scanman.co.za">scanman.co.za</a></p>
+  </div>
+</footer>
+
+<script type="text/babel">
+const { useState, useCallback, useRef, useEffect } = React;
+
+// ─── GS1 Parser (full implementation) ─────────────────────
+const AI_DEFS = {
+  "00":{len:18,name:"sscc",label:"SSCC"},"01":{len:14,name:"gtin",label:"GTIN"},
+  "02":{len:14,name:"contentGtin",label:"Content GTIN"},"10":{len:null,name:"batch",label:"Batch/Lot"},
+  "11":{len:6,name:"productionDate",label:"Production Date"},"13":{len:6,name:"packDate",label:"Pack Date"},
+  "15":{len:6,name:"bestBefore",label:"Best Before"},"17":{len:6,name:"expiry",label:"Expiry Date"},
+  "20":{len:2,name:"variant",label:"Variant"},"21":{len:null,name:"serial",label:"Serial Number"},
+  "30":{len:null,name:"variableCount",label:"Variable Count"},"37":{len:null,name:"tradeItemCount",label:"Trade Item Count"},
+  "240":{len:null,name:"additionalProductId",label:"Additional ID"},"400":{len:null,name:"customerPO",label:"Customer PO"},
+  "401":{len:null,name:"consignment",label:"Consignment"},"402":{len:17,name:"shipmentId",label:"Shipment ID"},
+  "410":{len:13,name:"shipToGLN",label:"Ship To GLN"},"414":{len:13,name:"locationGLN",label:"Location GLN"},
+  "420":{len:null,name:"shipToPostal",label:"Ship To Postal"},"422":{len:3,name:"countryOfOrigin",label:"Country of Origin"},
+};
+[310,311,312,313,314,315,316,320,330,340].forEach(p=>{for(let d=0;d<=9;d++)AI_DEFS[`${p}${d}`]={len:6,name:`measure_${p}_${d}`,label:`Measure ${p}`}});
+
+function parseGS1Date(s){const yy=parseInt(s.substring(0,2)),mm=parseInt(s.substring(2,4)),dd=parseInt(s.substring(4,6));const year=yy>=50?1900+yy:2000+yy;const day=dd===0?new Date(year,mm,0).getDate():dd;return`${year}-${String(mm).padStart(2,"0")}-${String(day).padStart(2,"0")}`}
+function parseGS1(raw){let data=raw;if(data.startsWith("]C1")||data.startsWith("]d2")||data.startsWith("]e0")||data.startsWith("]Q3"))data=data.substring(3);const GS="\x1D";const result=[];let pos=0;while(pos<data.length){let aiCode=null,aiDef=null;for(let l of[4,3,2]){const c=data.substring(pos,pos+l);if(AI_DEFS[c]){aiCode=c;aiDef=AI_DEFS[c];pos+=l;break}}if(!aiCode){const nx=data.indexOf(GS,pos);pos=nx===-1?data.length:nx+1;continue}let value;if(aiDef.len!==null){value=data.substring(pos,pos+aiDef.len);pos+=aiDef.len;if(pos<data.length&&data[pos]===GS)pos++}else{const nx=data.indexOf(GS,pos);if(nx===-1){value=data.substring(pos);pos=data.length}else{value=data.substring(pos,nx);pos=nx+1}}const isDate=["productionDate","packDate","bestBefore","expiry"].includes(aiDef.name);const isMeasure=aiDef.name.startsWith("measure_");let displayValue=value;if(isDate)displayValue=parseGS1Date(value);if(isMeasure){const d=parseInt(aiCode.slice(-1));displayValue=(parseInt(value)/Math.pow(10,d)).toFixed(d)}result.push({ai:aiCode,name:aiDef.name,label:aiDef.label,raw:value,value:displayValue})}return result}
+function calcCheckDigit(digits){const nums=digits.split("").map(Number).reverse();let sum=0;for(let i=0;i<nums.length;i++)sum+=nums[i]*(i%2===0?3:1);return(10-(sum%10))%10}
+function validateGTIN(g){const d=g.replace(/\s/g,"");if(![8,12,13,14].includes(d.length))return false;return calcCheckDigit(d.slice(0,-1))===parseInt(d.slice(-1))}
+function validateSSCC(s){const d=s.replace(/\s/g,"");if(d.length!==18)return false;return calcCheckDigit(d.slice(0,-1))===parseInt(d.slice(-1))}
+function detectBarcodeType(raw){if(raw.startsWith("]C1")||raw.startsWith("]d2")||raw.startsWith("]e0")||raw.startsWith("]Q3"))return"GS1";if(/^(00|01|02|10|11|13|15|17|20|21|30|37|240|310|320|330|340|400|401|402|410|420)\d/.test(raw))return"GS1";if(/^\d{18}$/.test(raw))return"SSCC";if(/^\d{14}$/.test(raw))return"GTIN-14";if(/^\d{13}$/.test(raw))return"EAN-13";if(/^\d{12}$/.test(raw))return"UPC-A";if(/^\d{8}$/.test(raw))return"EAN-8";return"Custom"}
+function playBeep(type="success"){try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const osc=ctx.createOscillator();const gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);if(type==="success"){osc.frequency.setValueAtTime(880,ctx.currentTime);osc.frequency.setValueAtTime(1100,ctx.currentTime+0.08);gain.gain.setValueAtTime(0.15,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.18);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.18)}else{osc.frequency.setValueAtTime(200,ctx.currentTime);osc.type="sawtooth";gain.gain.setValueAtTime(0.15,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.35)}}catch(e){}}
+
+const WAREHOUSE_INVENTORY={"09506000134352812345670":{product:"Premium Coffee 250g",location:"A-03-B-12",qty:48,po:"PO-2026-0380"},"6001069034221":{product:"Sunlight Dishwash 750ml",location:"B-07-C-03",qty:120,po:"PO-2026-0392"},"16001069034228":{product:"Sunlight Dishwash Outer (x12)",location:"B-07-A-01",qty:10,po:"PO-2026-0392"},"09506000134352":{product:"Premium Coffee 250g",location:"A-03-B-12",qty:240,po:"PO-2026-0380"}};
+const MODES={receive:{label:"Receiving",icon:"\u{1F4E6}",color:"#2563eb",desc:"Scan inbound cartons & pallets"},putaway:{label:"Put-Away",icon:"\u{1F3D7}\uFE0F",color:"#7c3aed",desc:"Scan item then scan location"},pick:{label:"Picking",icon:"\u{1F6D2}",color:"#22873a",desc:"Scan location then scan item"},pack:{label:"Packing",icon:"\u{1F4CB}",color:"#d97706",desc:"Scan items into carton"},ship:{label:"Shipping",icon:"\u{1F69B}",color:"#dc2626",desc:"Load cartons to trailer"},count:{label:"Count",icon:"\u{1F4CA}",color:"#0891b2",desc:"Cycle count by location"}};
+const SAMPLES=[{label:"GS1-128: SSCC Pallet",value:"]C1009506000134352812345670",desc:"SSCC for pallet tracking"},{label:"GS1-128: GTIN+Batch+Expiry",value:"]C10109506000134352810ABC123\x1D1726063017100",desc:"Product with batch and expiry"},{label:"EAN-13: SA Product",value:"6001069034221",desc:"South African product GTIN"},{label:"GTIN-14: Trade Unit",value:"16001069034228",desc:"Outer case/carton"},{label:"GS1-128: Ship To+PO",value:"]C14209200\x1D400PO-2026-0451",desc:"Shipping with postal code and PO"},{label:"Location: Bin Code",value:"A-04-B-07",desc:"Aisle A, Bay 4, Shelf B, Pos 7"}];
+
+function getWorkflowContext(mode,parsed){const gtin=parsed.find(e=>e.name==="gtin");const sscc=parsed.find(e=>e.name==="sscc");const key=sscc?.raw||gtin?.value;const inv=key?WAREHOUSE_INVENTORY[key]:null;switch(mode){case"receive":if(sscc)return{action:"RECEIVE PALLET",detail:inv?`PO: ${inv.po} | ${inv.product} | Qty: ${inv.qty}`:`SSCC ${sscc.value} \u2014 awaiting ASN match`,status:inv?"matched":"pending"};if(gtin)return{action:"RECEIVE ITEM",detail:inv?`${inv.product} | Location: ${inv.location}`:`GTIN ${gtin.value} \u2014 not on open PO`,status:inv?"matched":"warning"};return{action:"SCAN INBOUND",detail:"Scan pallet SSCC or carton barcode",status:"info"};case"pick":if(gtin&&inv)return{action:"PICK CONFIRMED",detail:`${inv.product} from ${inv.location}`,status:"matched"};if(parsed[0]?.name==="custom")return{action:"LOCATION VERIFIED",detail:`At bin ${parsed[0].value}`,status:"info"};return{action:"SCAN LOCATION",detail:"Scan bin location first",status:"info"};default:return{action:mode.toUpperCase(),detail:parsed[0]?.value||"Scan barcode",status:"info"}}}
+
+function Scanner(){
+  const[mode,setMode]=useState("receive");
+  const[input,setInput]=useState("");
+  const[history,setHistory]=useState([]);
+  const[selected,setSelected]=useState(null);
+  const[flash,setFlash]=useState(null);
+
+  const processScan=useCallback((rawValue)=>{const raw=rawValue.trim();if(!raw)return;const type=detectBarcodeType(raw);let parsed=[],valid=null;if(type==="GS1"){parsed=parseGS1(raw);const g=parsed.find(e=>e.name==="gtin");const s=parsed.find(e=>e.name==="sscc");if(g)valid=validateGTIN(g.value);if(s)valid=validateSSCC(s.value)}else if(["EAN-13","UPC-A","EAN-8"].includes(type)){valid=validateGTIN(raw);parsed=[{ai:"-",name:"gtin",label:"GTIN",raw,value:raw}]}else if(type==="GTIN-14"){valid=validateGTIN(raw);parsed=[{ai:"-",name:"gtin",label:"GTIN-14",raw,value:raw}]}else if(type==="SSCC"){valid=validateSSCC(raw);parsed=[{ai:"00",name:"sscc",label:"SSCC",raw,value:raw}]}else{parsed=[{ai:"-",name:"custom",label:"Value",raw,value:raw}]}const workflow=getWorkflowContext(mode,parsed);const record={id:Date.now(),raw,type,parsed,valid,mode,workflow,timestamp:new Date().toLocaleTimeString()};setHistory(prev=>[record,...prev].slice(0,30));setSelected(record);setInput("");setFlash(valid===false?"error":"success");playBeep(valid===false?"error":"success");if(navigator.vibrate)navigator.vibrate(valid===false?[80,40,80]:80);setTimeout(()=>setFlash(null),400)},[mode]);
+
+  const mi=MODES[mode];
+
+  return(
+    <div style={{fontFamily:"'JetBrains Mono','SF Mono',monospace",background:"#0a0e17",color:"#e2e8f0",minHeight:400,position:"relative"}}>
+      {flash&&<div style={{position:"absolute",inset:0,zIndex:99,pointerEvents:"none",background:flash==="success"?"rgba(34,135,58,0.15)":"rgba(220,38,38,0.2)",transition:"opacity .3s"}}/>}
+      <div style={{background:"#111827",borderBottom:"1px solid #1e293b",padding:"10px 16px"}}>
+        <div style={{fontSize:10,color:"#64748b",letterSpacing:2}}>SCANMAN WAREHOUSE SCANNER</div>
+        <div style={{fontSize:15,fontWeight:700,color:mi.color}}>{mi.icon} {mi.label}</div>
+      </div>
+      <div style={{padding:"6px 16px",display:"flex",gap:4,overflowX:"auto",borderBottom:"1px solid #1e293b"}}>
+        {Object.entries(MODES).map(([k,m])=>(
+          <button key={k} onClick={()=>setMode(k)} style={{background:mode===k?m.color+"22":"#111827",border:`1px solid ${mode===k?m.color:"#1e293b"}`,color:mode===k?m.color:"#94a3b8",padding:"4px 10px",borderRadius:6,fontSize:9,whiteSpace:"nowrap",cursor:"pointer",fontWeight:mode===k?700:400,fontFamily:"inherit"}}>{m.icon} {m.label}</button>
+        ))}
+      </div>
+      <div style={{padding:14}}>
+        <div style={{display:"flex",gap:6,marginBottom:12}}>
+          <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")processScan(input)}} placeholder="Scan barcode here..." style={{flex:1,background:"#0a0e17",border:"1px solid #334155",color:"#f8fafc",padding:"10px 12px",borderRadius:6,fontSize:13,outline:"none",fontFamily:"inherit"}}/>
+          <button onClick={()=>processScan(input)} style={{background:mi.color,color:"#fff",border:"none",padding:"10px 16px",borderRadius:6,fontSize:13,cursor:"pointer",fontWeight:700,fontFamily:"inherit"}}>&crarr;</button>
+        </div>
+        {selected&&selected.workflow&&(
+          <div style={{background:"#111827",border:`2px solid ${selected.workflow.status==="matched"?"#22873a":selected.workflow.status==="warning"?"#d97706":"#2563eb"}`,borderRadius:10,padding:14,marginBottom:12}}>
+            <div style={{fontSize:9,fontWeight:800,letterSpacing:2,marginBottom:4,color:selected.workflow.status==="matched"?"#22873a":"#2563eb"}}>{selected.workflow.action}</div>
+            <div style={{fontSize:12,color:"#e2e8f0",marginBottom:8}}>{selected.workflow.detail}</div>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+              <span style={{background:MODES[selected.mode].color+"22",color:MODES[selected.mode].color,padding:"2px 8px",borderRadius:4,fontSize:9,fontWeight:700}}>{MODES[selected.mode].label}</span>
+              <span style={{background:"#0f172a",color:"#64748b",padding:"2px 8px",borderRadius:4,fontSize:9}}>{selected.type}</span>
+              {selected.valid!==null&&<span style={{background:selected.valid?"#22873a22":"#dc262622",color:selected.valid?"#22873a":"#dc2626",padding:"2px 8px",borderRadius:4,fontSize:9,fontWeight:700}}>{selected.valid?"\u2713 Valid":"\u2717 Invalid"}</span>}
+            </div>
+          </div>
+        )}
+        {selected&&selected.parsed.length>0&&(
+          <div style={{marginBottom:12}}>
+            <div style={{background:"#0a0e17",padding:6,borderRadius:6,marginBottom:6,fontSize:9,color:"#475569",wordBreak:"break-all"}}>RAW: {selected.raw.replace(/\x1D/g,"\u23CE")}</div>
+            {selected.parsed.map((p,i)=>(
+              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 8px",background:"#111827",borderRadius:4,borderLeft:`3px solid ${mi.color}`,marginBottom:3}}>
+                <span style={{fontSize:9,color:"#64748b"}}>AI ({p.ai}) {p.label}</span>
+                <span style={{fontSize:11,fontWeight:700,color:"#f8fafc"}}>{p.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <div style={{fontSize:9,color:"#475569",letterSpacing:1,marginBottom:6}}>TEST SAMPLES</div>
+        {SAMPLES.map((s,i)=>(
+          <button key={i} onClick={()=>processScan(s.value)} style={{width:"100%",background:"#111827",border:"1px solid #1e293b",borderRadius:6,padding:"8px 10px",textAlign:"left",cursor:"pointer",color:"#e2e8f0",marginBottom:3,fontFamily:"inherit",display:"block"}}>
+            <span style={{fontSize:10,fontWeight:600}}>{s.label}</span>
+            <span style={{fontSize:8,color:"#64748b",marginLeft:8}}>{s.desc}</span>
+          </button>
+        ))}
+        {history.length>0&&(
+          <div style={{marginTop:12}}>
+            <div style={{fontSize:9,color:"#475569",letterSpacing:1,marginBottom:6}}>HISTORY ({history.length})</div>
+            {history.slice(0,5).map(s=>(
+              <button key={s.id} onClick={()=>setSelected(s)} style={{width:"100%",background:selected?.id===s.id?"#1e293b":"#111827",border:`1px solid ${selected?.id===s.id?"#334155":"#1e293b"}`,borderRadius:6,padding:"6px 10px",textAlign:"left",cursor:"pointer",color:"#e2e8f0",marginBottom:2,fontFamily:"inherit",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{fontSize:10}}>{s.type} <span style={{color:"#64748b",fontSize:9}}>{s.workflow?.action}</span></span>
+                <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:6,height:6,borderRadius:"50%",background:s.valid===false?"#dc2626":s.valid?"#22873a":"#64748b",display:"inline-block"}}/><span style={{fontSize:8,color:"#475569"}}>{s.timestamp}</span></span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <div style={{padding:"10px 16px",borderTop:"1px solid #1e293b",fontSize:9,color:"#334155",textAlign:"center"}}>
+        ScanMan Warehouse Scanner &bull; 2nth.ai Skills Platform
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("scanner-root")).render(<Scanner/>);
+</script>
+</body>
+</html>

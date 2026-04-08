@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2BS IoT — ESP32 &amp; Industrial IoT Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .partner-header{display:flex;align-items:center;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+    .partner-logo{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:1px}
+    .partner-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#71717a;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+    .stat{background:#fff;border:1px solid #ede9f6;border-radius:8px;padding:16px;text-align:center}
+    .stat .value{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#18181b}
+    .stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa;margin-top:2px}
+    .section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a1a1aa;margin-top:40px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #e4e4e7}
+    .team-card{display:flex;gap:16px;align-items:start;background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:10px}
+    .team-avatar{width:48px;height:48px;border-radius:50%;background:#003459;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:#00a8e8;flex-shrink:0}
+    .team-card h3{margin:0 0 2px;font-size:15px;color:#18181b}
+    .team-card .role{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;color:#00a8e8;margin-bottom:4px}
+    .team-card p{margin:0;font-size:13px;color:#71717a;line-height:1.5}
+    .capability-list{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+    .cap-tag{font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 10px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase}
+    .cap-hw{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .cap-fw{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .cap-conn{color:#0369a1;background:rgba(3,105,161,.06);border:1px solid rgba(3,105,161,.2)}
+    .cap-cloud{color:#d97706;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
+    .cap-ai{color:#dc2626;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2)}
+    .skill-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:12px;transition:border-color .15s}
+    .skill-card:hover{border-color:#003459}
+    .skill-card h3{margin:0 0 6px;font-size:16px;color:#18181b}
+    .skill-card p{margin:0;font-size:13px;color:#71717a;line-height:1.5}
+    .skill-card .skill-meta{display:flex;gap:12px;margin-top:10px}
+    .skill-tier{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+    .tier-esp{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+    .tier-iot{color:#0369a1;background:rgba(3,105,161,.06);border:1px solid rgba(3,105,161,.2)}
+    .tier-edge{color:#7c3aed;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:16px 0}
+    .board-card{background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:16px;transition:border-color .15s}
+    .board-card:hover{border-color:#003459}
+    .board-name{font-size:15px;font-weight:700;color:#18181b;margin-bottom:4px}
+    .board-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00a8e8;margin-bottom:6px}
+    .board-specs{font-size:11px;color:#71717a;line-height:1.6}
+    .board-price{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#059669;margin-top:8px}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav><a href="/docs.html">Docs</a><a href="/hub">Hub</a></nav>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin-bottom:8px"><a href="/hub" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a1a1aa">&larr; Back to Partner Hub</a></div>
+
+  <div class="partner-header">
+    <div class="partner-logo" style="background:#003459">IoT</div>
+    <div>
+      <h1 style="margin-bottom:4px">B2BS IoT</h1>
+      <div style="margin-bottom:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:4px 12px;border-radius:4px;background:rgba(0,168,232,.08);border:1px solid rgba(0,168,232,.2);color:#00a8e8">IoT Partner &mdash; ESP32 &amp; Edge Computing</span></div>
+      <div class="partner-meta">
+        <span>IoT Partner since April 2026</span>
+        <span>|</span>
+        <span>Part of <a href="/partners/b2bs-ai.html">B2BS.AI</a></span>
+        <span>|</span>
+        <span>South Africa</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="lead">B2BS IoT is the hardware and edge computing arm of B2BS.AI, focused on ESP32-based solutions for industrial monitoring, asset tracking, environmental sensing, and smart infrastructure. We design, prototype, and deploy connected devices that feed real-time data into the 2nth.ai intelligence layer &mdash; from factory floors to agricultural fields to commercial buildings.</p>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="value">ESP32</div><div class="label">Primary Platform</div></div>
+    <div class="stat"><div class="value">BLE+WiFi</div><div class="label">Dual Connectivity</div></div>
+    <div class="stat"><div class="value">Edge</div><div class="label">AI at the Edge</div></div>
+    <div class="stat"><div class="value">MQTT</div><div class="label">Protocol</div></div>
+    <div class="stat"><div class="value">OTA</div><div class="label">Remote Updates</div></div>
+  </div>
+
+  <!-- Team -->
+  <div class="section-label">Lead</div>
+  <div class="team-card">
+    <div class="team-avatar">CL</div>
+    <div>
+      <h3>Craig Leppan</h3>
+      <div class="role">IoT Lead — B2BS.AI</div>
+      <p>Designs and deploys ESP32-based IoT solutions for industrial and commercial applications. Combines hardware prototyping with cloud integration through MQTT, Cloudflare Workers, and the 2nth.ai platform. <a href="mailto:craig@b2bs.co.za">craig@b2bs.co.za</a></p>
+    </div>
+  </div>
+
+  <!-- Capabilities -->
+  <div class="section-label">Capabilities</div>
+  <div class="capability-list">
+    <span class="cap-tag cap-hw">ESP32 / ESP32-S3</span>
+    <span class="cap-tag cap-hw">PCB Design</span>
+    <span class="cap-tag cap-hw">Sensor Integration</span>
+    <span class="cap-tag cap-fw">Arduino / ESP-IDF</span>
+    <span class="cap-tag cap-fw">FreeRTOS</span>
+    <span class="cap-tag cap-fw">OTA Firmware Updates</span>
+    <span class="cap-tag cap-conn">BLE 5.0</span>
+    <span class="cap-tag cap-conn">WiFi</span>
+    <span class="cap-tag cap-conn">MQTT / MQTTS</span>
+    <span class="cap-tag cap-conn">LoRa (planned)</span>
+    <span class="cap-tag cap-cloud">Cloudflare Workers</span>
+    <span class="cap-tag cap-cloud">Cloudflare D1 / KV</span>
+    <span class="cap-tag cap-cloud">Webhooks / API</span>
+    <span class="cap-tag cap-ai">Edge ML (TFLite Micro)</span>
+    <span class="cap-tag cap-ai">Anomaly Detection</span>
+    <span class="cap-tag cap-hw">3D Printed Enclosures</span>
+    <span class="cap-tag cap-hw">Power Management</span>
+    <span class="cap-tag cap-hw">Solar / Battery</span>
+  </div>
+
+  <!-- Board catalogue -->
+  <div class="section-label">ESP32 Board Catalogue</div>
+  <p style="font-size:13px;color:#71717a;margin-bottom:12px">Reference boards we design and deploy for IoT projects. All support OTA updates, BLE+WiFi, and MQTT to 2nth.ai.</p>
+
+  <div class="board-grid">
+    <div class="board-card">
+      <div class="board-name">Sensor Node</div>
+      <div class="board-chip">ESP32-S3 &middot; BLE+WiFi</div>
+      <div class="board-specs">Temperature, humidity, pressure, light. Battery or USB powered. Deep sleep for months on CR123A. MQTT heartbeat every 60s.</div>
+      <div class="board-price">~R350 per unit</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Asset Tracker</div>
+      <div class="board-chip">ESP32 &middot; BLE beacon</div>
+      <div class="board-specs">BLE advertisement for indoor positioning. Attach to tools, pallets, containers. Gateway picks up RSSI for location. 12-month battery life.</div>
+      <div class="board-price">~R180 per unit</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Industrial Gateway</div>
+      <div class="board-chip">ESP32-S3 &middot; WiFi+Ethernet</div>
+      <div class="board-specs">Aggregates BLE sensor data, forwards via MQTT over WiFi or Ethernet. RS485/Modbus input for legacy equipment. DIN rail mount.</div>
+      <div class="board-price">~R650 per unit</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Power Monitor</div>
+      <div class="board-chip">ESP32 &middot; CT Clamp input</div>
+      <div class="board-specs">Non-invasive current monitoring via CT clamps. 3-phase support. Calculates kW, kWh, power factor. Load shedding detection.</div>
+      <div class="board-price">~R420 per unit</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Vibration Monitor</div>
+      <div class="board-chip">ESP32-S3 &middot; ADXL345</div>
+      <div class="board-specs">3-axis accelerometer for spindle, motor, and bearing vibration. FFT on-device. Alerts on threshold breach. Predictive maintenance.</div>
+      <div class="board-price">~R480 per unit</div>
+    </div>
+    <div class="board-card">
+      <div class="board-name">Solar Weather Station</div>
+      <div class="board-chip">ESP32 &middot; Solar + LiPo</div>
+      <div class="board-specs">Temp, humidity, wind, rain, UV, soil moisture. Solar panel + 18650 battery. LoRa backhaul option. Agriculture &amp; construction sites.</div>
+      <div class="board-price">~R750 per unit</div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="section-label">Skills &amp; Domain Knowledge</div>
+
+  <div class="skill-card">
+    <h3>iot/esp32-development</h3>
+    <p>ESP32 firmware development: Arduino and ESP-IDF frameworks, FreeRTOS task management, peripheral drivers (I2C, SPI, UART, ADC), BLE GATT services, WiFi provisioning, OTA updates, deep sleep power management, and secure boot.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-esp">ESP32</span>
+      <span class="skill-tier tier-iot">Firmware</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/mqtt-telemetry</h3>
+    <p>MQTT-based IoT telemetry: broker architecture (Mosquitto, HiveMQ, Cloudflare Pub/Sub), topic design, QoS levels, retained messages, last will, TLS/mTLS, and data pipeline from device to Cloudflare Workers to D1/KV storage.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-iot">MQTT</span>
+      <span class="skill-tier tier-edge">Cloud</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/edge-ai</h3>
+    <p>Machine learning at the edge: TensorFlow Lite Micro on ESP32-S3, on-device anomaly detection, vibration pattern classification, predictive maintenance models, and the trade-offs between edge inference and cloud processing.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-esp">ESP32-S3</span>
+      <span class="skill-tier tier-edge">Edge ML</span>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <h3>iot/industrial-monitoring</h3>
+    <p>Industrial IoT deployments: power monitoring (CT clamps, 3-phase), vibration analysis (FFT, bearing defect frequencies), temperature mapping, environmental compliance, and integration with existing SCADA/PLC systems via Modbus RS485.</p>
+    <div class="skill-meta">
+      <span class="skill-tier tier-iot">Industrial</span>
+      <span class="skill-tier tier-esp">Sensors</span>
+    </div>
+  </div>
+
+  <!-- Architecture -->
+  <div class="section-label">Architecture</div>
+  <div style="background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:#52525b">
+    <pre style="margin:0;white-space:pre-wrap">
+ESP32 Sensor Nodes (BLE + WiFi)
+    │
+    ├── BLE advertisement → Gateway (RSSI positioning)
+    │
+    ├── WiFi → MQTT Broker (TLS)
+    │              │
+    │              └── Cloudflare Worker (ingestion)
+    │                      │
+    │                      ├── D1 (time-series storage)
+    │                      ├── KV (latest values, device state)
+    │                      └── 2nth.ai (AI analysis, alerts)
+    │
+    └── OTA Update Server (Cloudflare R2)
+            │
+            └── Firmware binary → ESP32 (auto-update on boot)
+    </pre>
+  </div>
+
+  <!-- Partnership -->
+  <div class="section-label">Partnership Details</div>
+  <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;width:180px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Parent</td>
+      <td style="padding:10px 0;font-weight:600"><a href="/partners/b2bs-ai.html">B2BS.AI — Premier Developer Partner</a></td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Domain</td>
+      <td style="padding:10px 0">ESP32, Industrial IoT, Edge Computing, Sensor Networks</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Lead</td>
+      <td style="padding:10px 0">Craig Leppan — craig@b2bs.co.za</td>
+    </tr>
+    <tr style="border-bottom:1px solid #e4e4e7">
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Skill Paths</td>
+      <td style="padding:10px 0"><code>iot/esp32-development</code>, <code>iot/mqtt-telemetry</code>, <code>iot/edge-ai</code>, <code>iot/industrial-monitoring</code></td>
+    </tr>
+    <tr>
+      <td style="padding:10px 0;color:#71717a;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase">Ecosystem</td>
+      <td style="padding:10px 0"><a href="https://ai.b2bs.co.za">ai.b2bs.co.za</a> &middot; <a href="https://iot.2nth.ai">iot.2nth.ai</a></td>
+    </tr>
+  </table>
+
+  <div class="section-label">Live demos</div>
+  <div class="card-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:24px">
+    <a href="/preview/b2bs/chip-discovery.html" style="display:block;text-decoration:none;background:#fff;border:1px solid rgba(0,168,232,.2);border-radius:10px;padding:20px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#00a8e8;margin-bottom:6px">Interactive</div>
+      <div style="font-size:16px;font-weight:700;color:#18181b;margin-bottom:4px">Chip Discovery &amp; Auto-Demo</div>
+      <div style="font-size:13px;color:#71717a;line-height:1.5">Connect an ESP32 via USB. Auto-detect chip, view pinout and schematic, configure Wi-Fi, deploy a demo. Powered by WebSerial + @espressif skill.</div>
+    </a>
+    <a href="https://iot.demo.2nth.ai" style="display:block;text-decoration:none;background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#00a8e8;margin-bottom:6px">Platform</div>
+      <div style="font-size:16px;font-weight:700;color:#18181b;margin-bottom:4px">IoT Hardware Platform</div>
+      <div style="font-size:13px;color:#71717a;line-height:1.5">Full IoT platform overview &mdash; edge sensing, connectivity, automation, AI telemetry, and pilot methodology.</div>
+    </a>
+    <a href="https://skills.2nth.ai/iot/skills/espressif.html" style="display:block;text-decoration:none;background:#fff;border:1px solid #ede9f6;border-radius:10px;padding:20px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#059669;margin-bottom:6px">Skill Reference</div>
+      <div style="font-size:16px;font-weight:700;color:#18181b;margin-bottom:4px">@espressif Skill</div>
+      <div style="font-size:13px;color:#71717a;line-height:1.5">Complete Espressif SoC reference &mdash; ESP32 family, ESP-IDF, Arduino, Matter, RainMaker, security, power management.</div>
+    </a>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

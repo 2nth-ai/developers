@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Toolpath Optimiser — SC Engineering</title>
+  <meta name="description" content="AI-generated CNC toolpaths in minutes. Define the part, select material, choose operation — AI generates optimised G-code with feeds, speeds, and cycle time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0c0c14;--surface:#14141e;--surface2:#1a1a28;--surface3:#22222f;--border:rgba(255,255,255,.06);--border-s:rgba(255,255,255,.1);--text:#e8eaf0;--text2:#94a3b8;--text3:#64748b;--accent:#3b82f6;--accent-dim:#2563eb;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;--purple:#8b5cf6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--text2);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+    .app{max-width:1100px;margin:0 auto;padding:16px}
+
+    /* Header */
+    .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:16px}
+    .hdr-left{display:flex;align-items:center;gap:12px}
+    .hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:var(--text)}
+    .hdr-logo span{color:var(--accent)}
+    .hdr-badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:3px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--accent)}
+    .hdr-right{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)}
+    .hdr-right a{color:var(--accent);text-decoration:none}
+
+    /* Layout */
+    .layout{display:grid;grid-template-columns:320px 1fr;gap:16px;min-height:calc(100vh - 100px)}
+    @media(max-width:800px){.layout{grid-template-columns:1fr}}
+
+    /* Panel */
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;overflow-y:auto}
+    .panel-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;font-weight:600}
+
+    /* Form */
+    .field{margin-bottom:14px}
+    .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;font-weight:500}
+    .field select,.field input{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border-s);border-radius:6px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;appearance:none}
+    .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+    .field input:focus,.field select:focus{border-color:var(--accent)}
+
+    /* Dimensions grid */
+    .dim-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .dim-grid input{text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px}
+
+    /* Button */
+    .gen-btn{width:100%;padding:12px;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;background:var(--accent);color:#fff}
+    .gen-btn:hover{background:var(--accent-dim);transform:translateY(-1px)}
+    .gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+    /* Main area */
+    .main-area{display:flex;flex-direction:column;gap:16px}
+
+    /* Viewport */
+    .viewport{background:var(--surface);border:1px solid var(--border);border-radius:10px;flex:1;min-height:400px;position:relative;overflow:hidden}
+    .viewport-label{position:absolute;top:12px;left:14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);z-index:2}
+    .viewport-status{position:absolute;top:12px;right:14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;padding:3px 10px;border-radius:3px;z-index:2}
+    .status-idle{background:rgba(100,116,139,.1);color:var(--text3);border:1px solid rgba(100,116,139,.15)}
+    .status-gen{background:rgba(59,130,246,.1);color:var(--accent);border:1px solid rgba(59,130,246,.2);animation:pulse 1.5s infinite}
+    .status-done{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .viewport canvas{width:100%;height:100%}
+
+    /* Results bar */
+    .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+    .result-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+    .result-val{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text)}
+    .result-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-top:2px}
+    .result-change{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;margin-top:4px}
+    .change-good{color:var(--green)}
+    .change-warn{color:var(--amber)}
+
+    /* G-code terminal */
+    .gcode-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .gcode-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
+    .gcode-bar span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+    .gcode-copy{font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:3px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+    .gcode-body{padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.7;max-height:200px;overflow-y:auto;color:var(--text2)}
+    .gcode-body .comment{color:var(--text3)}
+    .gcode-body .gval{color:var(--accent)}
+    .gcode-body .mval{color:var(--green)}
+    .gcode-body .fval{color:var(--amber)}
+    .gcode-body .sval{color:var(--cyan)}
+
+    /* Optimisation log */
+    .opt-log{margin-top:12px}
+    .opt-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2)}
+    .opt-check{color:var(--green)}
+    .opt-warn{color:var(--amber)}
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-logo"><span>SC</span> TOOLPATH AI</div>
+      <div class="hdr-badge">Concept Demo</div>
+    </div>
+    <div class="hdr-right">
+      <a href="/preview/scengineering/">SC Engineering</a> &middot; <a href="https://2nth.ai">2nth.ai</a>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Left: Input panel -->
+    <div class="panel">
+      <div class="panel-title">Part Definition</div>
+
+      <div class="field">
+        <label>Material</label>
+        <select id="material">
+          <option value="alu6061">Aluminium 6061-T6</option>
+          <option value="alu7075">Aluminium 7075-T6</option>
+          <option value="steel1018">Steel 1018 (mild)</option>
+          <option value="steel4140">Steel 4140 (alloy)</option>
+          <option value="ss304">Stainless 304</option>
+          <option value="ss316">Stainless 316</option>
+          <option value="brass">Brass C360</option>
+          <option value="delrin">Delrin (POM)</option>
+          <option value="nylon">Nylon 6/6</option>
+          <option value="titanium">Titanium Ti-6Al-4V</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Stock Dimensions (mm)</label>
+        <div class="dim-grid">
+          <input type="number" id="dim-x" value="150" placeholder="X">
+          <input type="number" id="dim-y" value="100" placeholder="Y">
+          <input type="number" id="dim-z" value="25" placeholder="Z">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Operation</label>
+        <select id="operation">
+          <option value="face">Face Milling</option>
+          <option value="pocket">Pocket (2.5D)</option>
+          <option value="contour">Contour / Profile</option>
+          <option value="slot">Slot Milling</option>
+          <option value="drill">Drilling Pattern</option>
+          <option value="adaptive">Adaptive Clearing</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Tool</label>
+        <select id="tool">
+          <option value="em10">10mm Flat End Mill</option>
+          <option value="em6">6mm Flat End Mill</option>
+          <option value="em12">12mm Flat End Mill</option>
+          <option value="bm8">8mm Ball Nose</option>
+          <option value="dr5">5mm Drill</option>
+          <option value="dr8">8mm Drill</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Depth of Cut (mm)</label>
+        <input type="number" id="doc" value="2.0" step="0.1">
+      </div>
+
+      <div class="field">
+        <label>Finish Quality</label>
+        <select id="finish">
+          <option value="rough">Roughing (fast, Ra 6.3)</option>
+          <option value="semi" selected>Semi-Finish (Ra 3.2)</option>
+          <option value="finish">Fine Finish (Ra 1.6)</option>
+          <option value="mirror">Mirror Finish (Ra 0.8)</option>
+        </select>
+      </div>
+
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        Generate AI Toolpath
+      </button>
+
+      <!-- Optimisation log -->
+      <div class="opt-log" id="opt-log" style="display:none">
+        <div class="panel-title" style="margin-top:16px">AI Optimisation Log</div>
+        <div id="opt-items"></div>
+      </div>
+    </div>
+
+    <!-- Right: Viewport + results -->
+    <div class="main-area">
+
+      <div class="viewport" id="viewport">
+        <div class="viewport-label">Toolpath Preview</div>
+        <div class="viewport-status status-idle" id="vp-status">Ready</div>
+        <canvas id="canvas"></canvas>
+      </div>
+
+      <!-- Results -->
+      <div class="results" id="results" style="display:none">
+        <div class="result-card">
+          <div class="result-val" id="r-cycle">—</div>
+          <div class="result-label">Cycle Time</div>
+          <div class="result-change change-good" id="r-cycle-save"></div>
+        </div>
+        <div class="result-card">
+          <div class="result-val" id="r-feed">—</div>
+          <div class="result-label">Feed (mm/min)</div>
+        </div>
+        <div class="result-card">
+          <div class="result-val" id="r-speed">—</div>
+          <div class="result-label">Speed (RPM)</div>
+        </div>
+        <div class="result-card">
+          <div class="result-val" id="r-mrr">—</div>
+          <div class="result-label">MRR cm³/min</div>
+        </div>
+        <div class="result-card">
+          <div class="result-val" id="r-passes">—</div>
+          <div class="result-label">Passes</div>
+        </div>
+        <div class="result-card">
+          <div class="result-val" id="r-length">—</div>
+          <div class="result-label">Path Length (m)</div>
+        </div>
+      </div>
+
+      <!-- G-code -->
+      <div class="gcode-panel" id="gcode-panel" style="display:none">
+        <div class="gcode-bar">
+          <span>Generated G-Code</span>
+          <button class="gcode-copy" onclick="copyGcode()">Copy</button>
+        </div>
+        <div class="gcode-body" id="gcode-body"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var materialDB = {
+  alu6061:   { name:'Alu 6061-T6',     sfm:800, chipload:0.05, color:'#a8b0b9' },
+  alu7075:   { name:'Alu 7075-T6',     sfm:700, chipload:0.04, color:'#8b939d' },
+  steel1018: { name:'Steel 1018',       sfm:350, chipload:0.03, color:'#636d79' },
+  steel4140: { name:'Steel 4140',       sfm:250, chipload:0.025, color:'#4a525c' },
+  ss304:     { name:'Stainless 304',    sfm:200, chipload:0.02, color:'#c4cad1' },
+  ss316:     { name:'Stainless 316',    sfm:180, chipload:0.018, color:'#d4d4d8' },
+  brass:     { name:'Brass C360',       sfm:600, chipload:0.06, color:'#d4a017' },
+  delrin:    { name:'Delrin POM',       sfm:1000,chipload:0.08, color:'#f0f0f0' },
+  nylon:     { name:'Nylon 6/6',        sfm:900, chipload:0.07, color:'#e8e8d0' },
+  titanium:  { name:'Titanium Ti-6Al',  sfm:120, chipload:0.015, color:'#7a7a8a' },
+};
+
+var toolDB = {
+  em10: { dia:10, flutes:3, name:'10mm Flat End Mill' },
+  em6:  { dia:6,  flutes:2, name:'6mm Flat End Mill' },
+  em12: { dia:12, flutes:3, name:'12mm Flat End Mill' },
+  bm8:  { dia:8,  flutes:2, name:'8mm Ball Nose' },
+  dr5:  { dia:5,  flutes:2, name:'5mm Drill' },
+  dr8:  { dia:8,  flutes:2, name:'8mm Drill' },
+};
+
+var canvas, ctx;
+
+function initCanvas() {
+  canvas = document.getElementById('canvas');
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  ctx = canvas.getContext('2d');
+  drawGrid();
+}
+
+function drawGrid() {
+  if (!ctx) return;
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,.03)';
+  ctx.lineWidth = 1;
+  for (var x = 0; x < w; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (var y = 0; y < h; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+}
+
+function generate() {
+  var btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+
+  var status = document.getElementById('vp-status');
+  status.className = 'viewport-status status-gen';
+  status.textContent = 'AI Processing...';
+
+  var mat = materialDB[document.getElementById('material').value];
+  var tool = toolDB[document.getElementById('tool').value];
+  var dimX = parseFloat(document.getElementById('dim-x').value) || 150;
+  var dimY = parseFloat(document.getElementById('dim-y').value) || 100;
+  var dimZ = parseFloat(document.getElementById('dim-z').value) || 25;
+  var doc = parseFloat(document.getElementById('doc').value) || 2;
+  var op = document.getElementById('operation').value;
+  var finish = document.getElementById('finish').value;
+
+  // Calculate cutting parameters
+  var rpm = Math.round((mat.sfm * 1000) / (Math.PI * tool.dia));
+  var feedPerTooth = mat.chipload * (finish === 'rough' ? 1.2 : finish === 'finish' ? 0.6 : finish === 'mirror' ? 0.4 : 1.0);
+  var feed = Math.round(rpm * tool.flutes * feedPerTooth);
+  var stepover = tool.dia * (finish === 'rough' ? 0.65 : finish === 'finish' ? 0.3 : finish === 'mirror' ? 0.15 : 0.45);
+  var passes = Math.ceil(dimZ / doc);
+  var pathsPerPass = Math.ceil(dimY / stepover);
+  var pathLength = ((dimX * pathsPerPass * passes) / 1000).toFixed(1);
+  var mrr = ((feed * doc * stepover) / 1000).toFixed(1);
+  var cycleTime = ((parseFloat(pathLength) * 1000) / feed).toFixed(1);
+  var manualTime = (cycleTime * 1.4).toFixed(1);
+  var savings = Math.round((1 - cycleTime / manualTime) * 100);
+
+  // Simulate AI processing
+  var logItems = [
+    { delay:400, text:'Analysing ' + mat.name + ' cutting characteristics...', type:'check' },
+    { delay:900, text:'Selecting optimal feeds: ' + feed + ' mm/min @ ' + rpm + ' RPM', type:'check' },
+    { delay:1400, text:'Calculating stepover: ' + stepover.toFixed(1) + 'mm (' + (stepover/tool.dia*100).toFixed(0) + '% of ' + tool.dia + 'mm tool)', type:'check' },
+    { delay:1800, text:'Generating ' + op + ' toolpath (' + passes + ' passes, ' + pathsPerPass + ' paths/pass)', type:'check' },
+    { delay:2200, text:'Optimising entry/exit moves for chip thinning compensation', type:'check' },
+    { delay:2600, text:'Applying ' + finish + ' surface finish parameters (Ra target)', type:'check' },
+    { delay:3000, text:'Cycle time reduced ' + savings + '% vs manual programming', type:'warn' },
+    { delay:3300, text:'Tool life estimated: ' + Math.round(60 / parseFloat(cycleTime) * 45) + ' parts before insert change', type:'check' },
+  ];
+
+  var logEl = document.getElementById('opt-items');
+  logEl.innerHTML = '';
+  document.getElementById('opt-log').style.display = '';
+
+  logItems.forEach(function(item) {
+    setTimeout(function() {
+      var div = document.createElement('div');
+      div.className = 'opt-item';
+      div.innerHTML = '<span class="' + (item.type === 'check' ? 'opt-check' : 'opt-warn') + '">' + (item.type === 'check' ? '&#10003;' : '&#9888;') + '</span> ' + item.text;
+      logEl.appendChild(div);
+      logEl.parentElement.scrollTop = logEl.parentElement.scrollHeight;
+    }, item.delay);
+  });
+
+  // Draw toolpath after "processing"
+  setTimeout(function() {
+    drawToolpath(dimX, dimY, dimZ, doc, stepover, tool, mat, op, passes);
+
+    status.className = 'viewport-status status-done';
+    status.textContent = 'Complete';
+    btn.disabled = false;
+    btn.textContent = 'Regenerate';
+
+    // Show results
+    document.getElementById('results').style.display = '';
+    document.getElementById('r-cycle').textContent = cycleTime + 'min';
+    document.getElementById('r-cycle-save').textContent = savings + '% faster than manual';
+    document.getElementById('r-feed').textContent = feed;
+    document.getElementById('r-speed').textContent = rpm;
+    document.getElementById('r-mrr').textContent = mrr;
+    document.getElementById('r-passes').textContent = passes;
+    document.getElementById('r-length').textContent = pathLength;
+
+    // Generate G-code
+    generateGcode(mat, tool, rpm, feed, doc, dimX, dimY, dimZ, stepover, passes, op);
+  }, 3500);
+}
+
+function drawToolpath(dimX, dimY, dimZ, doc, stepover, tool, mat, op, passes) {
+  var w = canvas.width, h = canvas.height;
+  drawGrid();
+
+  // Draw stock outline
+  var margin = 60;
+  var scaleX = (w - margin * 2) / dimX;
+  var scaleY = (h - margin * 2) / dimY;
+  var scale = Math.min(scaleX, scaleY);
+  var ox = (w - dimX * scale) / 2;
+  var oy = (h - dimY * scale) / 2;
+
+  // Stock
+  ctx.fillStyle = mat.color + '15';
+  ctx.strokeStyle = mat.color + '40';
+  ctx.lineWidth = 2;
+  ctx.fillRect(ox, oy, dimX * scale, dimY * scale);
+  ctx.strokeRect(ox, oy, dimX * scale, dimY * scale);
+
+  // Material label
+  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.fillText(mat.name + ' · ' + dimX + '×' + dimY + '×' + dimZ + 'mm', ox + 8, oy + 16);
+
+  // Toolpath lines
+  var pathCount = Math.ceil(dimY / stepover);
+  var toolR = (tool.dia / 2) * scale;
+
+  for (var pass = 0; pass < Math.min(passes, 3); pass++) {
+    var alpha = 1 - pass * 0.3;
+    ctx.strokeStyle = 'rgba(59,130,246,' + alpha + ')';
+    ctx.lineWidth = 1.5;
+
+    for (var i = 0; i < pathCount; i++) {
+      var py = oy + (stepover * i * scale) + toolR;
+      if (py > oy + dimY * scale - toolR) break;
+
+      ctx.beginPath();
+      if (i % 2 === 0) {
+        ctx.moveTo(ox + toolR, py);
+        ctx.lineTo(ox + dimX * scale - toolR, py);
+      } else {
+        ctx.moveTo(ox + dimX * scale - toolR, py);
+        ctx.lineTo(ox + toolR, py);
+      }
+      ctx.stroke();
+
+      // Connect to next line
+      if (i < pathCount - 1) {
+        var nextPy = py + stepover * scale;
+        if (nextPy <= oy + dimY * scale - toolR) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(34,197,94,' + (alpha * 0.4) + ')';
+          var endX = i % 2 === 0 ? ox + dimX * scale - toolR : ox + toolR;
+          ctx.moveTo(endX, py);
+          ctx.lineTo(endX, nextPy);
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(59,130,246,' + alpha + ')';
+        }
+      }
+    }
+  }
+
+  // Tool position indicator
+  var toolX = ox + dimX * scale * 0.7;
+  var toolY = oy + dimY * scale * 0.4;
+  ctx.beginPath();
+  ctx.arc(toolX, toolY, toolR * 1.5, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(59,130,246,.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(59,130,246,.6)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(toolX, toolY, 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#3b82f6';
+  ctx.fill();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(255,255,255,.2)';
+  ctx.font = 'bold 10px "JetBrains Mono", monospace';
+  ctx.fillText('X →', ox + dimX * scale + 8, oy + dimY * scale / 2);
+  ctx.fillText('Y ↓', ox + dimX * scale / 2, oy + dimY * scale + 18);
+
+  // Dimensions
+  ctx.fillStyle = 'rgba(255,255,255,.15)';
+  ctx.font = '9px "JetBrains Mono", monospace';
+  ctx.fillText(dimX + 'mm', ox + dimX * scale / 2 - 15, oy - 8);
+  ctx.save();
+  ctx.translate(ox - 10, oy + dimY * scale / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(dimY + 'mm', -15, 0);
+  ctx.restore();
+}
+
+function generateGcode(mat, tool, rpm, feed, doc, dimX, dimY, dimZ, stepover, passes, op) {
+  var lines = [];
+  lines.push('<span class="comment">; AI-Generated Toolpath — SC Engineering + 2nth.ai</span>');
+  lines.push('<span class="comment">; Material: ' + mat.name + ' | Tool: ' + tool.name + '</span>');
+  lines.push('<span class="comment">; Stock: ' + dimX + ' x ' + dimY + ' x ' + dimZ + 'mm</span>');
+  lines.push('<span class="comment">; Operation: ' + op + ' | Passes: ' + passes + '</span>');
+  lines.push('');
+  lines.push('<span class="gval">G90 G94 G17</span> <span class="comment">; Absolute, feed/min, XY plane</span>');
+  lines.push('<span class="gval">G21</span> <span class="comment">; Metric</span>');
+  lines.push('<span class="mval">M06 T01</span> <span class="comment">; Tool change: ' + tool.name + '</span>');
+  lines.push('<span class="sval">S' + rpm + '</span> <span class="mval">M03</span> <span class="comment">; Spindle ON CW @ ' + rpm + ' RPM</span>');
+  lines.push('<span class="mval">M08</span> <span class="comment">; Coolant ON</span>');
+  lines.push('');
+  lines.push('<span class="comment">; --- Rapid to start ---</span>');
+  lines.push('<span class="gval">G00</span> X0 Y0 Z10.0');
+  lines.push('');
+
+  var pathCount = Math.ceil(dimY / stepover);
+  for (var p = 0; p < Math.min(passes, 2); p++) {
+    var z = -(doc * (p + 1)).toFixed(1);
+    lines.push('<span class="comment">; --- Pass ' + (p+1) + ' @ Z' + z + ' ---</span>');
+    lines.push('<span class="gval">G00</span> Z2.0');
+
+    for (var i = 0; i < Math.min(pathCount, 6); i++) {
+      var y = (stepover * i).toFixed(1);
+      if (i % 2 === 0) {
+        lines.push('<span class="gval">G00</span> X0 Y' + y);
+        lines.push('<span class="gval">G01</span> Z' + z + ' <span class="fval">F' + Math.round(feed * 0.3) + '</span> <span class="comment">; Plunge</span>');
+        lines.push('<span class="gval">G01</span> X' + dimX.toFixed(1) + ' <span class="fval">F' + feed + '</span>');
+      } else {
+        lines.push('<span class="gval">G00</span> X' + dimX.toFixed(1) + ' Y' + y);
+        lines.push('<span class="gval">G01</span> Z' + z + ' <span class="fval">F' + Math.round(feed * 0.3) + '</span>');
+        lines.push('<span class="gval">G01</span> X0 <span class="fval">F' + feed + '</span>');
+      }
+    }
+    if (pathCount > 6) lines.push('<span class="comment">; ... ' + (pathCount - 6) + ' more paths ...</span>');
+    lines.push('');
+  }
+  if (passes > 2) lines.push('<span class="comment">; ... ' + (passes - 2) + ' more passes ...</span>');
+  lines.push('');
+  lines.push('<span class="comment">; --- End ---</span>');
+  lines.push('<span class="gval">G00</span> Z50.0 <span class="comment">; Retract</span>');
+  lines.push('<span class="mval">M09</span> <span class="comment">; Coolant OFF</span>');
+  lines.push('<span class="mval">M05</span> <span class="comment">; Spindle OFF</span>');
+  lines.push('<span class="mval">M30</span> <span class="comment">; Program end</span>');
+
+  document.getElementById('gcode-panel').style.display = '';
+  document.getElementById('gcode-body').innerHTML = lines.join('<br>');
+  window.__gcode = lines.map(function(l) { return l.replace(/<[^>]+>/g, ''); }).join('\n');
+}
+
+function copyGcode() {
+  if (window.__gcode) {
+    navigator.clipboard.writeText(window.__gcode).then(function() {
+      var btn = document.querySelector('.gcode-copy');
+      btn.textContent = 'Copied!';
+      setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    });
+  }
+}
+
+window.addEventListener('load', initCanvas);
+window.addEventListener('resize', initCanvas);
+</script>
+
+</body>
+</html>

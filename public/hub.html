@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2nth.ai — Partner Hub</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .hub{max-width:720px;margin:48px auto 0;padding:0 24px}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:#18181b;margin-bottom:4px}
+    .sub{font-size:14px;color:#71717a;margin-bottom:32px}
+    .group{margin-bottom:32px}
+    .group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#a1a1aa;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e4e4e7;cursor:pointer;display:flex;align-items:center;justify-content:space-between;-webkit-user-select:none;user-select:none}
+    .group-label::after{content:'▾';font-size:12px;color:#d4d4d8;transition:transform .2s}
+    .group.collapsed .group-label::after{transform:rotate(-90deg)}
+    .group.collapsed .link-row,.group.collapsed .access-panel{display:none!important}
+    .group-label:hover{color:#71717a}
+    .link-row{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:4px;border-radius:8px;text-decoration:none;transition:background .1s}
+    .link-row:hover{background:rgba(124,58,237,.04)}
+    .link-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;flex-shrink:0}
+    .link-body{flex:1;min-width:0}
+    .link-name{font-size:14px;font-weight:600;color:#18181b}
+    .link-desc{font-size:11px;color:#a1a1aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .link-arrow{font-size:14px;color:#a1a1aa;flex-shrink:0}
+    .category{margin-top:40px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .category-label{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#18181b}
+    .category-line{flex:1;height:1px;background:#e4e4e7}
+    .category-count{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:#a1a1aa;text-transform:uppercase}
+    .category:first-of-type{margin-top:0}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <nav>
+      <a href="/docs.html">Docs</a>
+      <a href="/portal.html">Portal</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hub">
+  <h1>PARTNER HUB</h1>
+  <div class="sub">All partner pages, demos, and previews in one place.</div>
+
+  <!-- Signed-in user bar (always visible when authenticated) -->
+  <div id="user-info-bar" style="display:none;background:#f0fdf4;border:1px solid rgba(16,185,129,.15);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:11px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="width:8px;height:8px;border-radius:50%;background:#22c55e"></div>
+      <span style="color:#18181b;font-weight:600" id="user-display-name">—</span>
+      <span style="color:#a1a1aa">|</span>
+      <span style="color:#71717a" id="user-display-scope">—</span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <a href="/access.html" style="font-size:9px;color:#71717a;text-decoration:none;border:1px solid #e4e4e7;padding:2px 8px;border-radius:3px">Switch User</a>
+        <a href="/api/access-logout" style="font-size:9px;color:#71717a;text-decoration:none;border:1px solid #e4e4e7;padding:2px 8px;border-radius:3px">Sign Out</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin: View As bar -->
+  <div id="view-as-bar" style="display:none;background:#f5f3ff;border:1px solid rgba(124,58,237,.15);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="color:#71717a">View as:</span>
+      <select id="view-as-select" onchange="viewAs(this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(124,58,237,.2);background:#fff;font-family:inherit;font-size:11px;color:#18181b">
+        <option value="full">Admin (full access)</option>
+      </select>
+      <span id="view-as-scope" style="font-size:9px;color:#7c3aed"></span>
+    </div>
+  </div>
+
+  <div class="category"><span class="category-label">PLATFORM</span><div class="category-line"></div><span class="category-count">Agents &amp; AI</span></div>
+
+  <!-- Agent Team -->
+  <div class="group" data-scope="platform">
+    <div class="group-label">Agent Team &mdash; Fractional C-Suite</div>
+    <a href="/preview/agents/" class="link-row">
+      <div class="link-icon" style="background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff">AI</div>
+      <div class="link-body"><div class="link-name">The Agent Team</div><div class="link-desc">12 fractional C-suite agents — CMO, CFO, CRO, COO, CLO, CDO, CSO, CHRO, CSM, IoT, Healthcare</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://ai.b2bs.co.za/agents/" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">B2B</div>
+      <div class="link-body"><div class="link-name">B2BS Agent Marketplace</div><div class="link-desc">10 specialist agents live &mdash; GTM, ICP, Sales, Pipeline, CRM, Content, Outbound, Proposals (B2BS exclusive until 1 May)</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">TECHNOLOGY</span><div class="category-line"></div><span class="category-count">IoT, spatial, warehouse</span></div>
+
+  <!-- Proximity Green -->
+  <div class="group" data-scope="proximity-green">
+    <div class="group-label">Proximity Green</div>
+    <a href="/partners/proximity-green.html" class="link-row">
+      <div class="link-icon" style="background:#059669">PG</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Skills, platform, customers, spatial gallery architecture</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/proximity-green/gallery/" class="link-row">
+      <div class="link-icon" style="background:#059669">W17</div>
+      <div class="link-body"><div class="link-name">Workshop17 Space Directory</div><div class="link-desc">5 sites, 186 spaces, live availability, floor plan</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/proximity-green/gallery/silo.html" class="link-row">
+      <div class="link-icon" style="background:#0a1f1a">SG</div>
+      <div class="link-body"><div class="link-name">Silo Gallery — Art Exhibition</div><div class="link-desc">15-room visual walkthrough of the spatial gallery concept</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/proximity-green/" class="link-row">
+      <div class="link-icon" style="background:#059669">SK</div>
+      <div class="link-body"><div class="link-name">Proximity Green Skills Hub</div><div class="link-desc">AI skills for shared spaces — branded preview</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- SC Engineering -->
+  <div class="group" data-scope="scengineering,dronescan">
+    <div class="group-label">SC Engineering — Premium Build Partner (Murray Paton, Mechatronics &amp; CNC)</div>
+    <a href="/partners/scengineering.html" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">SCE</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Premium build — mechatronics, CNC, robotics, product development, 10M tokens</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scengineering/" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">AI</div>
+      <div class="link-body"><div class="link-name">AI-Powered Engineering Showcase</div><div class="link-desc">CNC optimisation, intelligent robotics, predictive maintenance, generative design</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scengineering/fanuc.html" class="link-row">
+      <div class="link-icon" style="background:#d97706;color:#fff">&#129302;</div>
+      <div class="link-body"><div class="link-name">FANUC Mobile Factory</div><div class="link-desc">Containerised M-20iB/35S robot cell — drill, cut, deburr, inspect on site. Live dashboard.</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scengineering/ble-scanner.html" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">BLE</div>
+      <div class="link-body"><div class="link-name">BLE Environment Scanner</div><div class="link-desc">Discover Bluetooth devices, track RSSI signal levels, tag sources, export CSV log</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scengineering/toolpath.html" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">CNC</div>
+      <div class="link-body"><div class="link-name">AI Toolpath Optimiser — Live Demo</div><div class="link-desc">Select material, tool, operation — AI generates optimised G-code with feeds, speeds, cycle time</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/dronescan/skispot.html" class="link-row">
+      <div class="link-icon" style="background:#0d1117;color:#58a6ff">&#9975;</div>
+      <div class="link-body"><div class="link-name">SkiSpot V1.0.0 — Concept App</div><div class="link-desc">BLE ski finder — compass, RSSI graph, 360&deg; rotation scan, simulated demo</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/dronescan/skispot-consumer.html" class="link-row">
+      <div class="link-icon" style="background:#0d1117;color:#58a6ff">&#9975;</div>
+      <div class="link-body"><div class="link-name">SkiSpot Consumer App</div><div class="link-desc">Full user experience — device list, compass finder, distance estimate, approach tracking</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/dronescan/skispot-monitor.html" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">RF</div>
+      <div class="link-body"><div class="link-name">SkiSpot RSSI Monitor</div><div class="link-desc">VC42kV4TBdgNpj66sWzb — live signal evaluation, chart, distribution, CSV export</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://scengineering.co.za" class="link-row">
+      <div class="link-icon" style="background:#1e40af;color:#93c5fd">WEB</div>
+      <div class="link-body"><div class="link-name">scengineering.co.za</div><div class="link-desc">CNC Solutions &amp; Product Development</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Luthuli -->
+  <div class="group" data-scope="luthuli">
+    <div class="group-label">Luthuli — Conservation Architecture</div>
+    <a href="/preview/luthuli/" class="link-row">
+      <div class="link-icon" style="background:#3d3229">L</div>
+      <div class="link-body"><div class="link-name">Luthuli Platform Concept</div><div class="link-desc">Conservation architecture partner explainer for Guy Hamlin</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/luthuli/lodge.html" class="link-row">
+      <div class="link-icon" style="background:#5a7a5c">LH</div>
+      <div class="link-body"><div class="link-name">Luthuli Lodge Dashboard</div><div class="link-desc">Pavilions, bookings, off-grid systems, wildlife, maintenance</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">DESIGN &amp; CREATIVE</span><div class="category-line"></div><span class="category-count">Surface agency</span></div>
+
+  <!-- VibeCrafters -->
+  <div class="group" data-scope="vibecrafters">
+    <div class="group-label">VibeCrafters — Premium Contracted Design &amp; Surface Agency</div>
+    <a href="/partners/vibecrafters.html" class="link-row">
+      <div class="link-icon" style="background:#1C1C2E;color:#FF6B6B">VC</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Premium contracted, AI-powered web agency, Emma Leppan creative lead</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://vibecrafters.com" class="link-row">
+      <div class="link-icon" style="background:#1C1C2E;color:#FF6B6B">WEB</div>
+      <div class="link-body"><div class="link-name">VibeCrafters.com</div><div class="link-desc">AI-powered websites — no WordPress, no developers, just tell us what you want</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://portal.vibecrafters.com" class="link-row">
+      <div class="link-icon" style="background:#1C1C2E;color:#FF6B6B">CP</div>
+      <div class="link-body"><div class="link-name">Client Portal</div><div class="link-desc">Review, comment, approve — all client projects in one place</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://vibecrafters-platform.pages.dev" class="link-row">
+      <div class="link-icon" style="background:#1C1C2E;color:#FF6B6B">AI</div>
+      <div class="link-body"><div class="link-name">VibeCrafters Platform (Dev)</div><div class="link-desc">AI agency dashboard — briefs, projects, Vibe creative director</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://portal.vibecrafters.com/client/ks/" class="link-row">
+      <div class="link-icon" style="background:#2C1810;color:#D4A574">KS</div>
+      <div class="link-body"><div class="link-name">Kate Sunley — Concept Site</div><div class="link-desc">The Art of the Beautiful Pause — brand extraction, concept site, strategic kit</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://kslux.demo.2nth.ai" class="link-row">
+      <div class="link-icon" style="background:#2C1810;color:#D4A574">KD</div>
+      <div class="link-body"><div class="link-name">Kate Sunley — AI Business Intelligence Demo</div><div class="link-desc">2nth.ai demo platform for Kate Sunley luxury consultancy</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://portal.vibecrafters.com/client/tcinc/" class="link-row">
+      <div class="link-icon" style="background:#1a1a2e;color:#6366f1">TC</div>
+      <div class="link-body"><div class="link-name">TC Inc — Property Law</div><div class="link-desc">Property Law. Precisely Delivered. 8 pages — brand refresh, team, 2 design variants</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://portal.vibecrafters.com/client/walkerp/" class="link-row">
+      <div class="link-icon" style="background:#0a2540;color:#00d4aa">WP</div>
+      <div class="link-body"><div class="link-name">Walker Phillip — Financial Recruitment</div><div class="link-desc">Specialist Recruitment for Africa's Financial Markets — brand, site, vacancies</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://walkerphillip-platform.pages.dev" class="link-row">
+      <div class="link-icon" style="background:#0a2540;color:#00d4aa">WPP</div>
+      <div class="link-body"><div class="link-name">Walker Phillip — Platform</div><div class="link-desc">Dedicated recruitment platform for Walker Phillip</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="#" class="link-row" style="opacity:0.5;pointer-events:none">
+      <div class="link-icon" style="background:#1a1a2e;color:#fbbf24">OC</div>
+      <div class="link-body"><div class="link-name">Omega Capital — Coming Soon</div><div class="link-desc">Investment &amp; capital management — concept in development</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://vibecrafters-portal.pages.dev/clients/le-gravier/demo" class="link-row">
+      <div class="link-icon" style="background:#2d3436;color:#dfe6e9">LG</div>
+      <div class="link-body"><div class="link-name">Le Gravier — AI Bike Advisor Demo</div><div class="link-desc">VibeCrafters concept — AI-powered cycling advisor for Le Gravier</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://koo.uct.2nth.ai/" class="link-row">
+      <div class="link-icon" style="background:#003f5c;color:#7fc8f8">UCT</div>
+      <div class="link-body"><div class="link-name">UCT ECO3024F — AI Partner</div><div class="link-desc">International Trade &amp; Finance course — AI-powered learning companion</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">PREMIER PARTNERS</span><div class="category-line"></div><span class="category-count">Full platform access</span></div>
+
+  <!-- B2BS AI -->
+  <div class="group" data-scope="b2bs">
+    <div class="group-label">B2B AI Solutions — Premier Developer Partner</div>
+    <a href="/partners/b2bs-ai.html" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">B2B</div>
+      <div class="link-body"><div class="link-name">Partner Profile &amp; 12 Agents</div><div class="link-desc">Premier tier, full platform access, 12 fractional C-suite agents, all domains</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/b2bs/" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">AI</div>
+      <div class="link-body"><div class="link-name">B2B AI Solutions Showcase</div><div class="link-desc">Reimagined concept &mdash; 4 practices, solutions portfolio, May 1st launch</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://ai.b2bs.co.za" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">AG</div>
+      <div class="link-body"><div class="link-name">AI Agent Marketplace</div><div class="link-desc">ai.b2bs.co.za &mdash; 10 sales/marketing agents, 50K free tokens</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://b2b-skills-demo.pages.dev" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">RC</div>
+      <div class="link-body"><div class="link-name">Recall.ai Meeting Skill</div><div class="link-desc">Meeting bots, live status, transcript generation</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://dev.20crm-2nth-ai.pages.dev/" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#00a8e8">20</div>
+      <div class="link-body"><div class="link-name">20CRM &mdash; Group CRM</div><div class="link-desc">TwentyCRM for the 2nth ecosystem &mdash; partners, customers, leads</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- B2BS IoT — separate group -->
+  <div class="group" data-scope="b2bs">
+    <div class="group-label">B2BS IoT &mdash; ESP32 &amp; Edge Computing</div>
+    <a href="/preview/b2bs/chip-discovery.html" class="link-row" style="border:2px solid rgba(8,145,178,.25);background:rgba(8,145,178,.03)">
+      <div class="link-icon" style="background:#0891b2;color:#fff">&#9881;</div>
+      <div class="link-body"><div class="link-name" style="color:#0891b2">ESP32 Chip Discovery &amp; Auto-Demo</div><div class="link-desc">Connect via USB &mdash; auto-detect chip, pinout schematic, Wi-Fi config, flash demo, live serial monitor</div></div>
+      <div class="link-arrow" style="color:#0891b2">&rarr;</div>
+    </a>
+    <a href="/partners/b2bs-iot.html" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#14b8a6">IoT</div>
+      <div class="link-body"><div class="link-name">IoT Partner Profile</div><div class="link-desc">ESP32 board catalogue, reference designs, sensor nodes, gateways, edge AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://skills.2nth.ai/iot/skills/espressif.html" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#fff">ES</div>
+      <div class="link-body"><div class="link-name">@espressif Skill</div><div class="link-desc">ESP32/S2/S3/C3/C6/H2/P4 &mdash; ESP-IDF, Arduino, Matter, RainMaker, security, power</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://skills.2nth.ai/iot/skills/mqtt.html" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#fff">MQ</div>
+      <div class="link-body"><div class="link-name">@mqtt Skill</div><div class="link-desc">MQTT messaging &mdash; brokers, QoS, topics, TLS, ESP32 clients, Mosquitto, EMQX</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://iot.demo.2nth.ai" class="link-row">
+      <div class="link-icon" style="background:#003459;color:#14b8a6">&#9889;</div>
+      <div class="link-body"><div class="link-name">IoT Hardware Platform</div><div class="link-desc">iot.demo.2nth.ai &mdash; edge sensing, connectivity, automation, pilot methodology</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Ctrl Future -->
+  <div class="group" data-scope="ctrl-future">
+    <div class="group-label">Ctrl Future — AI Strategy &amp; Readiness (Katherine Janisch)</div>
+    <a href="/partners/ctrl-future.html" class="link-row">
+      <div class="link-icon" style="background:#7c3aed">CF</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Build partner, 1M tokens, 3-month sponsored access, 4 AI skills</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/ctrl-future/" class="link-row">
+      <div class="link-icon" style="background:#7c3aed">AI</div>
+      <div class="link-body"><div class="link-name">Ctrl Future AI Showcase</div><div class="link-desc">AI readiness demo, workforce impact analysis, governance frameworks</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Republic Lifestyle -->
+  <div class="group" data-scope="republic-lifestyle">
+    <div class="group-label">Republic Lifestyle — Premium Build Partner (Textile Manufacturing)</div>
+    <a href="/partners/republic-lifestyle.html" class="link-row">
+      <div class="link-icon" style="background:#1c1917;color:#C4B895">RL</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Premium tier, 10M tokens, 6-month credit, Sage X3, 5 AI skills</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/republic-lifestyle/" class="link-row">
+      <div class="link-icon" style="background:#1c1917;color:#C4B895">AI</div>
+      <div class="link-body"><div class="link-name">Republic AI Showcase</div><div class="link-desc">Manufacturing intelligence — products, demos, Sage X3, Noha blueprint</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://republic.2nth.ai" class="link-row">
+      <div class="link-icon" style="background:#1c1917;color:#C4B895">X3</div>
+      <div class="link-body"><div class="link-name">Sage X3 Dashboard</div><div class="link-desc">Live BI — R14.2M revenue, 847 customers, AI reports, GraphQL</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://demo.noha.2nth.ai" class="link-row">
+      <div class="link-icon" style="background:#292524;color:#d4c8b8">NH</div>
+      <div class="link-body"><div class="link-name">Noha AI Studio</div><div class="link-desc">ERPNext production intelligence — BOM, stock, QC, AI configurator</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">SPECIALIST DOMAIN</span><div class="category-line"></div><span class="category-count">Finance, medical, consulting, cash</span></div>
+
+  <!-- Jonty Jankovich-Besan -->
+  <div class="group" data-scope="jankovich">
+    <div class="group-label">Jonty Jankovich-Besan — Specialist Consulting Partner (CA(SA), MD Aqunion)</div>
+    <a href="/partners/jankovich-consulting.html" class="link-row">
+      <div class="link-icon" style="background:#1e3a5f;color:#93c5fd">JJB</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Corporate strategy, board governance, operations — Sea Harvest, I&amp;J, Marshall Monteagle</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/jankovich/boris.html" class="link-row">
+      <div class="link-icon" style="background:#c9a84c;color:#fff">&#129438;</div>
+      <div class="link-body"><div class="link-name">Boris — Abalone Market Intelligence</div><div class="link-desc">Prices, buyers, sellers, supply forecasts, poaching intel, global trade — interactive AI agent</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://seaharvestgroup.co.za" class="link-row">
+      <div class="link-icon" style="background:#1e3a5f;color:#93c5fd">SH</div>
+      <div class="link-body"><div class="link-name">Sea Harvest Group</div><div class="link-desc">Listed fisheries &amp; aquaculture group — Jonty is MD of Aqunion division</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- EatFitSA -->
+  <div class="group" data-scope="eatfitsa">
+    <div class="group-label">EatFitSA — Specialist Medical Partner (Erica Jankovich RD)</div>
+    <a href="/partners/eatfitsa.html" class="link-row">
+      <div class="link-icon" style="background:#059669;color:#d1fae5">EF</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Gut health, IBS, FODMAP, IBD — HPCSA registered dietitian, referral network</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/eatfitsa/" class="link-row">
+      <div class="link-icon" style="background:#059669;color:#d1fae5">AI</div>
+      <div class="link-body"><div class="link-name">AI Patient Screening &amp; Onboarding</div><div class="link-desc">Interactive demo — symptom screening, triage, dietitian matching, programme referral</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://eatfitsa.com" class="link-row">
+      <div class="link-icon" style="background:#059669;color:#d1fae5">WEB</div>
+      <div class="link-body"><div class="link-name">eatfitsa.com</div><div class="link-desc">Eat Better. Feel Better. Live Life. — Gut health dietetics practice</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Gananda Connect -->
+  <div class="group" data-scope="gananda">
+    <div class="group-label">Gananda Connect — Financial Advisory &amp; Agricultural Finance (Barry Hawke)</div>
+    <a href="/partners/gananda.html" class="link-row">
+      <div class="link-icon" style="background:#78350f;color:#fbbf24">GC</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Premium domain partner — CFA, M&amp;A, capital raising, agri-tech, Africa markets</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/gananda/" class="link-row">
+      <div class="link-icon" style="background:#78350f;color:#fbbf24">AI</div>
+      <div class="link-body"><div class="link-name">Gananda AI Showcase</div><div class="link-desc">How AI transforms financial advisory, deal intelligence, and agricultural investment</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/gananda/cashflow.html" class="link-row">
+      <div class="link-icon" style="background:#3d7a3e;color:#fbbf24">CF</div>
+      <div class="link-body"><div class="link-name">Soleil Sitrus — Cash Flow Forecaster</div><div class="link-desc">R48.2M citrus season model, scenario analysis, AI cash flow advisor</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://gananda.net" class="link-row">
+      <div class="link-icon" style="background:#78350f;color:#fbbf24">WEB</div>
+      <div class="link-body"><div class="link-name">gananda.net</div><div class="link-desc">Consulting, advisory, capital raising — connecting opportunities in Africa</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">PROFESSIONAL SERVICES</span><div class="category-line"></div><span class="category-count">Recruitment, workforce, strategy, restructuring</span></div>
+
+  <!-- Paul Presbury -->
+  <div class="group" data-scope="presbury">
+    <div class="group-label">Paul Presbury — Strategic Leadership &amp; Restructuring</div>
+    <a href="/partners/presbury.html" class="link-row">
+      <div class="link-icon" style="background:#0f172a;color:#06b6d4">PP</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Specialist partner — turnaround, FMCG, eCommerce, governance</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/presbury/" class="link-row">
+      <div class="link-icon" style="background:#06b6d4">AI</div>
+      <div class="link-body"><div class="link-name">AI Turnaround Showcase</div><div class="link-desc">Business diagnostic, 90-day recovery plan, restructuring scenarios</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- GridLineProp -->
+  <div class="group" data-scope="gridlineprop">
+    <div class="group-label">GridLineProp — Property Development (Grant Kneale)</div>
+    <a href="/partners/gridlineprop.html" class="link-row">
+      <div class="link-icon" style="background:#d97706;color:#fff">GP</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Build partner — SANS 10400, NHBRC, CIDB, construction, 5M tokens</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://gridlineprop.co.za" class="link-row">
+      <div class="link-icon" style="background:#d97706;color:#fff">WEB</div>
+      <div class="link-body"><div class="link-name">gridlineprop.co.za</div><div class="link-desc">Property development — Cape Town &amp; Johannesburg</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/gridlineprop/silvercroft.html" class="link-row">
+      <div class="link-icon" style="background:#b8860b;color:#fff">SC</div>
+      <div class="link-body"><div class="link-name">Silvercroft Constantia — AI Smart Development</div><div class="link-desc">3 luxury off-grid homes — solar, water, security, climate, maintenance, all AI managed</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/gridlineprop/construction-ai.html" class="link-row">
+      <div class="link-icon" style="background:#1d3557;color:#d1fae5">AI</div>
+      <div class="link-body"><div class="link-name">AI for Construction &amp; QS — Game Changer</div><div class="link-desc">QS takeoff in hours, AI estimating, 4D programme, digital twin, open smart building platform</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://dev.skills.2nth.ai/biz/openbim.html" class="link-row">
+      <div class="link-icon" style="background:#2d6a4f;color:#d1fae5">BIM</div>
+      <div class="link-body"><div class="link-name">openBIM — Smart Building Skill</div><div class="link-desc">IFC, BCF, IDS, bSDD, digital twins, SA compliance (SANS 10400), BIM-to-IoT</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://gridline.co.za" class="link-row">
+      <div class="link-icon" style="background:#d97706;color:#fff">GL</div>
+      <div class="link-body"><div class="link-name">gridline.co.za</div><div class="link-desc">Gridline Group — construction &amp; development</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- DurPro -->
+  <div class="group" data-scope="durpro">
+    <div class="group-label">DurPro Workforce Solutions — Specialist Recruitment Partner (Jacqui Denny)</div>
+    <a href="/partners/durpro.html" class="link-row">
+      <div class="link-icon" style="background:#34405a">DP</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Specialist recruitment, 1M tokens, labour outsourcing, HR services, 100+ brands</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/durpro/" class="link-row">
+      <div class="link-icon" style="background:#006ba1">AI</div>
+      <div class="link-body"><div class="link-name">DurPro AI Showcase</div><div class="link-desc">AI-powered workforce intelligence — role design, workforce planning, compliance</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/durpro/brian.html" class="link-row">
+      <div class="link-icon" style="background:#e4373c">B</div>
+      <div class="link-body"><div class="link-name">Ask Brian — AI Labour Lawyer</div><div class="link-desc">LRA, BCEA, CCMA, dismissals, TES, contracts — interactive labour law AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Rohrs & Associates -->
+  <div class="group" data-scope="rohrs">
+    <div class="group-label">Rohrs &amp; Associates — Future of Cash &amp; Payments (Barry R&ouml;hrs)</div>
+    <a href="/partners/rohrs-associates.html" class="link-row">
+      <div class="link-icon" style="background:#0c4a6e;color:#38bdf8">R&A</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">Builder partner — SMART Cash, ATM economics, payments infrastructure, 2M tokens</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/rohrs-associates/" class="link-row">
+      <div class="link-icon" style="background:#0c4a6e;color:#38bdf8">AI</div>
+      <div class="link-body"><div class="link-name">Future of Cash &amp; Payments — AI Concept</div><div class="link-desc">SA payments ecosystem map, SMART Cash analytics, ATM intelligence, CBDC modelling</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://thefutureofcash.com/template/programme-2025/" class="link-row">
+      <div class="link-icon" style="background:#0c4a6e;color:#38bdf8">FOC</div>
+      <div class="link-body"><div class="link-name">Future of Cash 2025 — Programme</div><div class="link-desc">Warsaw, Nov 3-5. Barry presents SMART Cash in SA alongside ECB, Fed, BoE</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- AgileX -->
+  <div class="group" data-scope="agilex">
+    <div class="group-label">AgileX — Recruitment AI</div>
+    <a href="/partners/agilex.html" class="link-row">
+      <div class="link-icon" style="background:#E04032">AX</div>
+      <div class="link-body"><div class="link-name">Partner Profile</div><div class="link-desc">5 recruitment agents — sourcing, interviews, compliance, scheduling</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Other partners -->
+  <div class="group" data-scope="dronescan,scanman,20crm">
+    <div class="group-label">Other Partners</div>
+    <a href="/partners/dronescan.html" class="link-row">
+      <div class="link-icon" style="background:#1e40af">DS</div>
+      <div class="link-body"><div class="link-name">DroneScan</div><div class="link-desc">Drone-powered warehouse inventory</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/partners/scanman.html" class="link-row">
+      <div class="link-icon" style="background:#22873a">SM</div>
+      <div class="link-body"><div class="link-name">ScanMan — Partner Profile</div><div class="link-desc">Early access build partner, 5 AI skills, roadmap</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scanman/" class="link-row">
+      <div class="link-icon" style="background:#22873a">AI</div>
+      <div class="link-body"><div class="link-name">ScanMan AI Showcase</div><div class="link-desc">Reimagined concept site — warehouse intelligence to the power of n</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/preview/scanman/warehouse.html" class="link-row">
+      <div class="link-icon" style="background:#22873a">WH</div>
+      <div class="link-body"><div class="link-name">Live Warehouse Simulation</div><div class="link-desc">Hillcrest DC — ERPNext, zone map, live scans, Jasper AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/partners/20crm.html" class="link-row">
+      <div class="link-icon" style="background:#06b6d4">20</div>
+      <div class="link-body"><div class="link-name">20CRM</div><div class="link-desc">Group CRM powered by TwentyCRM</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <div class="category"><span class="category-label">ECOSYSTEM</span><div class="category-line"></div><span class="category-count">Research, education, infrastructure</span></div>
+
+  <!-- 2nth.io -->
+  <div class="group" data-scope="platform">
+    <div class="group-label">2nth.io &mdash; Elastic Open-Source Compute</div>
+    <a href="/preview/2nth-io/" class="link-row">
+      <div class="link-icon" style="background:#06b6d4;color:#0a0a0a">IO</div>
+      <div class="link-body"><div class="link-name">2nth.io Concept Showcase</div><div class="link-desc">Deploy anything, any Hetzner location, AI managed, 1 hour or forever — marketing concept</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://2nth.io" class="link-row">
+      <div class="link-icon" style="background:#06b6d4;color:#0a0a0a">&#9881;</div>
+      <div class="link-body"><div class="link-name">2nth.io — Live Platform</div><div class="link-desc">Dashboard, provisioning, health monitoring, partner economics</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Imbila.AI -->
+  <div class="group" data-scope="imbila,platform">
+    <div class="group-label">Imbila.AI &mdash; Specialist AI Partner</div>
+    <a href="https://dev.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">IM</div>
+      <div class="link-body"><div class="link-name">Imbila.AI</div><div class="link-desc">AI research, thought leadership, methodology, agent architecture</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://dev.imbila.ai/intel.html" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">DI</div>
+      <div class="link-body"><div class="link-name">Daily Intel</div><div class="link-desc">Model releases, platform updates, partner news, research</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://baobab.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#166534;color:#bbf7d0">BB</div>
+      <div class="link-body"><div class="link-name">Baobab &mdash; AI Education for Africa</div><div class="link-desc">Free AI education for every African student</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://know.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">KN</div>
+      <div class="link-body"><div class="link-name">Know &mdash; Knowledge Base</div><div class="link-desc">Imbila.AI knowledge base and reference system</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://claw.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#134e4a;color:#5eead4">CL</div>
+      <div class="link-body"><div class="link-name">Penelope &mdash; Executive Coordinator</div><div class="link-desc">AI executive coordinator agent at Imbila.AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://api.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">API</div>
+      <div class="link-body"><div class="link-name">API Gateway</div><div class="link-desc">Shared AI services gateway &mdash; inference, routing, rate limiting</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://demo.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">DM</div>
+      <div class="link-body"><div class="link-name">AI Demos</div><div class="link-desc">Cloudflare AI, LiteParse, LangChain, llama.cpp &mdash; interactive demos</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://platform.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">PL</div>
+      <div class="link-body"><div class="link-name">Platform Demos</div><div class="link-desc">Working demonstrations of 2nth.ai platform capabilities</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://claude.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#7c3aed;color:#ddd6fe">CL</div>
+      <div class="link-body"><div class="link-name">Claude AI Academy</div><div class="link-desc">AI fluency course &mdash; guided by Imbila.AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://openai.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#059669;color:#d1fae5">OA</div>
+      <div class="link-body"><div class="link-name">OpenAI Academy</div><div class="link-desc">OpenAI platform education &mdash; guided by Imbila.AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://google.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#1d4ed8;color:#bfdbfe">GA</div>
+      <div class="link-body"><div class="link-name">Google AI Academy</div><div class="link-desc">Google AI platform education &mdash; guided by Imbila.AI</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://blog.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">BL</div>
+      <div class="link-body"><div class="link-name">Blog</div><div class="link-desc">Imbila.AI blog &mdash; research notes, tutorials, announcements</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://brand.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#0f766e;color:#ccfbf1">BR</div>
+      <div class="link-body"><div class="link-name">Brand Guide v3.0</div><div class="link-desc">Imbila.AI brand identity, colours, typography, usage guidelines</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://push.imbila.ai/" class="link-row">
+      <div class="link-icon" style="background:#134e4a;color:#5eead4">PS</div>
+      <div class="link-body"><div class="link-name">Push &mdash; Agent-Ready Stack</div><div class="link-desc">The agent-ready stack &mdash; architecture and deployment patterns</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Admin -->
+  <div class="group" data-scope="admin">
+    <div class="group-label">Admin</div>
+    <a href="/admin/users.html" class="link-row">
+      <div class="link-icon" style="background:#7c3aed">&#9881;</div>
+      <div class="link-body"><div class="link-name">User Management</div><div class="link-desc">Manage PINs, scopes, sign-in links, send welcome emails</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+  <!-- Platform -->
+  <div class="group" data-scope="platform">
+    <div class="group-label">Platform &amp; Skills</div>
+    <a href="https://dev.2nth-skills.pages.dev/biz/spatial-gallery.html" class="link-row">
+      <div class="link-icon" style="background:#059669">SK</div>
+      <div class="link-body"><div class="link-name">biz/spatial-gallery</div><div class="link-desc">FOAM-inspired spatial index skill</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://dev.2nth-skills.pages.dev/tech/recall-ai.html" class="link-row">
+      <div class="link-icon" style="background:#7c3aed">RC</div>
+      <div class="link-body"><div class="link-name">tech/recall-ai</div><div class="link-desc">Meeting bot API — Zoom, Meet, Teams</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/guides/getting-started.html" class="link-row">
+      <div class="link-icon" style="background:#06b6d4">&#128214;</div>
+      <div class="link-body"><div class="link-name">Getting Started Guide</div><div class="link-desc">Windows/Mac setup, GitHub, Cloudflare, Claude Code, first project, first skill</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="/guides/platform.html" class="link-row">
+      <div class="link-icon" style="background:#06b6d4">&#127959;</div>
+      <div class="link-body"><div class="link-name">Platform Guide — Tiers &amp; Capabilities</div><div class="link-desc">Explorer → Starter → Designer → Builder, what each unlocks, 2nth.io infrastructure, partner types</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://2nth.ai/partner-terms.html" class="link-row">
+      <div class="link-icon" style="background:#18181b">T</div>
+      <div class="link-body"><div class="link-name">Partner Terms v1.0</div><div class="link-desc">IP, revenue share, obligations, termination</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+    <a href="https://2nth.ai/partner-agreement.html" class="link-row">
+      <div class="link-icon" style="background:#18181b">A</div>
+      <div class="link-body"><div class="link-name">Partner Agreement Generator</div><div class="link-desc">Self-service agreement with download</div></div>
+      <div class="link-arrow">&rarr;</div>
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a></p>
+  </div>
+</footer>
+
+<style>
+  .access-panel{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;padding:10px 12px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06);border-radius:6px}
+  .access-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+  .access-check{width:16px;height:16px;accent-color:#10b981;cursor:pointer}
+  .access-name{font-size:12px;flex:1}
+  .access-name.full{color:#7c3aed}
+  .access-name.scoped{color:#06b6d4}
+  .access-name.off{color:#a1a1aa;text-decoration:line-through;opacity:.5}
+  .access-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .access-count{font-size:11px;color:#71717a}
+</style>
+<script>
+// All registered users with their current scopes
+var ALL_USERS = [
+  { id:'craig', name:'Craig Leppan', scope:'full', email:'craig@2nth.ai' },
+  { id:'craig-pg', name:'Craig (PG)', scope:'proximity-green,luthuli', email:'craig@proximity.green' },
+  { id:'mark', name:'Mark', scope:'proximity-green', email:'mark@proximity.green' },
+  { id:'guy', name:'Guy Hamlin', scope:'full', email:'guy@rumf.co.za' },
+  { id:'jasper', name:'Jasper', scope:'dronescan,scanman,luthuli', email:'jasper@dronescan.co' },
+  { id:'craig-b2b', name:'Craig (B2B)', scope:'full', email:'craig@b2bs.co.za' },
+  { id:'kath', name:'Katherine Janisch', scope:'ctrl-future', email:'kath@ctrlfuture.co.za' },
+  { id:'republic', name:'Republic Lifestyle', scope:'republic-lifestyle', email:'info@republiclifestyle.co.za' },
+  { id:'emma', name:'Emma Leppan', scope:'vibecrafters', email:'emma@vibecrafters.com' },
+  { id:'barry', name:'Barry Hawke', scope:'full', email:'barry@gananda.net' },
+  { id:'jacqui', name:'Jacqui Denny', scope:'durpro', email:'jacqui.denny@durpro.co.za' },
+  { id:'murray', name:'Murray Paton', scope:'dronescan,scengineering', email:'murray@scengineering.co.za' },
+  { id:'brian', name:'Brian Denny', scope:'durpro', email:'brian.denny@deneys.co.za' },
+  { id:'barryr', name:'Barry Röhrs', scope:'rohrs', email:'barry.rohrs@rohrsassociates.com' },
+  { id:'erica', name:'Erica Jankovich', scope:'eatfitsa', email:'erica@eatfitsa.com' },
+  { id:'jonty', name:'Jonty Jankovich-Besan', scope:'jankovich', email:'jonty@seaharvestgroup.co.za' },
+  { id:'paul', name:'Paul Presbury', scope:'full', email:'presburypaul@gmail.com' },
+  { id:'grant', name:'Grant Kneale', scope:'gridlineprop', email:'grant@gridline.co.za' },
+];
+
+(function() {
+  var scope = window.__userScope;
+
+  // Admin: show interactive access panels
+  if (scope === 'full') {
+    document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+      var groupScopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
+      if (groupScopes.indexOf('platform') >= 0 || groupScopes.indexOf('admin') >= 0) {
+        // Platform/admin — just show a simple label
+        var simple = document.createElement('div');
+        simple.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:9px;color:#a1a1aa;margin-top:4px';
+        simple.innerHTML = '&#128101; ' + (groupScopes.indexOf('admin') >= 0 ? 'Admins only' : 'All authenticated members');
+        var label = group.querySelector('.group-label');
+        if (label) label.after(simple);
+        return;
+      }
+
+      var panel = document.createElement('div');
+      panel.className = 'access-panel';
+
+      // Build user list for this group
+      var html = '<div class="access-header"><span class="access-count" id="count-' + groupScopes[0] + '"></span></div>';
+
+      ALL_USERS.forEach(function(u) {
+        var userScopes = u.scope.split(',').map(function(s){return s.trim()});
+        var isFull = u.scope === 'full';
+        var hasAccess = isFull || groupScopes.some(function(gs) { return userScopes.indexOf(gs) >= 0; });
+
+        html += '<div class="access-row">' +
+          '<input type="checkbox" class="access-check" ' + (hasAccess ? 'checked' : '') +
+            ' onchange="toggleAccess(\'' + u.id + '\',\'' + groupScopes[0] + '\',this.checked)"' +
+            (isFull ? ' title="Full access user"' : '') + '>' +
+          '<span class="access-name ' + (isFull ? 'full' : hasAccess ? 'scoped' : 'off') + '">' +
+            u.name + '</span>' +
+          '<span style="font-size:10px;color:#a1a1aa">' + (isFull ? 'full access' : u.email.split('@')[1]) + '</span>' +
+        '</div>';
+      });
+
+      panel.innerHTML = html;
+
+      var label = group.querySelector('.group-label');
+      if (label) label.after(panel);
+
+      // Update count
+      updateCount(groupScopes[0]);
+    });
+  }
+
+  // Non-admin: filter groups
+  if (scope && scope !== 'full') {
+    var userScopes = scope.split(',');
+    document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+      var groupScopes = group.dataset.scope.split(',');
+      var visible = groupScopes.some(function(gs) {
+        if (gs === 'platform') return true;
+        if (gs === 'admin') return false;
+        return userScopes.some(function(us) { return gs.trim() === us.trim(); });
+      });
+      if (!visible) group.style.display = 'none';
+    });
+  }
+})();
+
+function updateCount(groupScope) {
+  var el = document.getElementById('count-' + groupScope);
+  if (!el) return;
+  var panel = el.closest('.access-panel');
+  var checked = panel.querySelectorAll('.access-check:checked').length;
+  var total = panel.querySelectorAll('.access-check').length;
+  el.textContent = checked + '/' + total + ' users have access';
+}
+
+function toggleAccess(userId, groupScope, granted) {
+  var user = ALL_USERS.find(function(u) { return u.id === userId; });
+  if (!user) return;
+
+  // If removing full-access user from a group, convert them to specific scopes
+  if (user.scope === 'full' && !granted) {
+    if (!confirm('Remove ' + user.name + ' from full access and limit to specific scopes?')) {
+      event.target.checked = true;
+      return;
+    }
+    // Build scope from all currently-checked groups for this user
+    var allChecked = [];
+    document.querySelectorAll('.group[data-scope]').forEach(function(g) {
+      var gs = g.dataset.scope.split(',')[0].trim();
+      if (gs === 'platform' || gs === 'admin' || gs === 'imbila') return;
+      var checkbox = g.querySelector('.access-row input[onchange*="' + userId + '"]');
+      if (checkbox && checkbox.checked && gs !== groupScope) allChecked.push(gs);
+    });
+    user.scope = allChecked.join(',') || 'none';
+    // Update all name labels for this user
+    document.querySelectorAll('.access-row').forEach(function(row) {
+      if (row.innerHTML.indexOf(userId) >= 0) {
+        var nameEl = row.querySelector('.access-name');
+        if (nameEl && nameEl.classList.contains('full')) {
+          nameEl.classList.remove('full');
+          nameEl.classList.add(row.querySelector('.access-check').checked ? 'scoped' : 'off');
+        }
+      }
+    });
+  }
+
+  var scopes = user.scope.split(',').map(function(s){return s.trim()}).filter(function(s){return s && s !== 'none'});
+
+  if (granted) {
+    if (scopes.indexOf(groupScope) < 0) scopes.push(groupScope);
+  } else {
+    scopes = scopes.filter(function(s) { return s !== groupScope; });
+  }
+
+  var newScope = scopes.join(',') || 'none';
+  user.scope = newScope;
+
+  // Update visual
+  var row = event.target.closest('.access-row');
+  var nameEl = row.querySelector('.access-name');
+  nameEl.className = 'access-name ' + (granted ? 'scoped' : 'off');
+  updateCount(groupScope);
+
+  // Persist via API
+  fetch('/api/access-update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: userId, scope: newScope })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ok) {
+      showToast((granted ? '✓ Granted' : '✗ Revoked') + ': ' + user.name + ' → ' + groupScope);
+    } else {
+      showToast('Error: ' + (d.error || 'Unknown'));
+      // Revert checkbox
+      event.target.checked = !granted;
+      nameEl.className = 'access-name ' + (!granted ? 'scoped' : 'off');
+      updateCount(groupScope);
+    }
+  }).catch(function() {
+    showToast('Failed to save. Check connection.');
+  });
+}
+
+function showToast(msg) {
+  var toast = document.getElementById('access-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'access-toast';
+    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#18181b;color:#fff;padding:10px 20px;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:11px;z-index:100;transition:opacity .3s;opacity:0';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function() { toast.style.opacity = '0'; }, 3000);
+}
+
+// Show signed-in user info
+(function() {
+  var scope = window.__userScope;
+  if (!scope) return;
+
+  // Find current user from scope
+  var currentUser = null;
+  if (scope === 'full') {
+    currentUser = ALL_USERS.find(function(u) { return u.scope === 'full' && u.id === 'craig'; }) || { name: 'Admin', scope: 'full' };
+  } else {
+    currentUser = ALL_USERS.find(function(u) { return u.scope === scope; }) || { name: 'Member', scope: scope };
+  }
+
+  var bar = document.getElementById('user-info-bar');
+  bar.style.display = '';
+  document.getElementById('user-display-name').textContent = currentUser.name;
+  document.getElementById('user-display-scope').textContent = scope === 'full' ? 'Admin — full access' : 'Scope: ' + scope;
+})();
+
+// View As — admin impersonation
+if (window.__userScope === 'full') {
+  var bar = document.getElementById('view-as-bar');
+  bar.style.display = '';
+
+  // Populate dropdown with all users
+  var sel = document.getElementById('view-as-select');
+  ALL_USERS.forEach(function(u) {
+    if (u.scope === 'full') return; // skip other admins
+    var opt = document.createElement('option');
+    opt.value = u.scope;
+    opt.textContent = u.name + ' (' + u.scope + ')';
+    sel.appendChild(opt);
+  });
+}
+
+function viewAs(scope) {
+  document.getElementById('view-as-scope').textContent = scope === 'full' ? '' : 'scope: ' + scope;
+
+  // Show/hide groups based on selected scope
+  var userScopes = scope.split(',').map(function(s){return s.trim()});
+
+  document.querySelectorAll('.group[data-scope]').forEach(function(group) {
+    var groupScopes = group.dataset.scope.split(',').map(function(s){return s.trim()});
+
+    if (scope === 'full') {
+      // Admin sees everything
+      group.style.display = '';
+      group.classList.remove('collapsed');
+      // Show access panels
+      var ap = group.querySelector('.access-panel');
+      if (ap) ap.style.display = '';
+    } else {
+      // Filter like the middleware would
+      var visible = groupScopes.some(function(gs) {
+        if (gs === 'platform') return true;
+        if (gs === 'imbila') return true;
+        if (gs === 'admin') return false;
+        return userScopes.some(function(us) { return gs === us; });
+      });
+      group.style.display = visible ? '' : 'none';
+      if (visible) group.classList.remove('collapsed');
+      // Hide access panels in view-as mode
+      var ap = group.querySelector('.access-panel');
+      if (ap) ap.style.display = scope === 'full' ? '' : 'none';
+    }
+  });
+
+  // Hide/show categories based on whether they have visible groups after them
+  document.querySelectorAll('.category').forEach(function(cat) {
+    var next = cat.nextElementSibling;
+    var hasVisible = false;
+    while (next && !next.classList.contains('category')) {
+      if (next.classList.contains('group') && next.style.display !== 'none') hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    cat.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+// Collapsible groups — click label to toggle
+document.querySelectorAll('.group-label').forEach(function(label) {
+  label.addEventListener('click', function(e) {
+    if (e.target.tagName === 'INPUT') return; // don't collapse when clicking checkboxes
+    this.closest('.group').classList.toggle('collapsed');
+  });
+});
+
+// Auto-collapse non-essential groups on load (keep first 3 open)
+(function() {
+  var groups = document.querySelectorAll('.group[data-scope]');
+  groups.forEach(function(g, i) {
+    // Keep Agent Team, first partner group, and Platform open. Collapse the rest.
+    if (i > 2 && g.style.display !== 'none') {
+      g.classList.add('collapsed');
+    }
+  });
+})();
+</script>
+</body>
+</html>

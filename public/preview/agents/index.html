@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Agent Team — 2nth.ai Fractional C-Suite</title>
+  <meta name="description" content="15 AI-powered fractional executives: CMO, CFO, CRO, COO, CLO, CDO, CSO, CSM, CHRO — each grounded in domain skills from the 2nth.ai skill tree.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#fafafa;--bg2:#fff;--text:#18181b;--text2:#52525b;--text3:#71717a;--muted:#a1a1aa;--border:#e4e4e7;--brand:#06b6d4;--brand-dark:#0891b2;--font-display:'Bebas Neue',sans-serif;--font-body:'Barlow',sans-serif;--font-mono:'JetBrains Mono',monospace}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--brand-dark);text-decoration:none}a:hover{text-decoration:underline}
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+    header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 0}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:var(--font-display);font-size:22px;letter-spacing:.06em;color:var(--text);text-decoration:none}
+    .logo span{color:var(--brand)}
+    nav{display:flex;gap:20px;align-items:center}
+    nav a{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .nav-cta{background:var(--brand);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+
+    .hero{padding:60px 0 40px;text-align:center}
+    .hero-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.15);color:var(--brand-dark);margin-bottom:16px}
+    .hero h1{font-family:var(--font-display);font-size:clamp(32px,5vw,48px);letter-spacing:.03em;color:var(--text);line-height:1.05;margin-bottom:12px}
+    .hero h1 span{color:var(--brand)}
+    .hero p{font-size:16px;color:var(--text3);max-width:600px;margin:0 auto;line-height:1.6}
+
+    .section{padding:40px 0}
+    .sec-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--brand-dark);margin-bottom:10px}
+
+    .agent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:20px}
+    .agent-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s;position:relative}
+    .agent-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.04)}
+    .agent-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .agent-avatar{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;color:#fff;flex-shrink:0;letter-spacing:1px}
+    .agent-name{font-family:var(--font-display);font-size:24px;letter-spacing:.04em;color:var(--text)}
+    .agent-role{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+    .agent-title{font-size:13px;color:var(--text3);margin-top:2px}
+    .agent-desc{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:12px}
+    .agent-skills{display:flex;flex-wrap:wrap;gap:4px}
+    .skill-tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.5px;padding:2px 7px;border-radius:3px;background:rgba(6,182,212,.04);border:1px solid rgba(6,182,212,.1);color:var(--brand-dark)}
+
+    /* Service area colors */
+    .area-mkt .agent-avatar{background:#7c3aed}.area-mkt .agent-role{color:#7c3aed}
+    .area-fin .agent-avatar{background:#059669}.area-fin .agent-role{color:#059669}
+    .area-sales .agent-avatar{background:#0369a1}.area-sales .agent-role{color:#0369a1}
+    .area-ops .agent-avatar{background:#d97706}.area-ops .agent-role{color:#d97706}
+    .area-legal .agent-avatar{background:#dc2626}.area-legal .agent-role{color:#dc2626}
+    .area-data .agent-avatar{background:#06b6d4}.area-data .agent-role{color:#06b6d4}
+    .area-strategy .agent-avatar{background:#18181b}.area-strategy .agent-role{color:#18181b}
+    .area-csm .agent-avatar{background:#0891b2}.area-csm .agent-role{color:#0891b2}
+    .area-hr .agent-avatar{background:#be185d}.area-hr .agent-role{color:#be185d}
+    .area-health .agent-avatar{background:#2d8a6e}.area-health .agent-role{color:#2d8a6e}
+    .area-iot .agent-avatar{background:#4338ca}.area-iot .agent-role{color:#4338ca}
+    .area-exec .agent-avatar{background:linear-gradient(135deg,#7c3aed,#06b6d4)}.area-exec .agent-role{color:#7c3aed}
+
+    .stats-bar{display:flex;gap:32px;justify-content:center;margin:24px 0 8px;flex-wrap:wrap}
+    .stat{text-align:center}
+    .stat-val{font-family:var(--font-display);font-size:36px;color:var(--text)}
+    .stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:12px;color:var(--muted);margin-top:40px}
+
+    @media(max-width:700px){.agent-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:var(--muted);letter-spacing:2px">AGENTS</span></a>
+    <nav>
+      <a href="https://developers.2nth.ai/hub">Hub</a>
+      <a href="https://dev.skills.2nth.ai">Skills</a>
+      <a href="https://2nth.ai" class="nav-cta">2nth.ai</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">2nth.ai Agent Team</div>
+    <h1>Your Fractional <span>C-Suite</span></h1>
+    <p>AI-powered executives grounded in domain skills. Each agent brings a specialist perspective backed by the 2nth.ai skill tree — 130+ skills across 9 domains.</p>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-val">12</div><div class="stat-label">Agents</div></div>
+      <div class="stat"><div class="stat-val">9</div><div class="stat-label">Domains</div></div>
+      <div class="stat"><div class="stat-val">130+</div><div class="stat-label">Skills</div></div>
+      <div class="stat"><div class="stat-val">11</div><div class="stat-label">C-Suite Roles</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <div class="sec-label">The Team</div>
+    <div class="agent-grid">
+
+      <!-- Penny — CMO -->
+      <div class="agent-card area-mkt">
+        <div class="agent-top">
+          <div class="agent-avatar">P</div>
+          <div>
+            <div class="agent-name">PENNY</div>
+            <div class="agent-role">Fractional CMO</div>
+            <div class="agent-title">Marketing Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Owns the full marketing stack — brand, content, digital, social, performance, demand gen, PR, and go-to-market strategy. Builds marketing engines that compound.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">mkt/brand</span>
+          <span class="skill-tag">mkt/content</span>
+          <span class="skill-tag">mkt/digital</span>
+          <span class="skill-tag">mkt/social</span>
+          <span class="skill-tag">mkt/performance</span>
+          <span class="skill-tag">mkt/demand-gen</span>
+          <span class="skill-tag">mkt/pr</span>
+          <span class="skill-tag">mkt/go-to-market</span>
+        </div>
+      </div>
+
+      <!-- Grant — CFO -->
+      <div class="agent-card area-fin">
+        <div class="agent-top">
+          <div class="agent-avatar">G</div>
+          <div>
+            <div class="agent-name">GRANT</div>
+            <div class="agent-role">Fractional CFO</div>
+            <div class="agent-title">Financial Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Financial rigour for growing businesses — management accounts, cash flow, FP&A, credit control, costing, financial modelling. Makes the numbers tell the truth.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">fin/accounting</span>
+          <span class="skill-tag">fin/management-accounts</span>
+          <span class="skill-tag">fin/cash-flow</span>
+          <span class="skill-tag">fin/fp-and-a</span>
+          <span class="skill-tag">fin/credit-control</span>
+          <span class="skill-tag">fin/costing</span>
+          <span class="skill-tag">fin/modelling</span>
+        </div>
+      </div>
+
+      <!-- Katharine — CRO -->
+      <div class="agent-card area-sales">
+        <div class="agent-top">
+          <div class="agent-avatar">K</div>
+          <div>
+            <div class="agent-name">KATHARINE</div>
+            <div class="agent-role">Fractional CRO</div>
+            <div class="agent-title">Revenue Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Revenue architecture — qualification, discovery, pipeline, forecasting, proposals, negotiation, enablement, and RevOps. Turns conversations into contracts.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">biz/sales</span>
+          <span class="skill-tag">biz/sales/qualification</span>
+          <span class="skill-tag">biz/sales/discovery</span>
+          <span class="skill-tag">biz/sales/pipeline</span>
+          <span class="skill-tag">biz/sales/forecasting</span>
+          <span class="skill-tag">biz/sales/proposal</span>
+          <span class="skill-tag">biz/sales/negotiation</span>
+          <span class="skill-tag">biz/sales/revops</span>
+        </div>
+      </div>
+
+      <!-- Tom — COO -->
+      <div class="agent-card area-ops">
+        <div class="agent-top">
+          <div class="agent-avatar">T</div>
+          <div>
+            <div class="agent-name">TOM</div>
+            <div class="agent-role">Fractional COO</div>
+            <div class="agent-title">Operations Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Operational backbone — process mapping, SOPs, ERP systems, architecture, bottleneck elimination. Makes the machine run without the founder in every meeting.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">biz/erp</span>
+          <span class="skill-tag">biz/erp/shopify</span>
+          <span class="skill-tag">biz/erp/woocommerce</span>
+          <span class="skill-tag">tech/architecture</span>
+        </div>
+      </div>
+
+      <!-- Leo — CLO -->
+      <div class="agent-card area-legal">
+        <div class="agent-top">
+          <div class="agent-avatar">L</div>
+          <div>
+            <div class="agent-name">LEO</div>
+            <div class="agent-role">Fractional CLO</div>
+            <div class="agent-title">Legal Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Legal protection without the hourly bill — commercial, employment (CCMA), IP, corporate, data privacy, disputes, property, and fundraising law.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">leg/commercial</span>
+          <span class="skill-tag">leg/employment</span>
+          <span class="skill-tag">leg/employment/ccma</span>
+          <span class="skill-tag">leg/ip</span>
+          <span class="skill-tag">leg/corporate</span>
+          <span class="skill-tag">leg/data-privacy</span>
+          <span class="skill-tag">leg/disputes</span>
+          <span class="skill-tag">leg/property</span>
+        </div>
+      </div>
+
+      <!-- Alex — CDO -->
+      <div class="agent-card area-data">
+        <div class="agent-top">
+          <div class="agent-avatar">A</div>
+          <div>
+            <div class="agent-name">ALEX</div>
+            <div class="agent-role">Fractional CDO</div>
+            <div class="agent-title">Data Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Data strategy to production ML — engineering, analysis, science, ML-ops, visualisation, governance, and SA-specific compliance (POPIA, B-BBEE).</div>
+        <div class="agent-skills">
+          <span class="skill-tag">data/strategy</span>
+          <span class="skill-tag">data/engineering</span>
+          <span class="skill-tag">data/analysis</span>
+          <span class="skill-tag">data/science</span>
+          <span class="skill-tag">data/ml-ops</span>
+          <span class="skill-tag">data/visualisation</span>
+          <span class="skill-tag">data/governance</span>
+          <span class="skill-tag">data/sa</span>
+        </div>
+      </div>
+
+      <!-- Max — CSO -->
+      <div class="agent-card area-strategy">
+        <div class="agent-top">
+          <div class="agent-avatar">M</div>
+          <div>
+            <div class="agent-name">MAX</div>
+            <div class="agent-role">Fractional CSO</div>
+            <div class="agent-title">Strategy Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Big-picture strategy — annual planning, OKR design, priority stack-ranking, competitor mapping, financial modelling for strategic decisions.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">fin/modelling</span>
+          <span class="skill-tag">biz/crm</span>
+          <span class="skill-tag">tech/architecture</span>
+        </div>
+      </div>
+
+      <!-- Clara — CSM -->
+      <div class="agent-card area-csm">
+        <div class="agent-top">
+          <div class="agent-avatar">C</div>
+          <div>
+            <div class="agent-name">CLARA</div>
+            <div class="agent-role">Fractional CSM Lead</div>
+            <div class="agent-title">Customer Success Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Customer retention engine — health scoring, early warning systems, renewal playbooks, proactive check-ins, NPS, and at-risk client recovery.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">biz/crm</span>
+          <span class="skill-tag">biz/erp/shopify</span>
+        </div>
+      </div>
+
+      <!-- Grace — CHRO -->
+      <div class="agent-card area-hr">
+        <div class="agent-top">
+          <div class="agent-avatar">G</div>
+          <div>
+            <div class="agent-name">GRACE</div>
+            <div class="agent-role">Fractional CHRO</div>
+            <div class="agent-title">People Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">People operations — job design, structured interviews, onboarding, performance reviews, OKRs, compensation benchmarking, and HR compliance.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">biz/crm</span>
+          <span class="skill-tag">biz/hr</span>
+          <span class="skill-tag">biz/hr/recruitment</span>
+        </div>
+      </div>
+
+      <!-- Morgan — Healthcare -->
+      <div class="agent-card area-health">
+        <div class="agent-top">
+          <div class="agent-avatar">M</div>
+          <div>
+            <div class="agent-name">MORGAN</div>
+            <div class="agent-role">Fractional Healthcare Director</div>
+            <div class="agent-title">Healthcare Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">Healthcare operations and governance — clinical, finance, digital health, public health, mental health, pharmacy, and SA regulatory compliance.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">health/operations</span>
+          <span class="skill-tag">health/clinical-governance</span>
+          <span class="skill-tag">health/finance</span>
+          <span class="skill-tag">health/digital</span>
+          <span class="skill-tag">health/public-health</span>
+          <span class="skill-tag">health/mental-health</span>
+          <span class="skill-tag">health/pharmacy</span>
+          <span class="skill-tag">health/sa</span>
+        </div>
+      </div>
+
+      <!-- Eric — IoT -->
+      <div class="agent-card area-iot">
+        <div class="agent-top">
+          <div class="agent-avatar">E</div>
+          <div>
+            <div class="agent-name">ERIC</div>
+            <div class="agent-role">Fractional IoT Director</div>
+            <div class="agent-title">IoT Engineering Partner</div>
+          </div>
+        </div>
+        <div class="agent-desc">IoT from edge to cloud — hardware, firmware, connectivity, sensors, power, security, platform architecture, and SA-specific deployments.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">iot/hardware</span>
+          <span class="skill-tag">iot/firmware</span>
+          <span class="skill-tag">iot/connectivity</span>
+          <span class="skill-tag">iot/sensors</span>
+          <span class="skill-tag">iot/power</span>
+          <span class="skill-tag">iot/security</span>
+          <span class="skill-tag">iot/platform</span>
+          <span class="skill-tag">iot/sa</span>
+        </div>
+      </div>
+
+      <!-- Penny Internal — CEO Partner -->
+      <div class="agent-card area-exec">
+        <div class="agent-top">
+          <div class="agent-avatar">P</div>
+          <div>
+            <div class="agent-name">PENNY</div>
+            <div class="agent-role">Chief Executive Partner</div>
+            <div class="agent-title">Internal — Cross-Functional</div>
+          </div>
+        </div>
+        <div class="agent-desc">The orchestrator — coordinates across all agents, prioritises across functions, resolves cross-domain conflicts, and ensures the whole team pulls in one direction.</div>
+        <div class="agent-skills">
+          <span class="skill-tag">all domains</span>
+          <span class="skill-tag">cross-functional</span>
+          <span class="skill-tag">orchestration</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>2nth.ai Agent Team &mdash; Human + AI + n Skills = compounding intelligence. <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

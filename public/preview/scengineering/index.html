@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SC Engineering — AI-Powered Mechatronics &amp; CNC</title>
+  <meta name="description" content="How AI transforms CNC machining, robotics, and product development. SC Engineering + 2nth.ai — from digital intelligence to physical output.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--steel:#1e3a5f;--steel-light:#2563eb;--blue:#3b82f6;--blue-dim:rgba(59,130,246,.06);--purple:#7c3aed;--red:#ef4444;--green:#10b981;--amber:#d97706;--text:#0f172a;--text2:#475569;--text3:#64748b;--muted:#94a3b8;--border:#e2e8f0;--bg:#f8fafc;--bg2:#fff;--font-display:'Bebas Neue',sans-serif;--font-body:'Barlow',sans-serif;--font-mono:'JetBrains Mono',monospace}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text2);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:var(--steel-light);text-decoration:none}a:hover{text-decoration:underline}
+    .container{max-width:960px;margin:0 auto;padding:0 24px}
+    .nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 0}
+    .nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:.06em;color:var(--text);text-decoration:none}
+    .nav-logo span{color:var(--steel-light)}
+    .nav-links{display:flex;gap:20px;align-items:center}
+    .nav-links a{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+    .nav-cta{background:var(--steel);color:#fff!important;padding:6px 16px;border-radius:6px;font-weight:600}
+    .hero{padding:80px 0 60px;text-align:center}
+    .hero-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:5px 14px;border-radius:5px;background:var(--blue-dim);border:1px solid rgba(59,130,246,.2);color:var(--steel-light);margin-bottom:20px}
+    .hero h1{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);letter-spacing:.03em;color:var(--text);line-height:1.05;margin-bottom:16px}
+    .hero h1 span{color:var(--steel-light)}
+    .hero p{font-size:18px;color:var(--text3);max-width:640px;margin:0 auto;line-height:1.6}
+    .section{padding:60px 0}
+    .section-alt{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .section-dark{background:var(--steel);color:#fff}
+    .section-dark h2{color:#fff}
+    .section-dark p{color:rgba(255,255,255,.75)}
+    .section-dark .sec-label{color:var(--blue)}
+    .sec-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--steel-light);margin-bottom:10px}
+    h2{font-family:var(--font-display);font-size:36px;letter-spacing:.02em;color:var(--text);line-height:1.1;margin-bottom:16px}
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:24px}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .2s}
+    .card:hover{border-color:var(--steel-light);transform:translateY(-2px)}
+    .section-dark .card{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+    .section-dark .card:hover{border-color:var(--blue)}
+    .card-icon{font-size:28px;margin-bottom:14px}
+    .card h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .section-dark .card h3{color:#fff}
+    .card p{font-size:14px;color:var(--text3);line-height:1.6;margin:0}
+    .section-dark .card p{color:rgba(255,255,255,.6)}
+    .card-tag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-top:12px}
+    .tag-cnc{color:var(--purple);background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2)}
+    .tag-robot{color:var(--red);background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+    .tag-mech{color:var(--steel-light);background:var(--blue-dim);border:1px solid rgba(59,130,246,.2)}
+    .tag-prod{color:var(--amber);background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:30px 0}
+    .stat-card{text-align:center;padding:24px 16px}
+    .stat-val{font-family:var(--font-display);font-size:42px;letter-spacing:.02em;line-height:1}
+    .section-dark .stat-val{color:var(--blue)}
+    .stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+    .section-dark .stat-label{color:rgba(255,255,255,.4)}
+    .cta-section{text-align:center;padding:80px 0;background:#eff6ff}
+    .cta-btn{display:inline-block;background:var(--steel);color:#fff;padding:14px 36px;border-radius:8px;font-family:var(--font-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none;transition:all .2s}
+    .cta-btn:hover{background:var(--steel-light);transform:translateY(-2px);text-decoration:none}
+    footer{border-top:1px solid var(--border);padding:24px 0;text-align:center;font-size:12px;color:var(--muted)}
+    @media(max-width:640px){.hero h1{font-size:36px}.card-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container">
+    <a href="https://scengineering.co.za" class="nav-logo"><span>SC</span> ENGINEERING</a>
+    <div class="nav-links">
+      <a href="https://scengineering.co.za">Main Site</a>
+      <a href="https://developers.2nth.ai/partners/scengineering.html">Partner Profile</a>
+      <a href="https://2nth.ai" class="nav-cta">Powered by 2nth.ai</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-tag">SC Engineering + 2nth.ai</div>
+    <h1>Where AI Meets<br><span>Precision Engineering</span></h1>
+    <p>CNC machining, robotics, and product development — amplified by artificial intelligence. From digital design to physical reality, faster and smarter.</p>
+  </div>
+</div>
+
+<!-- Capabilities -->
+<div class="section section-dark">
+  <div class="container">
+    <div class="sec-label">AI-Powered Engineering</div>
+    <h2>EVERY MACHINE, SMARTER</h2>
+    <p style="font-size:16px;max-width:640px">AI doesn't replace the engineer — it amplifies the engineering. Every CNC programme, robot path, and product design gets faster, more precise, and more reliable.</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-val">40%</div><div class="stat-label">Faster toolpath generation</div></div>
+      <div class="stat-card"><div class="stat-val">15%</div><div class="stat-label">Less material waste</div></div>
+      <div class="stat-card"><div class="stat-val">3X</div><div class="stat-label">Faster prototyping</div></div>
+      <div class="stat-card"><div class="stat-val">24/7</div><div class="stat-label">Machine monitoring</div></div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">&#9881;</div>
+        <h3>AI CNC Optimisation</h3>
+        <p>AI-generated toolpaths that minimise cycle time and tool wear. Automatic feed rate optimisation based on material properties, cutter geometry, and real-time vibration data. G-code that a machine operator would take hours to write, generated in seconds.</p>
+        <span class="card-tag tag-cnc">CNC</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#129302;</div>
+        <h3>Intelligent Robotics</h3>
+        <p>AI-powered robot path planning, collision avoidance, and adaptive pick-and-place. Vision systems that identify parts, defects, and orientations in real time. Robots that learn from production data and improve cycle after cycle.</p>
+        <span class="card-tag tag-robot">Robotics</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128736;</div>
+        <h3>Predictive Maintenance</h3>
+        <p>Machine learning on spindle vibration, temperature, and power consumption to predict failures before they happen. Reduce unplanned downtime by detecting bearing wear, tool degradation, and alignment drift weeks in advance.</p>
+        <span class="card-tag tag-mech">Mechatronics</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128295;</div>
+        <h3>Generative Design</h3>
+        <p>AI-driven topology optimisation: define the constraints, loads, and manufacturing method — let AI explore thousands of design alternatives. Parts that are lighter, stronger, and ready for CNC or additive manufacturing.</p>
+        <span class="card-tag tag-prod">Product Dev</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>Production Intelligence</h3>
+        <p>Real-time OEE dashboards, cycle time analytics, quality trend monitoring, and automated root cause analysis. Connect every CNC machine, robot cell, and inspection station into a unified intelligence layer.</p>
+        <span class="card-tag tag-mech">Automation</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128270;</div>
+        <h3>Quality Vision</h3>
+        <p>Computer vision inspection: surface finish analysis, dimensional verification from camera data, defect classification, and automated pass/fail decisions. Quality at the speed of production, not the speed of a CMM queue.</p>
+        <span class="card-tag tag-robot">Vision AI</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Before/After -->
+<div class="section section-alt">
+  <div class="container">
+    <div class="sec-label">The Transformation</div>
+    <h2>Engineering, before and after AI</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:20px">
+      <thead>
+        <tr><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Process</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Traditional</th><th style="text-align:left;padding:12px;border-bottom:2px solid var(--border);font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--steel-light)">With AI</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">CNC programming</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Manual CAM, hours per part</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--steel-light)">AI toolpath in minutes, auto-optimised</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Robot programming</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Teach pendant, point by point</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--steel-light)">Simulation + AI path planning, offline</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Machine maintenance</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Scheduled or breakdown</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--steel-light)">Predictive — fix before failure</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Quality inspection</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">CMM queue, sample-based</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--steel-light)">100% vision inspection at line speed</td></tr>
+        <tr><td style="padding:12px;border-bottom:1px solid var(--border)">Product design</td><td style="padding:12px;border-bottom:1px solid var(--border);color:var(--text3)">Engineer intuition, 3-5 iterations</td><td style="padding:12px;border-bottom:1px solid var(--border);font-weight:600;color:var(--steel-light)">Generative design, 1000s of options explored</td></tr>
+        <tr><td style="padding:12px">Production monitoring</td><td style="padding:12px;color:var(--text3)">Whiteboards, shift reports</td><td style="padding:12px;font-weight:600;color:var(--steel-light)">Real-time OEE, AI anomaly detection</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="container">
+    <div class="sec-label">Get Started</div>
+    <h2 style="margin-bottom:12px">From intelligence to production</h2>
+    <p style="font-size:16px;color:var(--text3);max-width:480px;margin:0 auto 28px">SC Engineering + 2nth.ai. Precision engineering meets AI capability. Build smarter, manufacture faster.</p>
+    <a href="https://scengineering.co.za" class="cta-btn">Contact SC Engineering</a>
+    <a href="https://2nth.ai" class="cta-btn" style="margin-left:12px;background:var(--text)">Explore 2nth.ai</a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>SC Engineering &mdash; CNC Solutions &amp; Product Development. Powered by <a href="https://2nth.ai">2nth.ai</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

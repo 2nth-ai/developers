@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DroneScan — Autonomous Robotics for the Physical World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#f8fafc;color:#475569;line-height:1.6;-webkit-font-smoothing:antialiased}
+    ::selection{background:rgba(0,150,180,.15)}
+
+    :root{--blue:#0891b2;--blue-dark:#0e7490;--cyan:#06b6d4;--green:#059669;--amber:#d97706;--red:#dc2626;--text:#0f172a;--text2:#475569;--muted:#94a3b8;--border:#e2e8f0;--bg:#f8fafc;--bg2:#ffffff;--bg3:#f1f5f9}
+
+    .container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+    header{padding:16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;background:rgba(248,250,252,.92);backdrop-filter:blur(12px)}
+    header .container{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+    .logo-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0891b2,#06b6d4);display:flex;align-items:center;justify-content:center;position:relative}
+    .logo-mark svg{width:18px;height:18px;fill:#fff}
+    .logo-mark::after{content:'';position:absolute;top:-1px;right:-1px;width:8px;height:8px;border-radius:50%;background:#059669;border:2px solid var(--bg)}
+    nav{display:flex;gap:24px;align-items:center}
+    nav a{font-size:12px;font-weight:500;color:var(--text2);text-decoration:none;transition:color .15s}
+    nav a:hover{color:var(--text)}
+    .nav-cta{background:var(--blue);color:#fff!important;padding:7px 18px;border-radius:6px;font-weight:600}
+    .nav-cta:hover{background:var(--blue-dark)}
+
+    /* Hero */
+    .hero{padding:100px 0 60px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(8,145,178,.06),transparent 70%);pointer-events:none}
+    .hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(6,182,212,.04),transparent 70%);pointer-events:none}
+    .hero-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .hero-tag .pulse{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,7vw,72px);font-weight:700;color:var(--text);line-height:1.05;margin-bottom:20px;letter-spacing:-.03em}
+    .hero h1 span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:18px;color:var(--text2);max-width:580px;line-height:1.6;margin-bottom:32px}
+    .hero-stats{display:flex;gap:40px;flex-wrap:wrap}
+    .hero-stat{text-align:left}
+    .hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:var(--text)}
+    .hero-stat .label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+    /* Section */
+    .section{padding:80px 0;border-top:1px solid var(--border)}
+    .sec-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:8px}
+    h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4vw,40px);font-weight:700;color:var(--text);line-height:1.1;margin-bottom:16px;letter-spacing:-.02em}
+
+    /* Market cards */
+    .markets{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:32px 0}
+    .market{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .2s;position:relative;overflow:hidden}
+    .market:hover{border-color:var(--blue);transform:translateY(-2px)}
+    .market::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0891b2,#06b6d4);opacity:0;transition:opacity .2s}
+    .market:hover::before{opacity:1}
+    .market-icon{font-size:28px;margin-bottom:12px}
+    .market h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
+    .market p{font-size:13px;color:var(--text2);margin-bottom:12px}
+    .market-stats{display:flex;gap:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+    .market-stats strong{color:var(--text)}
+
+    /* Platform row */
+    .platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:32px 0}
+    .plat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;transition:border-color .2s}
+    .plat-card:hover{border-color:var(--blue)}
+    .plat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px}
+    .plat-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .plat-card p{font-size:12px;color:var(--text2)}
+
+    /* Products */
+    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:32px 0}
+    .product{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+    .product:hover{border-color:var(--blue)}
+    .product-hero{height:120px;position:relative}
+    .product-body{padding:20px}
+    .product h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .product .type{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+    .product p{font-size:12px;color:var(--text2);margin:0}
+    .spec-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+    .spec-row:last-child{border:none}
+    .spec-row .k{color:var(--muted)}
+    .spec-row .v{color:var(--text);font-weight:500}
+
+    /* AI skills */
+    .ai-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:32px 0}
+    .ai-skill{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s}
+    .ai-skill:hover{border-color:var(--blue)}
+    .ai-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:8px}
+    .tag-scan{color:#0891b2;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.15)}
+    .tag-fleet{color:#0e7490;background:rgba(14,116,144,.06);border:1px solid rgba(14,116,144,.15)}
+    .tag-safety{color:#d97706;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.15)}
+    .tag-ml{color:#059669;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15)}
+    .ai-skill h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+    .ai-skill p{font-size:12px;color:var(--text2);margin:0}
+
+    /* Proof strip */
+    .proof{display:flex;gap:24px;flex-wrap:wrap;padding:24px 0;margin:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .proof-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+    .proof-item strong{color:var(--text)}
+
+    /* Architecture */
+    .arch{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:32px;margin:32px 0;overflow-x:auto}
+    .arch pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#334155;line-height:1.8;margin:0}
+    .arch .hl{color:#0891b2;font-weight:600}
+
+    /* CTA */
+    .cta-section{text-align:center;padding:80px 0}
+    .cta-section h2{margin-bottom:8px}
+    .cta-section p{color:var(--text2);margin-bottom:28px;font-size:16px}
+    .cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1px;font-weight:700;text-decoration:none;transition:all .15s}
+    .btn-blue{background:#0891b2;color:#fff}.btn-blue:hover{background:#0e7490}
+    .btn-ghost{background:none;border:1px solid var(--border);color:var(--text)}.btn-ghost:hover{border-color:#0891b2;color:#0891b2}
+
+    footer{border-top:1px solid var(--border);padding:24px 0;display:flex;align-items:center;justify-content:space-between}
+    footer p{font-size:11px;color:var(--muted)}
+    footer a{color:var(--blue);text-decoration:none}
+
+    @media(max-width:768px){.markets,.platform-grid,.ai-grid{grid-template-columns:1fr}.hero-stats{gap:20px}nav{display:none}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="#" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M4 20v-2a8 8 0 0116 0v2" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="8" r="1" fill="#fff"/><line x1="12" y1="11" x2="12" y2="14" stroke="#fff" stroke-width="1.5"/><line x1="9" y1="13" x2="15" y2="13" stroke="#fff" stroke-width="1.5"/></svg></div>
+      <span style="letter-spacing:-.02em">Drone<span style="font-weight:400;opacity:.5">Scan</span></span>
+    </a>
+    <nav>
+      <a href="#markets">Markets</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#ai">AI Platform</a>
+      <a href="#architecture">Architecture</a>
+      <a href="https://www.dronescan.co" class="nav-cta">dronescan.co</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag"><span class="pulse"></span> Autonomous robotics &amp; AI</div>
+    <h1>Autonomous robots<br>for the <span>physical world</span>.</h1>
+    <p>DroneScan builds scanning robots — aerial and ground — that count, inspect, and monitor at industrial scale. AI-powered, edge-deployed, ERP-integrated. From a single warehouse to a global fleet.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">3</div><div class="label">Robot platforms</div></div>
+      <div class="hero-stat"><div class="num">4</div><div class="label">AI skills</div></div>
+      <div class="hero-stat"><div class="num">6</div><div class="label">Global markets</div></div>
+      <div class="hero-stat"><div class="num">20%</div><div class="label">Partner revenue share</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Markets -->
+<section class="section" id="markets">
+  <div class="container">
+    <div class="sec-label">Global markets</div>
+    <h2>One platform, six verticals</h2>
+    <p style="max-width:560px;margin-bottom:8px">The scanning robotics technology that proved itself in warehouses applies everywhere something needs counting, inspecting, or monitoring at scale.</p>
+
+    <div class="markets">
+      <div class="market">
+        <div class="market-icon">&#128230;</div>
+        <h3>Warehousing &amp; Logistics</h3>
+        <p>Where it started. Autonomous RFID/barcode drone scanning replaces manual stocktaking from forklifts and scissor lifts. Real-time inventory reconciliation.</p>
+        <div class="market-stats"><span><strong>$45B</strong> TAM</span><span>Walmart, LF Logistics, Kenco</span></div>
+      </div>
+      <div class="market">
+        <div class="market-icon">&#9875;</div>
+        <h3>Ports &amp; Container Yards</h3>
+        <p>Aerial container identification, damage inspection, yard mapping. Replace crane-mounted cameras with fleet drones covering entire terminals in hours.</p>
+        <div class="market-stats"><span><strong>$12B</strong> TAM</span><span>Container ID, damage detection</span></div>
+      </div>
+      <div class="market">
+        <div class="market-icon">&#127806;</div>
+        <h3>Agriculture &amp; Forestry</h3>
+        <p>Crop health monitoring, livestock counting, timber volume estimation. NDVI mapping, pest detection, yield forecasting from drone-captured multispectral data.</p>
+        <div class="market-stats"><span><strong>$8B</strong> TAM</span><span>Precision ag, forestry inventory</span></div>
+      </div>
+      <div class="market">
+        <div class="market-icon">&#9935;</div>
+        <h3>Mining &amp; Resources</h3>
+        <p>Stockpile volumetrics, pit wall inspection, haul road monitoring, tailings dam surveillance. Safer than human inspection in hazardous environments.</p>
+        <div class="market-stats"><span><strong>$6B</strong> TAM</span><span>Stockpile, safety, compliance</span></div>
+      </div>
+      <div class="market">
+        <div class="market-icon">&#127959;</div>
+        <h3>Infrastructure &amp; Construction</h3>
+        <p>Bridge inspection, power line surveys, building facade scanning, progress monitoring. 3D point clouds and defect detection without scaffolding.</p>
+        <div class="market-stats"><span><strong>$15B</strong> TAM</span><span>Inspection, progress, as-built</span></div>
+      </div>
+      <div class="market">
+        <div class="market-icon">&#128737;</div>
+        <h3>Security &amp; Perimeter</h3>
+        <p>Autonomous patrol routes, intrusion detection, thermal surveillance, incident response. 24/7 coverage of large-area facilities — data centres, solar farms, reserves.</p>
+        <div class="market-stats"><span><strong>$10B</strong> TAM</span><span>Patrol, thermal, incident</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Hardware -->
+<section class="section" id="hardware">
+  <div class="container">
+    <div class="sec-label">Hardware</div>
+    <h2>Purpose-built robots</h2>
+    <p style="max-width:560px;margin-bottom:8px">Three platforms engineered for different environments. All share the same AI backbone, the same operator interface, and the same cloud pipeline.</p>
+
+    <div class="products">
+      <div class="product">
+        <div class="product-hero" style="background:linear-gradient(135deg,#0e7490,#22d3ee)"></div>
+        <div class="product-body">
+          <div class="type">Aerial — Indoor</div>
+          <h3>Hummingbird</h3>
+          <p>Indoor warehouse drone. RFID + barcode + camera. Dedicated RF comms, on-drone display, 100m+ range.</p>
+          <div style="margin-top:12px">
+            <div class="spec-row"><span class="k">Type</span><span class="v">Quadcopter</span></div>
+            <div class="spec-row"><span class="k">Scan</span><span class="v">RFID, barcode, camera</span></div>
+            <div class="spec-row"><span class="k">Range</span><span class="v">100m+ (dedicated RF)</span></div>
+            <div class="spec-row"><span class="k">Market</span><span class="v">Warehouse, logistics</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="product-hero" style="background:linear-gradient(135deg,#0e7490,#06b6d4)"></div>
+        <div class="product-body">
+          <div class="type">Aerial — Outdoor</div>
+          <h3>Buffalo</h3>
+          <p>Extended-range outdoor platform. Multispectral + LiDAR + thermal. Wind-rated for open environments.</p>
+          <div style="margin-top:12px">
+            <div class="spec-row"><span class="k">Type</span><span class="v">Heavy-lift quadcopter</span></div>
+            <div class="spec-row"><span class="k">Scan</span><span class="v">Multispectral, LiDAR, thermal</span></div>
+            <div class="spec-row"><span class="k">Range</span><span class="v">5km+ (4G/LTE)</span></div>
+            <div class="spec-row"><span class="k">Market</span><span class="v">Mining, ag, infrastructure</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="product">
+        <div class="product-hero" style="background:linear-gradient(135deg,#065f46,#22c55e)"></div>
+        <div class="product-body">
+          <div class="type">Ground — Autonomous</div>
+          <h3>Meerkat</h3>
+          <p>Ground-based autonomous scanner. Navigates warehouse aisles, container yards, and perimeters. All-weather.</p>
+          <div style="margin-top:12px">
+            <div class="spec-row"><span class="k">Type</span><span class="v">4-wheel ground robot</span></div>
+            <div class="spec-row"><span class="k">Scan</span><span class="v">RFID, barcode, LiDAR</span></div>
+            <div class="spec-row"><span class="k">Range</span><span class="v">Continuous (docking)</span></div>
+            <div class="spec-row"><span class="k">Market</span><span class="v">Warehouse, perimeter, port</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="section" id="ai">
+  <div class="container">
+    <div class="sec-label">AI platform</div>
+    <h2>Intelligence layer</h2>
+    <p style="max-width:560px;margin-bottom:8px">The robots capture data. The AI makes it useful. Four skills on the 2nth.ai platform turn raw scans into decisions.</p>
+
+    <div class="ai-grid">
+      <div class="ai-skill">
+        <span class="ai-tag tag-scan">Scanning</span>
+        <h3>Warehouse Inventory Intelligence</h3>
+        <p>Stock discrepancy detection, location accuracy scoring, cycle count optimisation, and inventory health across warehouse zones.</p>
+      </div>
+      <div class="ai-skill">
+        <span class="ai-tag tag-fleet">Fleet</span>
+        <h3>Drone Fleet Operations</h3>
+        <p>Flight planning, battery management, maintenance scheduling, and fleet utilisation analytics for multi-robot deployments.</p>
+      </div>
+      <div class="ai-skill">
+        <span class="ai-tag tag-ml">ML</span>
+        <h3>Scan Anomaly Detection</h3>
+        <p>ML-powered detection of misplaced items, phantom inventory, label damage, and rack position errors. Automated WMS correction workflows.</p>
+      </div>
+      <div class="ai-skill">
+        <span class="ai-tag tag-safety">Safety</span>
+        <h3>Warehouse Safety Compliance</h3>
+        <p>Visual inspection of racking condition, aisle clearance, fire exit access, PPE compliance. Audit-ready reports per OSHA/OHS standards.</p>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="proof-item">Featured by <strong>CNN</strong></div>
+      <div class="proof-item">Featured by <strong>Forbes</strong></div>
+      <div class="proof-item">Pilot with <strong>Walmart</strong></div>
+      <div class="proof-item">Deployed with <strong>LF Logistics</strong> (Asia)</div>
+      <div class="proof-item">Partner: <strong>Kenco Innovation Labs</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section class="section" id="architecture">
+  <div class="container">
+    <div class="sec-label">Architecture</div>
+    <h2>Edge to cloud to action</h2>
+
+    <div class="arch">
+      <pre><code><span class="hl">PHYSICAL LAYER</span>                        <span class="hl">AI LAYER</span>                          <span class="hl">ACTION LAYER</span>
+
+┌─────────────────┐                  ┌─────────────────────┐            ┌──────────────────┐
+│  Hummingbird    │──┐               │  2nth.ai Platform   │            │  WMS Integration │
+│  (indoor drone) │  │               │                     │            │  SAP / Oracle /  │
+├─────────────────┤  │  Azure IoT    │  Inventory Intel    │──────────▸ │  Manhattan       │
+│  Buffalo        │──┼──── Hub ─────▸│  Fleet Ops          │            ├──────────────────┤
+│  (outdoor drone)│  │               │  Anomaly Detection  │            │  Dashboard       │
+├─────────────────┤  │               │  Safety Compliance  │──────────▸ │  scan.dronescan  │
+│  Meerkat        │──┘               │                     │            ├──────────────────┤
+│  (ground robot) │                  │  Token billing      │            │  Alerts          │
+└─────────────────┘                  │  20% revenue share  │──────────▸ │  Slack / Teams / │
+                                     └─────────────────────┘            │  Email / SMS     │
+                                                                        └──────────────────┘
+
+<span class="hl">GLOBAL DEPLOYMENT</span>
+
+  Durban (HQ) ─── Dallas ─── Singapore ─── Rotterdam ─── Nairobi ─── S&atilde;o Paulo
+  Warehouse       Warehouse   Port          Port          Agriculture  Mining
+  R&amp;D Centre     Walmart     LF Logistics   Container     Livestock    Stockpile</code></pre>
+    </div>
+
+    <div class="platform-grid">
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(59,130,246,.1)">&#128225;</div>
+        <h3>Dedicated RF</h3>
+        <p>Non-WiFi, non-Bluetooth. Industrial-grade comms that work in metal-dense warehouse environments.</p>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(6,182,212,.1)">&#9729;&#65039;</div>
+        <h3>Azure IoT Hub</h3>
+        <p>Scan data streams to cloud in real-time. Triggers AI analysis on arrival. Global edge processing.</p>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(34,197,94,.1)">&#129302;</div>
+        <h3>2nth.ai Skills</h3>
+        <p>AI analysis runs on the 2nth.ai skill tree. Token-metered. DroneScan earns 20% revenue share.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Edge + ERP -->
+<section class="section" id="edge">
+  <div class="container">
+    <div class="sec-label">Edge infrastructure</div>
+    <h2>Cloudflare everywhere, ERPNext at every site</h2>
+    <p style="max-width:600px;margin-bottom:8px">DroneScan robots deploy globally. The AI and data layer must follow — zero-latency inference at the edge, with a dedicated ERP instance at every customer site that swarms into their master system.</p>
+
+    <div class="arch" style="margin-top:24px">
+      <pre><code><span class="hl">EDGE AI — CLOUDFLARE WORKERS</span>
+
+  Every scan location gets edge-local AI inference via Cloudflare:
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │  Cloudflare Network (310+ cities, 120+ countries)                  │
+  │                                                                     │
+  │  Cape Town ──── Dallas ──── Singapore ──── Rotterdam ──── Nairobi  │
+  │     │             │            │              │             │       │
+  │  ┌──▼──┐       ┌──▼──┐     ┌──▼──┐        ┌──▼──┐      ┌──▼──┐   │
+  │  │ W-AI│       │ W-AI│     │ W-AI│        │ W-AI│      │ W-AI│   │
+  │  └──┬──┘       └──┬──┘     └──┬──┘        └──┬──┘      └──┬──┘   │
+  │     │             │            │              │             │       │
+  │  Workers AI    Workers AI  Workers AI     Workers AI   Workers AI  │
+  │  Scan anomaly  Inventory   Fleet ops      Safety       Crop health │
+  │  detection     analysis    scheduling     compliance   monitoring  │
+  └─────────────────────────────────────────────────────────────────────┘
+
+  <span class="hl">Why Cloudflare edge matters for robotics:</span>
+  • Inference runs &lt;50ms from any warehouse on earth
+  • No data leaves the region (POPIA, GDPR, PDPA compliance)
+  • Workers AI scales to zero — pay only when robots are scanning
+  • D1 at edge stores scan results locally, syncs globally
+  • R2 stores drone footage without egress fees</code></pre>
+    </div>
+
+    <div class="arch" style="margin-top:16px">
+      <pre><code><span class="hl">ELASTIC ERPNEXT — SWARM ARCHITECTURE</span>
+
+  Each customer site gets an opinionated ERPNext instance tuned for their
+  market. All instances swarm into the customer's master ERP.
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  CUSTOMER MASTER ERP                                        │
+  │  (SAP / Oracle / Dynamics / ERPNext Enterprise)             │
+  │                                                             │
+  │  Consolidated: inventory, financials, compliance, fleet     │
+  └───────────────────────┬─────────────────────────────────────┘
+                          │
+              ┌───────────┼───────────┐
+              │           │           │
+     ┌────────▼──┐  ┌─────▼────┐  ┌──▼────────┐
+     │ ERPNext   │  │ ERPNext  │  │ ERPNext   │
+     │ Dallas    │  │ Singapore│  │ Nairobi   │
+     │           │  │          │  │           │
+     │ Warehouse │  │ Port     │  │ Farm      │
+     │ Module    │  │ Module   │  │ Module    │
+     │           │  │          │  │           │
+     │ • Stock   │  │ • Contai-│  │ • Livesto-│
+     │ • Putaway │  │   ner ID │  │   ck count│
+     │ • Pick    │  │ • Damage │  │ • Crop    │
+     │ • Cycle   │  │ • Yard   │  │   health  │
+     │   count   │  │   map    │  │ • Yield   │
+     └─────┬─────┘  └────┬─────┘  └─────┬─────┘
+           │             │              │
+     ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
+     │ Hummingbird│ │ Buffalo   │ │ Buffalo   │
+     │ + Meerkat  │ │ fleet     │ │ fleet     │
+     │ (indoor)   │ │ (outdoor) │ │ (outdoor) │
+     └────────────┘ └───────────┘ └───────────┘
+
+  <span class="hl">How the swarm works:</span>
+
+  1. <span class="hl">Deploy</span> — Spin up an ERPNext instance per site (Cloudflare Pages + D1)
+  2. <span class="hl">Opinionated</span> — Pre-configured for the market:
+     • Warehouse: Stock Entry, Putaway Rule, Cycle Count, Pick List
+     • Port: Container Register, Damage Log, Yard Grid, Vessel Schedule
+     • Farm: Crop Cycle, Livestock Register, Weather Integration, Yield Forecast
+  3. <span class="hl">Scan</span> — Robots feed scan data into the local ERPNext instance
+  4. <span class="hl">AI</span> — Cloudflare Workers AI runs analysis at the edge
+  5. <span class="hl">Swarm</span> — Local instances sync to master ERP via:
+     • ERPNext Data Import / Export API
+     • SAP RFC / BAPI connectors
+     • Oracle REST Data Services
+     • Microsoft Dynamics Business Central API
+  6. <span class="hl">Consolidate</span> — Master ERP has global view:
+     • Total inventory across all warehouses
+     • Fleet utilisation across all sites
+     • Compliance status per jurisdiction
+     • Consolidated financials in customer's currency</code></pre>
+    </div>
+
+    <div class="platform-grid" style="margin-top:24px">
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(59,130,246,.1)">&#127760;</div>
+        <h3>Edge-Local AI</h3>
+        <p>Cloudflare Workers AI at 310+ locations. Scan analysis runs where the robots are, not in a central cloud.</p>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(6,182,212,.1)">&#128202;</div>
+        <h3>Elastic ERP</h3>
+        <p>ERPNext instance per site, opinionated for the market. Spins up in minutes, syncs to master on schedule.</p>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon" style="background:rgba(34,197,94,.1)">&#129520;</div>
+        <h3>Swarm Sync</h3>
+        <p>Every site instance is autonomous. Master ERP consolidates. Works offline — robots don't stop when the internet does.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to deploy?</h2>
+    <p>From a single warehouse to a global fleet. Start a conversation.</p>
+    <div class="cta-buttons">
+      <a href="https://www.dronescan.co" class="btn btn-blue">Visit dronescan.co</a>
+      <a href="https://developers.2nth.ai/partners/dronescan.html" class="btn btn-ghost">View 2nth.ai partnership</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>DroneScan &mdash; concept reimagined for global robotics. <a href="https://developers.2nth.ai/partners/dronescan.html">2nth.ai Build Partner</a></p>
+    <p>Durban, South Africa &middot; <a href="https://www.dronescan.co">dronescan.co</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
