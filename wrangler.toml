@@ -3,11 +3,13 @@ compatibility_date = "2026-03-01"
 pages_build_output_dir = "public"
 
 [vars]
-GITHUB_REDIRECT_URI = "https://developers-2nth-ai.pages.dev/api/auth/callback"
-SITE_URL            = "https://developers-2nth-ai.pages.dev"
-MAIN_SITE_URL       = "https://2nth.ai"
-RESEND_FROM         = "2NTH Developers <hello@2nth.ai>"
+SITE_URL      = "https://developers.2nth.ai"
+MAIN_SITE_URL = "https://2nth.ai"
+RESEND_FROM   = "2NTH Developers <hello@2nth.ai>"
 
 [[kv_namespaces]]
 binding = "KV"
 id      = "bfa3357eddfc4b3fa5341d7b60c006b2"
+
+[ai]
+binding = "AI"

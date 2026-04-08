@@ -1,5 +1,8 @@
 // POST /api/auth/verify — validate OTP code, create session
 
+import { ADMIN_EMAILS } from '../../lib/registry.js';
+import { sidCookieHeader } from '../../lib/session.js';
+
 export async function onRequestPost(context) {
   const { env, request } = context;
 
@@ -32,7 +35,7 @@ export async function onRequestPost(context) {
     id: sid,
     email,
     name: email.split('@')[0],
-    role: email === env.ADMIN_EMAIL ? 'admin' : 'developer',
+    role: ADMIN_EMAILS.includes(email) ? 'admin' : 'developer',
     tier: 'email',
   };
   await env.KV.put(`session:${sid}`, JSON.stringify(user), { expirationTtl: 60 * 60 * 24 * 30 });
@@ -40,7 +43,7 @@ export async function onRequestPost(context) {
   return new Response(JSON.stringify({ ok: true, user }), {
     headers: {
       'Content-Type': 'application/json',
-      'Set-Cookie': `sid=${sid}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`,
+      'Set-Cookie': sidCookieHeader(sid),
     },
   });
 }

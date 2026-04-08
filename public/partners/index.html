@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Partners — 2nth.ai Developers</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .partner-row {
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 20px;
+      background: #fff;
+      border: 1px solid #e4e4e7;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: border-color .15s, box-shadow .15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .partner-row:hover { border-color: #0891b2; box-shadow: 0 2px 12px rgba(8,145,178,.07); }
+    .pr-name { font-size: 15px; font-weight: 700; color: #18181b; margin-bottom: 3px; }
+    .pr-sector { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #71717a; }
+    .pr-branches { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+    .branch-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .5px;
+      padding: 4px 10px; border-radius: 5px; text-decoration: none;
+      border: 1px solid #e4e4e7; color: #52525b; background: #fafafa;
+      transition: all .12s; white-space: nowrap;
+    }
+    .branch-link:hover { border-color: #0891b2; color: #0891b2; background: rgba(8,145,178,.04); }
+    .branch-link.main { border-color: #bbf7d0; color: #059669; background: rgba(5,150,105,.04); }
+    .branch-link.main:hover { border-color: #059669; }
+    .branch-link.beta { border-color: #ddd6fe; color: #7c3aed; background: rgba(124,58,237,.04); }
+    .branch-link.beta:hover { border-color: #7c3aed; }
+    .branch-link.dev  { border-color: #fde68a; color: #92400e; background: rgba(251,191,36,.05); }
+    .branch-link.dev:hover { border-color: #d97706; }
+    .branch-link.profile { border-color: #bae6fd; color: #0369a1; background: rgba(3,105,161,.04); }
+    .branch-link.profile:hover { border-color: #0891b2; }
+    .branch-link.pages { border-color: #fde2e2; color: #b91c1c; background: rgba(185,28,28,.03); }
+    .branch-link.pages:hover { border-color: #dc2626; }
+    .pr-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .status-dot.live  { background: #059669; }
+    .status-dot.draft { background: #d97706; }
+    .status-dot.none  { background: #d4d4d8; }
+    .status-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #a1a1aa; }
+    .section-head { display: flex; align-items: baseline; gap: 12px; margin: 32px 0 14px; }
+    .section-head h2 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: .06em; color: #18181b; margin: 0; }
+    .section-head span { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #a1a1aa; }
+    .no-repo { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #d4d4d8; letter-spacing: .5px; }
+    .cf-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .5px; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: rgba(249,115,22,.08); border: 1px solid rgba(249,115,22,.2); color: #c2410c; }
+    @media(max-width:680px) {
+      .partner-row { grid-template-columns: 1fr; }
+      .pr-actions { align-items: flex-start; }
+    }
+
+    /* ── Admin token UI ── */
+    .send-link-btn {
+      display: none; /* shown via JS for admins only */
+      align-items: center; gap: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 4px; cursor: pointer;
+      background: rgba(8,145,178,.06); border: 1px solid rgba(8,145,178,.25); color: #0891b2;
+      transition: all .12s;
+    }
+    .send-link-btn:hover { background: rgba(8,145,178,.14); }
+    .send-link-btn.loading { opacity: .5; pointer-events: none; }
+    .admin-visible { display: none; } /* shown for admins via JS */
+
+    /* ── Token modal ── */
+    #token-modal { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,.45); align-items: center; justify-content: center; padding: 16px; }
+    #token-modal.open { display: flex; }
+    .token-card { background: #fff; border-radius: 12px; padding: 28px; max-width: 520px; width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,.18); }
+    .token-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .06em; color: #18181b; margin: 0 0 4px; }
+    .token-card .tm-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #0891b2; margin-bottom: 16px; }
+    .token-url-box { background: #f4f9fc; border: 1px solid #dde8f0; border-radius: 7px; padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #18181b; word-break: break-all; line-height: 1.6; margin-bottom: 14px; }
+    .token-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tm-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; cursor: pointer; border: none; text-decoration: none; transition: all .12s; }
+    .tm-copy { background: #0891b2; color: #fff; }
+    .tm-copy:hover { background: #0e7490; }
+    .tm-copy.copied { background: #059669; }
+    .tm-close { background: none; border: 1px solid #e4e4e7; color: #71717a; }
+    .tm-close:hover { border-color: #18181b; color: #18181b; }
+    .tm-expiry { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #a1a1aa; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a href="/" class="logo"><span>2</span>NTH <span style="font-size:14px;color:#a1a1aa;letter-spacing:2px">DEVELOPERS</span></a>
+    <div id="user-area"></div>
+  </div>
+</header>
+
+<main>
+<div class="container">
+
+  <div style="margin:32px 0 8px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;margin-bottom:6px">Build network</div>
+    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,48px);letter-spacing:.05em;color:#18181b;margin:0 0 8px">PARTNER PROJECTS</h1>
+    <p style="font-size:14px;color:#71717a;max-width:560px;line-height:1.6">Each partner has a profile page on this portal. Projects follow the <code style="font-size:12px">dev → beta → main</code> governance model.</p>
+  </div>
+
+  <!-- ── ACTIVE PARTNERS ──────────────────────────── -->
+  <div class="section-head">
+    <h2>Active</h2>
+    <span>Live in production</span>
+  </div>
+
+  <!-- Hyram -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Hyram Serretta</div>
+      <div class="pr-sector">Industrial AI · Growth</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/hyram" target="_blank">&#128100; Profile</a>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot live"></span> <span class="status-label">Live</span></div>
+    </div>
+  </div>
+
+  <!-- 20CRM -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">20CRM</div>
+      <div class="pr-sector">CRM · Sales AI</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/20crm" target="_blank">&#128100; Profile</a>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot live"></span> <span class="status-label">Live</span></div>
+    </div>
+  </div>
+
+  <!-- ── BUILD PARTNERS (profile only, no repo yet) ── -->
+  <div class="section-head">
+    <h2>In Build</h2>
+    <span>Profile live · in development</span>
+  </div>
+
+  <!-- Andile -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Andile Solutions</div>
+      <div class="pr-sector">Capital Markets · Fintech</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/andile"           target="_blank">&#128100; Profile</a>
+      <a class="branch-link profile" href="/partners/andile-concept"   target="_blank">Concept</a>
+      <a class="branch-link profile" href="/partners/andile-copilot"   target="_blank">Copilot</a>
+      <a class="branch-link profile" href="/partners/andile-frtb"      target="_blank">FRTB</a>
+      <a class="branch-link profile" href="/partners/andile-sb-calypso" target="_blank">SB Calypso</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- Vibecrafters -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Vibecrafters</div>
+      <div class="pr-sector">Creative · Digital</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/vibecrafters" target="_blank">&#128100; Profile</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- ScanMan -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">ScanMan</div>
+      <div class="pr-sector">Spatial AI · Scanning</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/scanman" target="_blank">&#128100; Profile</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- Proximity Green -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Proximity Green</div>
+      <div class="pr-sector">PropTech · ESG</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/proximity-green" target="_blank">&#128100; Profile</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- Dronescan -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">DroneScan</div>
+      <div class="pr-sector">Robotics · Inspection</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/dronescan" target="_blank">&#128100; Profile</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- GridlineProp -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Gridline Properties</div>
+      <div class="pr-sector">PropTech · Real Estate</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/gridlineprop" target="_blank">&#128100; Profile</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <!-- Carla -->
+  <div class="partner-row" data-partner-key="carla">
+    <div>
+      <div class="pr-name">Carla de Abreu</div>
+      <div class="pr-sector">Individual · Build Partner</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/carla" target="_blank">&#128100; Profile</a>
+      <button class="send-link-btn admin-visible" data-key="carla">&#128279; Send preview link</button>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Private</span></div>
+    </div>
+  </div>
+
+  <!-- Nicola -->
+  <div class="partner-row" data-partner-key="nicola">
+    <div>
+      <div class="pr-name">Nicola Hawke</div>
+      <div class="pr-sector">Individual · Build Partner</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/nicola" target="_blank">&#128100; Profile</a>
+      <button class="send-link-btn admin-visible" data-key="nicola">&#128279; Send preview link</button>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Private</span></div>
+    </div>
+  </div>
+
+  <!-- Kath Janisch -->
+  <div class="partner-row" data-partner-key="kath-janisch">
+    <div>
+      <div class="pr-name">Kath Janisch</div>
+      <div class="pr-sector">Enterprise AI · Salesforce · ctrlFuture</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/kath-janisch" target="_blank">&#128100; Profile</a>
+      <button class="send-link-btn admin-visible" data-key="kath-janisch">&#128279; Send preview link</button>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Private</span></div>
+    </div>
+  </div>
+
+  <!-- James Grant -->
+  <div class="partner-row" data-partner-key="james-grant">
+    <div>
+      <div class="pr-name">James Grant</div>
+      <div class="pr-sector">Software Engineering · AWS · Cloudflare</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/james-grant" target="_blank">&#128100; Profile</a>
+      <button class="send-link-btn admin-visible" data-key="james-grant">&#128279; Send preview link</button>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Private</span></div>
+    </div>
+  </div>
+
+  <!-- Robert Fairon -->
+  <div class="partner-row" data-partner-key="robert-fairon">
+    <div>
+      <div class="pr-name">Robert Fairon</div>
+      <div class="pr-sector">Cloud · AI · Enterprise Tech · Daemon</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/robert-fairon" target="_blank">&#128100; Profile</a>
+      <button class="send-link-btn admin-visible" data-key="robert-fairon">&#128279; Send preview link</button>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Concept</span></div>
+    </div>
+  </div>
+
+  <!-- Agilex -->
+  <div class="partner-row">
+    <div>
+      <div class="pr-name">Agilex</div>
+      <div class="pr-sector">Staffing · HR Tech</div>
+    </div>
+    <div class="pr-branches">
+      <a class="branch-link profile" href="/partners/agilex"                   target="_blank">&#128100; Profile</a>
+      <a class="branch-link profile" href="/partners/agilex-paton-personnel"   target="_blank">Paton Personnel</a>
+      <a class="branch-link profile" href="/partners/agilex-walker-phillip"    target="_blank">Walker Phillip</a>
+      <span class="no-repo">No repo yet</span>
+    </div>
+    <div class="pr-actions">
+      <div><span class="status-dot draft"></span> <span class="status-label">Draft</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f4f4f5">
+    <p style="font-size:12px;color:#a1a1aa;font-family:'JetBrains Mono',monospace">
+      Branch governance: <code>dev → beta → main</code> ·
+      <a href="/lifecycle.html" style="color:#0891b2">View lifecycle →</a>
+    </p>
+  </div>
+
+</div>
+</main>
+
+<!-- Token modal -->
+<div id="token-modal">
+  <div class="token-card">
+    <h3 id="tm-name">Preview link</h3>
+    <div class="tm-sub" id="tm-key"></div>
+    <div class="token-url-box" id="tm-url"></div>
+    <div class="token-actions">
+      <button class="tm-btn tm-copy" id="tm-copy-btn">&#128203; Copy link</button>
+      <button class="tm-btn tm-close" id="tm-close-btn">Close</button>
+    </div>
+    <div class="tm-expiry" id="tm-expiry"></div>
+  </div>
+</div>
+
+<script src="/portal.js"></script>
+<script>
+// ── Admin token UI ───────────────────────────────────────────────
+var ADMIN_EMAILS = ['craig@2nth.ai','craigl@2nth.ai','craig@b2bs.co.za','imbilawork@gmail.com'];
+
+document.addEventListener('sso:ready', function(e) {
+  var user = e.detail;
+  if (!user || !ADMIN_EMAILS.includes(user.email)) return;
+
+  // Show all admin-only elements
+  document.querySelectorAll('.admin-visible').forEach(function(el) {
+    el.style.display = 'inline-flex';
+  });
+
+  // Send preview link buttons
+  document.querySelectorAll('.send-link-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var key = btn.dataset.key;
+      var row = btn.closest('[data-partner-key]');
+      var name = row ? row.querySelector('.pr-name').textContent : key;
+      generateToken(key, name, btn);
+    });
+  });
+});
+
+function generateToken(key, name, btn) {
+  btn.classList.add('loading');
+  btn.textContent = 'Generating…';
+
+  fetch('/api/partner/token', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: key }),
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    btn.classList.remove('loading');
+    btn.innerHTML = '&#128279; Send preview link';
+    if (data.error) { alert('Error: ' + data.error); return; }
+    showTokenModal(name, key, data.tokenUrl, data.expiresAt);
+  })
+  .catch(function(err) {
+    btn.classList.remove('loading');
+    btn.innerHTML = '&#128279; Send preview link';
+    alert('Failed to generate link: ' + err.message);
+  });
+}
+
+function showTokenModal(name, key, url, expiresAt) {
+  document.getElementById('tm-name').textContent = name + ' — preview link';
+  document.getElementById('tm-key').textContent = key;
+  document.getElementById('tm-url').textContent = url;
+  var exp = expiresAt ? new Date(expiresAt).toLocaleDateString('en-ZA', { day:'numeric', month:'short', year:'numeric' }) : '';
+  document.getElementById('tm-expiry').textContent = exp ? 'Expires ' + exp + ' · Partner clicks link — no account needed' : '';
+  document.getElementById('token-modal').classList.add('open');
+}
+
+document.getElementById('tm-copy-btn').addEventListener('click', function() {
+  var url = document.getElementById('tm-url').textContent;
+  navigator.clipboard.writeText(url).then(function() {
+    var btn = document.getElementById('tm-copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.innerHTML = '&#128203; Copy link';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+});
+
+document.getElementById('tm-close-btn').addEventListener('click', function() {
+  document.getElementById('token-modal').classList.remove('open');
+});
+
+document.getElementById('token-modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+</script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

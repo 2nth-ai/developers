@@ -67,6 +67,15 @@
 
     <h1>Developer Portal</h1>
 
+    <!-- Admin bar — only shown to admins via JS -->
+    <div id="admin-bar" style="display:none;align-items:center;justify-content:space-between;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;font-weight:700">&#128274; Admin</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="/onboard.html" style="display:inline-flex;align-items:center;gap:5px;background:#0891b2;color:#fff;padding:7px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none">&#43; Onboard partner</a>
+        <a href="/partners/index.html" style="display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid rgba(8,145,178,.3);color:#0891b2;padding:7px 14px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-decoration:none">Partners index</a>
+      </div>
+    </div>
+
     <div class="tab-bar">
       <div class="tab active" data-tab="start">Get started</div>
       <div class="tab" data-tab="showcase">Showcase</div>
@@ -82,13 +91,9 @@
 
       <h3>Quick links</h3>
       <div class="quick-links">
-        <a href="https://github.com/2nth-ai/skills/fork" target="_blank" class="quick-link">
+        <a href="https://2nth-skills-hub.pages.dev" target="_blank" class="quick-link">
           <div class="icon">&#9733;</div>
-          <div><div class="label">Step 1</div><div class="title">Fork the skills repo</div></div>
-        </a>
-        <a href="https://github.com/2nth-ai/skills" target="_blank" class="quick-link">
-          <div class="icon">&#128218;</div>
-          <div><div class="label">Browse</div><div class="title">Explore 300+ skills</div></div>
+          <div><div class="label">Browse</div><div class="title">Skills hub</div></div>
         </a>
         <a href="/vision.html" class="quick-link">
           <div class="icon">&#9889;</div>
@@ -98,29 +103,29 @@
           <div class="icon">&#128196;</div>
           <div><div class="label">Learn</div><div class="title">Read the docs</div></div>
         </a>
+        <a href="mailto:craig@2nth.ai" class="quick-link">
+          <div class="icon">&#128172;</div>
+          <div><div class="label">Contribute</div><div class="title">Submit a skill</div></div>
+        </a>
       </div>
 
-      <h3>Your first contribution</h3>
+      <h3>How skills work</h3>
       <ol class="step-list">
         <li>
-          <strong>Fork the skills repo</strong>
-          Go to <a href="https://github.com/2nth-ai/skills/fork" target="_blank">github.com/2nth-ai/skills/fork</a> and create your fork.
+          <strong>Browse the skills hub</strong>
+          Visit <a href="https://2nth-skills-hub.pages.dev" target="_blank">2nth-skills-hub.pages.dev</a> to explore available skills across all domains.
         </li>
         <li>
-          <strong>Create a skill directory</strong>
-          Pick a domain (<code>tech/</code>, <code>biz/</code>, <code>edu/</code>, <code>fin/</code>, <code>leg/</code>, <code>health/</code>) and create <code>your-skill-name/SKILL.md</code>.
+          <strong>Install into your agent</strong>
+          Copy the skill reference into your Claude Code, Cursor, or Windsurf project. Each skill is a self-contained <code>SKILL.md</code> that your AI agent loads as context.
         </li>
         <li>
-          <strong>Write your SKILL.md</strong>
-          Include the YAML frontmatter (name, domain, tier, version, contributor) and document what the skill does, configuration options, and example output. See the <a href="/docs.html">format guide</a>.
+          <strong>Want to contribute a skill?</strong>
+          Email <a href="mailto:craig@2nth.ai">craig@2nth.ai</a> with your skill idea. The skills repo is private to protect partner IP — contributions are reviewed and merged by the 2nth.ai team.
         </li>
         <li>
-          <strong>Open a pull request</strong>
-          PR your fork into <code>2nth-ai/skills</code> targeting the <code>dev</code> branch. CI will validate your frontmatter automatically.
-        </li>
-        <li>
-          <strong>Get reviewed and merged</strong>
-          The team reviews your skill. Once merged, it goes live on the platform and you earn 5% revenue share on usage.
+          <strong>Get reviewed and published</strong>
+          Once merged, your skill goes live on the hub and you earn 5% revenue share on usage.
         </li>
       </ol>
     </div>
@@ -130,7 +135,27 @@
       <h2 style="border:none;margin-top:0;padding-top:0">Partner showcase</h2>
       <p>Live deployments built on the 2nth.ai platform. Each partner hub is a branded instance of the skills engine.</p>
 
-      <div class="partner-grid">
+      <!-- Gate — shown to non-approved users, hidden for admins/verified partners -->
+      <div id="showcase-gate" style="display:none;max-width:520px;margin:0 auto 24px">
+        <div style="padding:28px 28px 24px;border:1px solid #e4e4e7;border-radius:10px;background:#fff;text-align:center;margin-bottom:16px">
+          <div style="font-size:28px;margin-bottom:10px">&#128274;</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:#18181b;margin-bottom:8px">PARTNER CONTENT — APPROVAL REQUIRED</div>
+          <p style="font-size:13px;color:#71717a;line-height:1.6;margin:0">Partner pages and showcase content are private. Only verified and approved 2nth.ai partners can view this section.</p>
+        </div>
+        <div style="padding:24px 28px;border:1px solid #e4e4e7;border-radius:10px;background:#fff">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0891b2;margin-bottom:14px">Apply to become a partner</div>
+          <div id="pgate-msg" style="display:none;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:14px"></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <input id="pgate-name"    type="text"  placeholder="Full name"        style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='#e4e4e7'">
+            <input id="pgate-company" type="text"  placeholder="Company / project" style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='#e4e4e7'">
+            <input id="pgate-email"   type="email" placeholder="Work email"        style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='#e4e4e7'">
+            <textarea id="pgate-why" placeholder="What are you building? (briefly)" rows="3" style="padding:9px 12px;border:1px solid #e4e4e7;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;resize:vertical" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='#e4e4e7'"></textarea>
+            <button id="pgate-submit" style="background:#0891b2;color:#fff;border:none;border-radius:6px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer" onmouseover="this.style.background='#0e7490'" onmouseout="this.style.background='#0891b2'">Submit application →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="showcase-grid" class="partner-grid" style="display:none">
         <a href="/partners/andile.html" class="partner-card" data-pending="true" style="border-color:#1C5014;background:linear-gradient(135deg,#F3F7F0,#fff)">
           <div class="pending-badge">&#128274; Partner onboarding — sign in to preview</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -147,13 +172,13 @@
           </div>
           <div class="cta" style="color:#1C5014">View partner showcase &rarr;</div>
         </a>
-        <a href="/partners/vibecrafters.html" class="partner-card" style="border-color:#7C3AED;background:linear-gradient(135deg,#faf8ff,#fff)">
+        <a href="/partners/vibecrafters.html" class="partner-card" data-pending="true" style="border-color:#7C3AED;background:linear-gradient(135deg,#faf8ff,#fff)">
           <div class="tag" style="color:#7C3AED">Digital Agency · Production Partner</div>
           <h3>VibeCrafters <span style="font-size:11px;font-weight:400;color:#059669;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Live</span></h3>
           <p>AI-powered digital agency built entirely on 2nth.ai — own Cloudflare environment, custom domain, branded AI persona "Vibe". WhatsApp + Instagram + web chat.</p>
           <div class="cta">View build partner story &rarr;</div>
         </a>
-        <a href="/partners/agilex.html" class="partner-card">
+        <a href="/partners/agilex.html" class="partner-card" data-pending="true">
           <div class="tag">Recruitment AI · Financial Services</div>
           <h3>AgileX</h3>
           <p>5 AI agents that run the full recruitment pipeline — sourcing, screening, scheduling, compliance, and onboarding. From R28/day.</p>
@@ -162,31 +187,31 @@
           </div>
           <div class="cta">View hub →</div>
         </a>
-        <a href="/partners/gridlineprop.html" class="partner-card">
+        <a href="/partners/gridlineprop.html" class="partner-card" data-pending="true">
           <div class="tag">Real Estate · Analytics</div>
           <h3>GridLineProp</h3>
           <p>Property analytics and market intelligence hub. Valuation models, rental yield calculators, and market trend skills.</p>
           <div class="cta">View hub &rarr;</div>
         </a>
-        <a href="/partners/scanman.html" class="partner-card">
+        <a href="/partners/scanman.html" class="partner-card" data-pending="true">
           <div class="tag">Field Operations · IoT</div>
           <h3>ScanMan</h3>
           <p>Field asset scanning and inspection workflow automation. Integrates with IoT sensors and drone data feeds.</p>
           <div class="cta">View hub &rarr;</div>
         </a>
-        <a href="/partners/proximity-green.html" class="partner-card">
+        <a href="/partners/proximity-green.html" class="partner-card" data-pending="true">
           <div class="tag">Sustainability · ESG</div>
           <h3>Proximity Green</h3>
           <p>ESG reporting and sustainability skills for property portfolios. Carbon tracking, green certification guidance.</p>
           <div class="cta">View hub &rarr;</div>
         </a>
-        <a href="/partners/dronescan.html" class="partner-card">
+        <a href="/partners/dronescan.html" class="partner-card" data-pending="true">
           <div class="tag">Aerial · Inspection</div>
           <h3>DroneScan</h3>
           <p>Drone survey analysis and automated inspection reporting. AI-powered defect detection and site mapping skills.</p>
           <div class="cta">View hub &rarr;</div>
         </a>
-        <a href="/partners/carla.html" class="partner-card" style="border-color:#2A1F3D;background:linear-gradient(135deg,#F8F4FC,#fff)">
+        <a href="/partners/carla.html" class="partner-card" data-pending="true" style="border-color:#2A1F3D;background:linear-gradient(135deg,#F8F4FC,#fff)">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
             <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2A1F3D,#C0405E);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:700;flex-shrink:0">CA</div>
             <div class="tag" style="color:#2A1F3D;margin:0">Digital Transformation · AI Strategy · Delivery</div>
@@ -195,14 +220,23 @@
           <p>BCom · MSc Edinburgh. Consultant and published thought leader on human-led tech partnerships, AI execution, and digital transformation. 15+ years across financial services, insurance, GRC, and enterprise delivery.</p>
           <div class="cta" style="color:#2A1F3D">View partner page &rarr;</div>
         </a>
-        <a href="/partners/hyram.html" class="partner-card" style="border-color:#0F3D5C;background:linear-gradient(135deg,#EEF4F9,#fff)">
+        <a href="/partners/hyram.html" class="partner-card" data-pending="true" style="border-color:#0F3D5C;background:linear-gradient(135deg,#EEF4F9,#fff)">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
             <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0F3D5C,#00A8CC);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:700;flex-shrink:0">HS</div>
             <div class="tag" style="color:#0F3D5C;margin:0">AI · Growth · Manufacturing · FinServ</div>
           </div>
           <h3>Hyram Serretta <span style="font-size:11px;font-weight:400;color:#00A8CC;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Build Partner</span></h3>
-          <p>MBA · MSc Engineering (UCT). Head of Growth at DataProphet. P&amp;L leader and AI practitioner bringing enterprise AI across manufacturing, financial services, and technology.</p>
+          <p>MBA · MSc Engineering (UCT). P&amp;L leader and AI practitioner bringing enterprise AI across industrial manufacturing, financial services, and technology.</p>
           <div class="cta" style="color:#0F3D5C">View partner page &rarr;</div>
+        </a>
+        <a href="/partners/nicola.html" class="partner-card" data-pending="true" style="border-color:#2D1B0E;background:linear-gradient(135deg,#FAF2EA,#fff)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2D1B0E,#C4622D);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;font-weight:700;flex-shrink:0">NH</div>
+            <div class="tag" style="color:#2D1B0E;margin:0">Residential Architecture · Property Development</div>
+          </div>
+          <h3>Nicola Hawke <span style="font-size:11px;font-weight:400;color:#C4622D;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase">&#9679; Consulting Partner</span></h3>
+          <p>Architect specialising in residential properties and developments. Bringing AI-assisted workflows and document intelligence into architectural practice — design, compliance, and project delivery.</p>
+          <div class="cta" style="color:#2D1B0E">View partner page &rarr;</div>
         </a>
         <a href="/vision.html" class="partner-card" style="border-style:dashed;background:#fafafa">
           <div class="tag">Coming soon</div>
@@ -251,7 +285,7 @@
       <table>
         <thead><tr><th>Type</th><th>Repo</th><th>Access</th></tr></thead>
         <tbody>
-          <tr><td>Skill documentation</td><td><a href="https://github.com/2nth-ai/skills">skills</a> (public)</td><td>Anyone — fork and PR</td></tr>
+          <tr><td>Skill contributions</td><td>skills (private — 2nth.ai IP)</td><td>Submit via <a href="mailto:craig@2nth.ai">craig@2nth.ai</a></td></tr>
           <tr><td>Code improvements</td><td>Platform repos (private)</td><td>Partners — request access</td></tr>
           <tr><td>Ideas &amp; feedback</td><td>This portal</td><td>Anyone signed in</td></tr>
         </tbody>
@@ -289,14 +323,6 @@
         <a href="/docs.html" class="quick-link">
           <div class="icon">&#128214;</div>
           <div><div class="label">Docs</div><div class="title">Platform documentation</div></div>
-        </a>
-        <a href="https://github.com/2nth-ai/skills" target="_blank" class="quick-link">
-          <div class="icon">&#128736;</div>
-          <div><div class="label">Public</div><div class="title">Skills repo (300+)</div></div>
-        </a>
-        <a href="https://github.com/orgs/2nth-ai/projects/1" target="_blank" class="quick-link">
-          <div class="icon">&#128203;</div>
-          <div><div class="label">Track</div><div class="title">Roadmap board</div></div>
         </a>
         <a href="/vision.html" class="quick-link">
           <div class="icon">&#127759;</div>
@@ -357,34 +383,87 @@ example here
 
 <footer>
   <div class="container">
-    <p>2nth.ai &mdash; from thought to motion. <a href="https://github.com/2nth-ai">GitHub</a> &middot; <a href="/vision.html">Vision</a> &middot; <a href="/docs.html">Docs</a></p>
+    <p>2nth.ai &mdash; from thought to motion. <a href="/vision.html">Vision</a> &middot; <a href="/docs.html">Docs</a></p>
   </div>
 </footer>
 
 <script src="/gate.js"></script>
 <script src="/portal.js"></script>
 <script>
-// Show pending partner cards once auth is confirmed
-document.addEventListener('sso:ready', function(e) {
-  var user = e.detail;
-  var cards = document.querySelectorAll('.partner-card[data-pending]');
+// Showcase gate — uses /api/auth/me (server-side) so no hardcoded email lists here
+document.addEventListener('sso:ready', async function() {
+  try {
+    var meRes = await fetch('/api/auth/me', { credentials: 'include' });
+    var me = meRes.ok ? await meRes.json() : { isAdmin: false, isPartner: false };
 
-  // Admin sees all cards unlocked — remove the pending badge lock text
-  var isAdmin = (user.role === 'admin' || user.email === 'craig@2nth.ai' || user.email === 'craigl@2nth.ai');
-
-  cards.forEach(function(card) {
-    card.style.display = 'block';
-    var badge = card.querySelector('.pending-badge');
-    if (badge) {
-      if (isAdmin) {
-        badge.textContent = '🔓 Admin preview — partner onboarding in progress';
-        badge.style.background = 'rgba(5,150,105,0.08)';
-        badge.style.borderColor = 'rgba(5,150,105,0.25)';
-        badge.style.color = '#047857';
-      } else {
-        badge.textContent = '🔒 Partner preview — sign in required';
-      }
+    if (me.isAdmin) {
+      var adminBar = document.getElementById('admin-bar');
+      if (adminBar) adminBar.style.display = 'flex';
     }
+
+    if (me.isAdmin || me.isPartner) {
+      var grid = document.getElementById('showcase-grid');
+      if (grid) grid.style.display = '';
+      document.querySelectorAll('.partner-card[data-pending]').forEach(function(c) {
+        c.style.display = 'block';
+        var badge = c.querySelector('.pending-badge');
+        if (badge && me.isAdmin) {
+          badge.textContent = 'Admin preview';
+          badge.style.background = 'rgba(5,150,105,0.08)';
+          badge.style.borderColor = 'rgba(5,150,105,0.25)';
+          badge.style.color = '#047857';
+        } else if (badge) {
+          badge.remove();
+        }
+      });
+    } else {
+      // Authenticated but not a partner — show the apply form
+      var gate = document.getElementById('showcase-gate');
+      if (gate) gate.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('[showcase] /api/auth/me failed:', err);
+  }
+});
+
+// Partner application form submission
+document.addEventListener('DOMContentLoaded', function() {
+  var submitBtn = document.getElementById('pgate-submit');
+  if (!submitBtn) return;
+  submitBtn.addEventListener('click', function() {
+    var name    = (document.getElementById('pgate-name')?.value || '').trim();
+    var company = (document.getElementById('pgate-company')?.value || '').trim();
+    var email   = (document.getElementById('pgate-email')?.value || '').trim();
+    var why     = (document.getElementById('pgate-why')?.value || '').trim();
+    var msgEl   = document.getElementById('pgate-msg');
+
+    if (!name || !email || !company) {
+      msgEl.textContent = 'Name, company, and email are required.';
+      msgEl.style.cssText = 'display:block;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);color:#dc2626;border-radius:6px;padding:10px 14px';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+
+    fetch('/api/enquiry', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, company, email, message: why, type: 'partner-application' }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      msgEl.textContent = 'Application sent — we\'ll be in touch within 1–2 business days.';
+      msgEl.style.cssText = 'display:block;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);color:#059669;border-radius:6px;padding:10px 14px';
+      submitBtn.style.display = 'none';
+    })
+    .catch(function() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit application →';
+      msgEl.textContent = 'Failed to send — try emailing craig@2nth.ai directly.';
+      msgEl.style.cssText = 'display:block;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);color:#dc2626;border-radius:6px;padding:10px 14px';
+    });
   });
 });
 

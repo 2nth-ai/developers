@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicola Hawke — 2nth.ai Consulting Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:  #2D1B0E;
+      --primary2: #1C1008;
+      --accent:   #C4622D;
+      --accent2:  #9E4C22;
+      --bg:       #FFFFFF;
+      --surface:  #FAF7F4;
+      --border:   #EDE5DC;
+      --border2:  #D4BCA8;
+      --text:     #1A1008;
+      --muted:    #5A3E28;
+      --faint:    #9E8070;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #2D1B0E 0%, #C4622D 45%, #E8A882 75%, #2D1B0E 100%); }
+    nav { background: #2D1B0E; border-bottom: 1px solid rgba(196,98,45,0.25); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #C4622D; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #C4622D; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Hero ── */
+    .hero { padding: 68px 0 56px; background: linear-gradient(160deg, #FAF2EA 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .partner-lockup { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #2D1B0E, #C4622D); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--display); font-size: 24px; letter-spacing: 2px; color: #fff; }
+    .partner-name { font-family: var(--display); font-size: clamp(30px, 4.5vw, 52px); letter-spacing: 1.5px; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .partner-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .partner-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .badge-consulting { background: rgba(196,98,45,0.08); border: 1px solid rgba(196,98,45,0.3); color: var(--accent); }
+    .badge-primary { background: rgba(45,27,14,0.07); border: 1px solid rgba(45,27,14,0.2); color: var(--primary); }
+
+    /* ── Expertise grid ── */
+    .expertise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 24px 0; }
+    .expertise-card { background: var(--primary); border-radius: 10px; padding: 22px; }
+    .expertise-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .expertise-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    .expertise-card p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+
+    /* ── Consulting model ── */
+    .model-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .model-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .model-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .model-who { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .model-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary2); text-decoration: none; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent2); text-decoration: none; }
+    .btn-outline { background: none; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+  </style>
+</head>
+<body data-partner="nicola">
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <span class="current">Nicola Hawke</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="partner-lockup">
+      <div class="partner-avatar">NH</div>
+      <div>
+        <div class="partner-name">NICOLA HAWKE</div>
+        <div class="partner-title">Architect · Residential &amp; Development · Consulting Partner</div>
+        <div class="partner-meta">
+          <span>South Africa</span>
+          <span>|</span>
+          <span>Residential Architecture · Property Development · AI in Design</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-consulting">Consulting Partner</span>
+          <span class="badge badge-primary">Residential</span>
+          <span class="badge badge-primary">Property Development</span>
+          <span class="badge badge-primary">Architecture</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.8">
+      Nicola Hawke is a residential architect and 2nth.ai Consulting Partner, specialising in residential properties and developments — from single dwellings to multi-unit schemes and property development projects. Her practice brings AI-assisted workflows, intelligent document processing, and automation into architectural practice, reducing the administrative overhead of design, compliance documentation, and project delivery.
+    </p>
+  </div>
+</section>
+
+<!-- ── EXPERTISE ── -->
+<section>
+  <div class="wrap">
+    <h2>Practice areas</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7">
+      Residential architecture and property development, with AI tools layered in to accelerate design, documentation, and approvals.
+    </p>
+    <div class="expertise-grid">
+      <div class="expertise-card">
+        <div class="icon">🏡</div>
+        <h4>Residential Design</h4>
+        <p>Custom homes and residential properties — from client brief through concept, design development, and detailed documentation. Sensitive to site, lifestyle, and budget.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🏘</div>
+        <h4>Property Development</h4>
+        <p>Multi-unit residential developments, cluster housing, and mixed-use schemes. Feasibility, planning, design, and delivery for developers and landowners.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">📐</div>
+        <h4>Planning &amp; Approvals</h4>
+        <p>Council submissions, building plan approvals, and regulatory compliance. AI-assisted documentation review to catch issues before submission and speed up the approvals process.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🤖</div>
+        <h4>AI in Design Practice</h4>
+        <p>Applying LLM-powered document intelligence and automation to specification writing, compliance checking, and report generation — reducing manual overhead in everyday architectural workflow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONSULTING MODEL ── -->
+<section>
+  <div class="wrap">
+    <h2>How the consulting partnership works</h2>
+    <div class="model-box">
+      <div class="model-row">
+        <div class="model-who">Nicola</div>
+        <div class="model-what">Architectural advisory, design review, AI readiness for built environment practices, documentation workflow consulting, and project delivery oversight. Owns the client relationship and professional accountability.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what">AI infrastructure, LLM Gateway (Llama routing → Claude Sonnet 4.6), document intelligence skills, edge deployment, and the 2nth.ai skills catalog. Platform SLA and AI model costs.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Client</div>
+        <div class="model-what">Receives an advisory and implementation engagement that brings AI into their architectural or built environment practice — from workflow assessment to live AI tools. Nicola leads; 2nth.ai provides the platform.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Sectors</div>
+        <div class="model-what">Residential architecture, property development, cluster and sectional title schemes, mixed-use developments. Any project where design quality, planning compliance, and delivery rigour matter.</div>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="https://www.instagram.com/nicolahawkearchitect/" target="_blank" rel="noopener" class="btn btn-primary">Instagram ↗</a>
+      <a href="https://2nth.ai" class="btn btn-accent">Sign in to 2nth.ai ↗</a>
+      <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI DEVELOPERS</div>
+      <div class="footer-links">
+        <a href="/portal.html">Portal</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://2nth.ai">Platform</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/partner-visibility.js"></script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>

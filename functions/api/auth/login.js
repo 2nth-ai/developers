@@ -1,24 +1,4 @@
-// GET  /api/auth/login — redirect to GitHub OAuth
 // POST /api/auth/login — send OTP to email
-
-export async function onRequestGet(context) {
-  const { env } = context;
-  const state = crypto.randomUUID();
-  const params = new URLSearchParams({
-    client_id: env.GITHUB_CLIENT_ID,
-    redirect_uri: env.GITHUB_REDIRECT_URI,
-    scope: 'read:user user:email public_repo',
-    state,
-  });
-
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: `https://github.com/login/oauth/authorize?${params}`,
-      'Set-Cookie': `gh_oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
-    },
-  });
-}
 
 export async function onRequestPost(context) {
   const { env, request } = context;
@@ -46,8 +26,13 @@ export async function onRequestPost(context) {
   await env.KV.put(`otp:${email}`, code, { expirationTtl: 600 });
 
   // Send via Resend
+  if (!env.RESEND_API_KEY) {
+    return Response.json({ ok: false, error: 'Email service not configured' }, { status: 503 });
+  }
+
+  let resendRes;
   try {
-    await fetch('https://api.resend.com/emails', {
+    resendRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${env.RESEND_API_KEY}`,
@@ -69,7 +54,14 @@ export async function onRequestPost(context) {
       }),
     });
   } catch (e) {
-    console.error('Resend error:', e);
+    console.error('Resend fetch error:', e);
+    return Response.json({ ok: false, error: 'Failed to send email — network error' }, { status: 502 });
+  }
+
+  if (!resendRes.ok) {
+    const errBody = await resendRes.text().catch(() => '');
+    console.error('Resend API error:', resendRes.status, errBody);
+    return Response.json({ ok: false, error: `Email delivery failed (${resendRes.status})` }, { status: 502 });
   }
 
   return Response.json({ ok: true });

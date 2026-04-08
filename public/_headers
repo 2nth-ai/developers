@@ -5,5 +5,8 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://2nth.ai; connect-src 'self'; base-uri 'self'
 
+/preview/*
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://2nth.ai; script-src 'self' https://2nth-beta.pages.dev; connect-src 'self'; base-uri 'self'
+
 /style.css
   Cache-Control: public, max-age=3600, must-revalidate

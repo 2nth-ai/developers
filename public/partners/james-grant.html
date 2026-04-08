@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>James Grant — 2nth.ai Development Build Partner</title>
+  <link rel="icon" type="image/svg+xml" href="https://2nth.ai/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:  #0C2A1A;
+      --primary2: #071A10;
+      --accent:   #10B981;
+      --accent2:  #059669;
+      --cloud:    #F97316;
+      --aws:      #FF9900;
+      --cf:       #F38020;
+      --bg:       #FFFFFF;
+      --surface:  #F4FBF7;
+      --border:   #D9EEE3;
+      --border2:  #A7D9BC;
+      --text:     #0A1E12;
+      --muted:    #1F5C38;
+      --faint:    #6DA882;
+      --mono:     'JetBrains Mono', 'Courier New', monospace;
+      --display:  'Bebas Neue', Impact, sans-serif;
+      --body:     'Barlow', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── Brand stripe + nav ── */
+    .brand-stripe { height: 5px; background: linear-gradient(90deg, #0C2A1A 0%, #10B981 40%, #34D399 70%, #0C2A1A 100%); }
+    nav { background: #0C2A1A; border-bottom: 1px solid rgba(16,185,129,0.2); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--display); font-size: 20px; letter-spacing: 3px; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #10B981; }
+    .nav-breadcrumb { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .nav-breadcrumb a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    .nav-breadcrumb a:hover { color: #10B981; }
+    .nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+    .nav-breadcrumb .current { color: rgba(255,255,255,0.85); }
+
+    /* ── Hero ── */
+    .hero { padding: 68px 0 56px; background: linear-gradient(160deg, #EDFAF3 0%, #fff 55%); border-bottom: 1px solid var(--border); }
+    .partner-lockup { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+    .partner-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #0C2A1A, #10B981); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: var(--display); font-size: 24px; letter-spacing: 2px; color: #fff; }
+    .partner-name { font-family: var(--display); font-size: clamp(30px, 4.5vw, 52px); letter-spacing: 1.5px; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .partner-title { font-family: var(--mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .partner-meta { font-family: var(--mono); font-size: 11px; color: var(--faint); display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+    .badge-build  { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); color: var(--accent); }
+    .badge-primary { background: rgba(12,42,26,0.07); border: 1px solid rgba(12,42,26,0.2); color: var(--primary); }
+    .badge-aws    { background: rgba(255,153,0,0.09); border: 1px solid rgba(255,153,0,0.35); color: #B86800; }
+    .badge-cf     { background: rgba(243,128,32,0.09); border: 1px solid rgba(243,128,32,0.35); color: #C25A00; }
+
+    /* ── Skills platform cards ── */
+    .skills-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 24px 0; }
+    .skill-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+    .skill-pill .icon { font-size: 20px; flex-shrink: 0; }
+    .skill-pill .sk-label { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); margin-bottom: 2px; }
+    .skill-pill .sk-name { font-size: 14px; font-weight: 600; color: var(--primary); }
+
+    /* ── Expertise grid ── */
+    .expertise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 24px 0; }
+    .expertise-card { background: var(--primary); border-radius: 10px; padding: 22px; }
+    .expertise-card .icon { font-size: 22px; margin-bottom: 10px; }
+    .expertise-card h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+    .expertise-card p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; line-height: 1.5; }
+
+    /* ── Build track ── */
+    .track-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .track-step { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .track-step:last-child { border-bottom: none; padding-bottom: 0; }
+    .track-num { font-family: var(--display); font-size: 22px; color: var(--accent); width: 32px; flex-shrink: 0; line-height: 1; padding-top: 2px; }
+    .track-body h4 { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+    .track-body p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+    /* ── Model ── */
+    .model-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 28px; margin: 24px 0; }
+    .model-row { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .model-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .model-who { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); width: 80px; flex-shrink: 0; padding-top: 2px; }
+    .model-what { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── CTA ── */
+    .cta-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: all .15s; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary2); text-decoration: none; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent2); text-decoration: none; }
+    .btn-outline { background: none; border: 1px solid var(--border2); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); text-decoration: none; }
+
+    /* ── Footer ── */
+    footer { padding: 28px 0; border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--display); font-size: 16px; letter-spacing: 3px; color: var(--faint); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--faint); text-decoration: none; }
+    .footer-links a:hover { color: var(--primary); }
+  </style>
+</head>
+<body data-partner="james-grant">
+
+<div class="brand-stripe"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><span>2</span>NTH.AI</a>
+    <div class="nav-breadcrumb">
+      <a href="/portal.html">Portal</a>
+      <span class="sep">/</span>
+      <span class="current">James Grant</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="partner-lockup">
+      <div class="partner-avatar">JG</div>
+      <div>
+        <div class="partner-name">JAMES GRANT</div>
+        <div class="partner-title">Software Engineer · Development Build Partner</div>
+        <div class="partner-meta">
+          <span>South Africa</span>
+          <span>|</span>
+          <span>Software Engineering · AWS · Cloudflare · Scalable Systems</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-build">Build Partner</span>
+          <span class="badge badge-aws">AWS</span>
+          <span class="badge badge-cf">Cloudflare</span>
+          <span class="badge badge-primary">Software Engineering</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.8">
+      James Grant is a Software Engineering graduate and 2nth.ai Development Build Partner with a focus on building scalable, intuitive applications that solve real-world problems. He is particularly drawn to the intersection of performance, usability, and clean architecture — qualities that align directly with the edge-first, AI-native approach of the 2nth.ai platform. James contributes to the build network as a developer, bringing thoughtful problem-solving, systems thinking, and a commitment to production-grade quality.
+    </p>
+
+    <!-- Platform skills -->
+    <div class="skills-row" style="margin-top:32px">
+      <div class="skill-pill">
+        <div class="icon">☁️</div>
+        <div>
+          <div class="sk-label">Cloud Platform</div>
+          <div class="sk-name">Amazon Web Services</div>
+        </div>
+      </div>
+      <div class="skill-pill">
+        <div class="icon">🌐</div>
+        <div>
+          <div class="sk-label">Edge Platform</div>
+          <div class="sk-name">Cloudflare Workers</div>
+        </div>
+      </div>
+      <div class="skill-pill">
+        <div class="icon">⚙️</div>
+        <div>
+          <div class="sk-label">Focus</div>
+          <div class="sk-name">Systems Architecture</div>
+        </div>
+      </div>
+      <div class="skill-pill">
+        <div class="icon">🤖</div>
+        <div>
+          <div class="sk-label">Domain</div>
+          <div class="sk-name">AI-First Engineering</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERTISE ── -->
+<section>
+  <div class="wrap">
+    <h2>Technical focus areas</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin:12px 0 24px">
+      Grounded in software engineering fundamentals, with hands-on experience building and deploying on AWS and Cloudflare's edge network.
+    </p>
+    <div class="expertise-grid">
+      <div class="expertise-card">
+        <div class="icon">🏗️</div>
+        <h4>Scalable Application Design</h4>
+        <p>Building systems that perform reliably under load — clean architecture, modular code, and maintainable patterns that grow without accumulating technical debt.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">☁️</div>
+        <h4>AWS Cloud</h4>
+        <p>Serverless functions, managed services, and cloud-native deployment. Leveraging the AWS ecosystem to build cost-effective, production-grade infrastructure.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">⚡</div>
+        <h4>Cloudflare Edge</h4>
+        <p>Workers, Pages, D1, KV, and R2 — the full Cloudflare stack that powers the 2nth.ai platform. Zero-cold-start AI inference and globally distributed deployment.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon">🔍</div>
+        <h4>Systems Thinking</h4>
+        <p>Understanding how systems behave under the hood — performance profiling, failure modes, and designing for reliability before complexity forces the issue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BUILD TRACK ── -->
+<section>
+  <div class="wrap">
+    <h2>Build partner track</h2>
+    <p style="font-size:15px;color:var(--muted);max-width:660px;line-height:1.7;margin:12px 0 24px">
+      The development build track is for engineers who want to build directly on the 2nth.ai platform — shipping skills, integrations, and edge-native AI features.
+    </p>
+    <div class="track-box">
+      <div class="track-step">
+        <div class="track-num">1</div>
+        <div class="track-body">
+          <h4>Set up GitHub &amp; Cloudflare</h4>
+          <p>Create a GitHub account (or use your existing one) and a Cloudflare account. Both are free to start. Your account manager will add you to the 2nth.ai GitHub org and Cloudflare team once setup is confirmed.</p>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-num">2</div>
+        <div class="track-body">
+          <h4>Install Wrangler CLI</h4>
+          <p>Install Node.js (≥18) and run <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">npm install -g wrangler</code>. Authenticate with <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">wrangler login</code>. This is the primary deployment tool for all 2nth.ai edge projects.</p>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-num">3</div>
+        <div class="track-body">
+          <h4>Clone the dev environment</h4>
+          <p>Start with the <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">2nth-beta</code> repository — the main platform codebase. Run <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">npm run dev</code> to spin up a local environment with all bindings (D1, KV, Workers AI) wired up.</p>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-num">4</div>
+        <div class="track-body">
+          <h4>Build your first skill</h4>
+          <p>Pick a domain (<code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">tech</code>, <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">biz</code>, <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">fin</code>, etc.), create your skill directory, and write your <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">SKILL.md</code>. Submit a PR targeting <code style="background:#e8f5ee;padding:2px 6px;border-radius:3px;font-size:12px">dev</code> and the team will review within 48 hours.</p>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-num">5</div>
+        <div class="track-body">
+          <h4>Graduate to platform builds</h4>
+          <p>Once you've shipped a skill, you can move into platform feature work — Workers, edge functions, D1 integrations, and AI agent logic. Full platform access with token budget included.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PARTNERSHIP MODEL ── -->
+<section>
+  <div class="wrap">
+    <h2>How the build partnership works</h2>
+    <div class="model-box">
+      <div class="model-row">
+        <div class="model-who">James</div>
+        <div class="model-what">Builds skills, integrations, and edge-native features on the 2nth.ai platform. Contributes clean, maintainable TypeScript targeting the Cloudflare Workers runtime. Reviews go through the standard dev → beta → main lifecycle.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">2nth.ai</div>
+        <div class="model-what">Provides platform access, Workers AI token budget, D1 and KV bindings, code review, and the skills catalog infrastructure. Routes AI inference through the 2nth AI Gateway (Llama 3.1 8B → Claude Sonnet 4.6).</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Revenue</div>
+        <div class="model-what">Community contributors earn a revenue share (default 5%, negotiable) on skills with paying tier usage. Skills must be active-status and pass the CI validation pipeline before share accrues.</div>
+      </div>
+      <div class="model-row">
+        <div class="model-who">Stack</div>
+        <div class="model-what">TypeScript throughout. Cloudflare Pages + Workers for compute. D1 (SQLite) for persistence. KV for sessions and caching. Vectorize for RAG. R2 for storage. Workers AI for edge inference. No Docker, no VMs.</div>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="https://www.linkedin.com/in/james-r-grant/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn ↗</a>
+      <a href="/docs.html" class="btn btn-outline">Dev Docs</a>
+      <a href="https://2nth.ai" class="btn btn-accent">Sign in to 2nth.ai ↗</a>
+      <a href="/portal.html" class="btn btn-outline">Back to portal</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-logo"><span>2</span>NTH.AI DEVELOPERS</div>
+      <div class="footer-links">
+        <a href="/portal.html">Portal</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://2nth.ai">Platform</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/partner-visibility.js"></script>
+<script src="https://2nth-beta.pages.dev/env-banner.js"></script>
+</body>
+</html>
